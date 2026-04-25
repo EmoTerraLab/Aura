@@ -37,7 +37,7 @@ class Middleware
         self::requireAuth();
         if (Auth::role() !== $role) {
             http_response_code(403);
-            View::error(403, 'No autorizado', 'No tienes permisos para acceder a esta sección.');
+            View::error(403, 'error.unauthorized_title', 'error.unauthorized_message', 'error.unauthorized_desc');
             exit;
         }
     }
@@ -47,7 +47,7 @@ class Middleware
         self::requireAuth();
         if (!in_array(Auth::role(), $roles, true)) {
             http_response_code(403);
-            View::error(403, 'No autorizado', 'No tienes permisos para acceder a esta sección.');
+            View::error(403, 'error.unauthorized_title', 'error.unauthorized_message', 'error.unauthorized_desc');
             exit;
         }
     }

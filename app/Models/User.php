@@ -50,4 +50,13 @@ class User extends Model {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
     }
+
+    /**
+     * Actualiza el idioma preferido del usuario en la base de datos.
+     */
+    public function updateLang(int $userId, string $lang): bool
+    {
+        $stmt = $this->db->prepare('UPDATE users SET lang = ? WHERE id = ?');
+        return $stmt->execute([$lang, $userId]);
+    }
 }

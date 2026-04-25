@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="light" lang="es">
+<html class="light" lang="<?= \App\Core\Lang::current() ?>">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title><?= $code ?? '404' ?> - <?= $title ?? 'Página no encontrada' ?> | Aura</title>
+    <title><?= $code ?? '404' ?> - <?= \App\Core\Lang::t($title_key ?? 'error.404_title') ?> | Aura</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -117,6 +117,9 @@
             Aura
         </div>
         <div class="flex items-center gap-4">
+            <div class="me-2">
+                <?= \App\Core\Lang::renderSelector() ?>
+            </div>
             <a href="/" class="p-2 rounded-full hover:bg-teal-50/50 transition-colors text-teal-700">
                 <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
             </a>
@@ -136,10 +139,10 @@
             </div>
             <!-- Typography Hierarchy -->
             <h1 class="font-h1 text-h1 text-on-background max-w-lg mx-auto">
-                <?= $message ?? 'Vaya, parece que te has alejado un poco del camino.' ?>
+                <?= \App\Core\Lang::t($message_key ?? 'error.404_message') ?>
             </h1>
             <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto leading-relaxed">
-                <?= $description ?? 'No te preocupes, este sigue siendo un espacio seguro. Pulsa el botón de abajo para volver a tu dashboard.' ?>
+                <?= \App\Core\Lang::t($description_key ?? 'error.404_desc') ?>
             </p>
             <!-- Action Area -->
             <div class="pt-gutter">
@@ -153,22 +156,22 @@
                 }
                 ?>
                 <a class="inline-flex items-center justify-center px-10 py-4 bg-primary-container text-white font-semibold rounded-full shadow-[0_8px_30px_rgb(6,105,114,0.12)] hover:opacity-90 active:scale-95 transition-all text-body-md" href="<?= $homeLink ?>">
-                    Volver al Inicio
+                    <?= \App\Core\Lang::t('error.back_to_start') ?>
                 </a>
             </div>
             <!-- Breadcrumb-like indicator (minimalist) -->
             <div class="pt-margin-page opacity-40">
-                <span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">Código de estado: <?= $code ?? '404' ?></span>
+                <span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant"><?= \App\Core\Lang::t('error.status_code') ?>: <?= $code ?? '404' ?></span>
             </div>
         </div>
     </main>
     <!-- Footer -->
     <footer class="flex justify-center items-center w-full py-8 mt-auto opacity-50 font-['Manrope'] text-[10px] tracking-wide text-slate-400">
         <div class="flex flex-col items-center gap-2">
-            <p>Aura powered by EmoTerraLab (emoterralab.com)</p>
+            <p><?= \App\Core\Lang::t('footer.powered_by') ?></p>
             <div class="flex gap-4">
-                <a class="hover:text-teal-500 underline transition-colors" href="#">Soporte</a>
-                <a class="hover:text-teal-500 underline transition-colors" href="#">Privacidad</a>
+                <a class="hover:text-teal-500 underline transition-colors" href="#"><?= \App\Core\Lang::t('footer.support') ?></a>
+                <a class="hover:text-teal-500 underline transition-colors" href="#"><?= \App\Core\Lang::t('footer.privacy') ?></a>
             </div>
         </div>
     </footer>

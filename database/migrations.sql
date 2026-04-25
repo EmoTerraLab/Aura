@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NULL,
     role VARCHAR(255) DEFAULT 'alumno' CHECK (role IN ('admin', 'direccion', 'orientador', 'profesor', 'alumno')),
+    lang VARCHAR(5) DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -99,3 +100,12 @@ CREATE TABLE IF NOT EXISTS report_mentions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_mentions_user ON report_mentions(user_id);
+
+-- Tabla `settings` [MEJORA i18n]
+CREATE TABLE IF NOT EXISTS settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key VARCHAR(100) NOT NULL UNIQUE,
+    value TEXT NOT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+INSERT OR IGNORE INTO settings (key, value) VALUES ('default_lang', 'es');

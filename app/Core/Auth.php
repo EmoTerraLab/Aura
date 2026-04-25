@@ -4,14 +4,18 @@ namespace App\Core;
 use App\Models\User;
 
 class Auth {
+    private static $cachedUser = null;
+
     public static function login($user) {
         Session::regenerate();
         Session::set('user_id', $user['id']);
         Session::set('user_role', $user['role']);
         Session::set('user_name', $user['name']);
+        self::$cachedUser = $user;
     }
 
     public static function logout() {
+        self::$cachedUser = null;
         Session::destroy();
     }
 
@@ -23,8 +27,27 @@ class Auth {
         if (!self::check()) {
             return null;
         }
+        
+        if (self::$cachedUser !== null) {
+            return self::$cachedUser;
+        }
+
         $userModel = new User();
-        return $userModel->find(Session::get('user_id'));
+        $user = $userModel->find(Session::get('user_id'));
+        
+        // Si el usuario ya no existe en BD, forzar logout
+        if (!$user) {
+            self::logout();
+            return null;
+        }
+
+        // Sincronizar rol en sesión por si ha cambiado en BD
+        if (Session::get('user_role') !== $user['role']) {
+            Session::set('user_role', $user['role']);
+        }
+
+        self::$cachedUser = $user;
+        return self::$cachedUser;
     }
 
     public static function id() {
@@ -32,7 +55,8 @@ class Auth {
     }
 
     public static function role() {
-        return Session::get('user_role');
+        $user = self::user();
+        return $user ? $user['role'] : null;
     }
 
     public static function hasRole($roles) {

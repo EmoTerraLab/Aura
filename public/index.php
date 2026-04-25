@@ -41,6 +41,9 @@ spl_autoload_register(function ($class) {
 // Iniciar sesión
 \App\Core\Session::start();
 
+// [MEJORA] Inicializar sistema de idiomas (i18n)
+\App\Core\Lang::init();
+
 // [MEJORA] Headers de seguridad HTTP - protección contra ataques comunes
 header('X-Frame-Options: SAMEORIGIN');
 header('X-Content-Type-Options: nosniff');
@@ -48,8 +51,8 @@ header('X-XSS-Protection: 1; mode=block');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
 
-// Content-Security-Policy: Permitiendo recursos necesarios
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data:;");
+// Content-Security-Policy: Permitiendo recursos necesarios (Tailwind, Bootstrap, Google Fonts)
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:;");
 
 // Inicializar y ejecutar Router
 $router = new \App\Core\Router();

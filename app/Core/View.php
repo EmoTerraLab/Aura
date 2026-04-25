@@ -2,13 +2,13 @@
 namespace App\Core;
 
 class View {
-    public static function error($code = '404', $title = 'Página no encontrada', $message = 'Vaya, parece que te has alejado un poco del camino.', $description = 'No te preocupes, este sigue siendo un espacio seguro. Pulsa el botón de abajo para volver a tu dashboard.', $icon = 'explore_off') {
+    public static function error($code = '404', $title_key = 'error.404_title', $message_key = 'error.404_message', $description_key = 'error.404_desc', $icon = 'explore_off') {
         http_response_code($code);
         self::render('errors/error', [
             'code' => $code,
-            'title' => $title,
-            'message' => $message,
-            'description' => $description,
+            'title_key' => $title_key,
+            'message_key' => $message_key,
+            'description_key' => $description_key,
             'icon' => $icon
         ], null);
         exit;

@@ -11,6 +11,7 @@ use App\Controllers\ReportController;
 use App\Controllers\StaffController;
 use App\Controllers\ReportManagementController;
 use App\Controllers\AdminController;
+use App\Controllers\LangController;
 
 // -- Endpoints Públicos y de Autenticación --
 
@@ -19,6 +20,9 @@ $router->get('/', function() {
     header('Location: /login');
     exit;
 });
+
+// POST /lang/switch : Cambia el idioma
+$router->post('/lang/switch', [LangController::class, 'switch']);
 
 // GET /login : Vista login con tabs alumno/staff
 $router->get('/login', [AuthController::class, 'showLogin']);
@@ -96,3 +100,6 @@ $router->get('/admin/api/classrooms', [AdminController::class, 'getClassrooms'],
 $router->post('/admin/api/classrooms', [AdminController::class, 'storeClassroom'], ['auth', 'role:admin']);
 $router->patch('/admin/api/classrooms/{id}', [AdminController::class, 'updateClassroom'], ['auth', 'role:admin']);
 $router->delete('/admin/api/classrooms/{id}', [AdminController::class, 'deleteClassroom'], ['auth', 'role:admin']);
+
+$router->get('/admin/api/settings', [AdminController::class, 'getSettings'], ['auth', 'role:admin']);
+$router->post('/admin/api/settings/lang', [AdminController::class, 'updateDefaultLang'], ['auth', 'role:admin']);

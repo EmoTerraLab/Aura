@@ -12,11 +12,13 @@ class AdminController {
     private $userModel;
     private $classroomModel;
     private $reportModel;
+    private $settingModel;
 
-    public function __construct(\App\Models\User $userModel, \App\Models\Classroom $classroomModel, \App\Models\Report $reportModel) {
+    public function __construct(\App\Models\User $userModel, \App\Models\Classroom $classroomModel, \App\Models\Report $reportModel, \App\Models\Setting $settingModel) {
         $this->userModel = $userModel;
         $this->classroomModel = $classroomModel;
         $this->reportModel = $reportModel;
+        $this->settingModel = $settingModel;
     }
     
     public function index() {
@@ -25,7 +27,7 @@ class AdminController {
             'totalUsers' => $this->userModel->count(),
             'totalClassrooms' => $this->classroomModel->count(),
             'totalReports' => $this->reportModel->count()
-        ], null);
+        ], 'app');
     }
 
     // --- API Usuarios ---
@@ -167,6 +169,28 @@ class AdminController {
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['error' => 'Error al eliminar aula. Puede que tenga dependencias.']);
+        }
+    }
+
+    // --- API Settings ---
+
+    public function getSettings() {
+        echo json_encode([
+            'default_lang' => $this->settingModel->get('default_lang') ?? 'es'
+        ]);
+    }
+
+    public function updateDefaultLang() {
+        Csrf::validateRequest();
+        
+        $data = json_decode(file_get_contents('php://input'), true);
+        $lang = $data['default_lang'] ?? 'es';
+
+        if (\App\Core\Lang::isSupported($lang)) {
+            $this->settingModel->set('default_lang', $lang);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['error' => 'Idioma no soportado.']);
         }
     }
 }

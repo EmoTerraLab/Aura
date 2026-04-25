@@ -13,7 +13,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             <span class="material-symbols-outlined text-on-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">spa</span>
         </div>
         <h1 class="font-h1 text-h1 text-primary-container tracking-tight">Aura</h1>
-        <p class="font-body-md text-body-md text-on-surface-variant text-center">Tu espacio seguro en el colegio</p>
+        <p class="font-body-md text-body-md text-on-surface-variant text-center"><?= \App\Core\Lang::t('auth.safe_space') ?></p>
     </div>
 
     <!-- Login Card -->
@@ -25,10 +25,10 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
         <!-- Tab Selectors -->
         <div class="flex relative bg-surface-container rounded-full p-1.5 mb-8">
             <label class="flex-1 text-center py-3 rounded-full cursor-pointer transition-all duration-300 font-label-caps text-label-caps text-on-surface-variant peer-checked/student:bg-surface-container-lowest peer-checked/student:text-primary peer-checked/student:shadow-sm" for="tab_student">
-                Estudiante
+                <?= \App\Core\Lang::t('auth.student') ?>
             </label>
             <label class="flex-1 text-center py-3 rounded-full cursor-pointer transition-all duration-300 font-label-caps text-label-caps text-on-surface-variant peer-checked/staff:bg-surface-container-lowest peer-checked/staff:text-primary peer-checked/staff:shadow-sm" for="tab_staff">
-                Personal
+                <?= \App\Core\Lang::t('auth.staff') ?>
             </label>
         </div>
 
@@ -37,18 +37,18 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             <!-- Fase 1: Email -->
             <div id="otp-step-1" class="flex flex-col gap-6">
                 <div class="flex flex-col gap-2">
-                    <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="alumno-email">Correo Institucional</label>
+                    <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="alumno-email"><?= \App\Core\Lang::t('auth.institutional_email') ?></label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline-variant">mail</span>
-                        <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="alumno-email" placeholder="estudiante@colegio.edu" type="email"/>
+                        <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="alumno-email" placeholder="<?= \App\Core\Lang::t('auth.email_placeholder') ?>" type="email"/>
                     </div>
                     <div class="flex items-start gap-2 mt-2 px-4">
                         <span class="material-symbols-outlined text-surface-tint text-sm mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
-                        <p class="font-body-md text-[14px] text-surface-tint leading-snug">Recibirás un código OTP en tu correo para acceder de forma segura.</p>
+                        <p class="font-body-md text-[14px] text-surface-tint leading-snug"><?= \App\Core\Lang::t('auth.otp_info') ?></p>
                     </div>
                 </div>
                 <button id="btn-generate-otp" onclick="generateOTP()" class="mt-4 w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-[0_8px_24px_-8px_rgba(0,79,86,0.3)] hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group" type="button">
-                    Continuar
+                    <?= \App\Core\Lang::t('auth.continue') ?>
                     <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </button>
             </div>
@@ -56,8 +56,8 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             <!-- Fase 2: OTP Code -->
             <div id="otp-step-2" class="hidden flex flex-col gap-6">
                 <div class="flex flex-col gap-2">
-                    <p class="font-body-md text-[14px] text-on-surface-variant px-4 text-center">Hemos generado un código para <br><span id="display-email" class="font-bold text-primary"></span></p>
-                    <label class="font-body-md text-body-md text-on-surface-variant ml-4 mt-2" for="alumno-code">Código de 6 dígitos</label>
+                    <p class="font-body-md text-[14px] text-on-surface-variant px-4 text-center"><?= \App\Core\Lang::t('auth.otp_sent_to') ?> <br><span id="display-email" class="font-bold text-primary"></span></p>
+                    <label class="font-body-md text-body-md text-on-surface-variant ml-4 mt-2" for="alumno-code"><?= \App\Core\Lang::t('auth.otp_label') ?></label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline-variant">password</span>
                         <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg text-center tracking-[0.5em] rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="alumno-code" placeholder="000000" type="text" maxlength="6"/>
@@ -65,11 +65,11 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
                 </div>
                 <div class="flex flex-col gap-3 mt-2">
                     <button id="btn-verify-otp" onclick="verifyOTP()" class="w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-[0_8px_24px_-8px_rgba(0,79,86,0.3)] hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group" type="button">
-                        Entrar
+                        <?= \App\Core\Lang::t('auth.login_btn') ?>
                         <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>
                     </button>
                     <button onclick="resetOTP()" class="w-full bg-surface-container text-on-surface-variant font-body-md text-body-md py-3 rounded-full hover:bg-surface-variant transition-all" type="button">
-                        Volver a empezar
+                        <?= \App\Core\Lang::t('auth.restart') ?>
                     </button>
                 </div>
             </div>
@@ -79,24 +79,24 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
         <!-- Staff Form -->
         <form id="form-staff" onsubmit="loginStaff(event)" class="hidden peer-checked/staff:flex flex-col gap-6 animate-[fadeIn_0.3s_ease-out]">
             <div class="flex flex-col gap-2">
-                <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="staff-email">Correo Electrónico</label>
+                <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="staff-email"><?= \App\Core\Lang::t('auth.staff_email') ?></label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline-variant">mail</span>
-                    <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="staff-email" placeholder="docente@colegio.edu" type="email" required/>
+                    <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="staff-email" placeholder="<?= \App\Core\Lang::t('auth.staff_email_placeholder') ?>" type="email" required/>
                 </div>
             </div>
             <div class="flex flex-col gap-2">
-                <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="staff-password">Contraseña</label>
+                <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="staff-password"><?= \App\Core\Lang::t('auth.password') ?></label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline-variant">lock</span>
                     <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="staff-password" placeholder="••••••••" type="password" required/>
                 </div>
             </div>
             <div class="flex justify-end px-4 mt-[-8px]">
-                <a class="font-body-md text-[14px] text-surface-tint hover:underline decoration-surface-tint/50 underline-offset-4" href="#">¿Olvidaste tu contraseña?</a>
+                <a class="font-body-md text-[14px] text-surface-tint hover:underline decoration-surface-tint/50 underline-offset-4" href="#"><?= \App\Core\Lang::t('auth.forgot_password') ?></a>
             </div>
             <button id="btn-staff-login" class="mt-2 w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-[0_8px_24px_-8px_rgba(0,79,86,0.3)] hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group" type="submit">
-                Iniciar Sesión
+                <?= \App\Core\Lang::t('auth.login_title') ?>
                 <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>
             </button>
             <p id="staff-error" class="text-error text-sm text-center hidden px-4"></p>
@@ -106,12 +106,15 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
 
 <!-- Footer Component -->
 <footer class="bg-transparent w-full py-8 flat no shadows w-full mt-auto flex flex-col items-center gap-2 relative z-10">
-    <div class="flex gap-4 mb-2">
-        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#">Privacidad</a>
-        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#">Soporte</a>
-        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#">Términos</a>
+    <div class="mb-4">
+        <?= \App\Core\Lang::renderSelector() ?>
     </div>
-    <p class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center">Aura powered by EmoTerraLab (emoterralab.com)</p>
+    <div class="flex gap-4 mb-2">
+        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.privacy') ?></a>
+        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.support') ?></a>
+        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.terms') ?></a>
+    </div>
+    <p class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center"><?= \App\Core\Lang::t('footer.powered_by') ?></p>
 </footer>
 
 <?php ob_start(); ?>
@@ -130,7 +133,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
 
         try {
             btn.disabled = true;
-            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">refresh</span> Generando...';
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">refresh</span> <?= \App\Core\Lang::t('auth.generating') ?>';
             errorEl.classList.add('hidden');
 
             const res = await fetchJson('/login/otp/generate', {
@@ -149,15 +152,15 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
                     document.getElementById('alumno-code').value = res.dev_code;
                 }
             } else {
-                errorEl.innerText = res.error || 'No se encontró un alumno con ese correo.';
+                errorEl.innerText = res.error || '<?= \App\Core\Lang::t('auth.error_otp_find') ?>';
                 errorEl.classList.remove('hidden');
             }
         } catch (e) {
-            errorEl.innerText = 'Error de conexión (el servidor no responde).';
+            errorEl.innerText = '<?= \App\Core\Lang::t('auth.error_connection') ?>';
             errorEl.classList.remove('hidden');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = 'Continuar <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>';
+            btn.innerHTML = '<?= \App\Core\Lang::t('auth.continue') ?> <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>';
         }
     }
 
@@ -171,7 +174,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
 
         try {
             btn.disabled = true;
-            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">refresh</span> Verificando...';
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">refresh</span> <?= \App\Core\Lang::t('auth.verifying') ?>';
             errorEl.classList.add('hidden');
 
             const res = await fetchJson('/login/otp/verify', {
@@ -182,15 +185,15 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             if (res.ok && res.redirect) {
                 window.location.href = res.redirect;
             } else {
-                errorEl.innerText = res.error || 'Código inválido o expirado.';
+                errorEl.innerText = res.error || '<?= \App\Core\Lang::t('auth.error_otp_invalid') ?>';
                 errorEl.classList.remove('hidden');
             }
         } catch (e) {
-            errorEl.innerText = 'Error de conexión (el servidor no responde).';
+            errorEl.innerText = '<?= \App\Core\Lang::t('auth.error_connection') ?>';
             errorEl.classList.remove('hidden');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = 'Entrar <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>';
+            btn.innerHTML = '<?= \App\Core\Lang::t('auth.login_btn') ?> <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>';
         }
     }
 
@@ -221,11 +224,11 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             if (res.ok && res.redirect) {
                 window.location.href = res.redirect;
             } else {
-                errorEl.innerText = res.error || 'Las credenciales proporcionadas no coinciden con nuestros registros.';
+                errorEl.innerText = res.error || '<?= \App\Core\Lang::t('auth.error_staff_invalid') ?>';
                 errorEl.classList.remove('hidden');
             }
         } catch (err) {
-            errorEl.innerText = 'Error de conexión (el servidor no responde).';
+            errorEl.innerText = '<?= \App\Core\Lang::t('auth.error_connection') ?>';
             errorEl.classList.remove('hidden');
         } finally {
             btn.disabled = false;
