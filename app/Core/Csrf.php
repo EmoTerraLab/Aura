@@ -19,12 +19,24 @@ class Csrf {
     }
 
     public static function validateRequest() {
-        $headers = getallheaders();
-        $token = $headers['X-CSRF-TOKEN'] ?? $_POST['csrf_token'] ?? null;
+        // Buscar token en cabeceras (Apache/Nginx friendly)
+        $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+        
+        // Si no está en cabeceras, buscar en POST tradicional
+        if (!$token) {
+            $token = $_POST['csrf_token'] ?? null;
+        }
+        
+        // Si sigue sin estar (petición JSON), intentar leer del body
+        if (!$token) {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $token = $input['csrf_token'] ?? null;
+        }
         
         if (!self::validateToken($token)) {
             http_response_code(403);
-            echo json_encode(['error' => 'CSRF token inválido.']);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'CSRF token inválido o expirado.']);
             exit;
         }
     }

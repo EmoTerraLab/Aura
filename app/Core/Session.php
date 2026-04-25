@@ -4,12 +4,20 @@ namespace App\Core;
 class Session {
     public static function start() {
         if (session_status() === PHP_SESSION_NONE) {
+            // Detectar HTTPS incluso detrás de proxies (Nginx, Cloudflare)
+            $isSecure = false;
+            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+                $isSecure = true;
+            } elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+                $isSecure = true;
+            }
+
             // Seguridad de sesión avanzada según spec
             session_set_cookie_params([
                 'lifetime' => 0,
                 'path' => '/',
-                'domain' => '', // en prod debería ser el dominio
-                'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+                'domain' => '', 
+                'secure' => $isSecure,
                 'httponly' => true,
                 'samesite' => 'Lax'
             ]);
