@@ -45,7 +45,7 @@ aura/
 
 ## 💻 Requisitos del Sistema
 
-- **PHP 8.1+** (extensiones: `pdo_sqlite`, `mbstring`, `openssl`, `gmp`).
+- **PHP 8.1+** (extensiones: `pdo_sqlite`, `mbstring`, `openssl`, `gmp`, `bcmath`).
 - **Composer**: Para la gestión de librerías de seguridad.
 - **Servidor Web**: Apache (con `mod_rewrite`) o Nginx.
 - **Base de Datos**: SQLite3.

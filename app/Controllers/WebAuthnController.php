@@ -16,26 +16,40 @@ class WebAuthnController
 
     public function __construct()
     {
-        $this->db = Database::getInstance();
+        // Forzar que no haya salida de errores HTML que rompan el JSON
+        ini_set('display_errors', 0);
         
-        $appName = Config::get('school_name', 'Aura PDP');
-        // RP ID must be the domain without protocol or port
-        $rpId = $_SERVER['HTTP_HOST'];
-        if (strpos($rpId, ':') !== false) {
-            $rpId = explode(':', $rpId)[0];
+        try {
+            $this->db = Database::getInstance();
+            
+            $appName = Config::get('school_name', 'Aura PDP');
+            $rpId = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            if (strpos($rpId, ':') !== false) {
+                $rpId = explode(':', $rpId)[0];
+            }
+            
+            // Verificar extensiones críticas
+            if (!extension_loaded('openssl')) throw new \Exception("Extensión 'openssl' no cargada.");
+            if (!extension_loaded('gmp') && !extension_loaded('bcmath')) {
+                throw new \Exception("WebAuthn requiere la extensión 'php-gmp' o 'php-bcmath' para cálculos criptográficos.");
+            }
+
+            if (!class_exists('lbuchs\WebAuthn\WebAuthn')) {
+                throw new \Exception("La librería 'lbuchs/webauthn' no se encuentra. ¿Has ejecutado 'composer install'?");
+            }
+
+            $this->webauthn = new WebAuthn($appName, $rpId, ['image/png', 'image/jpeg']);
+        } catch (\Exception $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Fallo de inicialización: ' . $e->getMessage()]);
+            exit;
         }
-        
-        // If it's an IP address, WebAuthn might not work in some browsers, 
-        // but we'll try to keep it as is.
-        
-        $this->webauthn = new WebAuthn($appName, $rpId, ['image/png', 'image/jpeg']);
     }
 
     // GET /alumno/2fa/webauthn/register/options
     public function registerOptions(): void
     {
         $user = Auth::user();
-        // User ID must be binary for the library
         $userIdBinary = (string)$user['id'];
         
         try {
@@ -63,9 +77,10 @@ class WebAuthnController
 
             header('Content-Type: application/json');
             echo json_encode($createArgs);
-        } catch (WebAuthnException $e) {
+        } catch (\Exception $e) {
+            error_log("WebAuthn registerOptions Error: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode(['error' => 'Error interno al generar desafío: ' . $e->getMessage()]);
         }
         exit;
     }
