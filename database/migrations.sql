@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
     totp_secret VARCHAR(64) DEFAULT NULL,
     totp_enabled INTEGER DEFAULT 0,
     totp_verified_at DATETIME DEFAULT NULL,
+    webauthn_handle VARCHAR(64) DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

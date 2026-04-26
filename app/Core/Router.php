@@ -60,7 +60,7 @@ class Router {
                         \App\Controllers\AuthController::class => new \App\Controllers\AuthController(new \App\Models\User(), new \App\Models\OTPCode()),
                         \App\Controllers\LangController::class => new \App\Controllers\LangController(new \App\Models\User()),
                         \App\Controllers\TotpController::class => new \App\Controllers\TotpController(),
-                        \App\Controllers\WebAuthnController::class => new \App\Controllers\WebAuthnController(),
+                        \App\Controllers\WebAuthnController::class => new \App\Controllers\WebAuthnController(new \App\Models\WebAuthnCredential()),
                         default => new $controllerClass()
                     };
 

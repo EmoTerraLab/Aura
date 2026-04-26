@@ -32,6 +32,8 @@ $router->get('/auth/2fa/totp', [TotpController::class, 'showVerify']);
 $router->post('/auth/2fa/totp/verify', [TotpController::class, 'verifyLogin']);
 
 // -- Verificación WebAuthn --
+$router->get('/auth/2fa/webauthn', [WebAuthnController::class, 'showVerify']);
+$router->get('/auth/2fa/webauthn/fallback', [WebAuthnController::class, 'fallback']);
 $router->get('/auth/2fa/webauthn/options', [WebAuthnController::class, 'authOptions']);
 $router->post('/auth/2fa/webauthn/verify', [WebAuthnController::class, 'authVerify']);
 

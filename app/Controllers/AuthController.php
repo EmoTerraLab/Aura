@@ -21,7 +21,16 @@ class AuthController {
             $this->redirectBasedOnRole();
             return;
         }
-        View::render('auth/login', ['title' => 'Aura - Iniciar Sesión']);
+
+        $data = ['title' => 'Aura - Iniciar Sesión'];
+        
+        // Comprobar si venimos de un fallback de WebAuthn
+        if (\App\Core\Session::get('force_otp_for_user')) {
+            $data['force_otp_email'] = \App\Core\Session::get('force_otp_for_user');
+            \App\Core\Session::remove('force_otp_for_user');
+        }
+
+        View::render('auth/login', $data);
     }
 
     public function loginStaff() {
@@ -79,7 +88,8 @@ class AuthController {
                 \App\Core\Session::set('pending_webauthn_user_id', $user['id']);
                 echo json_encode([
                     'ok' => true,
-                    'webauthn' => true // Frontend should trigger WebAuthn flow
+                    'webauthn' => true,
+                    'redirect' => '/auth/2fa/webauthn'
                 ]);
                 return;
             }

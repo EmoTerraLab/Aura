@@ -318,5 +318,11 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             btn.disabled = false;
         }
     }
+    document.addEventListener('DOMContentLoaded', () => {
+        <?php if (isset($force_otp_email)): ?>
+            document.getElementById('alumno-email').value = "<?= htmlspecialchars($force_otp_email) ?>";
+            generateOTP(true);
+        <?php endif; ?>
+    });
 </script>
 <?php $scripts = ob_get_clean(); ?>

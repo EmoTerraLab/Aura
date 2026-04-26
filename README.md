@@ -1,8 +1,13 @@
-# Aura: Santuario Digital Escolar 🛡️  ![Version](https://img.shields.io/badge/version-1.2.3--stable-teal)
+# Aura: Santuario Digital Escolar 🛡️  ![Version](https://img.shields.io/badge/version-1.3.0--stable-teal)
 
 Aura es una plataforma web integral diseñada para transformar la convivencia escolar. Proporciona un canal seguro, confidencial y ágil donde los estudiantes pueden reportar incidencias o preocupaciones, y donde el equipo educativo puede gestionar casos de manera colaborativa y estructurada.
 
 ## 🌟 Características Principales
+
+### 🏗️ Arquitectura MVC Refinada (Novedad)
+- **Modelos Dedicados**: Migración de la lógica de persistencia de seguridad a modelos especializados (`WebAuthnCredential`), garantizando un código más limpio y mantenible.
+- **Inyección de Dependencias**: Sistema de enrutamiento avanzado con inyección automática de modelos en controladores.
+- **Flujos de Acceso Especializados**: Vistas independientes para procesos de autenticación multifactor (WebAuthn/TOTP).
 
 ### 📱 Experiencia de Usuario (Novedad)
 - **Diseño Mobile-First**: Interfaz 100% responsive optimizada para smartphones y tablets.
