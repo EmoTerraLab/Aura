@@ -1,4 +1,4 @@
-# Aura: Santuario Digital Escolar 🛡️  ![Version](https://img.shields.io/badge/version-1.2.1--stable-teal)
+# Aura: Santuario Digital Escolar 🛡️  ![Version](https://img.shields.io/badge/version-1.2.3--stable-teal)
 
 Aura es una plataforma web integral diseñada para transformar la convivencia escolar. Proporciona un canal seguro, confidencial y ágil donde los estudiantes pueden reportar incidencias o preocupaciones, y donde el equipo educativo puede gestionar casos de manera colaborativa y estructurada.
 

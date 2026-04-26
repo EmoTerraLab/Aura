@@ -58,6 +58,7 @@ class AuthController {
         Csrf::validateRequest();
         $data = json_decode(file_get_contents('php://input'), true);
         $email = $data['email'] ?? '';
+        $forceOtp = !empty($data['force_otp']);
         
         if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1')) {
             http_response_code(429);
@@ -74,7 +75,7 @@ class AuthController {
             $stmt->execute([$user['id']]);
             $hasWebAuthn = $stmt->fetch()['count'] > 0;
 
-            if ($hasWebAuthn && \App\Core\Config::get('2fa_students_method', 'otp_email') === 'webauthn') {
+            if ($hasWebAuthn && !$forceOtp && \App\Core\Config::get('2fa_students_method', 'otp_email') === 'webauthn') {
                 \App\Core\Session::set('pending_webauthn_user_id', $user['id']);
                 echo json_encode([
                     'ok' => true,

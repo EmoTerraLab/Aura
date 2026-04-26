@@ -372,58 +372,79 @@
     }
 
     // WebAuthn Handlers
-    function base64urlToBuffer(b64) {
-        const bin = atob(b64.replace(/-/g,'+').replace(/_/g,'/'));
-        return Uint8Array.from(bin, c => c.charCodeAt(0)).buffer;
+    function base64urlToBuffer(base64url) {
+        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+        const pad = base64.length % 4;
+        const padded = pad ? base64 + '===='.substring(pad) : base64;
+        const binary_string = window.atob(padded);
+        const len = binary_string.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binary_string.charCodeAt(i);
+        }
+        return bytes.buffer;
     }
-    function bufferToBase64url(buf) {
-        return btoa(String.fromCharCode(...new Uint8Array(buf)))
-            .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+
+    function bufferToBase64url(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
     }
 
     async function registerWebAuthn() {
-        if (!window.isSecureContext) {
+        if (!window.isSecureContext && window.location.hostname !== 'localhost') {
             alert('WebAuthn requiere una conexión segura (HTTPS).');
             return;
         }
+        
+        const deviceName = prompt('Nombre para este dispositivo (ej: Mi iPhone, PC Casa)', 'Mi dispositivo');
+        if (!deviceName) return;
+
         try {
-            console.log('Iniciando registro WebAuthn...');
-            const optRes = await fetchJson('/alumno/2fa/webauthn/register/options', {method: 'GET'});
-            if (optRes.error) { 
-                console.error('Error del servidor:', optRes.error);
-                alert(optRes.error); 
-                return; 
+            console.log('Obteniendo opciones de registro...');
+            const optRes = await fetchJson('/alumno/2fa/webauthn/register/options');
+            if (optRes.error) throw new Error(optRes.error);
+            
+            // Preparar opciones para navigator.credentials.create
+            const options = optRes;
+            options.challenge = base64urlToBuffer(options.challenge);
+            options.user.id = base64urlToBuffer(options.user.id);
+            
+            if (options.excludeCredentials) {
+                for (let i = 0; i < options.excludeCredentials.length; i++) {
+                    options.excludeCredentials[i].id = base64urlToBuffer(options.excludeCredentials[i].id);
+                }
             }
+
+            console.log('Invocando biometría...');
+            const credential = await navigator.credentials.create({ publicKey: options });
             
-            console.log('Opciones recibidas:', optRes);
-            
-            optRes.challenge = base64urlToBuffer(optRes.challenge);
-            optRes.user.id = base64urlToBuffer(optRes.user.id);
-            
-            const credential = await navigator.credentials.create({ publicKey: optRes });
-            console.log('Credencial creada:', credential);
-            
+            console.log('Verificando credencial en servidor...');
             const verifyRes = await fetchJson('/alumno/2fa/webauthn/register/verify', {
                 method: 'POST',
                 body: {
-                    id: credential.id,
-                    rawId: bufferToBase64url(credential.rawId),
                     clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
                     attestationObject: bufferToBase64url(credential.response.attestationObject),
-                    type: credential.type,
-                    device_name: prompt('Nombre para este dispositivo', 'Mi dispositivo') || 'Mi dispositivo'
+                    device_name: deviceName
                 }
             });
+
             if (verifyRes.success) {
-                console.log('Registro verificado con éxito');
+                alert('¡Dispositivo registrado con éxito!');
                 window.location.reload();
             } else {
-                console.error('Error de verificación:', verifyRes.error);
-                alert(verifyRes.error || 'Error al registrar el dispositivo.');
+                throw new Error(verifyRes.error || 'Error en la verificación');
             }
         } catch (e) {
-            console.error('Error en el flujo WebAuthn:', e);
-            alert('Error o acción cancelada. Verifica la consola para más detalles.');
+            console.error('WebAuthn Error:', e);
+            if (e.name === 'NotAllowedError') alert('Operación cancelada o denegada por el usuario.');
+            else alert('Error: ' + e.message);
         }
     }
 

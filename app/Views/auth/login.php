@@ -124,7 +124,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
         document.getElementById('staff-error').classList.add('hidden');
     }
 
-    async function generateOTP() {
+    async function generateOTP(forceOtp = false) {
         const email = document.getElementById('alumno-email').value;
         const btn = document.getElementById('btn-generate-otp');
         const errorEl = document.getElementById('alumno-error');
@@ -138,11 +138,11 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
 
             const res = await fetchJson('/login/otp/generate', {
                 method: 'POST',
-                body: { email }
+                body: { email, force_otp: forceOtp }
             });
 
             if (res.ok) {
-                if (res.webauthn) {
+                if (res.webauthn && !forceOtp) {
                     await authWebAuthn();
                     return;
                 }
@@ -170,50 +170,81 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
     }
 
     // WebAuthn Helpers
-    function base64urlToBuffer(b64) {
-        const bin = atob(b64.replace(/-/g,'+').replace(/_/g,'/'));
-        return Uint8Array.from(bin, c => c.charCodeAt(0)).buffer;
+    function base64urlToBuffer(base64url) {
+        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+        const pad = base64.length % 4;
+        const padded = pad ? base64 + '===='.substring(pad) : base64;
+        const binary_string = window.atob(padded);
+        const len = binary_string.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binary_string.charCodeAt(i);
+        }
+        return bytes.buffer;
     }
-    function bufferToBase64url(buf) {
-        return btoa(String.fromCharCode(...new Uint8Array(buf)))
-            .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+
+    function bufferToBase64url(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
     }
 
     async function authWebAuthn() {
         const errorEl = document.getElementById('alumno-error');
+        const btn = document.getElementById('btn-generate-otp');
+        
         try {
+            console.log('Solicitando opciones de autenticación WebAuthn...');
             const optRes = await fetchJson('/auth/2fa/webauthn/options');
             if (optRes.error) throw new Error(optRes.error);
             
-            optRes.challenge = base64urlToBuffer(optRes.challenge);
-            if (optRes.allowCredentials) {
-                optRes.allowCredentials.forEach(c => {
-                    c.id = base64urlToBuffer(c.id);
-                });
+            const options = optRes;
+            options.challenge = base64urlToBuffer(options.challenge);
+            
+            if (options.allowCredentials) {
+                for (let i = 0; i < options.allowCredentials.length; i++) {
+                    options.allowCredentials[i].id = base64urlToBuffer(options.allowCredentials[i].id);
+                }
             }
 
-            const credential = await navigator.credentials.get({ publicKey: optRes });
+            console.log('Invocando autenticador...');
+            const assertion = await navigator.credentials.get({ publicKey: options });
             
+            console.log('Verificando respuesta...');
             const verifyRes = await fetchJson('/auth/2fa/webauthn/verify', {
                 method: 'POST',
                 body: {
-                    credentialId: bufferToBase64url(credential.rawId),
-                    clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
-                    authenticatorData: bufferToBase64url(credential.response.authenticatorData),
-                    signature: bufferToBase64url(credential.response.signature)
+                    credentialId: bufferToBase64url(assertion.rawId),
+                    clientDataJSON: bufferToBase64url(assertion.response.clientDataJSON),
+                    authenticatorData: bufferToBase64url(assertion.response.authenticatorData),
+                    signature: bufferToBase64url(assertion.response.signature)
                 }
             });
 
             if (verifyRes.success) {
                 window.location.href = verifyRes.redirect;
             } else {
-                throw new Error(verifyRes.error || 'Error verificando WebAuthn');
+                throw new Error(verifyRes.error || 'Autenticación fallida');
             }
         } catch (e) {
-            console.error(e);
-            errorEl.innerText = e.message || 'Error con WebAuthn. Intentando con código...';
+            console.error('WebAuthn Auth Error:', e);
+            let userMsg = 'Error en verificación biométrica.';
+            if (e.name === 'NotAllowedError') userMsg = 'Operación cancelada.';
+            else userMsg = e.message;
+
+            errorEl.innerText = userMsg + ' Reintentando con código...';
             errorEl.classList.remove('hidden');
-            // Podríamos hacer un fallback, pero requeriría otro endpoint que genere el código sin volver a comprobar webauthn
+            
+            // Fallback manual al OTP de correo
+            setTimeout(() => {
+                generateOTP(true); 
+            }, 2000);
         }
     }
 

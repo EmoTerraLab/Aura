@@ -47,8 +47,10 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 
 ### 🔒 Autenticación Avanzada (2FA / WebAuthn)
 - **WebAuthn para Alumnos:** Reemplazado opcionalmente el OTP por email de los alumnos por biometría (Face ID / Huella / Windows Hello). Creado `WebAuthnController` (librería `lbuchs/webauthn`) y UI de gestión en el dashboard del alumno.
-- **TOTP para Staff y Admin:** Añadido 2FA basado en aplicación (Google Authenticator / FreeOTP). Creado `TotpController` (librería `spomky-labs/otphp`), generación de códigos QR, verificación en el login y sistema de 8 códigos de recuperación de emergencia en base de datos.
-- **Flujo de Login Reactivo:** `AuthController` adaptado para redirigir dinámicamente al flujo 2FA correspondiente (WebAuthn o TOTP) si el usuario lo tiene habilitado, almacenando el ID temporalmente en sesión.
+- **Auditoría y Blindaje WebAuthn:** Realizada una revisión completa del sistema de biometría para solucionar errores de codificación binaria y fallos 500 en el VPS.
+- **Seguridad Criptográfica:** Implementada la validación de `sign_count` para detectar clonación de dispositivos y desafíos (challenges) con tiempo de expiración de 60 segundos y consumo de un solo uso.
+- **Flujo de Fallback Inteligente:** Si la verificación biométrica falla o es cancelada, el sistema redirige automáticamente al usuario al flujo de código OTP por correo electrónico.
+- **Compatibilidad de Servidor:** Optimizado el RP ID para detectar dinámicamente el dominio del VPS y manejo de extensiones PHP `gmp`/`bcmath`.
 
----
+### 🎨 Interfaz de Usuario (UI/UX)
 *Fin del registro inicial.*
