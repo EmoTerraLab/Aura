@@ -38,7 +38,7 @@ class WebAuthnController
                 throw new \Exception("La librería 'lbuchs/webauthn' no se encuentra. ¿Has ejecutado 'composer install'?");
             }
 
-            $this->webauthn = new WebAuthn($appName, $rpId, ['image/png', 'image/jpeg']);
+            $this->webauthn = new WebAuthn($appName, $rpId, ['android-key', 'android-safetynet', 'fido-u2f', 'none', 'packed', 'tpm']);
         } catch (\Exception $e) {
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Fallo de inicialización: ' . $e->getMessage()]);

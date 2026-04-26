@@ -17,6 +17,7 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 - **Headers de Seguridad:** Inyectadas cabeceras HTTP (`X-Frame-Options`, `Content-Security-Policy`, etc.) para mitigar ataques comunes.
 - **Sincronización de Roles:** Refactorizado `Auth::role()` para validar el rol del usuario contra la base de datos en cada petición, evitando que sesiones antiguas mantengan privilegios revocados.
 - **Corrección de Rutas:** Corregido un error de sintaxis en `app/routes.php` (tokens inesperados y duplicidad al final del archivo).
+- **Corrección WebAuthn Constructor:** Corregido el error "invalid formats on construct" al sustituir erróneamente tipos MIME por los formatos de atestación correctos (`packed`, `none`, etc.).
 
 ### 🌐 Internacionalización (i18n)
 - **Sistema Multiidioma:** Implementado soporte para **Español, Català, Galego, Euskara y English**.
