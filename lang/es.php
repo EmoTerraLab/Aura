@@ -166,4 +166,10 @@ return [
     'lang.gl'                    => 'Galego',
     'lang.eu'                    => 'Euskara',
     'lang.en'                    => 'English',
+
+    // Footer
+    'footer.privacy'             => 'Privacidad',
+    'footer.support'             => 'Soporte',
+    'footer.terms'               => 'Términos',
+    'footer.powered_by'          => 'Aura powered by EmoTerraLab (emoterralab.com)',
 ];

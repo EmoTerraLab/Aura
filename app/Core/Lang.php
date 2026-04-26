@@ -78,20 +78,47 @@ class Lang
             }
         }
 
-        // 2. Idioma en sesión (cambio temporal)
+        // 2. Idioma en sesión (cambio temporal manual)
         $sessionLang = Session::get('lang');
         if ($sessionLang && self::isSupported($sessionLang)) {
             return $sessionLang;
         }
 
-        // 3. Idioma por defecto configurado por el admin
+        // 3. Detección automática del navegador
+        $browserLang = self::getBrowserLanguage();
+        if ($browserLang && self::isSupported($browserLang)) {
+            return $browserLang;
+        }
+
+        // 4. Idioma por defecto configurado por el admin
         $defaultLang = self::getSystemDefaultLang();
         if ($defaultLang && self::isSupported($defaultLang)) {
             return $defaultLang;
         }
 
-        // 4. Fallback
+        // 5. Fallback final
         return 'es';
+    }
+
+    /**
+     * Detecta el idioma preferido del navegador del usuario.
+     */
+    private static function getBrowserLanguage(): ?string
+    {
+        if (empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            return null;
+        }
+
+        // El header suele ser: es-ES,es;q=0.9,en;q=0.8
+        $langs = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        foreach ($langs as $lang) {
+            $langCode = strtolower(substr(trim($lang), 0, 2));
+            if (self::isSupported($langCode)) {
+                return $langCode;
+            }
+        }
+
+        return null;
     }
 
     private static function getSystemDefaultLang(): ?string

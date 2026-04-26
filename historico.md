@@ -18,6 +18,8 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 - **Sincronización de Roles:** Refactorizado `Auth::role()` para validar el rol del usuario contra la base de datos en cada petición, evitando que sesiones antiguas mantengan privilegios revocados.
 - **Corrección de Rutas:** Corregido un error de sintaxis en `app/routes.php` (tokens inesperados y duplicidad al final del archivo).
 - **Corrección WebAuthn Constructor:** Corregido el error "invalid formats on construct" al sustituir erróneamente tipos MIME por los formatos de atestación correctos (`packed`, `none`, etc.).
+- **Detección de Idioma del Navegador:** Actualizada la clase `Lang` para detectar automáticamente el idioma preferido del usuario a través de las cabeceras HTTP del navegador, aplicándolo si no hay una preferencia guardada.
+- **Traducciones faltantes:** Añadidas las claves de traducción para el footer (`footer.privacy`, `footer.support`, `footer.terms`, `footer.powered_by`) en todos los idiomas soportados.
 
 ### 🌐 Internacionalización (i18n)
 - **Sistema Multiidioma:** Implementado soporte para **Español, Català, Galego, Euskara y English**.
