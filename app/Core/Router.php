@@ -55,9 +55,12 @@ class Router {
                         \App\Controllers\StudentController::class => new \App\Controllers\StudentController(new \App\Models\Report(), new \App\Models\StudentProfile(), new \App\Models\ReportMessage()),
                         \App\Controllers\StaffController::class => new \App\Controllers\StaffController(new \App\Models\Report(), new \App\Models\ReportMention()),
                         \App\Controllers\AdminController::class => new \App\Controllers\AdminController(new \App\Models\User(), new \App\Models\Classroom(), new \App\Models\Report(), new \App\Models\Setting()),
+                        \App\Controllers\Admin\SettingsController::class => new \App\Controllers\Admin\SettingsController(new \App\Models\Setting()),
                         \App\Controllers\ReportController::class => new \App\Controllers\ReportController(new \App\Models\Report(), new \App\Models\StudentProfile()),
                         \App\Controllers\AuthController::class => new \App\Controllers\AuthController(new \App\Models\User(), new \App\Models\OTPCode()),
                         \App\Controllers\LangController::class => new \App\Controllers\LangController(new \App\Models\User()),
+                        \App\Controllers\TotpController::class => new \App\Controllers\TotpController(),
+                        \App\Controllers\WebAuthnController::class => new \App\Controllers\WebAuthnController(),
                         default => new $controllerClass()
                     };
 

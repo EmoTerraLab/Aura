@@ -11,7 +11,10 @@ use App\Controllers\ReportController;
 use App\Controllers\StaffController;
 use App\Controllers\ReportManagementController;
 use App\Controllers\AdminController;
+use App\Controllers\Admin\SettingsController;
 use App\Controllers\LangController;
+use App\Controllers\TotpController;
+use App\Controllers\WebAuthnController;
 
 // -- Endpoints Públicos y de Autenticación --
 
@@ -23,6 +26,14 @@ $router->get('/', function() {
 
 // POST /lang/switch : Cambia el idioma
 $router->post('/lang/switch', [LangController::class, 'switch']);
+
+// -- Verificación 2FA TOTP --
+$router->get('/auth/2fa/totp', [TotpController::class, 'showVerify']);
+$router->post('/auth/2fa/totp/verify', [TotpController::class, 'verifyLogin']);
+
+// -- Verificación WebAuthn --
+$router->get('/auth/2fa/webauthn/options', [WebAuthnController::class, 'authOptions']);
+$router->post('/auth/2fa/webauthn/verify', [WebAuthnController::class, 'authVerify']);
 
 // GET /login : Vista login con tabs alumno/staff
 $router->get('/login', [AuthController::class, 'showLogin']);
@@ -54,6 +65,11 @@ $router->get('/alumno/reports/{id}', [StudentController::class, 'show'], ['auth'
 // POST /alumno/reports/{id}/messages : Añade mensaje desde el alumno (AJAX JSON)
 $router->post('/alumno/reports/{id}/messages', [StudentController::class, 'addMessage'], ['auth', 'role:alumno']);
 
+// -- Configuración WebAuthn 2FA (Alumno) --
+$router->get('/alumno/2fa/webauthn/register/options', [WebAuthnController::class, 'registerOptions'], ['auth', 'role:alumno']);
+$router->post('/alumno/2fa/webauthn/register/verify', [WebAuthnController::class, 'registerVerify'], ['auth', 'role:alumno']);
+$router->post('/alumno/2fa/webauthn/credential/delete', [WebAuthnController::class, 'deleteCredential'], ['auth', 'role:alumno']);
+
 
 // -- Endpoints de Staff (Profesores, Orientadores, Dirección) --
 
@@ -84,6 +100,11 @@ $router->post('/staff/mentions/read', [StaffController::class, 'markMentionsRead
 // GET /staff/colleagues : Lista de personal para menciones
 $router->get('/staff/colleagues', [StaffController::class, 'getColleagues'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
+// -- Configuración TOTP 2FA (Staff & Admin) --
+$router->get('/profile/2fa/totp/setup', [TotpController::class, 'setup'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+$router->post('/profile/2fa/totp/activate', [TotpController::class, 'activate'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+$router->post('/profile/2fa/totp/disable', [TotpController::class, 'disable'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+
 
 // -- Endpoints de Admin --
 
@@ -101,5 +122,10 @@ $router->post('/admin/api/classrooms', [AdminController::class, 'storeClassroom'
 $router->patch('/admin/api/classrooms/{id}', [AdminController::class, 'updateClassroom'], ['auth', 'role:admin']);
 $router->delete('/admin/api/classrooms/{id}', [AdminController::class, 'deleteClassroom'], ['auth', 'role:admin']);
 
-$router->get('/admin/api/settings', [AdminController::class, 'getSettings'], ['auth', 'role:admin']);
-$router->post('/admin/api/settings/lang', [AdminController::class, 'updateDefaultLang'], ['auth', 'role:admin']);
+// -- Settings Admin --
+$router->get('/admin/settings', [SettingsController::class, 'index'], ['auth', 'role:admin']);
+$router->post('/admin/settings/school', [SettingsController::class, 'saveSchool'], ['auth', 'role:admin']);
+$router->post('/admin/settings/appearance', [SettingsController::class, 'saveAppearance'], ['auth', 'role:admin']);
+$router->post('/admin/settings/mail', [SettingsController::class, 'saveMail'], ['auth', 'role:admin']);
+$router->post('/admin/settings/mail/test', [SettingsController::class, 'testMail'], ['auth', 'role:admin']);
+$router->post('/admin/settings/security', [SettingsController::class, 'saveSecurity'], ['auth', 'role:admin']);

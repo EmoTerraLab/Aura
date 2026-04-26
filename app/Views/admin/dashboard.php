@@ -15,10 +15,10 @@
             <span class="material-symbols-outlined">meeting_room</span>
             <span class="font-medium"><?= \App\Core\Lang::t('admin.classrooms') ?></span>
         </button>
-        <button onclick="switchTab('settings')" id="tab-btn-settings" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
+        <a href="/admin/settings" id="tab-btn-settings" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
             <span class="material-symbols-outlined">settings</span>
             <span class="font-medium">Configuración</span>
-        </button>
+        </a>
         <div class="mt-8 px-4">
             <a href="/staff/inbox" class="block bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden transition-transform hover:scale-[1.02]">
                 <span class="material-symbols-outlined text-secondary mb-2">forum</span>

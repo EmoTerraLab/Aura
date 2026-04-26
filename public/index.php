@@ -19,6 +19,11 @@ if (APP_ENV === 'development' || APP_ENV === 'local' || APP_ENV === 'dev') {
     ini_set('error_log', __DIR__ . '/../storage/logs/php_errors.log');
 }
 
+// Cargar dependencias de Composer si existen
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+
 // Cargar clases core automáticamente
 spl_autoload_register(function ($class) {
     // Convertir App\Core\Database -> ../app/Core/Database.php
@@ -40,6 +45,9 @@ spl_autoload_register(function ($class) {
 
 // Iniciar sesión
 \App\Core\Session::start();
+
+// Inicializar sistema de configuración (DB)
+\App\Core\Config::init(new \App\Models\Setting());
 
 // [MEJORA] Inicializar sistema de idiomas (i18n)
 \App\Core\Lang::init();

@@ -34,6 +34,15 @@ class AuthController {
         $user = $this->userModel->findByEmail($email);
 
         if ($user && $user['role'] !== 'alumno' && password_verify($password, $user['password'])) {
+            if (!empty($user['totp_enabled'])) {
+                \App\Core\Session::set('pending_2fa_user_id', $user['id']);
+                echo json_encode([
+                    'ok' => true,
+                    'redirect' => '/auth/2fa/totp'
+                ]);
+                return;
+            }
+
             Auth::login($user);
             echo json_encode([
                 'ok' => true,
@@ -59,6 +68,22 @@ class AuthController {
         $user = $this->userModel->findByEmail($email);
 
         if ($user && $user['role'] === 'alumno') {
+            // Comprobar si tiene WebAuthn configurado
+            $db = \App\Core\Database::getInstance();
+            $stmt = $db->prepare('SELECT COUNT(*) as count FROM webauthn_credentials WHERE user_id = ?');
+            $stmt->execute([$user['id']]);
+            $hasWebAuthn = $stmt->fetch()['count'] > 0;
+
+            if ($hasWebAuthn && \App\Core\Config::get('2fa_students_method', 'otp_email') === 'webauthn') {
+                \App\Core\Session::set('pending_webauthn_user_id', $user['id']);
+                echo json_encode([
+                    'ok' => true,
+                    'webauthn' => true // Frontend should trigger WebAuthn flow
+                ]);
+                return;
+            }
+
+            // Fallback a OTP por email
             $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
             $this->otpModel->create($user['id'], $code);
 

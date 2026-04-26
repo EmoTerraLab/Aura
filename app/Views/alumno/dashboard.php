@@ -200,6 +200,33 @@
                     <h4 class="font-body-lg text-[18px] font-semibold text-on-secondary-container mb-2"><?= \App\Core\Lang::t('dashboard.need_talk') ?></h4>
                     <button class="bg-surface-container-lowest text-secondary rounded-full px-6 py-2 font-body-md text-body-md font-medium shadow-sm hover:shadow-md transition-shadow"><?= \App\Core\Lang::t('dashboard.help_chat') ?></button>
                 </div>
+
+                <!-- WebAuthn 2FA Block -->
+                <?php if(\App\Core\Config::get('2fa_students_method') === 'webauthn'): ?>
+                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-card-padding">
+                    <h3 class="font-h2 text-[16px] text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">fingerprint</span> Acceso Seguro (FaceID/Huella)</h3>
+                    
+                    <?php if (empty($webauthnDevices)): ?>
+                        <p class="text-xs text-on-surface-variant mb-4">Registra tu dispositivo para iniciar sesión de forma más rápida y segura la próxima vez.</p>
+                    <?php else: ?>
+                        <ul class="space-y-2 mb-4">
+                            <?php foreach($webauthnDevices as $dev): ?>
+                                <li class="flex justify-between items-center bg-surface p-2 rounded-lg text-xs">
+                                    <div>
+                                        <p class="font-bold text-on-surface"><?= htmlspecialchars($dev['device_name']) ?></p>
+                                        <p class="text-slate-400 text-[10px]">Añadido: <?= date('d/m/Y', strtotime($dev['created_at'])) ?></p>
+                                    </div>
+                                    <button onclick="deleteWebAuthn(<?= $dev['id'] ?>)" class="text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="Eliminar"><span class="material-symbols-outlined text-sm">delete</span></button>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+
+                    <button onclick="registerWebAuthn()" class="w-full bg-primary-container text-on-primary-container rounded-full px-4 py-2 font-body-md text-[13px] font-medium shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">add</span> Añadir este dispositivo
+                    </button>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -321,6 +348,69 @@
         const i = document.getElementById('reply-message'); const msg = i.value.trim(); if (!msg || !currentReportId) return;
         const res = await fetchJson(`/alumno/reports/${currentReportId}/messages`, { method: 'POST', body: { message: msg } });
         if (!res.error) { i.value = ''; loadStudentReport(currentReportId); }
+    }
+
+    // WebAuthn Handlers
+    function base64urlToBuffer(b64) {
+        const bin = atob(b64.replace(/-/g,'+').replace(/_/g,'/'));
+        return Uint8Array.from(bin, c => c.charCodeAt(0)).buffer;
+    }
+    function bufferToBase64url(buf) {
+        return btoa(String.fromCharCode(...new Uint8Array(buf)))
+            .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+    }
+
+    async function registerWebAuthn() {
+        if (!window.isSecureContext) {
+            alert('WebAuthn requiere una conexión segura (HTTPS).');
+            return;
+        }
+        try {
+            console.log('Iniciando registro WebAuthn...');
+            const optRes = await fetchJson('/alumno/2fa/webauthn/register/options', {method: 'GET'});
+            if (optRes.error) { 
+                console.error('Error del servidor:', optRes.error);
+                alert(optRes.error); 
+                return; 
+            }
+            
+            console.log('Opciones recibidas:', optRes);
+            
+            // lbuchs webauthn return challenge and userId as binary base64url strings
+            optRes.challenge = base64urlToBuffer(optRes.challenge);
+            optRes.user.id = base64urlToBuffer(optRes.user.id);
+            
+            const credential = await navigator.credentials.create({ publicKey: optRes });
+            console.log('Credencial creada:', credential);
+            
+            const verifyRes = await fetchJson('/alumno/2fa/webauthn/register/verify', {
+                method: 'POST',
+                body: {
+                    id: credential.id,
+                    rawId: bufferToBase64url(credential.rawId),
+                    clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
+                    attestationObject: bufferToBase64url(credential.response.attestationObject),
+                    type: credential.type,
+                    device_name: prompt('Nombre para este dispositivo', 'Mi dispositivo') || 'Mi dispositivo'
+                }
+            });
+            if (verifyRes.success) {
+                console.log('Registro verificado con éxito');
+                window.location.reload();
+            } else {
+                console.error('Error de verificación:', verifyRes.error);
+                alert(verifyRes.error || 'Error al registrar el dispositivo.');
+            }
+        } catch (e) {
+            console.error('Error en el flujo WebAuthn:', e);
+            alert('Error o acción cancelada. Verifica la consola para más detalles.');
+        }
+    }
+
+    async function deleteWebAuthn(id) {
+        if (!confirm('¿Seguro que deseas eliminar este dispositivo?')) return;
+        const res = await fetchJson('/alumno/2fa/webauthn/credential/delete', { method: 'POST', body: { id } });
+        if (res.success) window.location.reload();
     }
 </script>
 <?php $scripts = ob_get_clean(); ?>

@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <meta name="csrf-token" content="<?= \App\Core\Csrf::generateToken() ?>">
-    <title><?= $title ?? 'Aura' ?></title>
+    <title><?= $title ?? \App\Core\Config::get('school_name', 'Aura') ?></title>
     
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -39,7 +39,7 @@
                         "surface-container-highest": "#e0e3e3",
                         "primary-fixed": "#a2eff9",
                         "inverse-primary": "#86d3dd",
-                        "secondary": "#3a6478",
+                        "secondary": "<?= \App\Core\Config::get('app_accent_color', '#3a6478') ?>",
                         "surface-container-high": "#e6e9e9",
                         "outline-variant": "#bec8ca",
                         "surface-bright": "#f7fafa",
@@ -55,7 +55,7 @@
                         "tertiary-fixed": "#ffdcc6",
                         "tertiary-container": "#895126",
                         "surface-variant": "#e0e3e3",
-                        "primary": "#004f56",
+                        "primary": "<?= \App\Core\Config::get('app_primary_color', '#004f56') ?>",
                         "on-error-container": "#93000a",
                         "on-primary": "#ffffff",
                         "on-primary-fixed-variant": "#004f56",

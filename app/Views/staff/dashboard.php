@@ -11,6 +11,23 @@
         <?php if (\App\Core\Auth::role() === 'admin'): ?><a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/admin"><span class="material-symbols-outlined">admin_panel_settings</span><span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.admin_panel') ?></span></a><?php endif; ?>
         <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="#"><span class="material-symbols-outlined">folder_open</span><span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.active_cases') ?></span></a>
         <div class="mt-8 px-4"><div class="bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden"><div class="absolute -right-4 -top-4 w-16 h-16 bg-white/20 rounded-full blur-xl"></div><span class="material-symbols-outlined text-secondary mb-2">hub</span><h3 class="font-body-md text-body-md font-semibold text-on-secondary-container leading-tight"><?= \App\Core\Lang::t('nav.sociograms') ?></h3><p class="font-label-caps text-label-caps text-secondary mt-1 normal-case"><?= \App\Core\Lang::t('nav.hidden_dynamics') ?></p></div></div>
+        
+        <div class="mt-4 px-2">
+            <?php if (!\App\Core\Auth::user()['totp_enabled']): ?>
+                <a href="/profile/2fa/totp/setup" class="flex items-center justify-between gap-3 text-amber-600 bg-amber-50 px-4 py-3 mx-2 hover:bg-amber-100 rounded-xl transition-colors text-sm font-bold border border-amber-200">
+                    <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">lock_open</span> Proteger Cuenta</span>
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </a>
+            <?php else: ?>
+                <form method="POST" action="/profile/2fa/totp/disable" onsubmit="return confirm('¿Seguro que deseas desactivar la verificación en dos pasos? Tu cuenta será menos segura.')">
+                    <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>">
+                    <button type="submit" class="w-[calc(100%-16px)] flex items-center justify-between gap-3 text-emerald-700 bg-emerald-50 px-4 py-3 mx-2 hover:bg-emerald-100 rounded-xl transition-colors text-sm font-bold border border-emerald-200">
+                        <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">lock</span> 2FA Activado</span>
+                        <span class="material-symbols-outlined text-[18px]">settings</span>
+                    </button>
+                </form>
+            <?php endif; ?>
+        </div>
     </div>
     <div class="mt-auto pt-4 border-t border-surface-variant/50 mx-4 flex flex-col gap-1">
         <div class="px-4 py-2">
@@ -156,23 +173,23 @@
             <div class="h-20 px-8 flex items-center justify-between bg-white border-b z-20">
                 <div class="flex items-center gap-4">
                     <button onclick="closeDetailMobile()" class="md:hidden"><span class="material-symbols-outlined">arrow_back</span></button>
-                    <div><h3 class="font-bold text-sm"><?= \App\Core\Lang::t('staff.case') ?> #\${report.id}</h3><p class="text-[10px] text-outline uppercase font-bold"><?= \App\Core\Lang::t('staff.aula') ?> \${report.classroom_name}</p></div>
+                    <div><h3 class="font-bold text-sm"><?= \App\Core\Lang::t('staff.case') ?> #${report.id}</h3><p class="text-[10px] text-outline uppercase font-bold"><?= \App\Core\Lang::t('staff.aula') ?> ${report.classroom_name}</p></div>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="showPremiumModal()" class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-[10px] font-black uppercase"><?= \App\Core\Lang::t('staff.ia_elos') ?></button>
-                    <select onchange="handleStatusChange(\${report.id}, this.value)" id="status-select" class="bg-slate-100 border-0 rounded-full py-1.5 px-4 text-[10px] font-black uppercase">
-                        <option value="new" \${report.status==='new'?'selected':''}>\${'<?= \App\Core\Lang::t('staff.status_received') ?>'}</option>
-                        <option value="in_progress" \${report.status==='in_progress'?'selected':''}>\${'<?= \App\Core\Lang::t('staff.status_review') ?>'}</option>
-                        <option value="resolved" \${report.status==='resolved'?'selected':''}>\${'<?= \App\Core\Lang::t('staff.status_resolved') ?>'}</option>
+                    <select onchange="handleStatusChange(${report.id}, this.value)" id="status-select" class="bg-slate-100 border-0 rounded-full py-1.5 px-4 text-[10px] font-black uppercase">
+                        <option value="new" ${report.status==='new'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_received') ?>'}</option>
+                        <option value="in_progress" ${report.status==='in_progress'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_review') ?>'}</option>
+                        <option value="resolved" ${report.status==='resolved'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_resolved') ?>'}</option>
                     </select>
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h4 class="text-xs font-black uppercase text-slate-400 mb-3 tracking-widest"><?= \App\Core\Lang::t('staff.student_story') ?></h4>
-                    <p class="text-sm text-slate-800 whitespace-pre-wrap">\${report.content}</p>
+                    <p class="text-sm text-slate-800 whitespace-pre-wrap">${report.content}</p>
                 </div>
-                <div id="messages-flow">\${mHtml || '<p class="text-center text-slate-400 py-10 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
+                <div id="messages-flow">${mHtml || '<p class="text-center text-slate-400 py-10 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
             </div>
             <div class="p-4 bg-white border-t">
                 <div class="flex gap-2 mb-3">
@@ -195,7 +212,7 @@
     }
 
     async function updateStatus(id, status, sum = null) {
-        await fetchJson(`/staff/reports/\${id}`, { method: 'PATCH', body: { status, resolution_summary: sum } });
+        await fetchJson(`/staff/reports/${id}`, { method: 'PATCH', body: { status, resolution_summary: sum } });
         window.location.reload();
     }
 
@@ -203,7 +220,7 @@
         const msg = document.getElementById('reply-message').value.trim();
         const isInt = document.getElementById('reply-internal').checked;
         if (!msg || !currentReportId) return;
-        const res = await fetchJson(`/staff/reports/\${currentReportId}/messages`, { method: 'POST', body: { message: msg, is_internal: isInt } });
+        const res = await fetchJson(`/staff/reports/${currentReportId}/messages`, { method: 'POST', body: { message: msg, is_internal: isInt } });
         if (!res.error) loadReport(currentReportId);
         else alert(res.error);
     }

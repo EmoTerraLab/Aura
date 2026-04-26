@@ -142,6 +142,11 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             });
 
             if (res.ok) {
+                if (res.webauthn) {
+                    await authWebAuthn();
+                    return;
+                }
+
                 document.getElementById('display-email').innerText = email;
                 document.getElementById('otp-step-1').classList.add('hidden');
                 document.getElementById('otp-step-2').classList.remove('hidden');
@@ -161,6 +166,54 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<?= \App\Core\Lang::t('auth.continue') ?> <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>';
+        }
+    }
+
+    // WebAuthn Helpers
+    function base64urlToBuffer(b64) {
+        const bin = atob(b64.replace(/-/g,'+').replace(/_/g,'/'));
+        return Uint8Array.from(bin, c => c.charCodeAt(0)).buffer;
+    }
+    function bufferToBase64url(buf) {
+        return btoa(String.fromCharCode(...new Uint8Array(buf)))
+            .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+    }
+
+    async function authWebAuthn() {
+        const errorEl = document.getElementById('alumno-error');
+        try {
+            const optRes = await fetchJson('/auth/2fa/webauthn/options');
+            if (optRes.error) throw new Error(optRes.error);
+            
+            optRes.challenge = base64urlToBuffer(optRes.challenge);
+            if (optRes.allowCredentials) {
+                optRes.allowCredentials.forEach(c => {
+                    c.id = base64urlToBuffer(c.id);
+                });
+            }
+
+            const credential = await navigator.credentials.get({ publicKey: optRes });
+            
+            const verifyRes = await fetchJson('/auth/2fa/webauthn/verify', {
+                method: 'POST',
+                body: {
+                    credentialId: bufferToBase64url(credential.rawId),
+                    clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
+                    authenticatorData: bufferToBase64url(credential.response.authenticatorData),
+                    signature: bufferToBase64url(credential.response.signature)
+                }
+            });
+
+            if (verifyRes.success) {
+                window.location.href = verifyRes.redirect;
+            } else {
+                throw new Error(verifyRes.error || 'Error verificando WebAuthn');
+            }
+        } catch (e) {
+            console.error(e);
+            errorEl.innerText = e.message || 'Error con WebAuthn. Intentando con código...';
+            errorEl.classList.remove('hidden');
+            // Podríamos hacer un fallback, pero requeriría otro endpoint que genere el código sin volver a comprobar webauthn
         }
     }
 

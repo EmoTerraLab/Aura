@@ -28,9 +28,16 @@ class StudentController {
             $reports = $this->reportModel->findByStudent($profile['id']);
         }
 
+        // Obtener dispositivos WebAuthn registrados
+        $db = \App\Core\Database::getInstance();
+        $stmt = $db->prepare("SELECT id, device_name, created_at, last_used_at FROM webauthn_credentials WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt->execute([$userId]);
+        $webauthnDevices = $stmt->fetchAll();
+
         View::render('alumno/dashboard', [
             'title' => 'Aura - Dashboard Alumno',
-            'reports' => $reports
+            'reports' => $reports,
+            'webauthnDevices' => $webauthnDevices
         ]);
     }
 

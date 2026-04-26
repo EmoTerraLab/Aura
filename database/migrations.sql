@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NULL,
     role VARCHAR(255) DEFAULT 'alumno' CHECK (role IN ('admin', 'direccion', 'orientador', 'profesor', 'alumno')),
     lang VARCHAR(5) DEFAULT NULL,
+    totp_secret VARCHAR(64) DEFAULT NULL,
+    totp_enabled INTEGER DEFAULT 0,
+    totp_verified_at DATETIME DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -101,11 +104,65 @@ CREATE TABLE IF NOT EXISTS report_mentions (
 );
 CREATE INDEX IF NOT EXISTS idx_mentions_user ON report_mentions(user_id);
 
--- Tabla `settings` [MEJORA i18n]
+-- Tabla `settings` [MEJORA i18n y Configuración]
 CREATE TABLE IF NOT EXISTS settings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key VARCHAR(100) NOT NULL UNIQUE,
-    value TEXT NOT NULL,
+    value TEXT,
+    type VARCHAR(20) DEFAULT 'text',
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-INSERT OR IGNORE INTO settings (key, value) VALUES ('default_lang', 'es');
+
+-- Identidad de la escuela
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('school_name', 'Mi Escuela', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('school_logo_url', '', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('school_contact_email', '', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('school_website', '', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('school_address', '', 'text');
+
+-- Apariencia
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('app_primary_color', '#004f56', 'color');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('app_accent_color', '#066972', 'color');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('footer_text', 'Aura powered by EmoTerraLab', 'text');
+
+-- Idioma
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('default_lang', 'es', 'text');
+
+-- Correo (SMTP)
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_driver', 'smtp', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_host', '', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_port', '587', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_encryption', 'tls', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_username', '', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_password', '', 'password');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_from_address', '', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_from_name', 'Aura PDP', 'text');
+
+-- Seguridad y 2FA
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('2fa_students_method', 'webauthn', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('2fa_staff_method', 'totp', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('session_lifetime_minutes', '120', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('max_login_attempts', '5', 'text');
+
+-- Tabla `totp_recovery_codes`
+CREATE TABLE IF NOT EXISTS totp_recovery_codes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    code VARCHAR(255) NOT NULL,
+    used INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Tabla `webauthn_credentials`
+CREATE TABLE IF NOT EXISTS webauthn_credentials (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    credential_id TEXT NOT NULL UNIQUE,
+    public_key TEXT NOT NULL,
+    sign_count INTEGER DEFAULT 0,
+    device_name VARCHAR(100) DEFAULT 'Mi dispositivo',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_used_at DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
