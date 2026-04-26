@@ -26,10 +26,16 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 - **Gestión:** Creado `LangController` y selector visual de idioma integrado en todas las interfaces de usuario.
 
 ### 🎨 Interfaz de Usuario (UI/UX)
+- **Diseño 100% Responsive:** Refactorizados todos los Dashboards (Admin, Staff, Alumno) para ser completamente usables en móviles y tablets.
+- **Menú Hamburguesa:** Implementado sistema de navegación móvil con barras laterales colapsables y overlays táctiles.
+- **Corrección de Escala y Zoom:** Ajustado el `meta viewport` y forzado el tamaño de fuente de 16px en inputs para evitar el zoom automático en iOS y elementos excesivamente grandes.
 - **Páginas de Error Personalizadas:** Creada una vista de error estética (404/403) con el estilo "Digital Sanctuary" de Aura y redirección inteligente según el rol.
 - **Rediseño del Panel Admin:** Migrada la interfaz de administración de Bootstrap 5 a **Tailwind CSS**, unificándola con la estética del resto del proyecto y corrigiendo fallos de carga de estilos.
-- **Navegación:** Unificados los SideNavBars para una experiencia coherente entre roles.
-- **Corrección de Renderizado Staff:** Corregido un error en `app/Views/staff/dashboard.php` donde los literales de plantilla de JavaScript (`${...}`) se mostraban como texto plano debido a escapes incorrectos.
+
+### 🌐 Infraestructura y Compatibilidad
+- **Optimización para Apache:** Creados archivos `.htaccess` para el manejo de URLs amigables, bloqueo de archivos sensibles y optimización de rendimiento (gzip y caché).
+- **Rutas de Assets Absolutas:** Implementada la constante `BASE_URL` para garantizar que CSS, JS e imágenes carguen correctamente independientemente de la profundidad de la ruta.
+- **Configuración PHP segura:** Inyectadas directivas de seguridad de sesión y límites de subida directamente en la configuración del servidor.
 
 ### ⚙️ Configuración y Administración Global
 - **Panel de Settings:** Creado un panel completo para administradores (`/admin/settings`) con pestañas de Escuela, Apariencia, Correo (SMTP) y Seguridad.

@@ -1,7 +1,29 @@
-<?php $bodyClass = "bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col md:flex-row overflow-hidden"; ?>
+<?php $bodyClass = "bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col overflow-hidden"; ?>
+
+<!-- Mobile TopNavBar -->
+<nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant font-manrope">
+    <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">spa</span>
+        </div>
+        <h1 class="text-lg font-bold text-teal-700">Aura Staff</h1>
+    </div>
+    <div class="flex items-center gap-2">
+        <button onclick="toggleMentions()" class="relative p-2 text-slate-500">
+            <span class="material-symbols-outlined">notifications</span>
+            <span id="mentions-badge-mobile" class="hidden absolute top-2 right-2 h-2 w-2 rounded-full bg-error"></span>
+        </button>
+        <button onclick="toggleSidebar()" class="p-2 text-slate-500">
+            <span class="material-symbols-outlined" id="menu-icon">menu</span>
+        </button>
+    </div>
+</nav>
+
+<!-- Sidebar Overlay -->
+<div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] hidden lg:hidden"></div>
 
 <!-- SideNavBar -->
-<nav class="bg-slate-50 dark:bg-slate-950 shadow-[4px_0_24px_rgba(6,105,114,0.04)] hidden lg:flex flex-col py-6 h-screen w-64 fixed left-0 top-0 z-40">
+<nav id="app-sidebar" class="bg-slate-50 dark:bg-slate-950 shadow-[4px_0_24px_rgba(6,105,114,0.04)] h-screen w-64 fixed left-0 top-0 z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col py-6">
     <div class="px-6 mb-8 flex items-center gap-3">
         <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">spa</span></div>
         <div><h1 class="font-h2 text-h2 text-teal-700 font-black tracking-tight leading-none">Aura</h1><p class="font-label-caps text-label-caps text-surface-tint opacity-70 mt-1">School Sanctuary</p></div>
@@ -38,31 +60,25 @@
     </div>
 </nav>
 
-<!-- Mobile TopNavBar -->
-<nav class="lg:hidden fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant font-manrope">
-    <h1 class="text-xl font-bold text-teal-700">Aura Staff</h1>
-    <button onclick="toggleMentions()" class="relative text-slate-500"><span class="material-symbols-outlined">notifications</span><span id="mentions-badge-mobile" class="hidden absolute top-0 right-0 h-2 w-2 rounded-full bg-error"></span></button>
-</nav>
-
 <!-- Dropdown Menciones -->
-<div id="mentions-dropdown" class="hidden fixed lg:absolute right-4 top-16 lg:top-20 mt-2 w-80 rounded-xl shadow-lg bg-surface-container-lowest ring-1 ring-black ring-opacity-5 z-[60] ambient-shadow overflow-hidden">
-    <div class="p-4 bg-surface-container-low border-b border-surface-variant flex justify-between items-center"><h3 class="text-sm font-bold text-on-surface"><?= \App\Core\Lang::t('staff.mentions_title') ?></h3></div>
+<div id="mentions-dropdown" class="hidden fixed lg:absolute right-4 top-16 lg:top-20 mt-2 w-[calc(100%-32px)] sm:w-80 rounded-xl shadow-lg bg-surface-container-lowest ring-1 ring-black ring-opacity-5 z-[70] ambient-shadow overflow-hidden">
+    <div class="p-4 bg-surface-container-low border-b border-surface-variant flex justify-between items-center"><h3 class="text-sm font-bold text-on-surface"><?= \App\Core\Lang::t('staff.mentions_title') ?></h3><button onclick="toggleMentions()" class="lg:hidden text-slate-400">✕</button></div>
     <div id="mentions-list" class="max-h-64 overflow-y-auto no-scrollbar"></div>
 </div>
 
 <main class="flex-1 lg:ml-64 flex flex-col md:flex-row h-screen pt-16 lg:pt-0 bg-surface">
-    <!-- Left Pane -->
-    <section class="w-full md:w-[35%] lg:w-[30%] h-full flex flex-col bg-surface-container-lowest ambient-shadow z-10 overflow-hidden">
+    <!-- Left Pane (Inbox) -->
+    <section id="inbox-pane" class="w-full md:w-[40%] lg:w-[30%] h-full flex flex-col bg-surface-container-lowest border-r border-surface-variant/30 ambient-shadow z-10 overflow-hidden">
         <div class="p-6 pb-2">
             <h2 class="font-h2 text-h2 text-on-surface mb-4"><?= \App\Core\Lang::t('staff.inbox_title') ?></h2>
             <div class="flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
                 <button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-caps text-label-caps tracking-wide"><?= \App\Core\Lang::t('staff.filter_all') ?></button>
             </div>
         </div>
-        <div class="flex-1 overflow-y-auto no-scrollbar px-4 pb-24 lg:pb-6 space-y-2">
+        <div class="flex-1 overflow-y-auto no-scrollbar px-4 pb-6 space-y-2">
             <?php foreach($reports as $report): ?>
                 <?php $badge = ($report['status'] === 'new') ? 'bg-[#f8d7da] text-[#721c24]' : (($report['status'] === 'in_progress') ? 'bg-[#fff3cd] text-[#856404]' : 'bg-[#d4edda] text-[#155724]'); ?>
-                <div class="bg-surface-container-lowest hover:bg-surface border-l-4 <?= $report['status']==='new'?'border-primary':'border-transparent' ?> p-4 rounded-DEFAULT cursor-pointer transition-colors" onclick="loadReport(<?= $report['id'] ?>)">
+                <div class="bg-surface-container-lowest hover:bg-surface border-l-4 <?= $report['status']==='new'?'border-primary':'border-transparent' ?> p-4 rounded-DEFAULT cursor-pointer transition-colors shadow-sm" onclick="loadReport(<?= $report['id'] ?>)">
                     <div class="flex justify-between items-start mb-2">
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full <?= $badge ?> font-label-caps text-[10px] tracking-wider uppercase font-bold"><?= \App\Core\Lang::t('staff.aula') ?> <?= htmlspecialchars($report['classroom_name']) ?></span>
                         <span class="font-label-caps text-[10px] text-outline"><?= date('d/m/y', strtotime($report['created_at'])) ?></span>
@@ -71,11 +87,14 @@
                     <p class="font-body-md text-[13px] text-on-surface-variant line-clamp-2"><?= htmlspecialchars($report['content']) ?></p>
                 </div>
             <?php endforeach; ?>
+            <?php if(empty($reports)): ?>
+                <div class="p-10 text-center text-slate-400 italic text-sm"><?= \App\Core\Lang::t('dashboard.no_activity') ?></div>
+            <?php endif; ?>
         </div>
     </section>
 
-    <!-- Right Pane -->
-    <section class="flex-1 h-full flex flex-col bg-surface-bright hidden md:flex relative" id="report-detail-container">
+    <!-- Right Pane (Detail) -->
+    <section id="report-detail-container" class="flex-1 h-full flex flex-col bg-surface-bright hidden md:flex relative z-20">
         <div class="flex-1 flex flex-col items-center justify-center text-outline">
             <span class="material-symbols-outlined text-6xl mb-4 opacity-50">forum</span>
             <h3 class="font-h2 text-[20px] font-medium text-on-surface-variant"><?= \App\Core\Lang::t('staff.select_report') ?></h3>
@@ -83,20 +102,22 @@
     </section>
 </main>
 
-<!-- Bottom Nav -->
-<nav class="lg:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/90 backdrop-blur-lg shadow-lg rounded-t-[32px]">
-    <a class="flex flex-col items-center text-slate-400" href="#"><span class="material-symbols-outlined">home</span><span class="text-[11px]"><?= \App\Core\Lang::t('nav.home') ?></span></a>
-    <a class="flex flex-col items-center bg-teal-100 text-teal-800 rounded-full w-12 h-12" href="/staff/inbox"><span class="material-symbols-outlined">chat_bubble</span></a>
-    <form action="/logout" method="POST" class="flex flex-col items-center justify-center">
-        <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>"/><button type="submit" class="text-slate-400"><span class="material-symbols-outlined">logout</span></button></form>
+<!-- Bottom Nav (Suppressed for detail focus on mobile) -->
+<nav id="mobile-bottom-nav" class="lg:hidden fixed bottom-0 w-full z-40 flex justify-around items-center px-4 pb-6 pt-3 bg-white/90 backdrop-blur-lg shadow-lg rounded-t-[32px] border-t border-surface-variant/30">
+    <a class="flex flex-col items-center text-slate-400 p-2" href="#"><span class="material-symbols-outlined">home</span><span class="text-[11px]"><?= \App\Core\Lang::t('nav.home') ?></span></a>
+    <a class="flex flex-col items-center bg-teal-100 text-teal-800 rounded-full w-12 h-12 justify-center" href="/staff/inbox"><span class="material-symbols-outlined">chat_bubble</span></a>
+    <form action="/logout" method="POST" class="flex flex-col items-center justify-center p-2">
+        <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>"/>
+        <button type="submit" class="text-slate-400"><span class="material-symbols-outlined">logout</span></button>
+    </form>
 </nav>
 
-<div id="premium-modal" class="fixed inset-0 z-[100] hidden bg-black/50 backdrop-blur-sm flex items-center justify-center">
-    <div class="bg-white rounded-xl p-8 text-center max-w-md m-4">
+<div id="premium-modal" class="fixed inset-0 z-[100] hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl p-6 md:p-8 text-center max-w-md w-full">
         <h3 class="font-h1 text-[24px] font-bold mb-2"><?= \App\Core\Lang::t('staff.premium_title') ?></h3>
-        <p class="mb-8"><?= \App\Core\Lang::t('staff.premium_desc') ?></p>
-        <button onclick="closePremiumModal()" class="w-full py-3 bg-primary text-white rounded-full mb-2"><?= \App\Core\Lang::t('staff.contact') ?></button>
-        <button onclick="closePremiumModal()" class="w-full py-3 text-slate-500"><?= \App\Core\Lang::t('staff.close') ?></button>
+        <p class="text-slate-500 mb-8"><?= \App\Core\Lang::t('staff.premium_desc') ?></p>
+        <button onclick="closePremiumModal()" class="w-full py-3 bg-primary text-white rounded-full font-bold mb-2">Contactar Soporte</button>
+        <button onclick="closePremiumModal()" class="w-full py-3 text-slate-500 font-medium">Cerrar</button>
     </div>
 </div>
 
@@ -104,6 +125,19 @@
 <script>
     let currentReportId = null;
     let colleaguesList = [];
+
+    function toggleSidebar() {
+        const s = document.getElementById('app-sidebar');
+        const o = document.getElementById('sidebar-overlay');
+        const isOpen = !s.classList.contains('-translate-x-full');
+        if (isOpen) {
+            s.classList.add('-translate-x-full');
+            o.classList.add('hidden');
+        } else {
+            s.classList.remove('-translate-x-full');
+            o.classList.remove('hidden');
+        }
+    }
 
     document.addEventListener("DOMContentLoaded", () => {
         loadMentions();
@@ -124,9 +158,11 @@
                 document.getElementById('mentions-badge-mobile')?.classList.remove('hidden');
                 document.getElementById('mentions-list').innerHTML = res.mentions.map(m => `
                     <div class="p-4 hover:bg-surface cursor-pointer border-b" onclick="readMention(${m.id}, ${m.report_id})">
-                        <p class="text-[10px] text-outline"><?= \App\Core\Lang::t('staff.case') ?>-${m.report_id}</p>
+                        <p class="text-[10px] text-outline">CASO-${m.report_id}</p>
                         <p class="text-sm font-bold text-primary">${m.sender_name}</p>
                     </div>`).join('');
+            } else {
+                document.getElementById('mentions-list').innerHTML = '<p class="p-8 text-center text-slate-400 text-xs italic">No hay menciones nuevas</p>';
             }
         } catch (e) {}
     }
@@ -141,17 +177,35 @@
     async function loadReport(id) {
         currentReportId = id;
         const container = document.getElementById('report-detail-container');
+        const inbox = document.getElementById('inbox-pane');
+        const bottomNav = document.getElementById('mobile-bottom-nav');
+        
         container.innerHTML = '<div class="flex h-full items-center justify-center text-primary"><span class="material-symbols-outlined animate-spin text-4xl">refresh</span></div>';
-        container.classList.remove('hidden');
-        if (window.innerWidth < 768) { container.classList.add('absolute', 'inset-0', 'z-40'); }
+        container.classList.remove('hidden', 'md:flex');
+        container.classList.add('flex');
+
+        if (window.innerWidth < 768) { 
+            container.classList.add('fixed', 'inset-0', 'bg-white'); 
+            inbox.classList.add('hidden');
+            bottomNav.classList.add('hidden');
+        } else {
+            container.classList.add('md:flex');
+        }
+
         const res = await fetchJson(`/staff/reports/${id}`);
         if (!res.error) renderDetail(res.report, res.messages);
-        else container.innerHTML = `<p class="p-10 text-error text-center font-bold">${res.error}</p>`;
+        else container.innerHTML = `<div class="p-10 text-center"><p class="text-error font-bold mb-4">${res.error}</p><button onclick="closeDetailMobile()" class="bg-primary text-white px-6 py-2 rounded-full">Volver</button></div>`;
     }
 
     function closeDetailMobile() {
         const container = document.getElementById('report-detail-container');
-        container.classList.add('hidden'); container.classList.remove('absolute', 'inset-0', 'z-40');
+        const inbox = document.getElementById('inbox-pane');
+        const bottomNav = document.getElementById('mobile-bottom-nav');
+        
+        container.classList.add('hidden', 'md:flex');
+        container.classList.remove('fixed', 'inset-0', 'bg-white', 'flex');
+        inbox.classList.remove('hidden');
+        bottomNav.classList.remove('hidden');
     }
 
     function renderDetail(report, messages) {
@@ -160,9 +214,9 @@
             const isMe = m.is_current_user;
             const isInt = parseInt(m.is_internal) === 1;
             return `<div class="flex gap-3 ${isMe?'flex-row-reverse':''} mb-4">
-                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">${m.sender_name.charAt(0)}</div>
-                <div class="${isInt?'bg-amber-50':(isMe?'bg-primary text-white':'bg-white border')} p-3 rounded-2xl ${isMe?'rounded-tr-none':'rounded-tl-none'} shadow-sm max-w-[85%]">
-                    ${isInt?'<p class="text-[9px] font-black text-amber-800 mb-1">🔒 <?= \App\Core\Lang::t('staff.internal_note') ?></p>':''}
+                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">${m.sender_name.charAt(0)}</div>
+                <div class="${isInt?'bg-amber-50 border-amber-100 border':(isMe?'bg-primary text-white':'bg-white border')} p-3 rounded-2xl ${isMe?'rounded-tr-none':'rounded-tl-none'} shadow-sm max-w-[85%]">
+                    ${isInt?'<p class="text-[9px] font-black text-amber-800 mb-1 uppercase tracking-tighter">🔒 Nota Interna</p>':''}
                     <p class="text-[13px] whitespace-pre-wrap">${m.message}</p>
                     <span class="text-[9px] opacity-60 block mt-1 ${isMe?'text-right':''}">${isMe?'Tú':m.sender_name} • ${m.created_at}</span>
                 </div>
@@ -170,34 +224,33 @@
         }).join('');
 
         container.innerHTML = `
-            <div class="h-20 px-8 flex items-center justify-between bg-white border-b z-20">
-                <div class="flex items-center gap-4">
-                    <button onclick="closeDetailMobile()" class="md:hidden"><span class="material-symbols-outlined">arrow_back</span></button>
-                    <div><h3 class="font-bold text-sm"><?= \App\Core\Lang::t('staff.case') ?> #${report.id}</h3><p class="text-[10px] text-outline uppercase font-bold"><?= \App\Core\Lang::t('staff.aula') ?> ${report.classroom_name}</p></div>
+            <div class="h-16 md:h-20 px-4 md:px-8 flex items-center justify-between bg-white border-b z-20 shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <button onclick="closeDetailMobile()" class="md:hidden text-slate-500"><span class="material-symbols-outlined">arrow_back</span></button>
+                    <div class="min-w-0"><h3 class="font-bold text-sm truncate">Caso #${report.id}</h3><p class="text-[10px] text-outline uppercase font-bold truncate">${report.classroom_name}</p></div>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="showPremiumModal()" class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-[10px] font-black uppercase"><?= \App\Core\Lang::t('staff.ia_elos') ?></button>
-                    <select onchange="handleStatusChange(${report.id}, this.value)" id="status-select" class="bg-slate-100 border-0 rounded-full py-1.5 px-4 text-[10px] font-black uppercase">
+                    <select onchange="handleStatusChange(${report.id}, this.value)" id="status-select" class="bg-slate-100 border-0 rounded-full py-1.5 px-3 md:px-4 text-[9px] md:text-[10px] font-black uppercase outline-none focus:ring-2 focus:ring-primary/20">
                         <option value="new" ${report.status==='new'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_received') ?>'}</option>
                         <option value="in_progress" ${report.status==='in_progress'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_review') ?>'}</option>
                         <option value="resolved" ${report.status==='resolved'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_resolved') ?>'}</option>
                     </select>
                 </div>
             </div>
-            <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h4 class="text-xs font-black uppercase text-slate-400 mb-3 tracking-widest"><?= \App\Core\Lang::t('staff.student_story') ?></h4>
+            <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50 no-scrollbar">
+                <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h4 class="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest"><?= \App\Core\Lang::t('staff.student_story') ?></h4>
                     <p class="text-sm text-slate-800 whitespace-pre-wrap">${report.content}</p>
                 </div>
                 <div id="messages-flow">${mHtml || '<p class="text-center text-slate-400 py-10 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
             </div>
-            <div class="p-4 bg-white border-t">
+            <div class="p-4 bg-white border-t shrink-0">
                 <div class="flex gap-2 mb-3">
-                    <input id="reply-message" class="flex-1 bg-slate-100 border-0 rounded-full py-3 px-6 text-sm" placeholder="<?= \App\Core\Lang::t('dashboard.chat_placeholder') ?>"/>
-                    <button onclick="sendMessage()" class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary/20"><span class="material-symbols-outlined">send</span></button>
+                    <input id="reply-message" class="flex-1 bg-slate-100 border-0 rounded-full py-3 px-6 text-sm outline-none focus:ring-2 focus:ring-primary/20" placeholder="<?= \App\Core\Lang::t('dashboard.chat_placeholder') ?>"/>
+                    <button onclick="sendMessage()" class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary/20 shrink-0 active:scale-90 transition-transform"><span class="material-symbols-outlined">send</span></button>
                 </div>
-                <label class="text-[11px] font-bold text-slate-500 flex items-center gap-2 pl-4 cursor-pointer">
-                    <input type="checkbox" id="reply-internal" class="rounded text-primary"/> <?= \App\Core\Lang::t('staff.mark_internal') ?>
+                <label class="text-[11px] font-bold text-slate-500 flex items-center gap-2 pl-4 cursor-pointer select-none">
+                    <input type="checkbox" id="reply-internal" class="rounded text-primary border-slate-300 focus:ring-primary/20"/> <?= \App\Core\Lang::t('staff.mark_internal') ?>
                 </label>
             </div>
         `;
@@ -217,11 +270,12 @@
     }
 
     async function sendMessage() {
-        const msg = document.getElementById('reply-message').value.trim();
+        const i = document.getElementById('reply-message');
+        const msg = i.value.trim();
         const isInt = document.getElementById('reply-internal').checked;
         if (!msg || !currentReportId) return;
         const res = await fetchJson(`/staff/reports/${currentReportId}/messages`, { method: 'POST', body: { message: msg, is_internal: isInt } });
-        if (!res.error) loadReport(currentReportId);
+        if (!res.error) { i.value = ''; document.getElementById('reply-internal').checked = false; loadReport(currentReportId); }
         else alert(res.error);
     }
     

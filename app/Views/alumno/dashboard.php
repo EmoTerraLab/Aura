@@ -1,7 +1,23 @@
-<?php $bodyClass = "antialiased min-h-screen flex w-full bg-surface"; ?>
+<?php $bodyClass = "antialiased min-h-screen flex flex-col bg-surface"; ?>
 
-<!-- Desktop SideNavBar -->
-<nav class="bg-slate-50 dark:bg-slate-950 font-manrope font-medium h-screen w-64 fixed left-0 top-0 no-border shadow-right shadow-[4px_0_24px_rgba(6,105,114,0.04)] hidden lg:flex flex-col py-6 z-40">
+<!-- Mobile TopNavBar -->
+<nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant font-manrope">
+    <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">eco</span>
+        </div>
+        <h1 class="text-lg font-bold text-teal-700">Aura</h1>
+    </div>
+    <button onclick="toggleSidebar()" class="p-2 text-slate-500">
+        <span class="material-symbols-outlined" id="menu-icon">menu</span>
+    </button>
+</nav>
+
+<!-- Sidebar Overlay -->
+<div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] hidden lg:hidden"></div>
+
+<!-- Sidebar -->
+<nav id="app-sidebar" class="bg-slate-50 dark:bg-slate-950 font-manrope font-medium h-screen w-64 fixed left-0 top-0 no-border shadow-right shadow-[4px_0_24px_rgba(6,105,114,0.04)] z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col py-6">
     <div class="px-6 mb-8 flex items-center gap-3">
         <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
@@ -12,17 +28,17 @@
         </div>
     </div>
     <div class="px-4 mb-6">
-        <button onclick="resetForm()" class="w-full bg-primary text-on-primary rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-sm shadow-primary/20 hover:opacity-90 transition-opacity">
+        <button onclick="resetForm(); toggleSidebar()" class="w-full bg-primary text-on-primary rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-sm shadow-primary/20 hover:opacity-90 transition-opacity">
             <span class="material-symbols-outlined">add</span>
             <span class="font-semibold text-sm"><?= \App\Core\Lang::t('nav.new_report') ?></span>
         </button>
     </div>
-    <div class="flex-1 flex flex-col gap-1">
+    <div class="flex-1 flex flex-col gap-1 overflow-y-auto no-scrollbar">
         <a class="bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 rounded-full mx-2 px-4 py-3 flex items-center gap-3 active:scale-95 duration-150" href="/alumno/dashboard">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
             <span><?= \App\Core\Lang::t('nav.dashboard') ?></span>
         </a>
-        <button onclick="openBreathingApp()" class="text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full flex items-center gap-3 transition-colors">
+        <button onclick="openBreathingApp(); toggleSidebar()" class="text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full flex items-center gap-3 transition-colors text-left">
             <span class="material-symbols-outlined">spa</span>
             <span><?= \App\Core\Lang::t('nav.breathe') ?></span>
         </button>
@@ -41,25 +57,9 @@
     </div>
 </nav>
 
-<!-- Mobile BottomNavBar -->
-<nav class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg text-[11px] font-manrope font-semibold docked full-width bottom-0 rounded-t-[32px] no-border shadow-[0_-8px_30px_rgba(0,0,0,0.05)] lg:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3">
-    <a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 w-12 h-12 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors" href="/alumno/dashboard">
-        <span class="material-symbols-outlined mb-1">home</span>
-        <span><?= \App\Core\Lang::t('nav.home') ?></span>
-    </a>
-    <button onclick="openBreathingApp()" class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 w-12 h-12 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
-        <span class="material-symbols-outlined mb-1">spa</span>
-        <span><?= \App\Core\Lang::t('nav.breathe_short') ?></span>
-    </button>
-    <a onclick="resetForm()" class="flex flex-col items-center justify-center bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-100 rounded-full w-12 h-12 active:scale-90 duration-200" href="#">
-        <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">add_circle</span>
-        <span><?= \App\Core\Lang::t('nav.report_short') ?></span>
-    </a>
-</nav>
-
 <!-- Main Content Canvas -->
-<main class="flex-1 w-full lg:ml-64 flex flex-col min-h-screen pb-24 lg:pb-0">
-    <div class="px-6 py-10 lg:px-margin-page lg:py-12 max-w-6xl mx-auto w-full flex-1 flex flex-col gap-stack-gap">
+<main class="flex-1 w-full lg:pl-64 flex flex-col pt-16 lg:pt-0">
+    <div class="px-4 py-8 md:px-margin-page md:py-12 max-w-6xl mx-auto w-full flex-1 flex flex-col gap-stack-gap">
         <header class="mb-4">
             <h2 class="font-h1 text-h1 text-primary"><?= \App\Core\Lang::t('dashboard.safe_space_title') ?></h2>
             <p class="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-2xl"><?= \App\Core\Lang::t('dashboard.safe_space_desc') ?></p>
@@ -70,20 +70,20 @@
             
             <!-- Main Form Area -->
             <div class="lg:col-span-8 flex flex-col gap-6">
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-card-padding flex flex-col relative overflow-hidden">
+                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding flex flex-col relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-primary-fixed/20 to-transparent pointer-events-none"></div>
                     <div class="relative z-10">
                         
                         <!-- Progress Bar -->
                         <div class="flex items-center justify-between mb-8" id="progress-header">
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3 shrink-0">
                                 <div id="indicator-1" class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm transition-colors">1</div>
-                                <span id="label-1" class="font-body-md text-body-md text-primary font-medium transition-colors"><?= \App\Core\Lang::t('dashboard.step1_label') ?></span>
+                                <span id="label-1" class="hidden sm:inline font-body-md text-body-md text-primary font-medium transition-colors"><?= \App\Core\Lang::t('dashboard.step1_label') ?></span>
                             </div>
                             <div class="flex-1 mx-4 h-1 bg-surface-variant rounded-full overflow-hidden">
                                 <div id="progress-bar" class="h-full bg-primary w-1/3 rounded-full transition-all duration-300"></div>
                             </div>
-                            <div class="flex items-center gap-3 opacity-50" id="indicator-group-2">
+                            <div class="flex items-center gap-3 opacity-50 shrink-0" id="indicator-group-2">
                                 <div id="indicator-2" class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-sm transition-colors">2</div>
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                                     <p id="error-step-1" class="text-error text-sm mt-2 hidden"><?= \App\Core\Lang::t('dashboard.step1_error') ?></p>
                                 </div>
                                 <div class="flex justify-end pt-4">
-                                    <button type="button" onclick="nextStep(2)" class="bg-primary text-on-primary rounded-full px-8 py-3 font-body-md text-body-md font-medium shadow-[0_4px_14px_rgba(0,79,86,0.2)] hover:shadow-[0_6px_20px_rgba(0,79,86,0.3)] hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                                    <button type="button" onclick="nextStep(2)" class="w-full sm:w-auto bg-primary text-on-primary rounded-full px-8 py-3 font-body-md text-body-md font-medium shadow-[0_4px_14px_rgba(0,79,86,0.2)] hover:shadow-[0_6px_20px_rgba(0,79,86,0.3)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
                                         <?= \App\Core\Lang::t('dashboard.next_step') ?>
                                         <span class="material-symbols-outlined text-sm">arrow_forward</span>
                                     </button>
@@ -135,9 +135,9 @@
                                     </div>
                                 </div>
 
-                                <div class="flex justify-between pt-4">
-                                    <button type="button" onclick="prevStep(1)" class="bg-surface-container text-on-surface-variant rounded-full px-6 py-3 font-body-md text-body-md font-medium hover:bg-surface-variant transition-colors"><?= \App\Core\Lang::t('dashboard.back') ?></button>
-                                    <button type="button" id="btn-submit-report" onclick="submitReport()" class="bg-primary text-on-primary rounded-full px-8 py-3 font-body-md text-body-md font-medium shadow-[0_4px_14px_rgba(0,79,86,0.2)] hover:shadow-[0_6px_20px_rgba(0,79,86,0.3)] hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                                <div class="flex flex-col sm:flex-row justify-between gap-4 pt-4">
+                                    <button type="button" onclick="prevStep(1)" class="w-full sm:w-auto bg-surface-container text-on-surface-variant rounded-full px-6 py-3 font-body-md text-body-md font-medium hover:bg-surface-variant transition-colors"><?= \App\Core\Lang::t('dashboard.back') ?></button>
+                                    <button type="button" id="btn-submit-report" onclick="submitReport()" class="w-full sm:w-auto bg-primary text-on-primary rounded-full px-8 py-3 font-body-md text-body-md font-medium shadow-[0_4px_14px_rgba(0,79,86,0.2)] hover:shadow-[0_6px_20px_rgba(0,79,86,0.3)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
                                         <?= \App\Core\Lang::t('dashboard.submit') ?> <span class="material-symbols-outlined text-sm">send</span>
                                     </button>
                                 </div>
@@ -170,8 +170,8 @@
 
                 <!-- Botón Principal Respira Conmigo -->
                 <div class="mt-8 flex justify-center">
-                    <button onclick="openBreathingApp()" class="bg-gradient-to-br from-teal-600 to-blue-700 text-white px-12 py-6 rounded-3xl font-black text-2xl shadow-2xl shadow-teal-900/20 hover:scale-105 transition-all flex items-center gap-4 group">
-                        <span class="material-symbols-outlined text-5xl group-hover:rotate-12 transition-transform">spa</span>
+                    <button onclick="openBreathingApp()" class="w-full sm:w-auto bg-gradient-to-br from-teal-600 to-blue-700 text-white px-8 py-6 md:px-12 md:py-6 rounded-3xl font-black text-xl md:text-2xl shadow-2xl shadow-teal-900/20 hover:scale-105 transition-all flex items-center justify-center gap-4 group">
+                        <span class="material-symbols-outlined text-4xl md:text-5xl group-hover:rotate-12 transition-transform">spa</span>
                         <?= \App\Core\Lang::t('breathing.title') ?>
                     </button>
                 </div>
@@ -179,8 +179,8 @@
 
             <!-- Sidebar -->
             <div class="lg:col-span-4 flex flex-col gap-6">
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-card-padding">
-                    <h3 class="font-h2 text-[20px] text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">history</span> <?= \App\Core\Lang::t('dashboard.history_title') ?></h3>
+                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding">
+                    <h3 class="font-h2 text-[18px] md:text-[20px] text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">history</span> <?= \App\Core\Lang::t('dashboard.history_title') ?></h3>
                     <div class="space-y-4">
                         <?php if (empty($reports)): ?><div class="p-6 text-center text-outline text-sm italic"><?= \App\Core\Lang::t('dashboard.no_activity') ?></div><?php else: ?>
                             <?php foreach ($reports as $report): ?>
@@ -195,7 +195,7 @@
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="bg-secondary-container rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-card-padding flex flex-col items-center text-center">
+                <div class="bg-secondary-container rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding flex flex-col items-center text-center">
                     <div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center mb-4 shadow-sm shadow-primary/10"><span class="material-symbols-outlined text-3xl text-secondary" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span></div>
                     <h4 class="font-body-lg text-[18px] font-semibold text-on-secondary-container mb-2"><?= \App\Core\Lang::t('dashboard.need_talk') ?></h4>
                     <button class="bg-surface-container-lowest text-secondary rounded-full px-6 py-2 font-body-md text-body-md font-medium shadow-sm hover:shadow-md transition-shadow"><?= \App\Core\Lang::t('dashboard.help_chat') ?></button>
@@ -203,27 +203,27 @@
 
                 <!-- WebAuthn 2FA Block -->
                 <?php if(\App\Core\Config::get('2fa_students_method') === 'webauthn'): ?>
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-card-padding">
-                    <h3 class="font-h2 text-[16px] text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">fingerprint</span> Acceso Seguro (FaceID/Huella)</h3>
+                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding">
+                    <h3 class="font-h2 text-[16px] text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">fingerprint</span> Acceso Seguro</h3>
                     
                     <?php if (empty($webauthnDevices)): ?>
-                        <p class="text-xs text-on-surface-variant mb-4">Registra tu dispositivo para iniciar sesión de forma más rápida y segura la próxima vez.</p>
+                        <p class="text-xs text-on-surface-variant mb-4">Registra tu dispositivo para un acceso biométrico más rápido.</p>
                     <?php else: ?>
                         <ul class="space-y-2 mb-4">
                             <?php foreach($webauthnDevices as $dev): ?>
                                 <li class="flex justify-between items-center bg-surface p-2 rounded-lg text-xs">
-                                    <div>
-                                        <p class="font-bold text-on-surface"><?= htmlspecialchars($dev['device_name']) ?></p>
-                                        <p class="text-slate-400 text-[10px]">Añadido: <?= date('d/m/Y', strtotime($dev['created_at'])) ?></p>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-bold text-on-surface truncate"><?= htmlspecialchars($dev['device_name']) ?></p>
+                                        <p class="text-slate-400 text-[10px]"><?= date('d/m/Y', strtotime($dev['created_at'])) ?></p>
                                     </div>
-                                    <button onclick="deleteWebAuthn(<?= $dev['id'] ?>)" class="text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="Eliminar"><span class="material-symbols-outlined text-sm">delete</span></button>
+                                    <button onclick="deleteWebAuthn(<?= $dev['id'] ?>)" class="text-error hover:bg-error/10 p-1.5 rounded-full transition-colors shrink-0" title="Eliminar"><span class="material-symbols-outlined text-sm">delete</span></button>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
 
                     <button onclick="registerWebAuthn()" class="w-full bg-primary-container text-on-primary-container rounded-full px-4 py-2 font-body-md text-[13px] font-medium shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-sm">add</span> Añadir este dispositivo
+                        <span class="material-symbols-outlined text-sm">add</span> Añadir dispositivo
                     </button>
                 </div>
                 <?php endif; ?>
@@ -242,8 +242,8 @@
     <section id="b-landing" class="absolute inset-0 flex items-center justify-center p-8 transition-all duration-700 z-[106]" style="background: radial-gradient(ellipse at 20% 20%, rgba(168, 197, 181, 0.22) 0%, transparent 55%), radial-gradient(ellipse at 80% 90%, rgba(197, 217, 229, 0.18) 0%, transparent 60%), linear-gradient(165deg, #0f1e26 0%, #1a2f3a 50%, #2d5160 100%);">
         <div class="text-center max-w-lg">
             <p class="text-[0.7rem] uppercase tracking-[0.3em] text-[#a8c5b5] mb-6"><?= \App\Core\Lang::t('breathing.landing_subtitle') ?></p>
-            <h1 class="text-5xl md:text-7xl font-light mb-4" style="font-family: 'Fraunces', serif;">Respira<em class="italic text-[#a8c5b5] block not-italic">Conmigo</em></h1>
-            <p class="text-[#c5d9e5] opacity-80 mb-10 text-lg"><?= \App\Core\Lang::t('breathing.landing_desc') ?></p>
+            <h1 class="text-4xl md:text-7xl font-light mb-4" style="font-family: 'Fraunces', serif;">Respira<em class="italic text-[#a8c5b5] block not-italic">Conmigo</em></h1>
+            <p class="text-[#c5d9e5] opacity-80 mb-10 text-base md:text-lg"><?= \App\Core\Lang::t('breathing.landing_desc') ?></p>
             <div class="flex flex-wrap gap-2 justify-center mb-10">
                 <button onclick="selectRhythm('calm', this)" class="r-btn active px-4 py-2 rounded-full border border-white/20 bg-white/5 text-[#c5d9e5] text-sm hover:bg-white/10 transition-all"><?= \App\Core\Lang::t('breathing.calm') ?><small class="block opacity-60 text-[10px]">4 · 6</small></button>
                 <button onclick="selectRhythm('box', this)" class="r-btn px-4 py-2 rounded-full border border-white/20 bg-white/5 text-[#c5d9e5] text-sm hover:bg-white/10 transition-all"><?= \App\Core\Lang::t('breathing.focus') ?><small class="block opacity-60 text-[10px]">4 · 4 · 4 · 4</small></button>
@@ -255,10 +255,10 @@
 
     <section id="b-scene" class="hidden absolute inset-0 flex items-center justify-center transition-all duration-1000 z-[107]">
         <div class="absolute top-10 left-1/2 -translate-x-1/2 text-[0.7rem] tracking-[0.4em] opacity-40 uppercase"><?= \App\Core\Lang::t('breathing.cycle') ?> <strong id="b-cycle" class="text-[#a8c5b5]">1</strong></div>
-        <div class="relative flex items-center justify-center w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
+        <div class="relative flex items-center justify-center w-[250px] h-[250px] md:w-[500px] md:h-[500px]">
             <div id="b-halo" class="absolute inset-0 rounded-full blur-3xl opacity-40 transition-all duration-1000"></div>
             <div id="b-circle" class="relative w-3/5 h-3/5 rounded-full flex flex-col items-center justify-center text-center shadow-2xl transition-all ease-in-out" style="background: radial-gradient(circle at 35% 30%, rgba(244, 237, 228, 0.25) 0%, rgba(168, 197, 181, 0.4) 40%, rgba(45, 81, 96, 0.6) 100%);">
-                <div id="b-label" class="text-3xl md:text-5xl font-light italic" style="font-family: 'Fraunces', serif;"><?= \App\Core\Lang::t('breathing.prepare') ?></div>
+                <div id="b-label" class="text-2xl md:text-5xl font-light italic" style="font-family: 'Fraunces', serif;"><?= \App\Core\Lang::t('breathing.prepare') ?></div>
                 <div id="b-timer" class="text-xs opacity-50 mt-2 tracking-widest"></div>
             </div>
         </div>
@@ -274,6 +274,25 @@
 
 <?php ob_start(); ?>
 <script>
+    function toggleSidebar() {
+        const s = document.getElementById('app-sidebar');
+        const o = document.getElementById('sidebar-overlay');
+        const i = document.getElementById('menu-icon');
+        const isOpen = !s.classList.contains('-translate-x-full');
+
+        if (isOpen) {
+            s.classList.add('-translate-x-full');
+            o.classList.add('hidden');
+            i.innerText = 'menu';
+            document.body.style.overflow = '';
+        } else {
+            s.classList.remove('-translate-x-full');
+            o.classList.remove('hidden');
+            i.innerText = 'close';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
     const BREATH = { calm: [4, 0, 6, 0], box: [4, 4, 4, 4], sleep: [4, 7, 8, 0] };
     const LABELS = ['<?= \App\Core\Lang::t('breathing.inhale') ?>', '<?= \App\Core\Lang::t('breathing.hold') ?>', '<?= \App\Core\Lang::t('breathing.exhale') ?>', '<?= \App\Core\Lang::t('breathing.hold') ?>'];
     let bState = { running: false, cycle: 1, pIdx: 0, start: 0, dur: 0, raf: null, rhythm: 'calm' };
@@ -315,6 +334,7 @@
     function nextStep(s) { 
         if (document.getElementById('report-content').value.trim().length < 5) { document.getElementById('error-step-1').classList.remove('hidden'); return; }
         document.getElementById('step-1').classList.add('hidden'); document.getElementById('step-2').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     function prevStep(s) { document.getElementById('step-2').classList.add('hidden'); document.getElementById('step-1').classList.remove('hidden'); }
     function setTarget(b) { document.querySelectorAll('.target-btn').forEach(x => x.className = 'target-btn px-4 py-2 rounded-full border border-outline-variant bg-transparent text-on-surface-variant hover:bg-surface-variant text-sm font-medium transition-colors'); b.className = 'target-btn px-4 py-2 rounded-full border border-primary bg-primary-fixed/20 text-on-primary-fixed-variant text-sm font-medium transition-colors'; document.getElementById('report-target').value = b.dataset.value; }
@@ -332,15 +352,16 @@
         const cm = document.getElementById('chat-messages'); cm.innerHTML = '<div class="flex h-full items-center justify-center text-primary"><span class="material-symbols-outlined animate-spin text-4xl">refresh</span></div>';
         const res = await fetchJson(`/alumno/reports/${id}`);
         if (!res.error) renderStudentChat(res.report, res.messages);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     function renderStudentChat(report, messages) {
         document.getElementById('chat-status').innerText = report.status;
         const ic = document.getElementById('chat-input-container');
         if (report.status === 'resolved') { ic.classList.add('hidden'); document.getElementById('resolved-note').innerText = "Resolución: " + (report.resolution_summary || "Cerrado."); document.getElementById('resolved-note').classList.remove('hidden'); }
-        let h = `<div class="flex gap-3 flex-row-reverse mb-6"><div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">Tú</div><div class="bg-slate-100 p-4 rounded-2xl rounded-tr-none max-w-[80%] text-sm">${report.content}</div></div>`;
+        let h = `<div class="flex gap-3 flex-row-reverse mb-6"><div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">Tú</div><div class="bg-slate-100 p-4 rounded-2xl rounded-tr-none max-w-[85%] sm:max-w-[80%] text-sm">${report.content}</div></div>`;
         messages.forEach(m => {
             const me = m.is_current_user;
-            h += `<div class="flex gap-3 ${me ? 'flex-row-reverse' : ''} mb-6"><div class="w-8 h-8 rounded-full ${me ? 'bg-slate-200' : 'bg-primary-container text-on-primary-container'} flex items-center justify-center text-xs font-bold">${me ? 'Tú' : m.sender_name.charAt(0)}</div><div class="${me ? 'bg-slate-100' : 'bg-white border'} p-4 rounded-2xl ${me ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-sm max-w-[80%] text-sm"><p>${m.message}</p></div></div>`;
+            h += `<div class="flex gap-3 ${me ? 'flex-row-reverse' : ''} mb-6"><div class="w-8 h-8 rounded-full ${me ? 'bg-slate-200 text-slate-600' : 'bg-primary-container text-on-primary-container'} flex items-center justify-center text-xs font-bold shrink-0">${me ? 'Tú' : m.sender_name.charAt(0)}</div><div class="${me ? 'bg-slate-100' : 'bg-white border'} p-4 rounded-2xl ${me ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-sm max-w-[85%] sm:max-w-[80%] text-sm"><p>${m.message}</p></div></div>`;
         });
         document.getElementById('chat-messages').innerHTML = h;
     }
@@ -376,7 +397,6 @@
             
             console.log('Opciones recibidas:', optRes);
             
-            // lbuchs webauthn return challenge and userId as binary base64url strings
             optRes.challenge = base64urlToBuffer(optRes.challenge);
             optRes.user.id = base64urlToBuffer(optRes.user.id);
             

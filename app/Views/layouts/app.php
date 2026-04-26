@@ -2,10 +2,15 @@
 <html lang="<?= \App\Core\Lang::current() ?>" class="light">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="<?= \App\Core\Csrf::generateToken() ?>">
+    
     <title><?= $title ?? \App\Core\Config::get('school_name', 'Aura') ?></title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico">
+
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -98,11 +103,29 @@
         }
     </script>
     <style>
+        /* Base Reset & Scale Fixes */
+        * { box-sizing: border-box; }
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden; 
+            font-size: 16px; /* Essential for mobile scale */
+            -webkit-text-size-adjust: 100%;
+        }
+
         body { background-color: theme('colors.surface'); color: theme('colors.on-surface'); }
-        ::-webkit-scrollbar { width: 8px; }
+        
+        /* Form elements zoom fix for iOS */
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="search"], select, textarea {
+            font-size: 16px !important; /* Prevents auto-zoom on focus in iOS */
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e0e3e3; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #bec8ca; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
         
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
@@ -118,6 +141,17 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Fluid Typography */
+        h1 { font-size: clamp(1.5rem, 5vw, 2rem) !important; }
+        h2 { font-size: clamp(1.25rem, 4vw, 1.5rem) !important; }
+
+        /* Responsive Table */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
     <script>
@@ -137,7 +171,7 @@
         }
     </script>
 </head>
-<body class="<?= $bodyClass ?? 'bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col md:flex-row overflow-hidden' ?>">
+<body class="<?= $bodyClass ?? 'bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen' ?>">
     <?= $content ?>
     <?php if (isset($scripts)): ?>
         <?= $scripts ?>

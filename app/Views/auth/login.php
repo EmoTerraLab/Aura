@@ -1,14 +1,14 @@
 <?php 
-$bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col relative overflow-hidden"; 
+$bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col relative overflow-x-hidden overflow-y-auto"; 
 ?>
 <!-- Ambient Background Element (Sanctuary Vibe) -->
 <div class="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-secondary-container/30 via-surface to-background"></div>
 <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary-fixed/20 blur-[120px] z-0 pointer-events-none"></div>
 
 <!-- Main Canvas Content -->
-<main class="flex-1 flex flex-col items-center justify-center p-6 relative z-10 w-full max-w-md mx-auto">
+<main class="flex-1 flex flex-col items-center justify-center p-4 md:p-6 relative z-10 w-full max-w-md mx-auto">
     <!-- Logo Area -->
-    <div class="flex flex-col items-center justify-center mb-10 gap-4">
+    <div class="flex flex-col items-center justify-center mb-6 md:mb-10 gap-4">
         <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center shadow-lg shadow-primary-container/10">
             <span class="material-symbols-outlined text-on-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">spa</span>
         </div>
@@ -17,7 +17,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
     </div>
 
     <!-- Login Card -->
-    <div class="w-full bg-surface-container-lowest rounded-xl p-8 shadow-[0_24px_64px_-12px_rgba(6,105,114,0.06)] relative overflow-hidden">
+    <div class="w-full bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-[0_24px_64px_-12px_rgba(6,105,114,0.06)] relative overflow-hidden">
         <!-- CSS-only Tab System Setup -->
         <input checked="" class="peer/student hidden" id="tab_student" name="login_type" type="radio" onchange="resetForms()"/>
         <input class="peer/staff hidden" id="tab_staff" name="login_type" type="radio" onchange="resetForms()"/>
@@ -105,16 +105,16 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
 </main>
 
 <!-- Footer Component -->
-<footer class="bg-transparent w-full py-8 flat no shadows w-full mt-auto flex flex-col items-center gap-2 relative z-10">
+<footer class="bg-transparent w-full py-8 flat no shadows mt-auto flex flex-col items-center gap-2 relative z-10 px-4">
     <div class="mb-4">
         <?= \App\Core\Lang::renderSelector() ?>
     </div>
-    <div class="flex gap-4 mb-2">
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-2">
         <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.privacy') ?></a>
         <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.support') ?></a>
         <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.terms') ?></a>
     </div>
-    <p class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center"><?= \App\Core\Lang::t('footer.powered_by') ?></p>
+    <p class="text-slate-400 dark:text-slate-600 text-[10px] font-manrope text-center"><?= \App\Core\Lang::t('footer.powered_by') ?></p>
 </footer>
 
 <?php ob_start(); ?>

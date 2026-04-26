@@ -6,6 +6,7 @@
 
 // [MEJORA] Control de errores según entorno - nunca exponer trazas en producción
 define('APP_ENV', $_ENV['APP_ENV'] ?? getenv('APP_ENV') ?: 'development');
+define('BASE_URL', '/'); // Cambiar si el proyecto está en un subdirectorio (ej: /aura/)
 
 if (APP_ENV === 'development' || APP_ENV === 'local' || APP_ENV === 'dev') {
     ini_set('display_errors', 1);
