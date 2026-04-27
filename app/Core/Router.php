@@ -62,6 +62,7 @@ class Router {
                         \App\Controllers\TotpController::class => new \App\Controllers\TotpController(),
                         \App\Controllers\WebAuthnController::class => new \App\Controllers\WebAuthnController(new \App\Models\WebAuthnCredential()),
                         \App\Controllers\Admin\UpdateController::class => new \App\Controllers\Admin\UpdateController(),
+                        \App\Controllers\TelemetryController::class => new \App\Controllers\TelemetryController(),
                         default => new $controllerClass()
                     };
 
