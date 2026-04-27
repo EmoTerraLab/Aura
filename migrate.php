@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * CLI Migration Runner — Aura PDP
+ * CLI Migration Runner — Aura
  * Uso: php migrate.php [comando]
  *
  * Comandos:
@@ -34,7 +34,7 @@ $db       = App\Core\Database::getInstance();
 $migrator = new App\Core\Migrator($db);
 $cmd      = $argv[1] ?? 'status';
 
-echo "\n🔷 Aura PDP — Migration CLI\n";
+echo "\n🔷 Aura — Migration CLI\n";
 echo str_repeat('─', 50) . "\n\n";
 
 switch ($cmd) {

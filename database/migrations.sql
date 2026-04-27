@@ -1,5 +1,5 @@
 -- =============================================================================
--- Aura PDP — migrations.sql
+-- Aura — migrations.sql
 -- Motor: SQLite
 -- =============================================================================
 
@@ -137,7 +137,7 @@ INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_encryption', 'tl
 INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_username', '', 'text');
 INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_password', '', 'password');
 INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_from_address', '', 'text');
-INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_from_name', 'Aura PDP', 'text');
+INSERT OR IGNORE INTO settings (key, value, type) VALUES ('mail_from_name', 'Aura', 'text');
 
 -- Seguridad y 2FA
 INSERT OR IGNORE INTO settings (key, value, type) VALUES ('2fa_students_method', 'webauthn', 'text');

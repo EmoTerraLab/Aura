@@ -97,7 +97,7 @@ class SettingsController
         // Usar el Mailer del proyecto para enviar un correo de prueba
         try {
             $mailer = new \App\Core\Mailer($this->settings);
-            $mailer->send($to, 'Test de correo - Aura PDP', '<p>El servidor de correo está configurado correctamente.</p>');
+            $mailer->send($to, 'Test de correo - Aura', '<p>El servidor de correo está configurado correctamente.</p>');
             header('Location: /admin/settings?tab=mail&test=ok');
         } catch (\Exception $e) {
             header('Location: /admin/settings?tab=mail&test=error&msg=' . urlencode($e->getMessage()));
