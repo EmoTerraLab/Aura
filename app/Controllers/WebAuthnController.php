@@ -29,7 +29,7 @@ class WebAuthnController
         try {
             $this->db = \App\Core\Database::getInstance();
             
-            $appName = Config::get('school_name', 'Aura PDP');
+            $appName = Config::get('school_name', 'Aura');
             $rpId = $_SERVER['HTTP_HOST'] ?? 'localhost';
             
             // WA-04: Limpiar puerto del RP ID si existe

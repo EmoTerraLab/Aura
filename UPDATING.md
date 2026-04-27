@@ -1,4 +1,4 @@
-# Guía de publicación de actualizaciones — Aura PDP
+# Guía de publicación de actualizaciones — Aura
 
 ## Para el desarrollador
 

@@ -1,6 +1,6 @@
 <?php
 // =============================================================================
-// Aura PDP — app/routes.php
+// Aura — app/routes.php
 // Definición de endpoints con Middleware [MEJORA]
 // =============================================================================
 
@@ -78,7 +78,7 @@ $router->post('/alumno/2fa/webauthn/credential/delete', [WebAuthnController::cla
 // GET /staff/dashboard : Bandeja de entrada staff (Referencia original)
 $router->get('/staff/dashboard', [StaffController::class, 'index'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
-// GET /staff/inbox : Alias de /staff/dashboard (Traducción a aura-pdp)
+// GET /staff/inbox : Alias de /staff/dashboard (Traducción a aura)
 $router->get('/staff/inbox', [StaffController::class, 'index'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
 // GET /staff/reports/{id} : Detalle de caso (AJAX JSON)
@@ -87,16 +87,16 @@ $router->get('/staff/reports/{id}', [ReportManagementController::class, 'show'],
 // POST /staff/reports/{id}/status : Actualiza estado (Referencia original)
 $router->post('/staff/reports/{id}/status', [ReportManagementController::class, 'updateStatus'], ['auth', 'roles:orientador,direccion,admin']);
 
-// PATCH /staff/reports/{id} : Reemplaza el POST de status (Traducción a aura-pdp)
+// PATCH /staff/reports/{id} : Reemplaza el POST de status (Traducción a aura)
 $router->patch('/staff/reports/{id}', [ReportManagementController::class, 'updateStatus'], ['auth', 'roles:orientador,direccion,admin']);
 
 // POST /staff/reports/{id}/messages : Añade mensaje (AJAX JSON)
 $router->post('/staff/reports/{id}/messages', [ReportManagementController::class, 'addMessage'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
-// GET /staff/mentions : Menciones no leídas (Traducción a aura-pdp)
+// GET /staff/mentions : Menciones no leídas (Traducción a aura)
 $router->get('/staff/mentions', [StaffController::class, 'mentions'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
-// POST /staff/mentions/read : Marcar menciones como leídas (Traducción a aura-pdp)
+// POST /staff/mentions/read : Marcar menciones como leídas (Traducción a aura)
 $router->post('/staff/mentions/read', [StaffController::class, 'markMentionsRead'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
 // GET /staff/colleagues : Lista de personal para menciones
@@ -110,7 +110,7 @@ $router->post('/profile/2fa/totp/disable', [TotpController::class, 'disable'], [
 
 // -- Endpoints de Admin --
 
-// GET /admin : Panel admin (Traducción a aura-pdp)
+// GET /admin : Panel admin (Traducción a aura)
 $router->get('/admin', [AdminController::class, 'index'], ['auth', 'role:admin']);
 
 // Rutas CRUD admin

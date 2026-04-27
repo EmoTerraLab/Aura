@@ -44,7 +44,7 @@
 
         <div class="space-y-2">
             <label class="block font-bold text-sm text-slate-500 uppercase tracking-wide">Nombre de Remitente</label>
-            <input type="text" name="mail_from_name" value="<?= htmlspecialchars($settings['mail_from_name'] ?? 'Aura PDP') ?>" class="w-full bg-slate-50 rounded-xl py-3 px-4 border border-surface-variant focus:ring-2 focus:ring-primary/20 outline-none">
+            <input type="text" name="mail_from_name" value="<?= htmlspecialchars($settings['mail_from_name'] ?? 'Aura') ?>" class="w-full bg-slate-50 rounded-xl py-3 px-4 border border-surface-variant focus:ring-2 focus:ring-primary/20 outline-none">
         </div>
     </div>
 

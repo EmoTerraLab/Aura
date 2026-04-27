@@ -1,5 +1,5 @@
 {
-    "name": "aura/pdp",
+    "name": "aura/app",
     "version": "1.0.0",
     "require": {
         "phpmailer/phpmailer": "^7.0",
