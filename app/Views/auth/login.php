@@ -9,8 +9,8 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
 <main class="flex-1 flex flex-col items-center justify-center p-4 md:p-6 relative z-10 w-full max-w-md mx-auto">
     <!-- Logo Area -->
     <div class="flex flex-col items-center justify-center mb-6 md:mb-10 gap-4">
-        <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center shadow-lg shadow-primary-container/10">
-            <span class="material-symbols-outlined text-on-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">spa</span>
+        <div class="w-24 h-24 flex items-center justify-center drop-shadow-sm">
+            <img src="<?= BASE_URL ?>icono-sinfondo.png" alt="Aura Logo" class="w-full h-full object-contain">
         </div>
         <h1 class="font-h1 text-h1 text-primary-container tracking-tight">Aura</h1>
         <p class="font-body-md text-body-md text-on-surface-variant text-center"><?= \App\Core\Lang::t('auth.safe_space') ?></p>

@@ -3,7 +3,9 @@
 <!-- SideNavBar -->
 <nav class="bg-slate-50 dark:bg-slate-950 shadow-[4px_0_24px_rgba(6,105,114,0.04)] hidden lg:flex flex-col py-6 h-screen w-64 fixed left-0 top-0 z-40">
     <div class="px-6 mb-8 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span></div>
+        <div class="w-10 h-10 flex items-center justify-center">
+            <img src="<?= BASE_URL ?>icono-sinfondo.png" alt="Aura Logo" class="w-full h-full object-contain">
+        </div>
         <div><h1 class="font-h2 text-h2 text-teal-700 font-black tracking-tight leading-none">Aura</h1><p class="font-label-caps text-label-caps text-surface-tint opacity-70 mt-1">Control Panel</p></div>
     </div>
     <div class="flex-1 overflow-y-auto no-scrollbar space-y-1">
@@ -66,7 +68,10 @@
 
 <!-- Mobile TopNavBar -->
 <nav class="lg:hidden fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant">
-    <h1 class="text-xl font-bold text-teal-700">Aura Admin</h1>
+    <div class="flex items-center gap-2">
+        <img src="<?= BASE_URL ?>icono-sinfondo.png" alt="Aura Logo" class="h-8 w-8 object-contain">
+        <h1 class="text-xl font-bold text-teal-700">Aura Admin</h1>
+    </div>
     <div class="flex items-center gap-2">
         <?= \App\Core\Lang::renderSelector() ?>
     </div>
