@@ -2,7 +2,7 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
-## [2026-04-27] - Sincronización Final y Plantillas (v1.6.1-stable)
+## [2026-04-27] - Sincronización Final y Plantillas (v1.6.2-stable)
 
 ### ⚙️ Mejoras en el Núcleo (Core)
 - **Plantilla de Migraciones:** Añadida plantilla profesional en `database/migrations/_template.php` con helpers de idempotencia para facilitar el escalado de la base de datos.
