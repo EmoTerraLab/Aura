@@ -2,6 +2,13 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-27] - Consolidación de Producción v2 (v1.9.0-stable)
+
+### 🚀 Lanzamiento Estable
+- **Consolidación Total:** Sincronización final de todos los módulos de preproducción y refinamiento de la API de Telemetría.
+- **Limpieza de Sistema:** Eliminación de archivos temporales y duplicados para un entorno de producción limpio.
+- **Monitoreo:** Activación del endpoint `/api/telemetry` para métricas institucionales.
+
 ## [2026-04-27] - Monitoreo y API (v1.8.0-stable)
 
 ### 📊 Telemetría y Monitoreo

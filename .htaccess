@@ -1,0 +1,31 @@
+Options -Indexes
+Options -MultiViews
+
+# Activar mod_rewrite
+RewriteEngine On
+
+# Si el proyecto está en la raíz, redirigir a public
+RewriteRule ^$ public/ [L]
+RewriteRule (.*) public/$1 [L]
+
+# Seguridad: bloquear acceso a archivos sensibles
+<FilesMatch "\.(env|sqlite|log|json|lock|md|gitignore|txt|yml|Dockerfile)$">
+    Require all denied
+</FilesMatch>
+
+# Bloquear acceso a directorios internos
+RedirectMatch 403 ^/app/
+RedirectMatch 403 ^/database/
+RedirectMatch 403 ^/lang/
+RedirectMatch 403 ^/storage/
+RedirectMatch 403 ^/vendor/
+
+# Configuración PHP para Apache (si usa mod_php)
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 12M
+    php_value max_execution_time 60
+    php_value memory_limit 128M
+    php_flag session.cookie_httponly On
+    php_flag session.use_strict_mode On
+</IfModule>
