@@ -1,101 +1,207 @@
-# Aura: Santuario Digital Escolar 🛡️  ![Version](https://img.shields.io/badge/version-1.3.0--stable-teal)
+# Aura PDP — Plataforma de Gestión de Convivencia Escolar
+# Aura PDP — School Well-being Management Platform
 
-Aura es una plataforma web integral diseñada para transformar la convivencia escolar. Proporciona un canal seguro, confidencial y ágil donde los estudiantes pueden reportar incidencias o preocupaciones, y donde el equipo educativo puede gestionar casos de manera colaborativa y estructurada.
+![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![i18n](https://img.shields.io/badge/i18n-es%20|%20ca%20|%20gl%20|%20eu%20|%20en-blue)
 
-## 🌟 Características Principales
+Aura PDP es una solución integral para la gestión de informes y convivencia en centros educativos. Permite a los alumnos reportar incidencias de forma anónima o identificada y al personal del centro (profesores, orientadores y dirección) gestionar dichos casos mediante un sistema de tickets seguro, bilingüe y con autenticación de vanguardia.
 
-### 🏗️ Arquitectura MVC Refinada (Novedad)
-- **Modelos Dedicados**: Migración de la lógica de persistencia de seguridad a modelos especializados (`WebAuthnCredential`), garantizando un código más limpio y mantenible.
-- **Inyección de Dependencias**: Sistema de enrutamiento avanzado con inyección automática de modelos en controladores.
-- **Flujos de Acceso Especializados**: Vistas independientes para procesos de autenticación multifactor (WebAuthn/TOTP).
-
-### 📱 Experiencia de Usuario (Novedad)
-- **Diseño Mobile-First**: Interfaz 100% responsive optimizada para smartphones y tablets.
-- **Detección Automática de Idioma**: El sistema identifica el idioma preferido del navegador del usuario para ofrecer una experiencia localizada inmediata.
-- **Navegación Táctil**: Menús laterales colapsables y sistema de notificaciones optimizados.
-
-### 🔒 Seguridad Avanzada (Novedad)
-- **2FA WebAuthn**: Los alumnos pueden iniciar sesión usando biometría (Face ID, huella dactilar) o llaves de seguridad físicas.
-- **2FA TOTP**: El personal educativo puede proteger sus cuentas mediante aplicaciones como Google Authenticator o FreeOTP, incluyendo códigos de recuperación de emergencia.
-- **Validación CSRF & Sesiones Seguras**: Protección robusta contra ataques comunes y detección inteligente de HTTPS tras proxies.
-
-### 🎓 Para Estudiantes (Panel Alumno)
-- **Acceso Flexible**: Autenticación mediante códigos OTP por email o biometría WebAuthn.
-- **Reportes de Incidencias**: Creación de avisos con niveles de urgencia y descripción detallada.
-- **Anonimato Garantizado**: Opción de reportar de forma anónima, ocultando la identidad criptográficamente.
-
-### 🏫 Para el Equipo Educativo (Panel Staff)
-- **Bandeja de Entrada Inteligente**: Gestión centralizada de reportes según el rol.
-- **Colaboración Interna**: Sistema de **Notas Internas** y **Menciones (@)**.
-- **Gestión de Estados**: Ciclo de vida completo del reporte.
-
-### ⚙️ Administración y Personalización
-- **Configuración Dinámica**: Panel de ajustes para cambiar el nombre de la escuela, colores corporativos y configuración SMTP directamente desde la interfaz.
-- **Gestión de Usuarios y Aulas**: Control total sobre la estructura del centro.
+Aura PDP is a comprehensive solution for managing well-being reports in schools. It allows students to report incidents anonymously or identified, and school staff (teachers, counselors, and management) to manage these cases through a secure, bilingual ticket system with cutting-edge authentication.
 
 ---
 
-## 🏗️ Estructura del Proyecto
+## 📋 Índice / Table of Contents
+1. [Características / Features](#-características--features)
+2. [Requisitos / System Requirements](#-requisitos-del-sistema--system-requirements)
+3. [Instalación / Installation](#-instalación--installation)
+4. [Configuración / Configuration](#-configuración--configuration)
+5. [Arquitectura / Architecture](#-arquitectura--architecture)
+6. [Base de Datos / Database](#-base-de-datos--database)
+7. [Seguridad / Security](#-seguridad--security)
+8. [Rutas / Routes](#-rutas--routes)
+9. [Contribuir / Contributing](#-contribuir--contributing)
+10. [Licencia / License](#-licencia--license)
 
-```text
-aura/
-├── app/
-│   ├── Controllers/    # Lógica de control (Auth, 2FA, Admin, etc.)
-│   ├── Core/           # Motor interno (Router, Config, Mailer, Database)
-│   ├── Models/         # Capa de datos (User, Setting, Report, etc.)
-│   ├── Views/          # Plantillas de interfaz (Tailwind CSS)
-│   └── routes.php      # Definición de rutas y middlewares
-├── database/           # SQLite, migraciones y semillas
-├── public/             # Punto de entrada único y assets
-├── vendor/             # Dependencias de Composer (PHPMailer, WebAuthn, OTP)
-└── storage/            # Logs, telemetría y bloqueos
+---
+
+## ✨ Características / Features
+
+### 🔐 Seguridad / Security
+- **WebAuthn**: Autenticación biométrica (Face ID, huella, passkeys) para alumnos.
+- **TOTP 2FA**: Verificación en dos pasos mediante apps (Google Authenticator) para staff y admin.
+- **Protección**: CSRF, XSS, inyección SQL (PDO) y headers HTTP de seguridad.
+- **Rate Limiting**: Control de intentos de inicio de sesión.
+
+### 🌍 Internacionalización / Internationalization
+- Soporte nativo para 5 idiomas: Español, Català, Galego, Euskara y English.
+- Cambio de idioma dinámico por usuario y configuración global.
+
+### 👥 Roles y Permisos / Roles & Permissions
+- **Admin**: Gestión total de usuarios, aulas, configuración del sistema y correo.
+- **Staff (Dirección/Orientador/Profesor)**: Gestión de informes, respuestas internas y menciones.
+- **Alumno**: Creación de reportes y seguimiento de sus casos.
+
+### 📋 Gestión de Informes / Report Management
+- Sistema de tickets con estados (`new`, `in_progress`, `resolved`).
+- Mensajería interna y menciones entre el personal.
+- Opción de anonimato para mayor seguridad del alumno.
+
+---
+
+## 🔧 Requisitos del sistema / System Requirements
+
+| Componente | Mínimo | Recomendado |
+|---|---|---|
+| PHP | 8.1 | 8.2+ |
+| Servidor web | Apache 2.4 con mod_rewrite | Apache 2.4+ |
+| Base de datos | SQLite 3 | SQLite 3.35+ |
+| Composer | 2.x | Última versión |
+| Extensiones PHP | openssl, pdo_sqlite, mbstring, gmp, json | + sodium |
+
+> ⚠️ **Nota:** WebAuthn requiere **HTTPS** en entornos de producción. En localhost funciona sin certificado SSL.
+
+---
+
+## 🚀 Instalación / Installation
+
+### Desarrollo Local / Local Development
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [url-del-repo]
+   cd aura-pdp
+   ```
+2. **Instalar dependencias:**
+   ```bash
+   composer install
+   ```
+3. **Configurar base de datos:**
+   El sistema creará `database/aura.sqlite` automáticamente al iniciar por primera vez. Asegúrate de que la carpeta tenga permisos de escritura.
+4. **Permisos:**
+   ```bash
+   chmod -R 775 storage database
+   ```
+5. **Configurar Apache:**
+   Apunta el `DocumentRoot` a la carpeta `public/`.
+
+### Producción / Production
+1. Sube los archivos al servidor (excluyendo `.git` y `node_modules`).
+2. Configura un VirtualHost apuntando a `public/`.
+3. Asegúrate de que `mod_rewrite` esté activo.
+4. Genera un certificado SSL (Let's Encrypt).
+5. Configura el servidor SMTP desde el panel de administración una vez dentro.
+
+---
+
+## ⚙️ Configuración / Configuration
+
+### Variables de Entorno (.env)
+Aunque Aura PDP utiliza configuración en base de datos para la mayoría de aspectos, se pueden definir:
+| Variable | Descripción | Defecto |
+|---|---|---|
+| `APP_ENV` | Entorno (development/production) | `development` |
+
+### Apache VirtualHost
+```apache
+<VirtualHost *:443>
+    ServerName colegio-aura.com
+    DocumentRoot /var/www/aura-pdp/public
+
+    <Directory /var/www/aura-pdp/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    # Certificados SSL...
+</VirtualHost>
 ```
 
 ---
 
-## 💻 Requisitos del Sistema
+## 🏗️ Arquitectura / Architecture
 
-- **PHP 8.1+** (extensiones: `pdo_sqlite`, `mbstring`, `openssl`, `gmp`, `bcmath`).
-- **Composer**: Para la gestión de librerías de seguridad.
-- **Servidor Web**: Apache (con `mod_rewrite`) o Nginx.
-- **Base de Datos**: SQLite3.
+Aura PDP sigue un patrón **MVC Nativo** sin frameworks pesados, optimizado para rendimiento y facilidad de despliegue.
 
----
-
-## 🚀 Instalación y Configuración
-
-### 1. Clonar y dependencias
-```bash
-git clone https://github.com/EmoTerraLab/Aura.git
-cd aura
-composer install
 ```
-
-### 2. Configuración de permisos
-```bash
-chmod -R 775 database storage
-```
-
-### 3. Ejecución (Local)
-```bash
-php -S localhost:8000 -t public
-```
-
----
-
-## 🛠️ Despliegue en Producción
-
-Se incluye un script `install.sh` optimizado para entornos Ubuntu/Debian que configura Apache, PHP y los permisos necesarios de forma automática.
-
-```bash
-sudo ./install.sh
+HTTP Request
+    │
+    ▼
+ public/.htaccess  ──►  Redirige todo a index.php
+    │
+    ▼
+ public/index.php  ──►  Bootstrap: sesión, headers, Lang::init(), Config::init()
+    │
+    ▼
+ App\Core\Router   ──►  Matching de ruta + método HTTP
+    │
+    ▼
+ App\Core\Middleware ─►  Verificación auth + roles
+    │
+    ▼
+ Controller        ──►  Lógica de negocio + llamadas a modelos
+    │
+    ▼
+ Model             ──►  Acceso a datos (PDO + SQLite)
+    │
+    ▼
+ View (.php)       ──►  Renderizado HTML con Lang::t()
+    │
+    ▼
+ HTTP Response
 ```
 
 ---
 
-## 📄 Licencia
+## 🗄️ Base de Datos / Database
 
+Utiliza **SQLite** para facilitar el despliegue. Estructura principal:
+- `users`: Usuarios y credenciales TOTP/WebAuthn.
+- `classrooms`: Gestión de grupos y tutores.
+- `reports`: Informes de convivencia.
+- `report_messages`: Historial de comunicación en informes.
+- `report_mentions`: Sistema de avisos internos entre staff.
+- `settings`: Configuración persistente del sistema.
+
+---
+
+## 🔒 Seguridad / Security
+
+- **Autenticación Multi-factor**: Obligatoria según configuración.
+- **WebAuthn**: Implementación de `lbuchs/webauthn`.
+- **TOTP**: Implementación de `spomky-labs/otphp`.
+- **Sesiones Seguras**: Regeneración de ID en login y expiración configurable.
+- **Escape Automático**: Uso de `htmlspecialchars()` en todas las salidas a vista.
+
+---
+
+## 🛣️ Rutas / Routes
+
+| Método | Ruta | Controlador | Middleware | Descripción |
+|---|---|---|---|---|
+| GET | `/login` | `AuthController@showLogin` | - | Formulario de acceso |
+| POST | `/login/staff` | `AuthController@loginStaff` | - | Login personal |
+| POST | `/login/otp/verify` | `AuthController@verifyOTP` | - | Login alumno (OTP) |
+| GET | `/alumno/dashboard` | `StudentController@index` | `auth`, `alumno` | Inicio alumno |
+| POST | `/alumno/report` | `ReportController@store` | `auth`, `alumno` | Nuevo informe |
+| GET | `/staff/dashboard` | `StaffController@index` | `auth`, `staff` | Inicio staff |
+| GET | `/admin` | `AdminController@index` | `auth`, `admin` | Panel administración |
+| GET | `/admin/settings` | `SettingsController@index` | `auth`, `admin` | Configuración global |
+
+---
+
+## 🤝 Contribuir / Contributing
+1. Haz un fork del proyecto.
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`).
+3. Haz commit de tus cambios (`git commit -m 'Add AmazingFeature'`).
+4. Haz push a la rama (`git push origin feature/AmazingFeature`).
+5. Abre un Pull Request.
+
+---
+
+## 📄 Licencia / License
 Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 
 ---
-*Desarrollado con ❤️ por EmoTerraLab.*
+© 2026 EmoTerraLab — Aura PDP Project

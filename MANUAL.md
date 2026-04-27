@@ -1,111 +1,238 @@
-# Manual de Usuario - Aura (Santuario Digital Escolar)
+# 📚 Manual de Usuario y Técnico — Aura PDP
+# User & Technical Manual — Aura PDP
 
-Bienvenido a **Aura**, la plataforma digital diseñada para mejorar la convivencia escolar, proporcionando un espacio seguro, confidencial y rápido donde los estudiantes pueden expresar sus preocupaciones, y donde el equipo educativo puede gestionar y resolver estas situaciones de forma colaborativa.
-
-Este manual está dividido por los diferentes perfiles de usuario que interactúan con la plataforma.
-
----
-
-## 🎓 1. Guía para Estudiantes (Alumnos)
-
-Aura es tu **Espacio Seguro**. Si tienes un problema, has visto algo que no está bien, o simplemente necesitas hablar con alguien del equipo de orientación o tus profesores, este es el lugar.
-
-### 1.1. Cómo acceder a Aura
-1. Entra a la página web de Aura proporcionada por tu colegio.
-2. En la pantalla principal, selecciona la pestaña **"Estudiante"**.
-3. Introduce tu **Correo Institucional** (el que te ha dado el colegio) y pulsa **Continuar**.
-4. Recibirás un correo con un **código de 6 dígitos (OTP)**. Introdúcelo en la pantalla para entrar.
-   *Nota: No necesitas recordar ninguna contraseña, tu correo es tu llave de acceso.*
-
-### 1.2. Cómo crear un nuevo aviso (Reporte)
-Una vez dentro de tu panel (Dashboard):
-1. Verás la sección **"¿Qué pasó?"**. Escribe detalladamente lo que ha ocurrido. Tómate tu tiempo, el sistema te pedirá al menos 5 letras para poder avanzar.
-2. Pulsa **Siguiente Paso**.
-3. **Detalles del aviso**:
-   - Selecciona a quién le ha pasado: *A mí mismo* o *A otra persona*.
-   - Indica el nivel de urgencia: *Baja Prioridad*, *Seguimiento* o *Alta Prioridad*.
-4. **Anonimato**: Por defecto, la opción **"Enviar de forma anónima"** está marcada. 
-   - Si la dejas marcada, tus profesores solo verán "Alumno Anónimo". Solo el equipo de soporte especializado (orientadores/dirección) sabrá quién eres si es estrictamente necesario para ayudarte.
-5. Pulsa **Enviar Mensaje Seguro**. Verás una pantalla de confirmación.
-
-### 1.3. Seguimiento de tus avisos
-En la parte derecha (o debajo en móviles) verás la sección **"Tus Avisos"**.
-- Haz clic en cualquier aviso para abrir el **Chat Seguro**.
-- Podrás ver si tu caso está:
-  - **🔵 Recibido**: El colegio lo ha recibido pero aún no lo ha revisado.
-  - **🟡 En revisión**: Un profesional está trabajando en ello.
-  - **🟢 Resuelto**: El caso se ha cerrado.
-- **Chat**: Puedes enviar mensajes adicionales a los profesores a través de la caja de texto en la parte inferior del chat, creando una conversación fluida y privada.
-- **Resolución**: Cuando un caso se marque como "Resuelto", verás un mensaje verde en la parte superior con la "Resolución Final" oficial escrita por el colegio. Ya no podrás enviar más mensajes en ese hilo.
+> **Versión:** 1.4.0-stable
+> **Última actualización:** 27 de abril de 2026
+> **Idiomas / Languages:** Español · English
 
 ---
 
-## 🏫 2. Guía para el Equipo Educativo (Staff / Profesores / Orientadores)
+## Índice / Table of Contents
 
-El panel del Staff está diseñado para gestionar las incidencias de manera serena, ordenada y colaborativa.
+### 🇪🇸 MANUAL DE USUARIO
+1. [Introducción](#1-introducción)
+2. [Acceso al sistema](#2-acceso-al-sistema)
+3. [Panel de Alumno](#3-panel-de-alumno)
+4. [Panel de Staff](#4-panel-de-staff)
+5. [Panel de Administración](#5-panel-de-administración)
+6. [Solución de problemas (usuario)](#6-solución-de-problemas-usuario)
 
-### 2.1. Acceso y Roles
-1. En la pantalla de login, selecciona la pestaña **"Personal"**.
-2. Introduce tu correo y tu contraseña.
-3. El sistema te mostrará información diferente dependiendo de tu rol:
-   - **Tutor / Profesor**: Solo verás los avisos de los alumnos que pertenecen a las aulas donde tú eres el tutor asignado. Si un alumno ha marcado "Anónimo", no verás su nombre, solo "Alumno Anónimo".
-   - **Orientador / Dirección**: Tienes acceso a todos los casos del colegio y puedes ver la identidad real de los alumnos (marcada con la etiqueta "Identidad Oculta" si el alumno pidió anonimato).
+### 🇬🇧 USER MANUAL
+1. [Introduction](#1-introduction)
+2. [System Access](#2-system-access)
+3. [Student Panel](#3-student-panel)
+4. [Staff Panel](#4-staff-panel)
+5. [Admin Panel](#5-admin-panel)
+6. [Troubleshooting (user)](#6-troubleshooting-user)
 
-### 2.2. Gestión de Casos (Bandeja de Entrada)
-- **Panel Izquierdo**: Muestra la lista de reportes activos. Puedes filtrar por "Todos" o "No leídos", y usar el buscador.
-- **Panel Derecho**: Al hacer clic en un caso, verás todos los detalles: relato original, urgencia, objetivo y el **Chat Seguro**.
-
-### 2.3. Comunicación y Notas Internas (Colaboración)
-En la parte inferior del chat puedes escribir respuestas. Tienes dos formas de comunicarte:
-1. **Mensaje Público**: Escribes y le das a enviar. El alumno lo leerá en su panel.
-2. **🔒 Nota Interna (Solo Staff)**: Marca la casilla "Marcar como nota interna". Este mensaje aparecerá en color amarillo y **nunca será visible para el alumno**. Sirve para debatir el caso con otros profesores u orientadores.
-
-### 2.4. Sistema de Menciones (@)
-Si necesitas la ayuda de un compañero (por ejemplo, el orientador) en un caso específico:
-1. En la caja de chat, empieza a escribir un símbolo **`@`**.
-2. Aparecerá un menú desplegable con todo el personal del colegio.
-3. Selecciona al compañero (ej. `@Lucia`). El sistema marcará automáticamente el mensaje como **Nota Interna**.
-4. Tu compañero recibirá una notificación (un punto rojo en la campana superior de su pantalla) y podrá acceder directamente al caso.
-
-### 2.5. Cambio de Estados y Resolución
-En la parte superior derecha del caso, puedes cambiar el estado (`Recibido` -> `En Revisión`).
-- **Cerrar un caso**: Si cambias el estado a **"Resuelto"**, el sistema te exigirá que escribas un **Resumen de Resolución Formal** (mínimo 5 caracteres). 
-- Este resumen será lo que el alumno lea como respuesta final y conclusión de su solicitud de ayuda.
+### 🛠️ MANUAL TÉCNICO / TECHNICAL MANUAL
+1. [Arquitectura / Architecture](#1-arquitectura--architecture)
+2. [Base de Datos / Database](#2-base-de-datos--database)
+3. [Seguridad / Security](#3-seguridad--security)
+4. [Guía de Desarrollo / Development Guide](#4-guía-de-desarrollo--development-guide)
+5. [Despliegue / Deployment](#5-despliegue--deployment)
 
 ---
 
-## ⚙️ 3. Guía para Administradores
+# 🇪🇸 MANUAL DE USUARIO
 
-El Administrador es responsable de gestionar las cuentas de usuario y la estructura básica (Aulas) de la plataforma Aura.
+## 1. Introducción
+Aura PDP es una herramienta diseñada para mejorar la convivencia escolar, proporcionando un canal seguro y privado para que los alumnos puedan comunicar incidencias o preocupaciones. El sistema garantiza la confidencialidad y permite una gestión eficiente por parte del equipo docente y directivo.
 
-### 3.1. Panel de Control (Dashboard)
-Al iniciar sesión como Administrador, accederás a una vista general con:
-- Total de Usuarios.
-- Total de Aulas.
-- Total de Avisos Registrados.
-
-### 3.2. Gestión de Usuarios
-En la pestaña **Usuarios**:
-- Puedes ver una lista de todos los estudiantes y miembros del personal.
-- **Crear un Usuario**: Pulsa "+ Nuevo Usuario".
-  - Completa el Nombre y Correo.
-  - Asigna el Rol (`alumno`, `profesor`, `orientador`, `direccion`, `admin`).
-  - **Importante (Alumnos)**: Si seleccionas el rol "Alumno", aparecerá un desplegable para **asignarle un Aula**. Todo alumno debe tener un aula asignada para que su tutor reciba los avisos.
-  - *Las contraseñas de los alumnos se pueden dejar en blanco (usan código OTP).*
-
-### 3.3. Gestión de Aulas
-En la pestaña **Aulas**:
-- Pulsa "+ Nueva Aula".
-- Escribe el nombre (ej. "3º ESO B").
-- **Tutor Asignado**: Selecciona de la lista qué Profesor será el responsable de recibir y gestionar los avisos de esa clase concreta.
+### Roles del Sistema
+- **Alumno:** Puede crear informes (anónimos o no) y hacer seguimiento de sus casos.
+- **Staff (Profesor/Orientador/Dirección):** Gestiona los casos asignados, responde a los alumnos y colabora internamente.
+- **Administrador:** Control total sobre usuarios, aulas y configuración técnica.
 
 ---
 
-## 🔒 4. Privacidad y Seguridad (Información para Padres y Comunidad)
+## 2. Acceso al sistema
 
-Aura está construida bajo los más estrictos estándares de privacidad (RGPD y normativas educativas):
+### 2.1 Iniciar sesión
+Acceda a la URL del centro y verá dos pestañas: **Alumno** y **Personal**.
+- **Alumnos:** Introduzcan su email escolar. Recibirán un código OTP de 6 dígitos en su correo o se les pedirá su huella/FaceID si ya han registrado un dispositivo.
+- **Personal:** Acceso mediante email y contraseña.
 
-- **Ausencia de Contraseñas para Alumnos**: Los estudiantes no necesitan recordar contraseñas, minimizando el riesgo de robo de cuentas. El acceso se realiza mediante un código temporal de un solo uso (OTP) enviado a su correo institucional.
-- **Anonimato Garantizado**: Si un estudiante elige la opción anónima, el sistema oculta su nombre criptográficamente a nivel de servidor frente a sus tutores directos, evitando represalias inmediatas o exposición no deseada en el aula.
-- **Auditoría Inmutable**: Todos los mensajes (públicos y notas internas) y cambios de estado no pueden ser borrados ni editados por nadie, ni siquiera por el administrador, garantizando un registro transparente de cómo el colegio actuó ante cada situación.
-- **Aislamiento de Datos**: Las bases de datos operan de manera local (o bajo el control del centro), y los apuntes internos de los profesionales de la salud mental o tutores están técnicamente bloqueados para que nunca lleguen al dispositivo del estudiante.
+### 2.2 Verificación en dos pasos para alumnos (WebAuthn)
+Aura utiliza biometría para que los alumnos no dependan de contraseñas.
+1. **Registro:** En su perfil, haga clic en "Registrar dispositivo".
+2. **Uso:** Al iniciar sesión, el navegador le pedirá su huella o FaceID.
+3. **Fallback:** Si no tiene el dispositivo, puede solicitar un código por email.
+
+### 2.3 Verificación para Staff y Admin (TOTP)
+El personal debe usar una app como Google Authenticator.
+1. **Activación:** Escanee el código QR desde su perfil.
+2. **Acceso:** Introduzca el código de 6 dígitos de la app tras poner su contraseña.
+
+---
+
+## 3. Panel de Alumno
+- **Dashboard:** Muestra el estado de sus informes abiertos.
+- **Nuevo Informe:** Formulario para describir qué sucede, quién está involucrado y el nivel de urgencia.
+- **Mensajes:** Chat seguro con el orientador asignado.
+
+---
+
+## 4. Panel de Staff
+- **Bandeja de Entrada:** Lista de informes pendientes de atención.
+- **Atender Caso:** Permite cambiar el estado (`En proceso`, `Resuelto`) y enviar mensajes al alumno o notas internas solo visibles para el staff.
+- **Menciones:** Use `@nombre` en las notas internas para notificar a un compañero.
+
+---
+
+## 5. Panel de Administración
+- **Usuarios:** Crear, editar o dar de baja a alumnos y personal.
+- **Aulas:** Configurar grupos y asignarles un tutor responsable.
+- **Configuración (Settings):**
+    - **Escuela:** Nombre, logo y contacto.
+    - **Correo:** Configuración del servidor SMTP (esencial para enviar códigos OTP).
+    - **Seguridad:** Ajustes de tiempo de sesión e idiomas.
+
+---
+
+## 6. Solución de problemas (usuario)
+- **No recibo el código:** Revise la carpeta de Spam. Si persiste, contacte con el administrador.
+- **Error biometría:** Asegúrese de estar usando un navegador compatible (Chrome, Safari, Edge) y tener el Bluetooth/Biometría activo.
+
+---
+
+# 🇬🇧 USER MANUAL
+
+## 1. Introduction
+Aura PDP is a tool designed to improve school well-being by providing a secure and private channel for students to communicate incidents or concerns. The system guarantees confidentiality and enables efficient management by the teaching and management team.
+
+### System Roles
+- **Student:** Can create reports (anonymous or not) and follow up on their cases.
+- **Staff (Teacher/Counselor/Management):** Manages assigned cases, responds to students, and collaborates internally.
+- **Administrator:** Full control over users, classrooms, and technical configuration.
+
+---
+
+## 2. System Access
+
+### 2.1 Signing In
+Access the school's URL and you will see two tabs: **Student** and **Staff**.
+- **Students:** Enter your school email. You will receive a 6-digit OTP code in your email or be asked for your fingerprint/FaceID if you have already registered a device.
+- **Staff:** Access via email and password.
+
+### 2.2 Two-Step Verification for Students (WebAuthn)
+Aura uses biometrics so students don't have to rely on passwords.
+1. **Registration:** In your profile, click "Register device".
+2. **Usage:** When signing in, the browser will ask for your fingerprint or FaceID.
+3. **Fallback:** If you don't have the device, you can request a code via email.
+
+### 2.3 Verification for Staff and Admin (TOTP)
+Staff must use an app like Google Authenticator or FreeOTP.
+1. **Activation:** Scan the QR code from your profile.
+2. **Access:** Enter the 6-digit code from the app after entering your password.
+
+---
+
+## 3. Student Panel
+- **Dashboard:** Shows the status of your open reports.
+- **New Report:** Form to describe what is happening, who is involved, and the urgency level.
+- **Messages:** Secure chat with the assigned counselor.
+
+---
+
+## 4. Staff Panel
+- **Inbox:** List of reports pending attention.
+- **Handle Case:** Allows changing the status (`In progress`, `Resolved`) and sending messages to the student or internal notes visible only to staff.
+- **Mentions:** Use `@name` in internal notes to notify a colleague.
+
+---
+
+## 5. Admin Panel
+- **Users:** Create, edit, or disable students and staff.
+- **Classrooms:** Configure groups and assign a responsible tutor.
+- **Settings:**
+    - **School:** Name, logo, and contact.
+    - **Mail:** SMTP server configuration (essential for sending OTP codes).
+    - **Security:** Session time and language settings.
+
+---
+
+## 6. Troubleshooting (user)
+- **I don't receive the code:** Check your Spam folder. If it persists, contact the administrator.
+- **Biometry error:** Make sure you are using a compatible browser (Chrome, Safari, Edge) and have Bluetooth/Biometrics active.
+
+---
+
+# 🛠️ MANUAL TÉCNICO / TECHNICAL MANUAL
+
+## 1. Arquitectura / Architecture
+Aura PDP utiliza un patrón **MVC Nativo**.
+- **Model:** `app/Models/` (Interacción con SQLite vía PDO).
+- **View:** `resources/views/` (PHP puro con escape de datos).
+- **Controller:** `app/Controllers/` (Lógica de negocio).
+- **Core:** `app/Core/` (Router, Auth, Session, Lang, etc.).
+
+### Flujo de Petición / Request Flow:
+1. `index.php` inicializa el entorno y el Core.
+2. `Router.php` busca la coincidencia de URL y método.
+3. `Middleware.php` valida la sesión y el rol.
+4. El `Controller` procesa la petición y devuelve una `View`.
+
+---
+
+## 2. Base de Datos / Database
+El esquema se encuentra en `database/migrations.sql`.
+```sql
+-- Ejemplo de tabla principal
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    role VARCHAR(255) CHECK (role IN ('admin', 'direccion', 'orientador', 'profesor', 'alumno')),
+    -- ...
+);
+```
+**Relaciones:**
+- `reports.student_id` -> `student_profiles.id`
+- `reports.classroom_id` -> `classrooms.id`
+- `report_messages.report_id` -> `reports.id`
+
+---
+
+## 3. Seguridad / Security
+- **CSRF:** Tokens obligatorios en todas las peticiones POST/PATCH/DELETE.
+- **XSS:** Todas las variables en vistas pasan por `htmlspecialchars()`.
+- **Inyección SQL:** Uso estricto de `PDO::prepare` y `bindValue`.
+- **Headers:** `Content-Security-Policy`, `X-Frame-Options`, `Strict-Transport-Security`.
+
+---
+
+## 4. Guía de Desarrollo / Development Guide
+
+### Añadir un nuevo Idioma
+1. Cree un archivo en `lang/XX.php` (ej. `fr.php`).
+2. Traduzca todas las claves del array.
+3. El sistema lo detectará automáticamente.
+
+### Crear una nueva Ruta
+En `app/routes.php`:
+```php
+$router->get('/nueva-ruta', [MiController::class, 'miMetodo'], ['auth', 'role:admin']);
+```
+
+---
+
+## 5. Despliegue / Deployment
+1. **Requisitos:** PHP 8.1+, Apache con `mod_rewrite`, SQLite3.
+2. **Permisos:** La carpeta `database/` y `storage/` deben tener permisos `0775` para el usuario `www-data`.
+3. **SMTP:** Configure obligatoriamente un servidor SMTP en el panel admin para el funcionamiento del 2FA.
+
+---
+
+## Apéndices / Appendices
+
+### A. Glosario / Glossary
+- **OTP:** One Time Password (Contraseña de un solo uso).
+- **TOTP:** Time-based One Time Password.
+- **WebAuthn:** Estándar web para autenticación biométrica.
+
+### B. Configuración SMTP / SMTP Setup
+- **Gmail:** Requiere "Contraseñas de aplicación".
+- **Brevo/Sendinblue:** Recomendado para estabilidad en envíos masivos.
+
+---
+© 2026 EmoTerraLab — Aura PDP Project
