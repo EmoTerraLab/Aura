@@ -2,6 +2,15 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-27] - Monitoreo y API (v1.8.0-stable)
+
+### 📊 Telemetría y Monitoreo
+- **API de Telemetría:** Implementado el endpoint `/api/telemetry` que expone métricas en tiempo real (usuarios, reportes, aulas, versiones).
+- **Controlador de Telemetría:** Creado `TelemetryController` para la gestión centralizada de estadísticas del sistema.
+
+### 🛡️ Seguridad y Estabilidad
+- **Mantenimiento del Núcleo:** Consolidación de los últimos fixes de preproducción.
+
 ## [2026-04-27] - Consolidación de Producción (v1.7.0-stable)
 
 ### 🚀 Lanzamiento de Producción
