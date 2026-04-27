@@ -10,6 +10,11 @@ class Csrf {
         return $_SESSION['csrf_token'];
     }
 
+    public static function tokenField() {
+        $token = self::generateToken();
+        return '<input type="hidden" name="csrf_token" value="' . $token . '">';
+    }
+
     public static function validateToken($token) {
         Session::start();
         if (empty($_SESSION['csrf_token']) || empty($token)) {
