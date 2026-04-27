@@ -188,7 +188,6 @@ Utiliza **SQLite** para facilitar el despliegue. Estructura principal:
 | GET | `/staff/dashboard` | `StaffController@index` | `auth`, `staff` | Inicio staff |
 | GET | `/admin` | `AdminController@index` | `auth`, `admin` | Panel administración |
 | GET | `/admin/settings` | `SettingsController@index` | `auth`, `admin` | Configuración global |
-| GET | `/api/telemetry` | `TelemetryController@getStats` | - | Métricas del sistema |
 
 ---
 

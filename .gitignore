@@ -1,6 +1,75 @@
-/vendor/
-/storage/logs/*.log
-/database/*.sqlite
-.DS_Store
+# Entorno
 .env
-deploy.sh
+
+# Base de datos
+database/*.sqlite
+database/backups/*
+!database/backups/.gitkeep
+
+# Storage
+storage/logs/*
+!storage/logs/.gitkeep
+storage/maintenance/*
+!storage/maintenance/.gitkeep
+storage/cache/*
+!storage/cache/.gitkeep
+
+# Dependencias
+vendor/
+
+# Archivos de prueba y desarrollo
+test*.php
+test_*.php
+*_test.php
+debug*.php
+phpinfo.php
+info.php
+
+# Scripts temporales
+add_client.php
+create_admin.php
+seed_*.php
+fix_*.php
+
+# Logs y PIDs (servidor de desarrollo)
+*.log
+*.pid
+server.log
+server.pid
+
+# Cookies de prueba
+cookies*.txt
+
+# Duplicados (archivos con ' 2' en el nombre — nunca deben existir)
+* 2.php
+* 2.json
+* 2.lock
+* 2.md
+* 2.yml
+* 2.sh
+VERSION 2
+Dockerfile 2
+
+# Sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+eHThumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Backups manuales
+*.bak
+*.tmp
+*.orig
+*.old
+/tmp_review/
