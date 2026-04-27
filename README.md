@@ -1,14 +1,14 @@
-# Aura PDP — Plataforma de Gestión de Convivencia Escolar
-# Aura PDP — School Well-being Management Platform
+# Aura — Plataforma de Gestión de Convivencia Escolar
+# Aura — School Well-being Management Platform
 
 ![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![i18n](https://img.shields.io/badge/i18n-es%20|%20ca%20|%20gl%20|%20eu%20|%20en-blue)
 
-Aura PDP es una solución integral para la gestión de informes y convivencia en centros educativos. Permite a los alumnos reportar incidencias de forma anónima o identificada y al personal del centro (profesores, orientadores y dirección) gestionar dichos casos mediante un sistema de tickets seguro, bilingüe y con autenticación de vanguardia.
+Aura es una solución integral para la gestión de informes y convivencia en centros educativos. Permite a los alumnos reportar incidencias de forma anónima o identificada y al personal del centro (profesores, orientadores y dirección) gestionar dichos casos mediante un sistema de tickets seguro, bilingüe y con autenticación de vanguardia.
 
-Aura PDP is a comprehensive solution for managing well-being reports in schools. It allows students to report incidents anonymously or identified, and school staff (teachers, counselors, and management) to manage these cases through a secure, bilingual ticket system with cutting-edge authentication.
+Aura is a comprehensive solution for managing well-being reports in schools. It allows students to report incidents anonymously or identified, and school staff (teachers, counselors, and management) to manage these cases through a secure, bilingual ticket system with cutting-edge authentication.
 
 ---
 
@@ -70,7 +70,7 @@ Aura PDP is a comprehensive solution for managing well-being reports in schools.
 1. **Clonar el repositorio:**
    ```bash
    git clone [url-del-repo]
-   cd aura-pdp
+   cd aura
    ```
 2. **Instalar dependencias:**
    ```bash
@@ -97,7 +97,7 @@ Aura PDP is a comprehensive solution for managing well-being reports in schools.
 ## ⚙️ Configuración / Configuration
 
 ### Variables de Entorno (.env)
-Aunque Aura PDP utiliza configuración en base de datos para la mayoría de aspectos, se pueden definir:
+Aunque Aura utiliza configuración en base de datos para la mayoría de aspectos, se pueden definir:
 | Variable | Descripción | Defecto |
 |---|---|---|
 | `APP_ENV` | Entorno (development/production) | `development` |
@@ -106,9 +106,9 @@ Aunque Aura PDP utiliza configuración en base de datos para la mayoría de aspe
 ```apache
 <VirtualHost *:443>
     ServerName colegio-aura.com
-    DocumentRoot /var/www/aura-pdp/public
+    DocumentRoot /var/www/aura/public
 
-    <Directory /var/www/aura-pdp/public>
+    <Directory /var/www/aura/public>
         AllowOverride All
         Require all granted
     </Directory>
@@ -122,7 +122,7 @@ Aunque Aura PDP utiliza configuración en base de datos para la mayoría de aspe
 
 ## 🏗️ Arquitectura / Architecture
 
-Aura PDP sigue un patrón **MVC Nativo** sin frameworks pesados, optimizado para rendimiento y facilidad de despliegue.
+Aura sigue un patrón **MVC Nativo** sin frameworks pesados, optimizado para rendimiento y facilidad de despliegue.
 
 ```
 HTTP Request
@@ -204,4 +204,4 @@ Utiliza **SQLite** para facilitar el despliegue. Estructura principal:
 Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 
 ---
-© 2026 EmoTerraLab — Aura PDP Project
+© 2026 EmoTerraLab — Aura Project

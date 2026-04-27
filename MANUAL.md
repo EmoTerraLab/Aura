@@ -1,8 +1,8 @@
-# 📚 Manual de Usuario y Técnico — Aura PDP
-# User & Technical Manual — Aura PDP
+# 📚 Manual de Usuario y Técnico — Aura
+# User & Technical Manual — Aura
 
-> **Versión:** 1.4.0-stable
-> **Última actualización:** 27 de abril de 2026
+> **Versión:** 1.5.0-stable
+> **Última actualización:** lunes, 27 de abril de 2026
 > **Idiomas / Languages:** Español · English
 
 ---
@@ -37,7 +37,7 @@
 # 🇪🇸 MANUAL DE USUARIO
 
 ## 1. Introducción
-Aura PDP es una herramienta diseñada para mejorar la convivencia escolar, proporcionando un canal seguro y privado para que los alumnos puedan comunicar incidencias o preocupaciones. El sistema garantiza la confidencialidad y permite una gestión eficiente por parte del equipo docente y directivo.
+Aura es una herramienta diseñada para mejorar la convivencia escolar, proporcionando un canal seguro y privado para que los alumnos puedan comunicar incidencias o preocupaciones. El sistema garantiza la confidencialidad y permite una gestión eficiente por parte del equipo docente y directivo.
 
 ### Roles del Sistema
 - **Alumno:** Puede crear informes (anónimos o no) y hacer seguimiento de sus casos.
@@ -99,7 +99,7 @@ El personal debe usar una app como Google Authenticator.
 # 🇬🇧 USER MANUAL
 
 ## 1. Introduction
-Aura PDP is a tool designed to improve school well-being by providing a secure and private channel for students to communicate incidents or concerns. The system guarantees confidentiality and enables efficient management by the teaching and management team.
+Aura is a tool designed to improve school well-being by providing a secure and private channel for students to communicate incidents or concerns. The system guarantees confidentiality and enables efficient management by the teaching and management team.
 
 ### System Roles
 - **Student:** Can create reports (anonymous or not) and follow up on their cases.
@@ -161,7 +161,7 @@ Staff must use an app like Google Authenticator or FreeOTP.
 # 🛠️ MANUAL TÉCNICO / TECHNICAL MANUAL
 
 ## 1. Arquitectura / Architecture
-Aura PDP utiliza un patrón **MVC Nativo**.
+Aura utiliza un patrón **MVC Nativo**.
 - **Model:** `app/Models/` (Interacción con SQLite vía PDO).
 - **View:** `resources/views/` (PHP puro con escape de datos).
 - **Controller:** `app/Controllers/` (Lógica de negocio).
@@ -235,4 +235,4 @@ $router->get('/nueva-ruta', [MiController::class, 'miMetodo'], ['auth', 'role:ad
 - **Brevo/Sendinblue:** Recomendado para estabilidad en envíos masivos.
 
 ---
-© 2026 EmoTerraLab — Aura PDP Project
+© 2026 EmoTerraLab — Aura Project

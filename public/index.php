@@ -47,6 +47,21 @@ spl_autoload_register(function ($class) {
 // Iniciar sesión
 \App\Core\Session::start();
 
+// [MANTENIMIENTO] Comprobar modo mantenimiento antes de procesar la petición
+if (\App\Core\MaintenanceMode::isActive()) {
+    $isAdmin = \App\Core\Auth::check() && (\App\Core\Auth::role() === 'admin' || \App\Core\Auth::role() === 'direccion');
+    $isAdminRoute = str_starts_with($_SERVER['REQUEST_URI'], '/admin/update');
+
+    // Permitir al admin acceder al panel de actualización incluso en mantenimiento
+    if (!$isAdmin || !$isAdminRoute) {
+        http_response_code(503);
+        header('Retry-After: 300');
+        $maintenanceData = \App\Core\MaintenanceMode::getData();
+        require __DIR__ . '/../app/Views/maintenance.php';
+        exit;
+    }
+}
+
 // Inicializar sistema de configuración (DB)
 \App\Core\Config::init(new \App\Models\Setting());
 

@@ -131,3 +131,11 @@ $router->post('/admin/settings/appearance', [SettingsController::class, 'saveApp
 $router->post('/admin/settings/mail', [SettingsController::class, 'saveMail'], ['auth', 'role:admin']);
 $router->post('/admin/settings/mail/test', [SettingsController::class, 'testMail'], ['auth', 'role:admin']);
 $router->post('/admin/settings/security', [SettingsController::class, 'saveSecurity'], ['auth', 'role:admin']);
+
+// -- Actualizaciones del Sistema --
+$router->get('/admin/update', [\App\Controllers\Admin\UpdateController::class, 'index'], ['auth', 'roles:admin,direccion']);
+$router->post('/admin/update/run', [\App\Controllers\Admin\UpdateController::class, 'run'], ['auth', 'roles:admin,direccion']);
+$router->post('/admin/update/maintenance/enable', [\App\Controllers\Admin\UpdateController::class, 'enableMaintenance'], ['auth', 'roles:admin,direccion']);
+$router->post('/admin/update/maintenance/disable', [\App\Controllers\Admin\UpdateController::class, 'disableMaintenance'], ['auth', 'roles:admin,direccion']);
+$router->post('/admin/update/backup/restore', [\App\Controllers\Admin\UpdateController::class, 'restoreBackup'], ['auth', 'roles:admin,direccion']);
+$router->get('/admin/update/integrity', [\App\Controllers\Admin\UpdateController::class, 'checkIntegrity'], ['auth', 'roles:admin,direccion']);

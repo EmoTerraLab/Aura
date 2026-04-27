@@ -1,16 +1,17 @@
-# Aura PDP - Histórico de Cambios
+# Aura - Histórico de Cambios
 
-Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura PDP.
+Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
-## [2026-04-27] - Sincronización de Preproducción a Producción (v1.4.0-stable)
+## [2026-04-27] - Lanzamiento Oficial (v1.5.0-stable)
 
-### 📚 Documentación y Manuales
-- **Manual de Usuario y Técnico:** Rediseño completo del manual (`MANUAL.md`) incluyendo secciones en Español e Inglés, guía técnica de arquitectura y despliegue.
-- **README Principal:** Actualización visual y de contenido del `README.md` con nuevos badges, estructura de arquitectura y guías de instalación rápida.
+### 🚀 Paso a Producción
+- **Transición desde Preproducción:** Migración completa de los cambios de la rama PDP a la versión estable de producción.
+- **Unificación de Marca:** Eliminación de las etiquetas "PDP" en la documentación y manuales técnicos para reflejar el estado estable.
+- **Sincronización de Versión:** Actualización global a la versión `1.5.0-stable`.
 
-### ⚙️ Ajustes Finales
-- **Sincronización de Versión:** Actualización a `1.4.0-stable` tras validar los cambios en el entorno de preproducción (PDP).
-- **Consolidación de Estilos:** Unificación de la estética visual en la documentación para reflejar el estado actual de la plataforma.
+### 📚 Documentación
+- **Manual de Usuario:** Actualizado para reflejar la versión final estable.
+- **README:** Refactorización de enlaces y nombres para el entorno de producción.
 
 ## [2026-04-25] - Mejoras de Seguridad, Arquitectura y UI
 
