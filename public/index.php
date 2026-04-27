@@ -1,6 +1,6 @@
 <?php
 // =============================================================================
-// Aura — public/index.php
+// Aura PDP — public/index.php
 // Punto de entrada de la aplicación
 // =============================================================================
 
@@ -50,14 +50,27 @@ spl_autoload_register(function ($class) {
 // [MANTENIMIENTO] Comprobar modo mantenimiento antes de procesar la petición
 if (\App\Core\MaintenanceMode::isActive()) {
     $isAdmin = \App\Core\Auth::check() && (\App\Core\Auth::role() === 'admin' || \App\Core\Auth::role() === 'direccion');
-    $isAdminRoute = str_starts_with($_SERVER['REQUEST_URI'], '/admin/update');
+    $isUpdateRoute = str_starts_with($_SERVER['REQUEST_URI'], '/admin/update');
 
-    // Permitir al admin acceder al panel de actualización incluso en mantenimiento
-    if (!$isAdmin || !$isAdminRoute) {
+    if (!$isAdmin || !$isUpdateRoute) {
         http_response_code(503);
         header('Retry-After: 300');
-        $maintenanceData = \App\Core\MaintenanceMode::getData();
-        require __DIR__ . '/../app/Views/maintenance.php';
+
+        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
+
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            $data = \App\Core\MaintenanceMode::getData();
+            echo json_encode([
+                'error'      => 'maintenance',
+                'message'    => $data['message'] ?? 'Sistema en mantenimiento',
+                'retry_after' => 300
+            ]);
+        } else {
+            $maintenanceData = \App\Core\MaintenanceMode::getData();
+            require __DIR__ . '/../app/Views/maintenance.php';
+        }
         exit;
     }
 }

@@ -38,7 +38,7 @@ class MaintenanceMode
             'message'       => $message ?: 'El sistema está en mantenimiento. Volveremos pronto.',
             'message_en'    => 'The system is under maintenance. We will be back soon.',
             'estimated_end' => $estimatedEnd,
-            'enabled_by'    => Auth::check() ? Auth::user()['email'] : 'system'
+            'enabled_by'    => (defined('CLI') && CLI) ? 'cli' : ((\App\Core\Auth::check()) ? \App\Core\Auth::user()['email'] : 'system')
         ];
 
         file_put_contents($dataFile, json_encode($data, JSON_PRETTY_PRINT));

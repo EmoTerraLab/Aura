@@ -26,7 +26,7 @@ class Migration_2024_01_08_000000_seed_initial_settings
             ['mail_username', '', 'text'],
             ['mail_password', '', 'password'],
             ['mail_from_address', '', 'text'],
-            ['mail_from_name', 'Aura', 'text'],
+            ['mail_from_name', 'Aura PDP', 'text'],
             ['2fa_students_method', 'webauthn', 'text'],
             ['2fa_staff_method', 'totp', 'text'],
             ['session_lifetime_minutes', '120', 'text'],

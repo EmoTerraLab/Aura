@@ -12,6 +12,7 @@ class Migrator
     private \PDO $db;
     private string $migrationsPath;
     private string $backupsPath;
+    private string $lockFile = __DIR__ . '/../../storage/maintenance/.migration_lock';
 
     public function __construct(\PDO $db)
     {
@@ -19,6 +20,30 @@ class Migrator
         $this->migrationsPath = __DIR__ . '/../../database/migrations/';
         $this->backupsPath    = __DIR__ . '/../../database/backups/';
         $this->ensureMigrationsTable();
+    }
+
+    private function acquireLock(): bool
+    {
+        // Si el lock tiene más de 10 minutos, considerarlo huérfano y eliminarlo
+        if (file_exists($this->lockFile)) {
+            if (time() - filemtime($this->lockFile) > 600) {
+                unlink($this->lockFile);
+            } else {
+                return false; // Lock activo
+            }
+        }
+        return touch($this->lockFile);
+    }
+
+    private function releaseLock(): void
+    {
+        if (file_exists($this->lockFile)) unlink($this->lockFile);
+    }
+
+    public function isRunning(): bool
+    {
+        return file_exists($this->lockFile)
+            && (time() - filemtime($this->lockFile) < 600);
     }
 
     /**
@@ -50,18 +75,26 @@ class Migrator
      */
     public function runPending(): array
     {
-        $pending = $this->getPending();
-        $results = [];
-
-        foreach ($pending as $migration) {
-            $result = $this->runSingle($migration);
-            $results[] = $result;
-            if (!$result['success']) {
-                break; // Detener en el primer error
-            }
+        if (!$this->acquireLock()) {
+            throw new \RuntimeException('Ya hay una migración en curso. Espera a que termine.');
         }
 
-        return $results;
+        try {
+            $pending = $this->getPending();
+            $results = [];
+
+            foreach ($pending as $migration) {
+                $result = $this->runSingle($migration);
+                $results[] = $result;
+                if (!$result['success']) {
+                    break; // Detener en el primer error
+                }
+            }
+
+            return $results;
+        } finally {
+            $this->releaseLock();
+        }
     }
 
     /**
@@ -245,7 +278,7 @@ class Migrator
     private function getAllMigrationFiles(): array
     {
         if (!is_dir($this->migrationsPath)) return [];
-        $files = glob($this->migrationsPath . '*.php');
+        $files = glob($this->migrationsPath . '[0-9]*.php');
         sort($files); // Orden cronológico por nombre
         return array_map('basename', $files);
     }

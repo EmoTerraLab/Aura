@@ -19,6 +19,28 @@
             <span class="material-symbols-outlined">settings</span>
             <span class="font-medium">Configuración</span>
         </a>
+        <?php
+        // Calcular migraciones pendientes para el badge
+        try {
+            $totalFiles = count(glob(__DIR__ . '/../../../database/migrations/[0-9]*.php'));
+            $db_inst = \App\Core\Database::getInstance();
+            $stmt_mig = $db_inst->query("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='migrations'");
+            if ($stmt_mig->fetchColumn() > 0) {
+                $stmt = $db_inst->query('SELECT COUNT(*) FROM migrations');
+                $executed = (int)$stmt->fetchColumn();
+            } else {
+                $executed = 0;
+            }
+            $pendingCount = max(0, $totalFiles - $executed);
+        } catch (\Exception $e) { $pendingCount = 0; }
+        ?>
+        <a href="/admin/update" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150 <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/update') ? 'bg-teal-50 text-teal-700' : '' ?>">
+            <span class="material-symbols-outlined">system_update</span>
+            <span class="font-medium">Actualizaciones</span>
+            <?php if ($pendingCount > 0): ?>
+                <span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><?= $pendingCount ?></span>
+            <?php endif; ?>
+        </a>
         <div class="mt-8 px-4">
             <a href="/staff/inbox" class="block bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden transition-transform hover:scale-[1.02]">
                 <span class="material-symbols-outlined text-secondary mb-2">forum</span>
@@ -52,6 +74,22 @@
 
 <main class="flex-1 lg:ml-64 flex flex-col h-screen pt-16 lg:pt-0 bg-surface overflow-y-auto no-scrollbar">
     <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full space-y-10">
+        <?php if ($pendingCount > 0): ?>
+        <!-- Update Alert Banner -->
+        <div class="bg-orange-50 border border-orange-200 rounded-2xl p-6 flex items-center gap-6 animate-pulse">
+            <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                <span class="material-symbols-outlined text-3xl">update</span>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-orange-900 font-black text-lg">Actualización de sistema pendiente</h3>
+                <p class="text-orange-700 text-sm font-medium">Hay <?= $pendingCount ?> cambios de base de datos esperando ser aplicados.</p>
+            </div>
+            <a href="/admin/update" class="bg-orange-600 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg shadow-orange-600/20 hover:bg-orange-700 transition-colors">
+                Actualizar ahora
+            </a>
+        </div>
+        <?php endif; ?>
+
         <!-- Stats Header -->
         <header class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-surface-container-lowest p-6 rounded-2xl border border-surface-variant/50 ambient-shadow">

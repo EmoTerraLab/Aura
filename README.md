@@ -70,7 +70,7 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
 1. **Clonar el repositorio:**
    ```bash
    git clone [url-del-repo]
-   cd aura
+   cd aura-pdp
    ```
 2. **Instalar dependencias:**
    ```bash
@@ -106,9 +106,9 @@ Aunque Aura utiliza configuración en base de datos para la mayoría de aspectos
 ```apache
 <VirtualHost *:443>
     ServerName colegio-aura.com
-    DocumentRoot /var/www/aura/public
+    DocumentRoot /var/www/aura-pdp/public
 
-    <Directory /var/www/aura/public>
+    <Directory /var/www/aura-pdp/public>
         AllowOverride All
         Require all granted
     </Directory>

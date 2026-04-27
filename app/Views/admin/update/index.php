@@ -7,7 +7,11 @@
                 <p class="text-slate-500">Versión actual: <span class="font-mono font-bold text-indigo-600">v<?= $currentVersion ?></span></p>
             </div>
             <div class="flex space-x-3">
-                <button onclick="checkIntegrity()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50">
+                <button onclick="createBackup()" class="px-4 py-2 text-sm font-medium text-white bg-slate-700 rounded-md hover:bg-slate-800 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">backup</span>
+                    Crear backup ahora
+                </button>
+                <button onclick="checkIntegrity()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">
                     🔍 Verificar integridad
                 </button>
                 <?php if ($maintenanceActive): ?>
@@ -230,8 +234,34 @@ async function checkIntegrity() {
     }
 }
 
+async function createBackup() {
+    if(!confirm("¿Quieres crear un backup de la base de datos ahora?")) return;
+    try {
+        const res = await fetch('/admin/update/backup/create', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '<?= \App\Core\Session::get("csrf_token") ?>'
+            }
+        });
+        const result = await res.json();
+        if(result.success) {
+            alert(result.message);
+            location.reload();
+        } else {
+            alert("Error: " + result.error);
+        }
+    } catch(e) {
+        alert("Error de red");
+    }
+}
+
 async function restoreBackup(filename) {
-    if(!confirm("⚠️ ¿Estás SEGURO de restaurar este backup?\n\nSe sobrescribirá la base de datos actual. El sistema entrará en modo mantenimiento.")) return;
+    const confirmation = prompt(`⚠️ ATENCIÓN: Estás a punto de restaurar un backup.\n\nEsto sobrescribirá la base de datos actual.\nPara confirmar, escribe "RESTAURAR" en el cuadro de abajo:`);
+    
+    if(confirmation !== "RESTAURAR") {
+        if(confirmation !== null) alert("Confirmación incorrecta. No se ha restaurado nada.");
+        return;
+    }
     
     try {
         const res = await fetch('/admin/update/backup/restore', {
@@ -242,6 +272,7 @@ async function restoreBackup(filename) {
             },
             body: JSON.stringify({
                 filename: filename,
+                confirmation: confirmation,
                 csrf_token: '<?= \App\Core\Session::get("csrf_token") ?>'
             })
         });

@@ -61,6 +61,7 @@ class Router {
                         \App\Controllers\LangController::class => new \App\Controllers\LangController(new \App\Models\User()),
                         \App\Controllers\TotpController::class => new \App\Controllers\TotpController(),
                         \App\Controllers\WebAuthnController::class => new \App\Controllers\WebAuthnController(new \App\Models\WebAuthnCredential()),
+                        \App\Controllers\Admin\UpdateController::class => new \App\Controllers\Admin\UpdateController(),
                         default => new $controllerClass()
                     };
 

@@ -49,6 +49,11 @@ class UpdateController
         Csrf::validateRequest();
         header('Content-Type: application/json');
 
+        // Aumentar límites para el proceso de migración
+        set_time_limit(300);        // 5 minutos máximo
+        ini_set('memory_limit', '256M');
+        ignore_user_abort(true);    // Continuar aunque el usuario cierre el navegador
+
         $logId = $this->startUpdateLog();
 
         try {
@@ -176,6 +181,22 @@ class UpdateController
     }
 
     /**
+     * POST /admin/update/backup/create
+     */
+    public function createBackupManual(): void
+    {
+        Csrf::validateRequest();
+        header('Content-Type: application/json');
+        try {
+            $path = $this->migrator->createBackup();
+            echo json_encode(['success' => true, 'message' => 'Backup creado: ' . basename($path)]);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * POST /admin/update/backup/restore
      */
     public function restoreBackup(): void
@@ -184,19 +205,42 @@ class UpdateController
         header('Content-Type: application/json');
 
         $data = json_decode(file_get_contents('php://input'), true);
+        
+        // Confirmación extra requerida
+        $confirmation = $data['confirmation'] ?? '';
+        if ($confirmation !== 'RESTAURAR') {
+            http_response_code(400);
+            echo json_encode(['error' => 'Debes escribir RESTAURAR para confirmar']);
+            return;
+        }
+
         $filename = basename($data['filename'] ?? '');
-        if (!$filename) {
-            echo json_encode(['success' => false, 'error' => 'Nombre de archivo no válido']);
+        if (!$filename || !preg_match('/^aura_backup_[\d_-]+\.sqlite$/', $filename)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Nombre de archivo no válido']);
             return;
         }
 
         try {
+            // 1. Crear backup del estado actual ANTES de restaurar
+            $preRestoreBackup = $this->migrator->createBackup();
+
+            // 2. Activar mantenimiento
+            MaintenanceMode::enable('Restaurando backup. Sistema no disponible.');
+
+            // 3. Restaurar
             $backupPath = __DIR__ . '/../../../database/backups/' . $filename;
-            MaintenanceMode::enable('Restaurando backup. El sistema no está disponible.');
             $this->migrator->restoreBackup($backupPath);
-            echo json_encode(['success' => true, 'message' => 'Backup restaurado. Verifica el sistema y desactiva el mantenimiento manualmente.']);
+
+            // 4. NO desactivar mantenimiento automáticamente
+            echo json_encode([
+                'success' => true,
+                'message' => 'Backup restaurado. Se ha creado un backup del estado anterior en: ' . basename($preRestoreBackup) . '. Verifica el sistema y desactiva el mantenimiento manualmente.',
+                'pre_restore_backup' => basename($preRestoreBackup)
+            ]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
         }
     }
 

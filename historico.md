@@ -2,16 +2,15 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
-## [2026-04-27] - Lanzamiento Oficial (v1.5.0-stable)
+## [2026-04-27] - Optimización de Actualizaciones y Migraciones (v1.6.0-stable)
 
-### 🚀 Paso a Producción
-- **Transición desde Preproducción:** Migración completa de los cambios de la rama PDP a la versión estable de producción.
-- **Unificación de Marca:** Eliminación de las etiquetas "PDP" en la documentación y manuales técnicos para reflejar el estado estable.
-- **Sincronización de Versión:** Actualización global a la versión `1.5.0-stable`.
+### ⚙️ Mejoras en el Núcleo (Core)
+- **Refactorización del Migrator:** Mejora en la detección de versiones de base de datos y manejo de errores durante la ejecución de esquemas.
+- **Sistema de Actualización:** Optimizada la lógica del `UpdateController` para una transición más fluida entre versiones estables.
+- **Rutas Consolidadas:** Limpieza y optimización de las rutas administrativas y de personal.
 
 ### 📚 Documentación
-- **Manual de Usuario:** Actualizado para reflejar la versión final estable.
-- **README:** Refactorización de enlaces y nombres para el entorno de producción.
+- **Sincronización:** Actualización de los manuales y guías de actualización para reflejar las nuevas capacidades del sistema de migraciones.
 
 ## [2026-04-25] - Mejoras de Seguridad, Arquitectura y UI
 

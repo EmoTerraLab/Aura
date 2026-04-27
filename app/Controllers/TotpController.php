@@ -33,7 +33,7 @@ class TotpController
 
         // Generar un TOTP temporal (no guardado aún)
         $totp = TOTP::create();
-        $appName = Config::get('school_name', 'Aura');
+        $appName = Config::get('school_name', 'Aura PDP');
         $totp->setLabel($user['email']);
         $totp->setIssuer($appName);
 
