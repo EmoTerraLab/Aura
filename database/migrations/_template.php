@@ -1,7 +1,7 @@
 <?php
 /**
  * Migración: [DESCRIPCIÓN AQUÍ]
- * Versión app: 1.6.2-stable
+ * Versión app: 1.6.3-stable
  * Fecha: 2026-04-27
  */
 class Migration_YYYY_MM_DD_HHMMSS_nombre_descriptivo
