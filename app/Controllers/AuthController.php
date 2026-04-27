@@ -10,10 +10,12 @@ use App\Core\Csrf;
 class AuthController {
     private $userModel;
     private $otpModel;
+    private $mailer;
 
-    public function __construct(\App\Models\User $userModel, \App\Models\OTPCode $otpModel) {
+    public function __construct(\App\Models\User $userModel, \App\Models\OTPCode $otpModel, \App\Core\Mailer $mailer = null) {
         $this->userModel = $userModel;
         $this->otpModel = $otpModel;
+        $this->mailer = $mailer;
     }
 
     public function showLogin() {
@@ -98,7 +100,31 @@ class AuthController {
             $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
             $this->otpModel->create($user['id'], $code);
 
-            // Registro en error_log simulando envío de mail según spec
+            // Envío real si el mailer está configurado
+            if ($this->mailer) {
+                try {
+                    $schoolName = \App\Core\Config::get('school_name', 'Aura');
+                    $subject = "Tu código de acceso - {$schoolName}";
+                    $body = "
+                        <h2>Tu código de acceso</h2>
+                        <p>Hola,</p>
+                        <p>Has solicitado un código de acceso para entrar en <strong>{$schoolName}</strong>.</p>
+                        <p style='font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #4F46E5;'>{$code}</p>
+                        <p>Este código caducará en 10 minutos por tu seguridad.</p>
+                        <p>Si no has solicitado este código, puedes ignorar este mensaje.</p>
+                    ";
+                    $this->mailer->send($email, $subject, $body);
+                } catch (\Exception $e) {
+                    error_log("Error enviando OTP a {$email}: " . $e->getMessage());
+                    // En desarrollo permitimos continuar, en prod fallamos si no se puede enviar
+                    if (APP_ENV !== 'dev') {
+                        echo json_encode(['ok' => false, 'error' => 'No se pudo enviar el correo. Por favor, contacta con soporte.']);
+                        return;
+                    }
+                }
+            }
+
+            // Registro en error_log para depuración
             error_log("OTP generado para {$email}: {$code}");
 
             $response = ['ok' => true];
