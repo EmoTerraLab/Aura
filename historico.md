@@ -2,6 +2,17 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-28] - Gestión de Identidad y Seguridad (v2.1.0-stable)
+
+### 🚀 Nuevas Funcionalidades
+- **Recuperación de Contraseña:** Implementación de flujo completo de recuperación de contraseña para el personal (Staff/Admin) mediante tokens seguros por correo electrónico.
+- **Modelos de Seguridad:** Nuevo modelo `PasswordReset` para la gestión de tokens de expiración temporal.
+- **Vistas de Autenticación:** Creadas interfaces para solicitud de reset, formulario de nueva contraseña y estados de token inválido/expirado.
+
+### 🛠️ Mejoras Técnicas
+- **Controlador de Reset:** Centralización de la lógica de recuperación en `PasswordResetController`.
+- **Validación Estricta:** Implementación de tipado nulo en el constructor de `AuthController` para mayor robustez en la inyección del Mailer.
+
 ## [2026-04-28] - Lanzamiento Aura v2.0 "Safe & Simple" (v2.0.0-stable)
 
 ### 🚀 Nuevas Funcionalidades

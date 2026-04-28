@@ -93,7 +93,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
                 </div>
             </div>
             <div class="flex justify-end px-4 mt-[-8px]">
-                <a class="font-body-md text-[14px] text-surface-tint hover:underline decoration-surface-tint/50 underline-offset-4" href="#"><?= \App\Core\Lang::t('auth.forgot_password') ?></a>
+                <a class="font-body-md text-[14px] text-surface-tint hover:underline decoration-surface-tint/50 underline-offset-4" href="/password/forgot"><?= \App\Core\Lang::t('auth.forgot_password') ?></a>
             </div>
             <button id="btn-staff-login" class="mt-2 w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-[0_8px_24px_-8px_rgba(0,79,86,0.3)] hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group" type="submit">
                 <?= \App\Core\Lang::t('auth.login_title') ?>

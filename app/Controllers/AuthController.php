@@ -12,7 +12,7 @@ class AuthController {
     private $otpModel;
     private $mailer;
 
-    public function __construct(\App\Models\User $userModel, \App\Models\OTPCode $otpModel, \App\Core\Mailer $mailer = null) {
+    public function __construct(\App\Models\User $userModel, \App\Models\OTPCode $otpModel, ?\App\Core\Mailer $mailer = null) {
         $this->userModel = $userModel;
         $this->otpModel = $otpModel;
         $this->mailer = $mailer;

@@ -6,6 +6,7 @@
 
 // Uso de namespaces para controladores
 use App\Controllers\AuthController;
+use App\Controllers\PasswordResetController;
 use App\Controllers\StudentController;
 use App\Controllers\ReportController;
 use App\Controllers\StaffController;
@@ -48,6 +49,12 @@ $router->post('/login/otp/generate', [AuthController::class, 'generateOTP']);
 
 // POST /login/otp/verify : Verifica OTP y autentica alumno (AJAX JSON)
 $router->post('/login/otp/verify', [AuthController::class, 'verifyOTP']);
+
+// -- Recuperación de contraseña --
+$router->get('/password/forgot', [PasswordResetController::class, 'showRequestForm']);
+$router->post('/password/forgot', [PasswordResetController::class, 'sendResetLink']);
+$router->get('/password/reset', [PasswordResetController::class, 'showResetForm']);
+$router->post('/password/reset', [PasswordResetController::class, 'resetPassword']);
 
 // POST /logout : Destruye sesión
 $router->post('/logout', [AuthController::class, 'logout']);
