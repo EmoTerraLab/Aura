@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?= \App\Core\Lang::getLocale() ?>">
+<html lang="<?= \App\Core\Lang::current() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

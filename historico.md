@@ -2,6 +2,17 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-28] - Estabilización de Inyección y Localización (v2.2.0-stable)
+
+### 🛠️ Mejoras Técnicas
+- **Inyección de Dependencias (DI):** Refactorizado el `PasswordResetController` para utilizar inyección de dependencias en el constructor, mejorando la testabilidad y el desacoplamiento.
+- **Router DI:** Actualizado el `Router` para inyectar correctamente el `User`, `PasswordReset` y `Mailer` en el controlador de recuperación.
+- **Robustez del Mailer:** Mejora en el sistema de obtención de remitente (`mail_from_address`) con fallback de seguridad para evitar fallos de envío.
+
+### 🌍 Internacionalización (i18n)
+- **Localización Dinámica:** Actualizadas las vistas de recuperación de contraseña para utilizar `Lang::current()` de forma consistente con el núcleo del sistema.
+- **Traducciones:** Ampliado el diccionario de español (`lang/es.php`) con las nuevas cadenas para el flujo de recuperación de cuenta.
+
 ## [2026-04-28] - Gestión de Identidad y Seguridad (v2.1.0-stable)
 
 ### 🚀 Nuevas Funcionalidades

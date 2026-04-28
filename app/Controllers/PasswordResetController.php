@@ -14,11 +14,11 @@ class PasswordResetController
     private $passwordResetModel;
     private $mailer;
 
-    public function __construct()
+    public function __construct(User $userModel, PasswordReset $passwordResetModel, Mailer $mailer)
     {
-        $this->userModel = new User();
-        $this->passwordResetModel = new PasswordReset();
-        $this->mailer = new Mailer();
+        $this->userModel = $userModel;
+        $this->passwordResetModel = $passwordResetModel;
+        $this->mailer = $mailer;
     }
 
     public function showRequestForm(): void
