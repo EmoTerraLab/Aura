@@ -54,7 +54,7 @@ class Router {
                         \App\Controllers\ReportManagementController::class => new \App\Controllers\ReportManagementController(new \App\Models\Report(), new \App\Models\ReportMessage()),
                         \App\Controllers\StudentController::class => new \App\Controllers\StudentController(new \App\Models\Report(), new \App\Models\StudentProfile(), new \App\Models\ReportMessage()),
                         \App\Controllers\StaffController::class => new \App\Controllers\StaffController(new \App\Models\Report(), new \App\Models\ReportMention()),
-                        \App\Controllers\AdminController::class => new \App\Controllers\AdminController(new \App\Models\User(), new \App\Models\Classroom(), new \App\Models\Report(), new \App\Models\Setting()),
+                        \App\Controllers\AdminController::class => new \App\Controllers\AdminController(new \App\Models\User(), new \App\Models\Classroom(), new \App\Models\Report(), new \App\Models\Setting(), new \App\Core\Mailer(new \App\Models\Setting())),
                         \App\Controllers\Admin\SettingsController::class => new \App\Controllers\Admin\SettingsController(new \App\Models\Setting()),
                         \App\Controllers\ReportController::class => new \App\Controllers\ReportController(new \App\Models\Report(), new \App\Models\StudentProfile()),
                         \App\Controllers\AuthController::class => new \App\Controllers\AuthController(new \App\Models\User(), new \App\Models\OTPCode(), new \App\Core\Mailer(new \App\Models\Setting())),
@@ -63,6 +63,8 @@ class Router {
                         \App\Controllers\TotpController::class => new \App\Controllers\TotpController(),
                         \App\Controllers\WebAuthnController::class => new \App\Controllers\WebAuthnController(new \App\Models\WebAuthnCredential()),
                         \App\Controllers\Admin\UpdateController::class => new \App\Controllers\Admin\UpdateController(),
+                        \App\Controllers\BullyingProtocolController::class => new \App\Controllers\BullyingProtocolController(new \App\Models\Setting()),
+                        \App\Controllers\ProtocolWorkflowController::class => new \App\Controllers\ProtocolWorkflowController(),
                         default => new $controllerClass()
                     };
 

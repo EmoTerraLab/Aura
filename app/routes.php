@@ -16,6 +16,8 @@ use App\Controllers\Admin\SettingsController;
 use App\Controllers\LangController;
 use App\Controllers\TotpController;
 use App\Controllers\WebAuthnController;
+use App\Controllers\BullyingProtocolController;
+use App\Controllers\ProtocolWorkflowController;
 
 // -- Endpoints Públicos y de Autenticación --
 
@@ -27,6 +29,29 @@ $router->get('/', function() {
 
 // POST /lang/switch : Cambia el idioma
 $router->post('/lang/switch', [LangController::class, 'switch']);
+
+// -- Protocolo de Acoso (Público/Consulta) --
+$router->get('/protocolo-acoso', [BullyingProtocolController::class, 'index'], ['auth']);
+$router->get('/api/protocol', [BullyingProtocolController::class, 'getApiProtocol'], ['auth']);
+
+// -- Workflow Legal del Protocolo --
+$router->get('/protocolos/dashboard', [\App\Controllers\ProtocolDashboardController::class, 'index'], ['auth', 'roles:direccion,admin']);
+
+// -- Sociogramas (CESC) --
+$router->get('/alumno/sociograma', [\App\Controllers\SociometricController::class, 'survey'], ['auth', 'role:alumno']);
+$router->post('/api/sociometric/respond', [\App\Controllers\SociometricController::class, 'submitResponse'], ['auth', 'role:alumno']);
+$router->get('/staff/sociogramas/{id}', [\App\Controllers\SociometricController::class, 'results'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+
+$router->get('/api/protocol/case/{report_id}', [ProtocolWorkflowController::class, 'getCaseData'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/phase', [ProtocolWorkflowController::class, 'changePhase'], ['auth', 'roles:orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/classify', [ProtocolWorkflowController::class, 'classify'], ['auth', 'roles:orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/assign-team', [ProtocolWorkflowController::class, 'assignTeam'], ['auth', 'roles:orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/communications', [ProtocolWorkflowController::class, 'updateComms'], ['auth', 'roles:orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/security-map', [ProtocolWorkflowController::class, 'saveSecurityMapFull'], ['auth', 'roles:orientador,direccion,admin']);
+$router->get('/api/protocol/case/{id}/security-map', [ProtocolWorkflowController::class, 'getSecurityMap'], ['auth', 'roles:orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/followup', [ProtocolWorkflowController::class, 'addFollowup'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/closure', [ProtocolWorkflowController::class, 'updateClosure'], ['auth', 'roles:direccion,admin']);
+$router->get('/protocol/case/{id}/export', [ProtocolWorkflowController::class, 'exportPdf'], ['auth', 'roles:orientador,direccion,admin']);
 
 // -- Verificación 2FA TOTP --
 $router->get('/auth/2fa/totp', [TotpController::class, 'showVerify']);
@@ -80,6 +105,11 @@ $router->post('/alumno/2fa/webauthn/register/verify', [WebAuthnController::class
 $router->post('/alumno/2fa/webauthn/credential/delete', [WebAuthnController::class, 'deleteCredential'], ['auth', 'role:alumno']);
 
 
+
+// -- Reportes de Staff --
+$router->get("/staff/reports/new", [StaffController::class, "createReport"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+$router->post("/staff/reports", [StaffController::class, "storeReport"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+
 // -- Endpoints de Staff (Profesores, Orientadores, Dirección) --
 
 // GET /staff/dashboard : Bandeja de entrada staff (Referencia original)
@@ -132,12 +162,15 @@ $router->patch('/admin/api/classrooms/{id}', [AdminController::class, 'updateCla
 $router->delete('/admin/api/classrooms/{id}', [AdminController::class, 'deleteClassroom'], ['auth', 'role:admin']);
 
 // -- Settings Admin --
+$router->post("/admin/settings/ccaa", [SettingsController::class, "saveCcaa"], ["auth", "role:admin"]);
+
 $router->get('/admin/settings', [SettingsController::class, 'index'], ['auth', 'role:admin']);
 $router->post('/admin/settings/school', [SettingsController::class, 'saveSchool'], ['auth', 'role:admin']);
 $router->post('/admin/settings/appearance', [SettingsController::class, 'saveAppearance'], ['auth', 'role:admin']);
 $router->post('/admin/settings/mail', [SettingsController::class, 'saveMail'], ['auth', 'role:admin']);
 $router->post('/admin/settings/mail/test', [SettingsController::class, 'testMail'], ['auth', 'role:admin']);
 $router->post('/admin/settings/security', [SettingsController::class, 'saveSecurity'], ['auth', 'role:admin']);
+$router->post('/admin/settings/protocol', [SettingsController::class, 'saveProtocol'], ['auth', 'role:admin']);
 
 // -- Actualizaciones del Sistema --
 $router->get('/admin/update', [\App\Controllers\Admin\UpdateController::class, 'index'], ['auth', 'roles:admin,direccion']);

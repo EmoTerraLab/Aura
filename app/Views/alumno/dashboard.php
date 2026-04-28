@@ -38,6 +38,12 @@
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
             <span><?= \App\Core\Lang::t('nav.dashboard') ?></span>
         </a>
+        <?php if (\App\Core\Config::get('ccaa_protocol_active', '1') === '1' && \App\Core\Config::get('ccaa_show_to_students', '1') === '1'): ?>
+            <a class="text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full flex items-center gap-3 transition-colors" href="/protocolo-acoso">
+                <span class="material-symbols-outlined">gavel</span>
+                <span><?= \App\Core\Lang::t('protocol.title') ?></span>
+            </a>
+        <?php endif; ?>
         <button onclick="openBreathingApp(); toggleSidebar()" class="text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full flex items-center gap-3 transition-colors text-left">
             <span class="material-symbols-outlined">spa</span>
             <span><?= \App\Core\Lang::t('nav.breathe') ?></span>
@@ -60,6 +66,32 @@
 <!-- Main Content Canvas -->
 <main class="flex-1 w-full lg:pl-64 flex flex-col pt-16 lg:pt-0">
     <div class="px-4 py-8 md:px-margin-page md:py-12 max-w-6xl mx-auto w-full flex-1 flex flex-col gap-stack-gap">
+        
+        <?php
+        $db = \App\Core\Database::getInstance();
+        $userId = \App\Core\Auth::id();
+        $profile = $db->query("SELECT classroom_id FROM student_profiles WHERE user_id = $userId")->fetch();
+        if ($profile) {
+            $survey = $db->query("SELECT * FROM sociometric_surveys WHERE classroom_id = {$profile['classroom_id']} AND status = 'active' LIMIT 1")->fetch();
+            if ($survey) {
+                $hasResponded = $db->query("SELECT COUNT(*) FROM sociometric_responses WHERE survey_id = {$survey['id']} AND student_id = $userId")->fetchColumn();
+                if (!$hasResponded) {
+                    echo '
+                    <div class="bg-primary-container text-on-primary-container p-6 rounded-xl shadow-sm flex items-center justify-between gap-4 mb-6 border border-primary/20">
+                        <div class="flex items-center gap-4">
+                            <span class="material-symbols-outlined text-3xl">hub</span>
+                            <div>
+                                <p class="font-bold text-sm">Qüestionari de Clima d\'Aula pendent</p>
+                                <p class="text-xs opacity-80">La teva participació ens ajuda a millorar la convivència a classe.</p>
+                            </div>
+                        </div>
+                        <a href="/alumno/sociograma" class="bg-primary text-on-primary px-6 py-2.5 rounded-full text-xs font-bold shrink-0">Començar</a>
+                    </div>';
+                }
+            }
+        }
+        ?>
+
         <header class="mb-4">
             <h2 class="font-h1 text-h1 text-primary"><?= \App\Core\Lang::t('dashboard.safe_space_title') ?></h2>
             <p class="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-2xl"><?= \App\Core\Lang::t('dashboard.safe_space_desc') ?></p>
@@ -187,7 +219,7 @@
                                 <div class="p-4 rounded-lg bg-surface hover:bg-surface-container transition-colors group border border-surface-variant/50 cursor-pointer" onclick="loadStudentReport(<?= $report['id'] ?>)">
                                     <div class="flex justify-between items-start mb-2">
                                         <span class="font-label-caps text-[10px] text-outline uppercase"><?= date('d M', strtotime($report['created_at'])) ?></span>
-                                        <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full <?= $report['status']==='new'?'bg-primary-fixed text-on-primary-fixed-variant':($report['status']==='in_progress'?'bg-[#fff3cd] text-[#856404]':'bg-[#d4edda] text-[#155724]') ?>"><?= \App\Core\Lang::t('status.' . $report['status']) ?></span>
+                                        <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full <?= $report['status']==='new'?'bg-primary-fixed text-on-primary-fixed-variant':($report['status']==='in_progress'?'bg-[#fff3cd] text-[#856404]':'bg-[#d4edda] text-[#155724]') ?>"><?= $report['status'] ?></span>
                                     </div>
                                     <p class="font-body-md text-[14px] text-on-surface line-clamp-2"><?= htmlspecialchars($report['content']) ?></p>
                                 </div>
@@ -347,10 +379,7 @@
     function resetForm() { window.location.reload(); }
     async function loadStudentReport(id) {
         currentReportId = id;
-        document.getElementById('progress-header').classList.add('hidden'); 
-        document.getElementById('step-1').classList.add('hidden');
-        document.getElementById('step-2').classList.add('hidden');
-        document.getElementById('step-success').classList.add('hidden');
+        document.getElementById('progress-header').classList.add('hidden'); document.getElementById('form-container').classList.add('hidden');
         document.getElementById('chat-view').classList.replace('hidden', 'flex');
         const cm = document.getElementById('chat-messages'); cm.innerHTML = '<div class="flex h-full items-center justify-center text-primary"><span class="material-symbols-outlined animate-spin text-4xl">refresh</span></div>';
         const res = await fetchJson(`/alumno/reports/${id}`);
@@ -358,12 +387,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     function renderStudentChat(report, messages) {
-        const statusMap = {
-            'new': '<?= \App\Core\Lang::t('status.new') ?>',
-            'in_progress': '<?= \App\Core\Lang::t('status.in_progress') ?>',
-            'resolved': '<?= \App\Core\Lang::t('status.resolved') ?>'
-        };
-        document.getElementById('chat-status').innerText = statusMap[report.status] || report.status;
+        document.getElementById('chat-status').innerText = report.status;
         const ic = document.getElementById('chat-input-container');
         if (report.status === 'resolved') { ic.classList.add('hidden'); document.getElementById('resolved-note').innerText = "Resolución: " + (report.resolution_summary || "Cerrado."); document.getElementById('resolved-note').classList.remove('hidden'); }
         let h = `<div class="flex gap-3 flex-row-reverse mb-6"><div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">Tú</div><div class="bg-slate-100 p-4 rounded-2xl rounded-tr-none max-w-[85%] sm:max-w-[80%] text-sm">${report.content}</div></div>`;

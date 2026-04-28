@@ -3,40 +3,57 @@
 
 ![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-stable-blue)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![i18n](https://img.shields.io/badge/i18n-es%20|%20ca%20|%20gl%20|%20eu%20|%20en-blue)
 
-Aura es una solución integral para la gestión de informes de convivencia en centros educativos. Permite a los alumnos reportar situaciones de bienestar de forma segura (y anónima si lo desean) y al personal docente gestionar estos casos de manera eficiente y colaborativa.
-
-Aura is a comprehensive solution for managing well-being reports in schools. It allows students to safely report well-being situations (anonymously if they choose) and enables teaching staff to manage these cases efficiently and collaboratively.
+Aura es una solución integral para la gestión de informes y convivencia en centros educativos. Permite a los alumnos reportar incidencias de forma anónima o identificada y al personal del centro (profesores, orientadores y dirección) gestionar dichos casos mediante un sistema de tickets seguro, bilingüe y con soporte de protocolos regionales.
 
 ---
 
 ## ✨ Características Principales / Key Features
 
-### 🎓 Alumnos / Students
-- **Reportes Seguros**: Interfaz intuitiva para crear informes de convivencia.
-- **Anonimato**: Opción para realizar reportes sin revelar la identidad.
-- **Acceso Simple**: Inicio de sesión mediante código OTP enviado al correo institucional o biometría (WebAuthn).
+### 🔐 Seguridad y Acceso / Security & Access
+- **WebAuthn**: Autenticación biométrica (Face ID, huella) para alumnos.
+- **TOTP 2FA**: Verificación en dos pasos para staff y administradores.
+- **Privacidad**: Opción de anonimato real para reportes de convivencia.
 
-### 👥 Roles y Permisos / Roles & Permissions
-- **Admin**: Gestión total de usuarios, aulas, configuración del sistema y correo.
-- **Staff (Dirección/Orientador/Profesor)**: Gestión de informes, respuestas internas y menciones.
-- **Alumno**: Creación de reportes y seguimiento de sus casos.
+### 📊 Análisis Convivencial / Well-being Analysis
+- **Sociogramas**: Sistema automático de detección de líderes, aislados y dinámicas de grupo.
+- **Mapas de Seguridad**: Identificación visual de puntos críticos en el centro educativo.
+- **Telemetría**: Estadísticas en tiempo real sobre el estado del bienestar escolar.
 
-### 📋 Gestión de Informes / Report Management
-- Sistema de tickets con estados (`new`, `in_progress`, `resolved`).
-- Mensajería interna y menciones entre el personal.
-- Opción de anonimato para mayor seguridad del alumno.
+### 🎓 Protocolos Regionales / Regional Protocols
+- **Adaptación CCAA**: Guías de actuación integradas basadas en la normativa de cada Comunidad Autónoma.
+- **Gestión de Casos**: Flujo de trabajo reglado para la apertura, seguimiento y cierre de protocolos oficiales de acoso.
 
-### 🔐 Seguridad Avanzada / Advanced Security
-- **Recuperación de Cuenta**: Sistema de reset de contraseña mediante tokens de un solo uso por email.
-- **MFA**: Soporte para TOTP y WebAuthn (Biometría).
-
-### 🎓 Protocolos CCAA / Regional Protocols
-- **Adaptación Local**: Sistema de protocolos de convivencia adaptados a la normativa de cada Comunidad Autónoma.
-- **Transparencia**: Acceso directo para alumnos a los protocolos de actuación vigentes en su región.
+### 👥 Gestión y Comunicación / Management & Comms
+- **Sistema de Tickets**: Gestión eficiente de informes con estados y prioridades.
+- **Mensajería Interna**: Comunicación segura entre alumnos y staff dentro de cada caso.
+- **Bilingüe**: Interfaz disponible en Español, Català, Galego, Euskara y English.
 
 ---
 
 ## 🔧 Requisitos del sistema / System Requirements
-...
+
+| Componente | Mínimo | Recomendado |
+|---|---|---|
+| PHP | 8.1 | 8.2+ |
+| Servidor web | Apache 2.4 con mod_rewrite | Apache 2.4+ |
+| Base de datos | SQLite 3 | SQLite 3.35+ |
+| Extensiones PHP | openssl, pdo_sqlite, mbstring, gmp, json | + sodium |
+
+---
+
+## 🚀 Instalación Rápida / Quick Start
+
+1. **Clonar y Preparar**:
+   ```bash
+   git clone [url-del-repo]
+   composer install
+   ```
+2. **Permisos**: Asegurar escritura en `database/` y `storage/`.
+3. **Servidor**: Apuntar el DocumentRoot a `public/`.
+4. **Configuración**: Acceder al panel de administración para configurar el centro y el protocolo CCAA.
+
+---
+© 2026 EmoTerraLab — Aura Project

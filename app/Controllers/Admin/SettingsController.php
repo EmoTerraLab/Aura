@@ -119,4 +119,30 @@ class SettingsController
         header('Location: /admin/settings?tab=security&saved=1');
         exit;
     }
+
+    // POST /admin/settings/protocol
+    public function saveProtocol(): void
+    {
+        Csrf::validateRequest();
+        $this->settings->setMany([
+            'ccaa_code'             => trim($_POST['ccaa_code'] ?? ''),
+            'ccaa_protocol_active'  => $_POST['ccaa_protocol_active'] ?? '0',
+            'ccaa_show_to_students' => $_POST['ccaa_show_to_students'] ?? '0',
+        ]);
+        header('Location: /admin/settings?tab=protocol&saved=1');
+        exit;
+    }
+    // POST /admin/settings/ccaa
+    public function saveCcaa(): void
+    {
+        Csrf::validateRequest();
+        $this->settings->setMany([
+            "ccaa_code"             => trim($_POST["ccaa_code"] ?? ""),
+            "ccaa_protocol_active"  => isset($_POST["ccaa_protocol_active"]) ? "1" : "0",
+            "ccaa_show_to_students" => isset($_POST["ccaa_show_to_students"]) ? "1" : "0",
+        ]);
+        header("Location: /admin/settings?tab=ccaa&saved=1");
+        exit;
+    }
+
 }

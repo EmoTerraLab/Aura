@@ -11,6 +11,13 @@
             <span class="material-symbols-outlined">dashboard</span>
             <span class="font-medium">Dashboard</span>
         </a>
+        <?php if (\App\Core\Config::get("ccaa_protocol_active", "1") === "1"): ?>
+        <a href="/protocolo-acoso" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
+            <span class="material-symbols-outlined">policy</span>
+            <span class="font-medium"><?= \App\Core\Lang::t("protocol.nav_title") ?></span>
+        </a>
+        <?php endif; ?>
+
         <a href="/admin/settings" class="w-[calc(100%-16px)] text-left flex items-center gap-3 bg-teal-50 text-teal-700 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
             <span class="material-symbols-outlined">settings</span>
             <span class="font-medium">Configuración</span>
@@ -46,6 +53,13 @@
     <h1 class="text-xl font-bold text-teal-700">Aura Admin</h1>
     <div class="flex items-center gap-2">
         <a href="/admin" class="p-2 text-slate-500"><span class="material-symbols-outlined">dashboard</span></a>
+        <?php if (\App\Core\Config::get("ccaa_protocol_active", "1") === "1"): ?>
+        <a href="/protocolo-acoso" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
+            <span class="material-symbols-outlined">policy</span>
+            <span class="font-medium"><?= \App\Core\Lang::t("protocol.nav_title") ?></span>
+        </a>
+        <?php endif; ?>
+
         <button onclick="toggleSidebar()" class="p-2 text-slate-500">
             <span class="material-symbols-outlined" id="menu-icon">menu</span>
         </button>
@@ -78,6 +92,9 @@
             </a>
             <a href="/admin/settings?tab=security" class="px-5 py-2.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap transition-colors <?= $tab === 'security' ? 'bg-primary text-white shadow-md' : 'bg-surface-container-lowest text-slate-500 hover:bg-surface-container-low' ?>">
                 Seguridad y Autenticación
+            </a>
+            <a href="/admin/settings?tab=protocol" class="px-5 py-2.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap transition-colors <?= $tab === 'protocol' ? 'bg-primary text-white shadow-md' : 'bg-surface-container-lowest text-slate-500 hover:bg-surface-container-low' ?>">
+                Protocolo Acoso
             </a>
         </div>
 
