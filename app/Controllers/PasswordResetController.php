@@ -51,7 +51,7 @@ class PasswordResetController
 
             $resetUrl = $this->getBaseUrl() . '/password/reset?token=' . $token;
             $schoolName = Config::get('school_name', 'Aura PDP');
-            $subject = Lang::t('auth.reset_email_subject');
+            $subject = Lang::t('auth.reset_email_subject', ['school' => $schoolName]);
             $body = $this->buildResetEmailBody($user['name'], $resetUrl, $schoolName);
             try {
                 $this->mailer->send($email, $subject, $body);

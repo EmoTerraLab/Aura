@@ -169,4 +169,18 @@ return [
     'footer.support'             => 'Laguntza',
     'footer.terms'               => 'Baldintzak',
     'footer.powered_by'          => 'Aura powered by EmoTerraLab (emoterralab.com)',
+
+    // Password Reset
+    'auth.forgot_password_title' => 'Pasahitza berrezarri',
+    'auth.forgot_password_desc' => 'Idatzi zure emaila eta pasahitza berrezartzeko esteka bat bidaliko dizugu',
+    'auth.reset_email_subject' => 'Berrezarri zure Aura pasahitza - :school',
+    'auth.reset_link_sent' => 'Emaila existitzen bada, esteka laster jasoko duzu',
+    'auth.reset_new_password' => 'Pasahitz berria',
+    'auth.reset_confirm_password' => 'Berretsi pasahitz berria',
+    'auth.reset_submit' => 'Pasahitza aldatu',
+    'auth.reset_success' => 'Pasahitza ondo eguneratu da',
+    'auth.reset_link_invalid' => 'Esteka ez da baliozkoa edo iraungi da',
+    'auth.reset_link_expired_desc' => 'Eskatu berrezartzeko esteka berri bat',
+    'auth.password_min_length' => 'Pasahitzak gutxienez 8 karaktere izan behar ditu',
+    'auth.password_mismatch' => 'Pasahitzak ez datoz bat',
 ];

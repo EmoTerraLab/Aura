@@ -59,4 +59,13 @@ class User extends Model {
         $stmt = $this->db->prepare('UPDATE users SET lang = ? WHERE id = ?');
         return $stmt->execute([$lang, $userId]);
     }
+
+    /**
+     * Actualiza la contraseña de un usuario por su correo electrónico.
+     */
+    public function updatePassword(string $email, string $hash): bool
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET password = :password WHERE email = :email");
+        return $stmt->execute(['password' => $hash, 'email' => $email]);
+    }
 }

@@ -156,7 +156,7 @@ return array (
   'footer.powered_by' => 'Aura powered by EmoTerraLab (emoterralab.com)',
   'auth.forgot_password_title' => 'Restablecer contraseña',
   'auth.forgot_password_desc' => 'Introduce tu email y te enviaremos un enlace para restablecer tu contraseña',
-  'auth.reset_email_subject' => 'Restablece tu contraseña — Aura PDP',
+  'auth.reset_email_subject' => 'Restablece tu contraseña Aura - :school',
   'auth.reset_link_sent' => 'Si el email existe, recibirás el enlace en breve',
   'auth.reset_new_password' => 'Nueva contraseña',
   'auth.reset_confirm_password' => 'Confirmar nueva contraseña',

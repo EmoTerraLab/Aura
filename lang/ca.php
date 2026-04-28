@@ -169,4 +169,18 @@ return [
     'footer.support'             => 'Suport',
     'footer.terms'               => 'Termes',
     'footer.powered_by'          => 'Aura powered by EmoTerraLab (emoterralab.com)',
+
+    // Password Reset
+    'auth.forgot_password_title' => 'Restablir contrasenya',
+    'auth.forgot_password_desc' => 'Introdueix el teu correu i t\'enviarem un enllaç per restablir la teva contrasenya',
+    'auth.reset_email_subject' => 'Restableix la teva contrasenya Aura - :school',
+    'auth.reset_link_sent' => 'Si el correu existeix, rebràs l\'enllaç ben aviat',
+    'auth.reset_new_password' => 'Nova contrasenya',
+    'auth.reset_confirm_password' => 'Confirmar nova contrasenya',
+    'auth.reset_submit' => 'Canviar contrasenya',
+    'auth.reset_success' => 'Contrasenya actualitzada correctament',
+    'auth.reset_link_invalid' => 'L\'enllaç no és vàlid o ha expirat',
+    'auth.reset_link_expired_desc' => 'Sol·licita un nou enllaç de restabliment',
+    'auth.password_min_length' => 'La contrasenya ha de tenir com a mínim 8 caràcters',
+    'auth.password_mismatch' => 'Les contrasenyes no coincideixen',
 ];

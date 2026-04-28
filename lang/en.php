@@ -172,4 +172,18 @@ return [
     'footer.support'             => 'Support',
     'footer.terms'               => 'Terms',
     'footer.powered_by'          => 'Aura powered by EmoTerraLab (emoterralab.com)',
+
+    // Password Reset
+    'auth.forgot_password_title' => 'Reset Password',
+    'auth.forgot_password_desc' => 'Enter your email and we will send you a link to reset your password',
+    'auth.reset_email_subject' => 'Reset your Aura password - :school',
+    'auth.reset_link_sent' => 'If the email exists, you will receive the link shortly',
+    'auth.reset_new_password' => 'New Password',
+    'auth.reset_confirm_password' => 'Confirm New Password',
+    'auth.reset_submit' => 'Change Password',
+    'auth.reset_success' => 'Password updated successfully',
+    'auth.reset_link_invalid' => 'The link is invalid or has expired',
+    'auth.reset_link_expired_desc' => 'Request a new reset link',
+    'auth.password_min_length' => 'Password must be at least 8 characters',
+    'auth.password_mismatch' => 'Passwords do not match',
 ];

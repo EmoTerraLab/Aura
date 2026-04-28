@@ -39,6 +39,8 @@ class Mailer
             $mail->addAddress($to);
 
             // Content
+            $mail->CharSet = 'UTF-8';
+            $mail->Encoding = 'base64';
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $body;

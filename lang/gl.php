@@ -169,4 +169,18 @@ return [
     'footer.support'             => 'Soporte',
     'footer.terms'               => 'Termos',
     'footer.powered_by'          => 'Aura powered by EmoTerraLab (emoterralab.com)',
+
+    // Password Reset
+    'auth.forgot_password_title' => 'Restablecer contrasinal',
+    'auth.forgot_password_desc' => 'Introduce o teu correo e enviarémosche unha ligazón para restablecer o teu contrasinal',
+    'auth.reset_email_subject' => 'Restablece o teu contrasinal Aura - :school',
+    'auth.reset_link_sent' => 'Se o correo existe, recibirás a ligazón en breve',
+    'auth.reset_new_password' => 'Novo contrasinal',
+    'auth.reset_confirm_password' => 'Confirmar novo contrasinal',
+    'auth.reset_submit' => 'Cambiar contrasinal',
+    'auth.reset_success' => 'Contrasinal actualizado correctamente',
+    'auth.reset_link_invalid' => 'A ligazón no é válida ou expirou',
+    'auth.reset_link_expired_desc' => 'Solicita unha nova ligazón de restablecemento',
+    'auth.password_min_length' => 'O contrasinal debe ter como mínimo 8 caracteres',
+    'auth.password_mismatch' => 'Os contrasinais non coinciden',
 ];
