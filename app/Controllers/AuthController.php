@@ -97,11 +97,12 @@ class AuthController {
             }
 
             // Fallback a OTP por email
-            $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $isDemo = ($email === 'alumno@aura.test');
+            $code = $isDemo ? '123456' : str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
             $this->otpModel->create($user['id'], $code);
 
-            // Envío real si el mailer está configurado
-            if ($this->mailer) {
+            // Envío real si el mailer está configurado (omitir para demo)
+            if ($this->mailer && !$isDemo) {
                 try {
                     $schoolName = \App\Core\Config::get('school_name', 'Aura');
                     $subject = "Tu código de acceso - {$schoolName}";
@@ -128,7 +129,7 @@ class AuthController {
             error_log("OTP generado para {$email}: {$code}");
 
             $response = ['ok' => true];
-            if (APP_ENV === 'dev') {
+            if (APP_ENV === 'dev' || $isDemo) {
                 $response['dev_code'] = $code;
             }
             echo json_encode($response);
