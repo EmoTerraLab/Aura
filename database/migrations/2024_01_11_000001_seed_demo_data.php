@@ -2,7 +2,7 @@
 /**
  * Migración: Datos iniciales de demostración
  */
-class Migration_2024_01_11_000000_seed_demo_data
+class Migration_2024_01_11_000001_seed_demo_data
 {
     private PDO $db;
 
