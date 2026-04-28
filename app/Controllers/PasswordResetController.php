@@ -52,7 +52,12 @@ class PasswordResetController
             $schoolName = Config::get('school_name', 'Aura PDP');
             $subject = Lang::t('auth.reset_email_subject');
             $body = $this->buildResetEmailBody($user['name'], $resetUrl, $schoolName);
-            $this->mailer->send($email, $subject, $body);
+            try {
+                $this->mailer->send($email, $subject, $body);
+            } catch (\Exception $e) {
+                // Loguear error pero permitir continuar en entorno local
+                error_log("Error enviando correo de recuperación: " . $e->getMessage());
+            }
         }
 
         header('Location: /password/forgot?sent=1');

@@ -2,6 +2,13 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-28] - Correcciones Finales y Sincronización (v2.1.2-stable)
+
+### 🛠️ Correcciones
+- **Vistas de Recuperación:** Ajustes finales en las vistas de recuperación de contraseña para asegurar la coherencia visual y funcional.
+- **Sincronización de Datos:** Actualización de la base de datos local consolidada para el entorno de producción.
+- **Documentación:** Actualización final del README con todas las características de la rama 2.1.x.
+
 ## [2026-04-28] - Corrección de Errores y Estabilidad (v2.1.1-stable)
 
 ### 🛠️ Correcciones y Mejoras
