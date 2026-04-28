@@ -187,7 +187,7 @@
                                 <div class="p-4 rounded-lg bg-surface hover:bg-surface-container transition-colors group border border-surface-variant/50 cursor-pointer" onclick="loadStudentReport(<?= $report['id'] ?>)">
                                     <div class="flex justify-between items-start mb-2">
                                         <span class="font-label-caps text-[10px] text-outline uppercase"><?= date('d M', strtotime($report['created_at'])) ?></span>
-                                        <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full <?= $report['status']==='new'?'bg-primary-fixed text-on-primary-fixed-variant':($report['status']==='in_progress'?'bg-[#fff3cd] text-[#856404]':'bg-[#d4edda] text-[#155724]') ?>"><?= $report['status'] ?></span>
+                                        <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full <?= $report['status']==='new'?'bg-primary-fixed text-on-primary-fixed-variant':($report['status']==='in_progress'?'bg-[#fff3cd] text-[#856404]':'bg-[#d4edda] text-[#155724]') ?>"><?= \App\Core\Lang::t('status.' . $report['status']) ?></span>
                                     </div>
                                     <p class="font-body-md text-[14px] text-on-surface line-clamp-2"><?= htmlspecialchars($report['content']) ?></p>
                                 </div>
@@ -347,7 +347,10 @@
     function resetForm() { window.location.reload(); }
     async function loadStudentReport(id) {
         currentReportId = id;
-        document.getElementById('progress-header').classList.add('hidden'); document.getElementById('form-container').classList.add('hidden');
+        document.getElementById('progress-header').classList.add('hidden'); 
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.add('hidden');
+        document.getElementById('step-success').classList.add('hidden');
         document.getElementById('chat-view').classList.replace('hidden', 'flex');
         const cm = document.getElementById('chat-messages'); cm.innerHTML = '<div class="flex h-full items-center justify-center text-primary"><span class="material-symbols-outlined animate-spin text-4xl">refresh</span></div>';
         const res = await fetchJson(`/alumno/reports/${id}`);
@@ -355,7 +358,12 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     function renderStudentChat(report, messages) {
-        document.getElementById('chat-status').innerText = report.status;
+        const statusMap = {
+            'new': '<?= \App\Core\Lang::t('status.new') ?>',
+            'in_progress': '<?= \App\Core\Lang::t('status.in_progress') ?>',
+            'resolved': '<?= \App\Core\Lang::t('status.resolved') ?>'
+        };
+        document.getElementById('chat-status').innerText = statusMap[report.status] || report.status;
         const ic = document.getElementById('chat-input-container');
         if (report.status === 'resolved') { ic.classList.add('hidden'); document.getElementById('resolved-note').innerText = "Resolución: " + (report.resolution_summary || "Cerrado."); document.getElementById('resolved-note').classList.remove('hidden'); }
         let h = `<div class="flex gap-3 flex-row-reverse mb-6"><div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">Tú</div><div class="bg-slate-100 p-4 rounded-2xl rounded-tr-none max-w-[85%] sm:max-w-[80%] text-sm">${report.content}</div></div>`;

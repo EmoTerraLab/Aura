@@ -2,6 +2,13 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-28] - Fix: Dashboard Alumno y Localización de Estados (v2.4.1-stable)
+
+### 🛠️ Correcciones y Mejoras
+- **Fix Dashboard Vacío:** Corregida la lógica de visualización en el dashboard del alumno que ocultaba el contenedor principal al cargar un chat, provocando que la interfaz se viera vacía.
+- **Localización de Estados:** Los estados de los reportes (`new`, `in_progress`, `resolved`) ahora se muestran traducidos correctamente en toda la interfaz (ej: "En progreso" en lugar de "in_progress").
+- **Consistencia i18n:** Añadidas claves de traducción de estados en los diccionarios principales.
+
 ## [2026-04-28] - Modo Demo y Carga Automática de Datos (v2.4.0-stable)
 
 ### 🚀 Mejoras para Presentación (Demo)

@@ -71,7 +71,10 @@ return [
     'dashboard.help_chat'        => 'Help Chat',
 
     // Staff
-    'staff.mentions_title'       => 'Mentions',
+    'status.new' => 'Received',
+    'status.in_progress' => 'In progress',
+    'status.resolved' => 'Resolved',
+    'staff.mentions_title' => 'Mentions',
     'staff.inbox_title'          => 'Inbox',
     'staff.filter_all'           => 'All',
     'staff.select_report'        => 'Select a notice',
