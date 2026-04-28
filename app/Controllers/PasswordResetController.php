@@ -118,27 +118,114 @@ class PasswordResetController
     {
         $nameEsc = htmlspecialchars($name);
         $schoolEsc = htmlspecialchars($schoolName);
-        
-        return "
-        <div style='font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 2rem;'>
-            <h2 style='color: #4F46E5; margin-top: 0;'>{$schoolEsc}</h2>
-            <p>Hola, <strong>{$nameEsc}</strong></p>
-            <p>Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón para continuar:</p>
-            <p style='text-align: center; margin: 2.5rem 0;'>
-                <a href='{$resetUrl}'
-                   style='background: #4F46E5; color: white; padding: 14px 28px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;'>
-                    Restablecer contraseña
-                </a>
-            </p>
-            <p style='color: #6b7280; font-size: 0.9rem;'>Este enlace expira en 30 minutos. Si no solicitaste esto, ignora este mensaje.</p>
-            <hr style='border: 0; border-top: 1px solid #e5e7eb; margin: 2rem 0;'>
-            <p style='color: #6b7280; font-size: 0.8rem;'>Si el botón no funciona, copia este enlace en tu navegador:<br>
-                <a href='{$resetUrl}' style='color: #4F46E5;'>{$resetUrl}</a>
-            </p>
-        </div>
-        ";
-    }
+        $resetUrlEsc = htmlspecialchars($resetUrl);
+        $expiresInMinutes = 30;
 
+        return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>Restablece tu contraseña de Aura</title>
+    <style>
+    /* Reseteo básico de cliente de correo */
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+
+    @media (prefers-color-scheme: dark) {
+      body, .email-bg  { background-color: #111827 !important; }
+      .email-card      { background-color: #1f2937 !important; border-color: #374151 !important; }
+      .email-text      { color: #f9fafb !important; }
+      .email-muted     { color: #9ca3af !important; }
+      .email-divider   { border-color: #374151 !important; }
+      .url-box         { background-color: #111827 !important; border-color: #374151 !important; color: #a78bfa !important; }
+      .footer-text     { color: #6b7280 !important; }
+    }
+    @media (max-width: 600px) {
+      .email-card    { padding: 1.5rem !important; }
+      .email-wrapper { width: 100% !important; padding: 0 1rem !important; }
+    }
+    </style>
+    </head>
+    <body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Helvetica, Arial, sans-serif;-webkit-font-smoothing:antialiased;" class="email-bg">
+
+    <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;color:#f3f4f6;line-height:1px;">
+    Recibiste una solicitud para cambiar tu contraseña. El enlace expira en ' . $expiresInMinutes . ' minutos. 
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+    </div>
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+    <tr>
+      <td align="center" style="padding:2rem 1rem;">
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-wrapper" style="max-width:600px;width:100%;margin:0 auto;" role="presentation">
+
+          <tr>
+            <td style="padding-bottom:1.25rem;">
+              <img src="https://app.aura.emoterralab.com/icono-sinfondo.png" alt="Aura Logo" width="30" height="30" style="width:30px;height:30px;vertical-align:middle;margin-right:8px;display:inline-block;">
+              <span style="font-size:1.1rem;font-weight:700;color:#4f46e5;vertical-align:middle;">Aura</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="email-card" style="background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;padding:2rem;">
+
+              <h2 style="color:#4f46e5;margin-top:0;margin-bottom:1.25rem;font-size:1.2rem;">' . $schoolEsc . '</h2>
+
+              <p class="email-text" style="margin:0 0 0.75rem;color:#111827;">Hola, <strong>' . $nameEsc . '</strong>,</p>
+
+              <p class="email-text" style="margin:0 0 2rem;color:#111827;line-height:1.6;">
+                Recibimos una solicitud para restablecer la contraseña de tu cuenta. Haz clic en el botón para continuar:
+              </p>
+
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" role="presentation">
+                <tr>
+                  <td align="center" style="padding-bottom:2rem;">
+                    <a href="' . $resetUrlEsc . '" style="background:#4f46e5;color:#ffffff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:bold;display:inline-block;border:1px solid #4f46e5;">
+                      Restablecer contraseña
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p class="email-muted" style="color:#6b7280;font-size:0.875rem;margin:0 0 1.5rem;line-height:1.6;">
+                Este enlace expira en <strong>' . $expiresInMinutes . ' minutos</strong>. Si no solicitaste esto, ignora este mensaje.
+              </p>
+
+              <hr class="email-divider" style="border:0;border-top:1px solid #e5e7eb;margin:0 0 1.25rem;">
+
+              <p class="email-muted" style="color:#6b7280;font-size:0.8rem;margin:0 0 0.5rem;line-height:1.6;">
+                Si el botón no funciona, copia este enlace en tu navegador:
+              </p>
+
+              <div class="url-box" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:4px;padding:0.6rem 0.75rem;margin:0 0 1.5rem;font-size:0.75rem;font-family:monospace;color:#4f46e5;word-break:break-all;line-height:1.5;">
+                <a href="' . $resetUrlEsc . '" style="color:#4f46e5;text-decoration:none;">' . $resetUrlEsc . '</a>
+              </div>
+
+              <hr class="email-divider" style="border:0;border-top:1px solid #e5e7eb;margin:0 0 1.25rem;">
+
+              <p class="footer-text" style="color:#6b7280;font-size:0.75rem;margin:0;line-height:1.6;">
+                Este email fue enviado por <strong>' . $schoolEsc . '</strong> a través de Aura PDP. Si no esperabas este correo, puedes ignorarlo.<br><br>
+                <img src="https://app.aura.emoterralab.com/icono-sinfondo.png" alt="" width="12" height="12" style="vertical-align:middle;margin-right:3px;">
+                <strong style="color:#4f46e5;">Aura</strong> &middot; Powered by <a href="https://emoterralab.com" style="color:#7c3aed;text-decoration:none;">EmoTerraLab</a>
+              </p>
+
+            </td>
+          </tr>
+
+        </table>
+
+        </td>
+    </tr>
+    </table>
+
+    </body>
+    </html>';
+    }
     private function getBaseUrl(): string
     {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
