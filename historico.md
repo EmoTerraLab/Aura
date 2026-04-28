@@ -2,16 +2,13 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
-## [2026-04-28] - Estabilización de Inyección y Localización (v2.2.0-stable)
+## [2026-04-28] - Corrección de Errores y Estabilidad (v2.1.1-stable)
 
-### 🛠️ Mejoras Técnicas
-- **Inyección de Dependencias (DI):** Refactorizado el `PasswordResetController` para utilizar inyección de dependencias en el constructor, mejorando la testabilidad y el desacoplamiento.
-- **Router DI:** Actualizado el `Router` para inyectar correctamente el `User`, `PasswordReset` y `Mailer` en el controlador de recuperación.
-- **Robustez del Mailer:** Mejora en el sistema de obtención de remitente (`mail_from_address`) con fallback de seguridad para evitar fallos de envío.
-
-### 🌍 Internacionalización (i18n)
-- **Localización Dinámica:** Actualizadas las vistas de recuperación de contraseña para utilizar `Lang::current()` de forma consistente con el núcleo del sistema.
-- **Traducciones:** Ampliado el diccionario de español (`lang/es.php`) con las nuevas cadenas para el flujo de recuperación de cuenta.
+### 🛠️ Correcciones y Mejoras
+- **Fix Inyección de Dependencias:** Corregida la instanciación de controladores en el `Router` para asegurar que el flujo de recuperación de contraseña reciba correctamente sus servicios.
+- **Estabilidad del Mailer:** Añadido fallback de seguridad en el remitente del correo para evitar errores de envío cuando la configuración es parcial.
+- **Consistencia de Idiomas:** Corregida la detección de idioma en las vistas de recuperación de contraseña para usar el método estándar `Lang::current()`.
+- **Refactorización:** Eliminada la creación manual de modelos dentro del controlador de reset, delegando la responsabilidad al Router/DI.
 
 ## [2026-04-28] - Gestión de Identidad y Seguridad (v2.1.0-stable)
 
@@ -47,15 +44,3 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 - **Fix OTP:** Activación del envío real de correos electrónicos para la autenticación de alumnos.
 
 ## [2026-04-27] - Fix Crítico: Envío de OTP por Email (v1.6.3-stable)
-
-### 🛡️ Seguridad y Autenticación
-- **Envío Real de OTP:** Implementada la integración con `Mailer` en el `AuthController` para que los alumnos reciban realmente su código de acceso por correo electrónico. Anteriormente, el código solo se registraba en el log del servidor.
-- **Inyección de Dependencias:** Actualizado el `Router` para inyectar correctamente el servicio `Mailer` con sus configuraciones al controlador de autenticación.
-- **Plantilla de Email:** Creada una plantilla de correo profesional para el código OTP, personalizada con el nombre de la institución.
-
-### ⚙️ Mejoras en el Núcleo (Core)
-- **Plantilla de Migraciones:** Añadida plantilla profesional en `database/migrations/_template.php` con helpers de idempotencia para facilitar el escalado de la base de datos.
-- **Limpieza de Branding:** Unificación del nombre de la aplicación a "Aura" en toda la documentación y rutas para la versión estable de producción.
-
-## [2026-04-27] - Optimización de Actualizaciones y Migraciones (v1.6.0-stable)
-...
