@@ -2,6 +2,17 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-28] - Lanzamiento Aura v2.0 "Safe & Simple" (v2.0.0-stable)
+
+### 🚀 Nuevas Funcionalidades
+- **Protocolos CCAA:** Implementación del sistema de protocolos de convivencia adaptados a las Comunidades Autónomas (CCAA).
+- **Gestión de Protocolos:** Nuevo módulo en administración para activar/desactivar y configurar el protocolo específico de cada región.
+- **Visibilidad Estudiantil:** Opción para mostrar u ocultar los protocolos de actuación directamente en el dashboard del alumno.
+
+### 🛠️ Mejoras Técnicas
+- **Data Engine:** Integración de `BullyingProtocols.php` para la gestión centralizada de normativas y procedimientos.
+- **Esquema de Datos:** Nueva migración para la persistencia de configuraciones de protocolos regionales.
+
 ## [2026-04-27] - Consolidación de Producción (v1.7.0-stable)
 
 ### 🚀 Lanzamiento de Producción

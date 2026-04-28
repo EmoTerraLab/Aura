@@ -48,6 +48,10 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
 - Mensajería interna y menciones entre el personal.
 - Opción de anonimato para mayor seguridad del alumno.
 
+### 🎓 Protocolos CCAA / Regional Protocols
+- **Adaptación Local**: Sistema de protocolos de convivencia adaptados a la normativa de cada Comunidad Autónoma.
+- **Transparencia**: Acceso directo para alumnos a los protocolos de actuación vigentes en su región.
+
 ---
 
 ## 🔧 Requisitos del sistema / System Requirements
