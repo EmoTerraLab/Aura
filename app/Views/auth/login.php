@@ -24,10 +24,10 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
         
         <!-- Tab Selectors -->
         <div class="flex relative bg-surface-container rounded-full p-1.5 mb-8">
-            <label class="flex-1 text-center py-3 rounded-full cursor-pointer transition-all duration-300 font-label-caps text-label-caps text-on-surface-variant peer-checked/student:bg-surface-container-lowest peer-checked/student:text-primary peer-checked/student:shadow-sm" for="tab_student">
+            <label class="flex-1 text-center py-3 rounded-full cursor-pointer transition-all duration-300 font-label-caps text-label-caps text-on-surface-variant peer-checked/student:bg-primary peer-checked/student:text-on-primary peer-checked/student:shadow-sm" for="tab_student">
                 <?= \App\Core\Lang::t('auth.student') ?>
             </label>
-            <label class="flex-1 text-center py-3 rounded-full cursor-pointer transition-all duration-300 font-label-caps text-label-caps text-on-surface-variant peer-checked/staff:bg-surface-container-lowest peer-checked/staff:text-primary peer-checked/staff:shadow-sm" for="tab_staff">
+            <label class="flex-1 text-center py-3 rounded-full cursor-pointer transition-all duration-300 font-label-caps text-label-caps text-on-surface-variant peer-checked/staff:bg-primary peer-checked/staff:text-on-primary peer-checked/staff:shadow-sm" for="tab_staff">
                 <?= \App\Core\Lang::t('auth.staff') ?>
             </label>
         </div>
