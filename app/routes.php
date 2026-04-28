@@ -16,12 +16,7 @@ use App\Controllers\LangController;
 use App\Controllers\TotpController;
 use App\Controllers\WebAuthnController;
 
-use App\Controllers\TelemetryController;
-
 // -- Endpoints Públicos y de Autenticación --
-
-// GET /api/telemetry : Métricas del sistema
-$router->get('/api/telemetry', [TelemetryController::class, 'getStats']);
 
 // GET / : Redirige a /login
 $router->get('/', function() {
