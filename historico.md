@@ -2,6 +2,17 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-28] - Modernización de Interfaz y Sistema de Vistas (v2.2.0-stable)
+
+### 🚀 Mejoras de Usuario (UX/UI)
+- **Interfaz de Recuperación:** Rediseño completo de las vistas de olvido de contraseña y restablecimiento con una estética moderna basada en Material Design 3.
+- **Feedback Visual:** Implementación de estados de éxito (Success) con iconografía clara y enlaces de retorno mejorados.
+- **Consistencia Visual:** Unificación de sombras, gradientes ambientales y tipografías en el flujo de autenticación.
+
+### 🛠️ Refactorización del Núcleo
+- **Sistema de Renderizado:** Migración de los controladores de autenticación al sistema `View::render` para una mejor gestión de layouts y variables globales.
+- **Limpieza de Vistas:** Eliminación de etiquetas `<html>` y `<head>` duplicadas en las vistas de auth, delegando la estructura al layout principal.
+
 ## [2026-04-28] - Correcciones Finales y Sincronización (v2.1.2-stable)
 
 ### 🛠️ Correcciones
@@ -15,29 +26,18 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 - **Fix Inyección de Dependencias:** Corregida la instanciación de controladores en el `Router` para asegurar que el flujo de recuperación de contraseña reciba correctamente sus servicios.
 - **Estabilidad del Mailer:** Añadido fallback de seguridad en el remitente del correo para evitar errores de envío cuando la configuración es parcial.
 - **Consistencia de Idiomas:** Corregida la detección de idioma en las vistas de recuperación de contraseña para usar el método estándar `Lang::current()`.
-- **Refactorización:** Eliminada la creación manual de modelos dentro del controlador de reset, delegando la responsabilidad al Router/DI.
 
 ## [2026-04-28] - Gestión de Identidad y Seguridad (v2.1.0-stable)
 
 ### 🚀 Nuevas Funcionalidades
 - **Recuperación de Contraseña:** Implementación de flujo completo de recuperación de contraseña para el personal (Staff/Admin) mediante tokens seguros por correo electrónico.
 - **Modelos de Seguridad:** Nuevo modelo `PasswordReset` para la gestión de tokens de expiración temporal.
-- **Vistas de Autenticación:** Creadas interfaces para solicitud de reset, formulario de nueva contraseña y estados de token inválido/expirado.
-
-### 🛠️ Mejoras Técnicas
-- **Controlador de Reset:** Centralización de la lógica de recuperación en `PasswordResetController`.
-- **Validación Estricta:** Implementación de tipado nulo en el constructor de `AuthController` para mayor robustez en la inyección del Mailer.
 
 ## [2026-04-28] - Lanzamiento Aura v2.0 "Safe & Simple" (v2.0.0-stable)
 
 ### 🚀 Nuevas Funcionalidades
 - **Protocolos CCAA:** Implementación del sistema de protocolos de convivencia adaptados a las Comunidades Autónomas (CCAA).
 - **Gestión de Protocolos:** Nuevo módulo en administración para activar/desactivar y configurar el protocolo específico de cada región.
-- **Visibilidad Estudiantil:** Opción para mostrar u ocultar los protocolos de actuación directamente en el dashboard del alumno.
-
-### 🛠️ Mejoras Técnicas
-- **Data Engine:** Integración de `BullyingProtocols.php` para la gestión centralizada de normativas y procedimientos.
-- **Esquema de Datos:** Nueva migración para la persistencia de configuraciones de protocolos regionales.
 
 ## [2026-04-27] - Consolidación de Producción (v1.7.0-stable)
 
@@ -51,3 +51,15 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 - **Fix OTP:** Activación del envío real de correos electrónicos para la autenticación de alumnos.
 
 ## [2026-04-27] - Fix Crítico: Envío de OTP por Email (v1.6.3-stable)
+
+### 🛡️ Seguridad y Autenticación
+- **Envío Real de OTP:** Implementada la integración con `Mailer` en el `AuthController` para que los alumnos reciban realmente su código de acceso por correo electrónico. Anteriormente, el código solo se registraba en el log del servidor.
+- **Inyección de Dependencias:** Actualizado el `Router` para inyectar correctamente el servicio `Mailer` con sus configuraciones al controlador de autenticación.
+- **Plantilla de Email:** Creada una plantilla de correo profesional para el código OTP, personalizada con el nombre de la institución.
+
+### ⚙️ Mejoras en el Núcleo (Core)
+- **Plantilla de Migraciones:** Añadida plantilla profesional en `database/migrations/_template.php` con helpers de idempotencia para facilitar el escalado de la base de datos.
+- **Limpieza de Branding:** Unificación del nombre de la aplicación a "Aura" en toda la documentación y rutas para la versión estable de producción.
+
+## [2026-04-27] - Optimización de Actualizaciones y Migraciones (v1.6.0-stable)
+...

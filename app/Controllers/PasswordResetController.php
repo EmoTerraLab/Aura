@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Core\Csrf;
+use App\Core\View;
 use App\Core\Lang;
 use App\Core\Mailer;
 use App\Core\Config;
@@ -23,7 +24,7 @@ class PasswordResetController
 
     public function showRequestForm(): void
     {
-        require __DIR__ . '/../Views/auth/password_forgot.php';
+        View::render('auth/password_forgot', ['title' => Lang::t('auth.forgot_password_title')]);
     }
 
     public function sendResetLink(): void
@@ -70,11 +71,11 @@ class PasswordResetController
         $record = $this->passwordResetModel->findValidToken($token);
 
         if (!$record) {
-            require __DIR__ . '/../Views/auth/password_reset_invalid.php';
+            View::render('auth/password_reset_invalid', ['title' => Lang::t('auth.reset_link_invalid')]);
             return;
         }
 
-        require __DIR__ . '/../Views/auth/password_reset_form.php';
+        View::render('auth/password_reset_form', ['title' => Lang::t('auth.reset_new_password'), 'token' => $token ?? $token_val ?? '', 'errors' => $errors ?? []]);
     }
 
     public function resetPassword(): void
@@ -101,7 +102,7 @@ class PasswordResetController
 
         if (!empty($errors)) {
             $token_val = htmlspecialchars($token);
-            require __DIR__ . '/../Views/auth/password_reset_form.php';
+            View::render('auth/password_reset_form', ['title' => Lang::t('auth.reset_new_password'), 'token' => $token ?? $token_val ?? '', 'errors' => $errors ?? []]);
             return;
         }
 

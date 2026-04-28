@@ -23,11 +23,11 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
                     <span class="material-symbols-outlined text-3xl">check_circle</span>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <h2 class="font-h2 text-xl text-on-surface font-bold"><?= \App\Core\Lang::t('auth.reset_link_sent_title') ?></h2>
+                    <h2 class="font-h2 text-xl text-on-surface font-bold">Enlace enviado</h2>
                     <p class="font-body-md text-on-surface-variant"><?= \App\Core\Lang::t('auth.reset_link_sent') ?></p>
                 </div>
                 <a href="/login" class="w-full bg-primary text-on-primary font-body-lg font-semibold py-4 rounded-full shadow-sm hover:bg-primary/90 transition-all text-center">
-                    <?= \App\Core\Lang::t('auth.back_to_login') ?>
+                    Volver al inicio
                 </a>
             </div>
         <?php else: ?>
@@ -58,7 +58,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
                 <div class="flex justify-center mt-2">
                     <a href="/login" class="font-body-md text-[14px] text-surface-tint hover:underline decoration-surface-tint/50 underline-offset-4 flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">arrow_back</span>
-                        <?= \App\Core\Lang::t('auth.back_to_login') ?>
+                        Volver al inicio
                     </a>
                 </div>
             </form>
