@@ -17,6 +17,7 @@ class ProtocolWorkflowController
     private Report $reportModel;
     private SecurityMap $mapModel;
     private ProtocolFollowup $followupModel;
+    private ReportMessage $messageModel;
 
     public function __construct()
     {
@@ -24,11 +25,19 @@ class ProtocolWorkflowController
         $this->reportModel = new Report();
         $this->mapModel = new SecurityMap();
         $this->followupModel = new ProtocolFollowup();
+        $this->messageModel = new ReportMessage();
     }
 
-    /**
-     * GET /api/protocol/case/{report_id}
-     */
+    private function logAction(int $reportId, string $message): void
+    {
+        $this->messageModel->create([
+            'report_id' => $reportId,
+            'sender_id' => Auth::id(),
+            'message' => "📋 [REGISTRE LEGAL] " . $message,
+            'is_internal' => 1
+        ]);
+    }
+
     public function getCaseData($report_id): void
     {
         try {
@@ -46,6 +55,7 @@ class ProtocolWorkflowController
                         'deadline_at' => $deadline
                     ]);
                     $case = $this->caseModel->findByReport($report_id);
+                    $this->logAction($report_id, "Protocol activat automàticament (CCAA: $ccaa). Termini de valoració: 48h.");
                 }
             }
 
@@ -76,7 +86,12 @@ class ProtocolWorkflowController
         }
 
         try {
+            $case = $this->caseModel->find($id);
+            $oldPhase = $case['current_phase'];
             $success = $this->caseModel->updatePhase($id, $newPhase);
+            if ($success) {
+                $this->logAction($case['report_id'], "Canvi de fase: de " . strtoupper($oldPhase) . " a " . strtoupper($newPhase));
+            }
             echo json_encode(['success' => $success]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -90,18 +105,23 @@ class ProtocolWorkflowController
         $data = json_decode(file_get_contents('php://input'), true);
         $severity = $data['severity'] ?? '';
         $classification = $data['classification'] ?? '';
+
+        $case = $this->caseModel->find($id);
         $success = $this->caseModel->updateClassification($id, $severity, $classification);
         
+        if ($success) {
+            $this->logAction($case['report_id'], "Tipificació actualitzada: Categoria [$classification], Gravetat [$severity]");
+            
+            // Avanzar automáticamente a la siguiente fase si es un caso normal
+            if ($severity !== 'violencia_sexual') {
+                $this->caseModel->updatePhase($id, ProtocolCase::PHASE_VALORACION);
+                $this->logAction($case['report_id'], "Indicis confirmats. El cas avança a fase de VALORACIÓ.");
+            }
+        }
+
         if ($severity === 'violencia_sexual') {
             $this->caseModel->updatePhase($id, ProtocolCase::PHASE_BARNAHUS);
-            $case = $this->caseModel->find($id);
-            $messageModel = new ReportMessage();
-            $messageModel->create([
-                'report_id' => $case['report_id'],
-                'sender_id' => Auth::id(),
-                'message' => "🔒 [BARNAHUS] Pas: CREURE i PROTEGIR. Derivació obligatòria.",
-                'is_internal' => 1
-            ]);
+            $this->logAction($case['report_id'], "🔒 BARNAHUS ACTIVAT: Pas directe a CREURE i PROTEGIR. Diagnosi interna bloquejada.");
         }
         echo json_encode(['success' => $success]);
     }
@@ -119,36 +139,26 @@ class ProtocolWorkflowController
             'notes'            => $data['notes'],
             'created_by'       => Auth::id()
         ]);
+
+        if ($success) {
+            $case = $this->caseModel->find($id);
+            $this->logAction($case['report_id'], "Nou seguiment registrat amb: " . strtoupper($data['target_type']));
+        }
         echo json_encode(['success' => $success]);
     }
 
-    public function updateClosure($id): void
+    public function updateComms($id): void
     {
         header('Content-Type: application/json');
         $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
-        $success = $this->caseModel->updateClosureChecks($id, $data['checks'] ?? []);
-        echo json_encode(['success' => $success]);
-    }
-
-    public function exportPdf($id): void
-    {
-        $case = $this->caseModel->find((int)$id);
-        if (!$case) die("Cas no trobat");
-
-        $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
-        $map = $this->mapModel->findByCase($case['id']);
-        $followups = $this->followupModel->findByCase($case['id']);
+        $case = $this->caseModel->find($id);
+        $success = $this->caseModel->updateCommunications($id, $data['comms'] ?? []);
         
-        $case['closure_checks'] = json_decode($case['closure_checks'] ?? '{}', true);
-        $case['communications'] = json_decode($case['communications'] ?? '{}', true);
-
-        View::render('protocol/pdf_export', [
-            'case' => $case,
-            'report' => $report,
-            'map' => $map,
-            'followups' => $followups
-        ], 'app'); // Usamos el layout app pero el CSS ocultará menús al imprimir
+        if ($success) {
+            $this->logAction($case['report_id'], "Actualització de comunicacions oficials.");
+        }
+        echo json_encode(['success' => $success]);
     }
 
     public function saveSecurityMapFull($id): void
@@ -158,8 +168,41 @@ class ProtocolWorkflowController
         $data = json_decode(file_get_contents('php://input'), true);
         $payload = $data['map'] ?? [];
         $payload['protocol_case_id'] = $id;
+        
         $success = $this->mapModel->upsert($payload);
+        if ($success) {
+            $case = $this->caseModel->find($id);
+            $this->logAction($case['report_id'], "Mapa de Seguretat actualitzat/dissenyat.");
+        }
         echo json_encode(['success' => $success]);
+    }
+
+    public function updateClosure($id): void
+    {
+        header('Content-Type: application/json');
+        $id = (int)$id;
+        $data = json_decode(file_get_contents('php://input'), true);
+        $case = $this->caseModel->find($id);
+        $success = $this->caseModel->updateClosureChecks($id, $data['checks'] ?? []);
+        
+        if ($success) {
+            $this->logAction($case['report_id'], "Checklist de tancament actualitzat.");
+        }
+        echo json_encode(['success' => $success]);
+    }
+
+    public function exportPdf($id): void
+    {
+        $case = $this->caseModel->find((int)$id);
+        if (!$case) die("Cas no trobat");
+        $this->logAction($case['report_id'], "S'ha generat/exportat l'informe oficial en PDF.");
+        
+        $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
+        $map = $this->mapModel->findByCase($case['id']);
+        $followups = $this->followupModel->findByCase($case['id']);
+        $case['closure_checks'] = json_decode($case['closure_checks'] ?? '{}', true);
+        $case['communications'] = json_decode($case['communications'] ?? '{}', true);
+        View::render('protocol/pdf_export', ['case' => $case, 'report' => $report, 'map' => $map, 'followups' => $followups], 'app');
     }
 
     public function getSecurityMap($id): void
@@ -169,14 +212,5 @@ class ProtocolWorkflowController
         $map = $this->mapModel->findByCase($id);
         if ($map) $map['mesures_urgencia'] = json_decode($map['mesures_urgencia'] ?? '[]', true);
         echo json_encode(['success' => true, 'map' => $map]);
-    }
-
-    public function updateComms($id): void
-    {
-        header('Content-Type: application/json');
-        $id = (int)$id;
-        $data = json_decode(file_get_contents('php://input'), true);
-        $success = $this->caseModel->updateCommunications($id, $data['comms'] ?? []);
-        echo json_encode(['success' => $success]);
     }
 }

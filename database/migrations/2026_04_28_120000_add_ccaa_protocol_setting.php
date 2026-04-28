@@ -1,6 +1,6 @@
 <?php
 
-class Migration_20260428120000_add_ccaa_protocol_setting
+class Migration_2026_04_28_120000_add_ccaa_protocol_setting
 {
     private \PDO $db;
 

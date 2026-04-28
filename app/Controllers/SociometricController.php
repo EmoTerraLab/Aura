@@ -113,14 +113,15 @@ class SociometricController
     }
 
     /**
-     * GET /staff/sociogramas/{survey_id}
+     * GET /staff/sociogramas/{id}
      * Dashboard de resultados para el Staff
      */
-    public function results(int $surveyId): void
+    public function results($id): void
     {
+        $id = (int)$id;
         // 1. Obtener datos básicos de la encuesta
         $stmtSurvey = $this->db->prepare("SELECT s.*, c.name as classroom_name FROM sociometric_surveys s JOIN classrooms c ON s.classroom_id = c.id WHERE s.id = ?");
-        $stmtSurvey->execute([$surveyId]);
+        $stmtSurvey->execute([$id]);
         $survey = $stmtSurvey->fetch();
 
         // 2. Cálculo de métricas (Agregados)
@@ -132,9 +133,9 @@ class SociometricController
                 JOIN student_profiles sp ON u.id = sp.user_id
                 WHERE sp.classroom_id = ?
                 ORDER BY pos_count DESC";
-        
+
         $stmtMetrics = $this->db->prepare($sql);
-        $stmtMetrics->execute([$surveyId, $surveyId, $surveyId, $survey['classroom_id']]);
+        $stmtMetrics->execute([$id, $id, $id, $survey['classroom_id']]);
         $metrics = $stmtMetrics->fetchAll();
 
         View::render('staff/sociometric_results', [
