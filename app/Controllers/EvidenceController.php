@@ -8,46 +8,48 @@ class EvidenceController
 {
     /**
      * GET /protocol/evidence/{id}/download
-     * Sirve el archivo de evidencia con control de permisos estricto.
+     * Serveix el fitxer d'evidència amb control estricte de permisos (Sènior Refactor).
      */
-    public function download($id): void
+    public function download(string|int $id): void
     {
         $id = (int)$id;
         $db = Database::getInstance();
 
-        // 1. Obtener datos de la evidencia
+        // 1. Recuperar metadades
         $stmt = $db->prepare("SELECT * FROM protocol_evidence WHERE id = ?");
         $stmt->execute([$id]);
         $evidence = $stmt->fetch();
 
         if (!$evidence) {
             http_response_code(404);
-            die("Evidencia no encontrada.");
+            die("Evidència no trobada.");
         }
 
-        // 2. Verificar permisos
-        // Solo Admin, Dirección, COCOBE o el usuario que la subió
-        $canAccess = Auth::hasRole(['admin', 'direccion']) || Auth::isCocobe() || Auth::id() === $evidence['uploaded_by'];
+        // 2. Control d'accés (RBAC + COCOBE)
+        $isAuthorized = Auth::hasRole(['admin', 'direccion']) 
+                        || Auth::isCocobe() 
+                        || (int)Auth::id() === (int)$evidence['uploaded_by'];
 
-        if (!$canAccess) {
+        if (!$isAuthorized) {
             http_response_code(403);
-            die("No tienes permiso para acceder a esta evidencia.");
+            die("Accés denegat: No teniu permisos per veure aquesta prova.");
         }
 
-        $filePath = __DIR__ . '/../../storage/evidence/' . $evidence['filename'];
+        // 3. Validació de seguretat del path (Prevé LFI)
+        $filename = basename($evidence['filename']);
+        $filePath = __DIR__ . '/../../storage/evidence/' . $filename;
 
         if (!file_exists($filePath)) {
             http_response_code(404);
-            die("El archivo físico no existe en el servidor.");
+            die("El fitxer físic ha estat eliminat o mogut.");
         }
 
-        // 3. Servir el archivo de forma segura
+        // 4. Stream segur
         header('Content-Type: ' . ($evidence['mime_type'] ?? 'application/octet-stream'));
         header('Content-Disposition: attachment; filename="' . $evidence['original_name'] . '"');
         header('Content-Length: ' . filesize($filePath));
-        header('Cache-Control: private, max-age=0, must-revalidate');
-        header('Pragma: public');
-
+        header('X-Content-Type-Options: nosniff');
+        
         readfile($filePath);
         exit;
     }

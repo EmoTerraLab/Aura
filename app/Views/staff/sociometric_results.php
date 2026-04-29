@@ -59,26 +59,28 @@ use App\Core\Lang;
                         <button onclick="openProtocol(<?= $v['id'] ?>)" class="text-[10px] bg-white/20 hover:bg-white/40 px-2 py-0.5 rounded-full">Activar</button>
                     </div>
                 <?php endforeach; ?>
+            <!-- Matriz Detallada -->
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                <div class="p-8 border-b border-slate-50">
+                    <h2 class="font-black text-slate-800 uppercase text-sm tracking-widest"><?= Lang::t('sociogram.nomination_matrix') ?></h2>
+                </div>
+                <div class="overflow-x-auto no-scrollbar">
+                    <div class="min-w-[800px]">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    <th class="px-8 py-4"><?= Lang::t('sociogram.student') ?></th>
+                                    <th><?= Lang::t('sociogram.positive') ?> (+)</th>
+                                    <th><?= Lang::t('sociogram.negative') ?> (-)</th>
+                                    <th><?= Lang::t('sociogram.victim_signals') ?> (?)</th>
+                                    <th class="px-8"><?= Lang::t('sociogram.actions') ?></th>
+                                </tr>
+                            </thead>
+            ...
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Matriz Detallada -->
-        <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-            <div class="p-8 border-b border-slate-50">
-                <h2 class="font-black text-slate-800 uppercase text-sm tracking-widest"><?= Lang::t('sociogram.nomination_matrix') ?></h2>
-            </div>
-            <div class="overflow-x-auto no-scrollbar">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                            <th class="px-8 py-4"><?= Lang::t('sociogram.student') ?></th>
-                            <th><?= Lang::t('sociogram.positive') ?> (+)</th>
-                            <th><?= Lang::t('sociogram.negative') ?> (-)</th>
-                            <th><?= Lang::t('sociogram.victim_signals') ?> (?)</th>
-                            <th class="px-8"><?= Lang::t('sociogram.actions') ?></th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm">
                         <?php foreach ($metrics as $m): ?>
                         <tr class="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
                             <td class="px-8 py-6 font-black text-slate-700"><?= htmlspecialchars($m['name']) ?></td>

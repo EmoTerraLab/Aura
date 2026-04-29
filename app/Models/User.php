@@ -60,6 +60,12 @@ class User extends Model {
         return $stmt->execute([$lang, $userId]);
     }
 
+    public function updateCocobeStatus(int $userId, bool $status): bool
+    {
+        $stmt = $this->db->prepare('UPDATE users SET is_cocobe = ? WHERE id = ?');
+        return $stmt->execute([(int)$status, $userId]);
+    }
+
     /**
      * Actualiza la contraseña de un usuario por su correo electrónico.
      */

@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\ProtocolCase;
 use App\Models\ReportMessage;
 use App\Core\Auth;
+use App\Core\Config;
 
 class ProtocolStateService
 {
@@ -17,7 +18,7 @@ class ProtocolStateService
     }
 
     /**
-     * Cambia la fase del protocolo con validaciones de negocio.
+     * Gestiona la transició de fase amb bloquejos per Violència Sexual (Barnahus).
      */
     public function transitionTo(int $caseId, string $newPhase): bool
     {
@@ -25,9 +26,10 @@ class ProtocolStateService
         if (!$case) return false;
 
         $oldPhase = $case['current_phase'];
-        
-        // Bloqueo Barnahus (Ya validado en el modelo, pero reforzamos aquí)
-        if ($case['severity_preliminary'] === 'violencia_sexual') {
+        $isSexualViolence = $case['severity_preliminary'] === 'violencia_sexual';
+
+        // Regla d'or Catalunya 2024: Si és violència sexual, només es permeten fases de derivació/tancament
+        if ($isSexualViolence) {
             $allowed = [ProtocolCase::PHASE_BARNAHUS, ProtocolCase::PHASE_COMUNICACION, ProtocolCase::PHASE_CIERRE];
             if (!in_array($newPhase, $allowed)) {
                 throw new \Exception("PROTOCOL BLOQUEJAT: Els casos de violència sexual requereixen derivació directa a Barnahus.");
@@ -37,16 +39,16 @@ class ProtocolStateService
         $success = $this->caseModel->updatePhase($caseId, $newPhase);
 
         if ($success) {
-            $this->logAction($case['report_id'], "Canvi de fase: de " . strtoupper($oldPhase) . " a " . strtoupper($newPhase));
+            $this->logInternalAudit($case['report_id'], "Canvi de fase legal: de " . strtoupper($oldPhase) . " a " . strtoupper($newPhase));
         }
 
         return $success;
     }
 
     /**
-     * Clasifica un caso y maneja automatismos (ej. Barnahus).
+     * Tipificació i activació automàtica del protocol de Catalunya.
      */
-    public function classify(int $caseId, string $severity, string $classification): bool
+    public function classifyCase(int $caseId, string $severity, string $classification): bool
     {
         $case = $this->caseModel->find($caseId);
         if (!$case) return false;
@@ -54,28 +56,29 @@ class ProtocolStateService
         $success = $this->caseModel->updateClassification($caseId, $severity, $classification);
 
         if ($success) {
-            $this->logAction($case['report_id'], "Tipificació: [$classification], Gravetat [$severity]");
+            $this->logInternalAudit($case['report_id'], "Tipificació actualitzada: [$classification] amb gravetat [$severity]");
             
-            // Automatismos
-            if ($severity === 'violencia_sexual') {
+            // Automatismes de Catalunya
+            if ($severity === 'violencia_sexual' && Config::get('ccaa_code') === 'cataluna') {
                 $this->caseModel->updatePhase($caseId, ProtocolCase::PHASE_BARNAHUS);
-                $this->logAction($case['report_id'], "🔒 BARNAHUS ACTIVAT: Pas directe a CREURE i PROTEGIR. Diagnosi interna bloquejada.");
+                $this->logInternalAudit($case['report_id'], "🔒 BARNAHUS ACTIVAT: Pas directe a CREURE i PROTEGIR.");
             } else {
-                // Avance automático a valoración para casos normales
-                $this->caseModel->updatePhase($caseId, ProtocolCase::PHASE_VALORACION);
-                $this->logAction($case['report_id'], "Indicis confirmats. El cas avança a fase de VALORACIÓ.");
+                // Avançar automàticament de detecció a valoració en casos ordinaris
+                if ($case['current_phase'] === ProtocolCase::PHASE_DETECCION) {
+                    $this->caseModel->updatePhase($caseId, ProtocolCase::PHASE_VALORACION);
+                }
             }
         }
 
         return $success;
     }
 
-    private function logAction(int $reportId, string $message): void
+    private function logInternalAudit(int $reportId, string $message): void
     {
         $this->messageModel->create([
             'report_id' => $reportId,
             'sender_id' => Auth::id(),
-            'message' => "📋 [REGISTRE LEGAL] " . $message,
+            'message' => "📋 [AUDITORIA LEGAL] " . $message,
             'is_internal' => 1
         ]);
     }

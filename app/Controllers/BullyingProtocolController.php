@@ -5,35 +5,37 @@ use App\Core\Auth;
 use App\Core\Config;
 use App\Core\Lang;
 use App\Core\View;
-use App\Data\BullyingProtocols;
 use App\Models\Setting;
+use App\Services\ProtocolDataService;
 
 class BullyingProtocolController
 {
     private Setting $settings;
+    private ProtocolDataService $protocolDataService;
 
     public function __construct(Setting $settings)
     {
         $this->settings = $settings;
+        $this->protocolDataService = new ProtocolDataService();
     }
 
     public function index(): void
     {
-        $ccaaCode = Config::get('ccaa_code');
         $active = Config::get('ccaa_protocol_active', '1') === '1';
-        $showToStudents = Config::get('ccaa_show_to_students', '1') === '1';
 
         if (!$active) {
             header('Location: /');
             exit;
         }
 
-        if (Auth::role() === 'alumno' && !$showToStudents) {
+        if (Auth::role() === 'alumno' && !$this->protocolDataService->isVisibleToStudents()) {
             header('Location: /alumno/dashboard');
             exit;
         }
 
-        if (empty($ccaaCode)) {
+        $protocol = $this->protocolDataService->getCurrentProtocol();
+
+        if (!$protocol) {
             if (Auth::role() === 'admin') {
                 View::render('protocol/not_configured', ['title' => Lang::t('protocol.not_configured')], 'app');
             } else {
@@ -41,8 +43,6 @@ class BullyingProtocolController
             }
             return;
         }
-
-        $protocol = BullyingProtocols::getByCode($ccaaCode);
 
         View::render('protocol/index', [
             'title' => Lang::t('protocol.nav_title'),
@@ -53,12 +53,13 @@ class BullyingProtocolController
     public function apiGet(): void
     {
         header('Content-Type: application/json');
-        $ccaaCode = Config::get('ccaa_code');
-        if (empty($ccaaCode)) {
+        $protocol = $this->protocolDataService->getCurrentProtocol();
+        
+        if (!$protocol) {
             echo json_encode(['error' => 'not_configured']);
             return;
         }
-        $protocol = BullyingProtocols::getByCode($ccaaCode);
+        
         echo json_encode($protocol);
     }
 }
