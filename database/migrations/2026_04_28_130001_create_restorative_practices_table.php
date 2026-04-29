@@ -25,7 +25,7 @@ class Migration_2026_04_28_130001_create_restorative_practices_table
             FOREIGN KEY (facilitator_id) REFERENCES users(id)
         )";
         $this->db->exec($sql);
-        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_restorative_case ON restorative_practices(protocol_case_id)");
+        $this->db->exec("CREATE INDEX idx_restorative_case ON restorative_practices(protocol_case_id)");
     }
 
     public function down(): void

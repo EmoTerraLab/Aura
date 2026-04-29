@@ -11,11 +11,16 @@ class Migration_2026_04_28_130000_add_acknowledgment_to_cases
 
     public function up(): void
     {
-        $this->db->exec("ALTER TABLE protocol_cases ADD COLUMN is_acknowledged INTEGER DEFAULT NULL");
+        // Añadir columna booleana (0/1) nullable
+        $stmt = $this->db->query("PRAGMA table_info(protocol_cases)");
+        $columns = array_column($stmt->fetchAll(\PDO::FETCH_ASSOC), 'name');
+        if (!in_array('aggressor_acknowledges_facts', $columns, true)) {
+            $this->db->exec("ALTER TABLE protocol_cases ADD COLUMN aggressor_acknowledges_facts INTEGER DEFAULT NULL");
+        }
     }
 
     public function down(): void
     {
-        // SQLite no permite DROP COLUMN de forma sencilla en versiones antiguas, omitimos para estabilidad
+        // SQLite no permite borrar columnas fácilmente. En un sistema real se reconstruiría la tabla.
     }
 }

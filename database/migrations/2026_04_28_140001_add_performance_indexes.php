@@ -9,20 +9,24 @@ class Migration_2026_04_28_140001_add_performance_indexes
 
     public function up(): void
     {
-        // Índices para reportes y mensajes (Bandeja de entrada Staff)
-        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_reports_status_created ON reports(status, created_at)");
-        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_messages_report_sender ON report_messages(report_id, sender_id)");
+        // Índices para Sociometría
+        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_sociometric_responses_survey ON sociometric_responses(survey_id);");
+        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_sociometric_responses_nominated ON sociometric_responses(nominated_student_id);");
         
-        // Índices para el flujo de protocolo legal
-        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_protocol_status_deadline ON protocol_cases(ccaa_code, deadline_at)");
-        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_followups_case_date ON protocol_followups(protocol_case_id, session_date)");
+        // Índices para Seguimientos y Mapas
+        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_protocol_followups_case ON protocol_followups(protocol_case_id);");
+        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_security_maps_case ON security_maps(protocol_case_id);");
+        
+        // Índice para Logs de Acceso
+        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_protocol_access_logs_case ON protocol_access_logs(protocol_case_id);");
     }
 
     public function down(): void
     {
-        $this->db->exec("DROP INDEX IF EXISTS idx_reports_status_created");
-        $this->db->exec("DROP INDEX IF EXISTS idx_messages_report_sender");
-        $this->db->exec("DROP INDEX IF EXISTS idx_protocol_status_deadline");
-        $this->db->exec("DROP INDEX IF EXISTS idx_followups_case_date");
+        $this->db->exec("DROP INDEX IF EXISTS idx_sociometric_responses_survey;");
+        $this->db->exec("DROP INDEX IF EXISTS idx_sociometric_responses_nominated;");
+        $this->db->exec("DROP INDEX IF EXISTS idx_protocol_followups_case;");
+        $this->db->exec("DROP INDEX IF EXISTS idx_security_maps_case;");
+        $this->db->exec("DROP INDEX IF EXISTS idx_protocol_access_logs_case;");
     }
 }

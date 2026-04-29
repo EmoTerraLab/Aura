@@ -260,20 +260,8 @@
         }
 
         const res = await fetchJson(`/staff/reports/${id}`);
-        if (!res.error) renderDetail(res.report, res.messages);
+        if (!res.error) await renderDetail(res.report, res.messages);
         else container.innerHTML = `<div class="p-10 text-center"><p class="text-error font-bold mb-4">${res.error}</p><button onclick="closeDetailMobile()" class="bg-primary text-white px-6 py-2 rounded-full">Volver</button></div>`;
-
-        // Inicializar Módulo Restaurativo (Después de inyectar el HTML en el container)
-        if (protocolCase) {
-            currentCaseId = protocolCase.id;
-            const resPanel = document.getElementById('restorative-panel-container');
-            const originalModule = document.getElementById('restorative-module');
-            if (resPanel && originalModule) {
-                resPanel.appendChild(originalModule);
-                originalModule.classList.remove('hidden');
-                loadRestorativeModule(currentCaseId);
-            }
-        }
     }
 
     function closeDetailMobile() {

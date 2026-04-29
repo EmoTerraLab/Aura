@@ -2,31 +2,24 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
-## [2026-04-29] - Optimización de Consultas y Rendimiento (v2.6.1-stable)
+## [2026-04-29] - Protocolo Legal Aragón y Gestión de Plazos (v2.7.0-stable)
+
+### 🚀 Nuevas Funcionalidades
+- **Protocolo de Aragón:** Implementación del sistema legal de gestión de acoso para la CCAA de Aragón, incluyendo la gestión de anexos oficiales (Anexo III, IV, etc.) y flujo de estados normativo.
+- **Módulo de Prácticas Restaurativas:** Implementación del enfoque ERG para la resolución de conflictos, permitiendo registrar conversaciones, reuniones y círculos restaurativos con seguimiento de acuerdos.
+- **Gestión de Evidencias Legales:** Sistema de subida y custodia de archivos vinculados a casos de protocolo con registro de trazabilidad.
+- **Registro de Acceso y Logs Legales:** Implementación de logs automáticos en el historial de los reportes para acciones administrativas de protocolo (cambios de fase, tipificación, exportaciones).
 
 ### 🛠️ Mejoras Técnicas
-- **Índices de Rendimiento:** Añadidos nuevos índices a las claves foráneas de las tablas de protocolos (`protocol_cases`, `protocol_followups`, `security_maps`, `protocol_evidence`, `protocol_access_logs`) para agilizar el tiempo de respuesta en bases de datos con gran volumen de datos.
-- **Sincronización:** Consolidación de migraciones provenientes de PDP.
+- **Helper de Días Lectivos:** Nuevo componente `SchoolDaysHelper` para el cálculo preciso de plazos legales basados en el calendario escolar, excluyendo fines de semana y festivos.
+- **Optimización de Consultas:** Añadidos índices de rendimiento adicionales para las tablas de protocolo de Aragón y logs de acceso.
+- **Internacionalización (i18n):** Ampliación de diccionarios para cubrir el vocabulario legal de Aragón y el sistema restaurativo.
+
+## [2026-04-29] - Optimización de Consultas y Rendimiento (v2.6.1-stable)
 
 ## [2026-04-29] - Prácticas Restaurativas y Custodia de Evidencias (v2.6.0-stable)
 
-### 🚀 Nuevas Funcionalidades
-- **Módulo de Prácticas Restaurativas:** Implementación del enfoque ERG para la resolución de conflictos, permitiendo registrar conversaciones, reuniones y círculos restaurativos con seguimiento de acuerdos.
-- **Gestión de Evidencias Legales:** Nuevo sistema de subida y custodia de archivos vinculados a casos de protocolo con registro de trazabilidad.
-- **Registro de Acceso y Logs Legales:** Implementación de logs automáticos en el historial de los reportes para acciones administrativas de protocolo (cambios de fase, tipificación, exportaciones).
-- **Exportación de Plantillas Oficiales:** Sistema de generación de documentos basados en modelos legales de CCAA (Addenda de Compromiso, Reconocimiento de hechos, etc.).
-
-### 🛠️ Mejoras Técnicas
-- **Optimización de Sociogramas:** Refactorización de las consultas SQL del módulo sociométrico mediante agregaciones en un solo paso, mejorando significativamente el rendimiento en aulas grandes.
-- **Robustez WebAuthn:** Corrección en el intercambio de parámetros `pubKeyCredParams` para asegurar compatibilidad total con navegadores modernos en el registro biométrico.
-- **Internacionalización (i18n):** Ampliación de diccionarios para cubrir el nuevo vocabulario restaurativo y legal.
-
 ## [2026-04-28] - Protocolos de Intervención y Sociogramas (v2.5.0-stable)
-
-### 🚀 Nuevas Funcionalidades
-- **Protocolos CCAA Dinámicos:** Sistema de guía de actuación ante acoso adaptado por Comunidad Autónoma.
-- **Módulo Sociométrico:** Encuestas para mapear dinámicas relacionales y detección de riesgos.
-- **Mapas de Seguridad:** Herramienta visual de puntos críticos.
 
 ## [2026-04-28] - Fix: Dashboard Alumno y Localización de Estados (v2.4.1-stable)
 
