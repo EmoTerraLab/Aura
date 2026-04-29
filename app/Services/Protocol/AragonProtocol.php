@@ -14,7 +14,7 @@ class AragonProtocol implements ProtocolInterface {
     }
 
     public function getLegalReference(): string {
-        return 'Resolución 19/10/2018';
+        return 'Resolución de 19/10/2018 (Protocolo de actuación en casos de acoso escolar)';
     }
 
     public function getInitialState(): string {

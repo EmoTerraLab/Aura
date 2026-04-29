@@ -14,7 +14,7 @@ class CatalunaProtocol implements ProtocolInterface {
     }
 
     public function getLegalReference(): string {
-        return 'Resolució 2024 (Generat de REVA/Barnahus)';
+        return 'Resolució d\'1 de setembre de 2021 (Protocol Marc)';
     }
 
     public function getInitialState(): string {
@@ -118,7 +118,7 @@ class CatalunaProtocol implements ProtocolInterface {
     }
 
     public function getExclusiveTools(): array {
-        return ['reva', 'barnahus', 'addenda_compromis', 'reconeixement_fets', 'derivacio_barnahus'];
+        return ['reva', 'barnahus', 'addenda_compromis', 'reconeixement_fets', 'derivacio_barnahus', 'closure_checklist'];
     }
 
     public function canTransition(string $fromState, string $toState, array $case): bool|string {

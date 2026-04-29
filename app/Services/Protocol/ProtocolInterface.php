@@ -1,6 +1,9 @@
 <?php
 namespace App\Services\Protocol;
 
+/**
+ * ProtocolInterface - Contrato obligatorio para todos los flujos de CCAA.
+ */
 interface ProtocolInterface {
     // Metadatos del protocolo
     public function getCcaaCode(): string;

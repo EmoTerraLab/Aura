@@ -40,10 +40,12 @@
                 <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.active_cases') ?></span>
             </a>
 
-            <?php if (\App\Core\Config::get('ccaa_code') === 'cataluna'): ?>
+            <?php 
+            $ccaaProtocol = \App\Services\Protocol\ProtocolFactory::make();
+            if ($ccaaProtocol->isFullyImplemented()): ?>
             <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/protocolos/dashboard">
                 <span class="material-symbols-outlined">dashboard_customize</span>
-                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?></span>
+                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?> (<?= $ccaaProtocol->getName() ?>)</span>
             </a>
             <?php endif; ?>
 
@@ -112,15 +114,27 @@
                             </div>
                             <h3 class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors mb-1"><?= $r['student_name'] ?></h3>
                             <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3"><?= $r['content'] ?></p>
-                            <div class="flex items-center gap-4">
-                                <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
-                                    <span class="material-symbols-outlined text-xs">chat_bubble</span>
-                                    <span><?= $r['message_count'] ?? 0 ?></span>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
+                                        <span class="material-symbols-outlined text-xs">chat_bubble</span>
+                                        <span><?= $r['message_count'] ?? 0 ?></span>
+                                    </div>
+                                    <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
+                                        <span class="material-symbols-outlined text-xs">meeting_room</span>
+                                        <span><?= $r['classroom_name'] ?></span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
-                                    <span class="material-symbols-outlined text-xs">meeting_room</span>
-                                    <span><?= $r['classroom_name'] ?></span>
-                                </div>
+                                <?php 
+                                $protocol = \App\Services\Protocol\ProtocolFactory::make();
+                                ?>
+                                <a href="<?= $protocol->getManageUrl($r['id']) ?>" class="text-[9px] font-black uppercase bg-primary/10 text-primary px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-all stop-propagation" onclick="event.stopPropagation()">
+                                    <?php if ($protocol->isFullyImplemented()): ?>
+                                        Gestionar Protocolo (<?= $protocol->getName() ?>)
+                                    <?php else: ?>
+                                        Consultar Protocolo de <?= $protocol->getName() ?>
+                                    <?php endif; ?>
+                                </a>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -317,7 +331,7 @@
         // Cargar datos del caso legal
         const caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
         const protocolCase = caseRes.case;
-        const isAdvancedProtocol = ['cataluna', 'aragon'].includes(caseRes.ccaa);
+        const isAdvancedProtocol = !caseRes.protocol_meta.current_actions.some(a => a.key === 'not_implemented');
 
         let mHtml = messages.map(m => {
             const isMe = m.is_current_user;
@@ -361,11 +375,7 @@
                 </div>
                 
                 <!-- PROTOCOL ACTIONS CARD -->
-                ${isAdvancedProtocol ? renderProtocolActionsCard(protocolCase, caseRes.ccaa) : `
-                    <div class="bg-white p-6 rounded-2xl border border-slate-100 italic text-slate-400 text-xs">
-                        El flux de protocol automatitzat per a la CCAA <strong>${caseRes.ccaa}</strong> està en fase d'implementació. Podeu gestionar el cas mitjançant el xat.
-                    </div>
-                `}
+                ${renderProtocolActionsCard(protocolCase, caseRes.protocol_meta)}
 
                 
             <!-- MÒDUL RESTAURATIU -->
@@ -392,20 +402,10 @@
             const originalModule = document.getElementById('restorative-module');
             
             if (resPanel && originalModule) {
-                const ccaa = caseRes.ccaa;
-                const phase = protocolCase.current_phase;
+                const activeProtocol = caseRes.ccaa;
                 
-                // En Aragón solo mostramos el módulo restaurativo a partir de la Valoración
-                let showRestorative = (ccaa === 'cataluna');
-                if (ccaa === 'aragon') {
-                    const advancedPhases = ['en_valoracion', 'valorado', 'contrato_conducta', 'expediente_disciplinario', 'en_seguimiento', 'cerrado'];
-                    showRestorative = advancedPhases.includes(phase);
-                }
-
-                // Salvaguarda: si la fase es desconocida para Aragón (como 'deteccion'), forzar ocultación
-                if (ccaa === 'aragon' && !['comunicacion_recibida', 'protocolo_iniciado', 'en_valoracion', 'valorado', 'contrato_conducta', 'expediente_disciplinario', 'en_seguimiento', 'cerrado', 'reabierto'].includes(phase)) {
-                    showRestorative = false;
-                }
+                // Solo Catalunya tiene prácticas restaurativas actualmente
+                let showRestorative = (activeProtocol === 'cataluna');
 
                 if (showRestorative) {
                     resPanel.appendChild(originalModule);
@@ -413,7 +413,7 @@
                     loadRestorativeModule(currentCaseId);
                 } else {
                     originalModule.classList.add('hidden');
-                    document.body.appendChild(originalModule);
+                    document.body.appendChild(originalModule); // Lo devolvemos al body oculto
                 }
             }
         }
@@ -475,7 +475,9 @@
             case 'overdue': return 'bg-red-900 text-white animate-pulse border-red-900';
             default: return 'text-slate-500 bg-slate-50 border-slate-100';
         }
-    }    function renderProtocolActionsCard(c, meta) {
+    }
+
+    function renderProtocolActionsCard(c, meta) {
         if (!c || !meta || !meta.current_actions || meta.current_actions.length === 0) {
              return `
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 italic text-slate-400 text-xs text-center">
@@ -497,6 +499,7 @@
                 case 'indigo': return 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700';
                 case 'dark': return 'bg-slate-800 text-white hover:bg-slate-900';
                 case 'link': return 'text-primary underline font-bold hover:text-primary/80';
+                case 'alert': return 'bg-amber-50 border border-amber-100 text-amber-700 italic text-xs p-6 rounded-2xl';
                 default: return 'bg-slate-100 text-slate-600';
             }
         };
@@ -516,15 +519,20 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    ${actions.map(a => `
-                        <button onclick="${a.onclick}" class="px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center justify-center text-center gap-2 ${getStyleClass(a.style)}">
-                            ${a.label}
-                        </button>
-                    `).join('')}
+                <div class="${actions.some(a => a.style === 'alert') ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-3'}">
+                    ${actions.map(a => {
+                        if (a.style === 'alert') {
+                            return `<div class="${getStyleClass(a.style)}">${a.label}</div>`;
+                        }
+                        return `
+                            <button onclick="${a.onclick}" class="px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center justify-center text-center gap-2 ${getStyleClass(a.style)}">
+                                ${a.label}
+                            </button>
+                        `;
+                    }).join('')}
                 </div>
                 
-                ${meta.ccaa_code === 'cataluna' && c.current_phase === 'comunicacio' ? `
+                ${meta.exclusive_tools && meta.exclusive_tools.includes('reva') && c.current_phase === 'comunicacio' ? `
                     <div class="pt-4 border-t border-slate-50">
                         <p class="text-[9px] font-black uppercase text-slate-400 mb-2">Completar requeriments REVA</p>
                         <div class="space-y-2">
@@ -544,7 +552,7 @@
                     </div>
                 ` : ''}
 
-                ${meta.ccaa_code === 'cataluna' && (c.current_phase === 'intervencio' || c.current_phase === 'seguiment_tancament') ? `
+                ${meta.exclusive_tools && meta.exclusive_tools.includes('closure_checklist') && (c.current_phase === 'intervencio' || c.current_phase === 'seguiment_tancament') ? `
                     <div class="pt-4 border-t border-slate-50 space-y-4">
                         <h5 class="text-[9px] font-black uppercase text-primary tracking-widest">Checklist de Tancament Oficial</h5>
                         <div class="space-y-2">
@@ -556,126 +564,17 @@
                     </div>
                 ` : ''}
 
-                ${c.current_phase === 'violencia_sexual_actiu' ? `
+                ${meta.ccaa_code === 'cataluna' && c.current_phase === 'violencia_sexual_actiu' ? `
                     <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
                         <p class="text-xs text-red-800 font-medium">S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.</p>
                     </div>
                 ` : ''}
-            </div>
-        `;
-    }
-                    
-                    ${c.current_phase === 'en_valoracion' ? `
-                        <div class="w-full space-y-3">
-                            <div class="flex gap-2">
-                                <button class="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Registrar Entrevista (ANEXO V)</button>
-                                <button class="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Registrar Indicadores (ANEXO VI)</button>
-                            </div>
-                            <button onclick="nextPhase(${c.id}, 'valorado')" class="w-full px-4 py-2 bg-primary text-white rounded-full text-[11px] font-bold transition-colors">Finalizar Valoración (Ir a Resolución)</button>
-                        </div>
-                    ` : ''}
 
-                    ${c.current_phase === 'valorado' ? `
-                        <div class="w-full space-y-3">
-                            <div class="flex gap-2">
-                                <button class="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Firmar Acta Valoración (ANEXO VII)</button>
-                                <button class="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Generar Informe-Resumen (ANEXO VIII)</button>
-                            </div>
-                            <button class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Enviar a Inspección</button>
-                            <div class="flex gap-2 mt-4 pt-4 border-t border-slate-100">
-                                <button onclick="nextPhase(${c.id}, 'contrato_conducta')" class="flex-1 px-2 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[10px] font-bold text-slate-700 transition-colors">Contrato Conducta</button>
-                                <button onclick="nextPhase(${c.id}, 'expediente_disciplinario')" class="flex-1 px-2 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[10px] font-bold text-slate-700 transition-colors">Expediente Disciplinario</button>
-                                <button onclick="nextPhase(${c.id}, 'en_seguimiento')" class="flex-1 px-2 py-2 bg-primary text-white rounded-full text-[10px] font-bold transition-colors">A Seguimiento</button>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${(c.current_phase === 'contrato_conducta' || c.current_phase === 'expediente_disciplinario') ? `
-                        <div class="w-full space-y-3">
-                            <p class="text-[11px] font-bold text-slate-500 italic">Estado intermedio: ${c.current_phase.replace('_', ' ').toUpperCase()}</p>
-                            <button onclick="nextPhase(${c.id}, 'en_seguimiento')" class="w-full px-4 py-2 bg-primary text-white rounded-full text-[11px] font-bold transition-colors">Avanzar a Seguimiento</button>
-                        </div>
-                    ` : ''}
-
-                    ${(c.current_phase === 'en_seguimiento' || c.current_phase === 'reabierto') ? `
-                        <div class="w-full space-y-6">
-                            <button onclick="openFollowupModalAragon(${c.id})" class="w-full py-3 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-2 justify-center">
-                                <span class="material-symbols-outlined text-sm">event_note</span> Registrar Sesión de Seguimiento (ANEXO IX)
-                            </button>
-
-                            <div class="space-y-3">
-                                <h5 class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Historial de Seguimiento</h5>
-                                <div class="max-h-40 overflow-y-auto no-scrollbar space-y-2" id="followup-list">
-                                    ${(c.followups || []).map(f => `
-                                        <div class="p-3 bg-slate-50 rounded-xl text-[11px] border border-slate-100">
-                                            <div class="flex justify-between font-bold mb-1">
-                                                <span class="text-primary uppercase">${f.target_type}</span>
-                                                <span class="text-slate-400">${f.session_date}</span>
-                                            </div>
-                                            <p class="text-slate-600">${f.notes}</p>
-                                        </div>
-                                    `).join('') || '<p class="text-[10px] text-slate-400 italic">No hay sesiones registradas.</p>'}
-                                </div>
-                            </div>
-
-                            <div class="flex gap-2 pt-4 border-t border-slate-100">
-                                <button onclick="nextPhase(${c.id}, 'cerrado')" class="flex-1 py-3 bg-primary text-white rounded-xl text-xs font-bold">Cerrar Protocolo</button>
-                                <button onclick="nextPhase(${c.id}, 'reabierto')" class="px-4 py-3 bg-amber-100 text-amber-700 rounded-xl text-xs font-bold">Reabrir</button>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${c.current_phase === 'cerrado' ? `
-                        <div class="w-full space-y-3">
-                            <button class="w-full px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Generar Acta de Cierre (ANEXO X)</button>
-                            <button class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Enviar a Inspección y EOE</button>
-                        </div>
-                    ` : ''}
-        `;
-
-        return `
-            <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border-l-4 ${borderColor} border-t border-r border-b space-y-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-[10px] font-black uppercase ${textColor} tracking-widest">
-                        ${isBarnahus ? '⚠️ ALERTA BARNAHUS: VIOLÈNCIA SEXUAL' : 'Protocolo Legal: ' + c.current_phase.toUpperCase()}
-                    </h4>
-                    <div class="flex gap-2">
-                        ${ccaa === 'cataluna' ? `
-                        <button onclick="copyRevaSummary(${c.id})" class="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded border border-teal-100 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">content_copy</span> REVA
-                        </button>
-                        ` : ''}
-                        ${(isClosed || c.current_phase === 'intervencio' || c.current_phase === 'en_seguimiento') ? `<a href="/protocol/case/${c.id}/export" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-primary flex items-center gap-1"><span class="material-symbols-outlined text-sm">picture_as_pdf</span> Exportar</a>` : ''}
-                        <button onclick="window.open('/protocolo-acoso', '_blank')" class="text-[10px] font-bold text-slate-400 hover:text-primary underline">Ver Guía CCAA</button>
+                ${meta.ccaa_code === 'aragon' && c.current_phase === 'violencia_sexual_activa' ? `
+                    <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
+                        <p class="text-xs text-red-800 font-medium">S'ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.</p>
                     </div>
-                </div>
-                
-                <div class="flex flex-wrap gap-2">
-                    ${ccaa === 'cataluna' ? catalunaActions : (ccaa === 'aragon' ? aragonActions : '')}
-
-                    ${isClosed ? `
-                        <div class="w-full bg-emerald-50 p-6 rounded-2xl text-center space-y-4">
-                            <span class="material-symbols-outlined text-4xl text-emerald-500">verified</span>
-                            <div class="space-y-1">
-                                <p class="text-sm font-black text-emerald-800 uppercase">Protocol Tancat i Resolt / Protocolo Cerrado</p>
-                                <p class="text-xs text-emerald-600">L'expedient ha estat arxivat correctament / El expediente ha sido archivado.</p>
-                            </div>
-                            <a href="/protocol/case/${c.id}/export" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-full text-xs font-bold shadow-lg shadow-emerald-600/20">
-                                <span class="material-symbols-outlined text-sm">download</span> Descarregar Informe Final
-                            </a>
-                        </div>
-                    ` : ''}
-
-                    ${isBarnahus ? `
-                        <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                            <p class="text-xs text-red-800 font-medium">S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.</p>
-                            <div class="flex flex-wrap gap-2">
-                                <a href="/protocol/case/${c.id}/template/derivacio_barnahus" target="_blank" class="px-4 py-2 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase">📄 Fitxa de Derivació</a>
-                                <button onclick="nextPhase(${c.id}, 'comunicacio')" class="px-4 py-2 bg-white border border-red-200 text-red-600 rounded-lg text-[10px] font-black uppercase">He realitzat la derivació</button>
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
+                ` : ''}
             </div>
         `;
     }

@@ -50,9 +50,9 @@ $router->get('/alumno/sociograma', [\App\Controllers\SociometricController::clas
 $router->post('/api/sociometric/respond', [\App\Controllers\SociometricController::class, 'submitResponse'], ['auth', 'role:alumno']);
 $router->get('/staff/sociogramas/{id}', [\App\Controllers\SociometricController::class, 'results'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
-$router->get('/api/protocol/case/{report_id}', [ProtocolWorkflowController::class, 'getCaseData'], ['auth', 'roles:profesor,orientador,direccion,admin']);
-$router->post('/api/protocol/case/{id}/phase', [ProtocolWorkflowController::class, 'changePhase'], ['auth', 'roles:orientador,direccion,admin']);
-$router->post('/api/protocol/case/{id}/classify', [ProtocolWorkflowController::class, 'classify'], ['auth', 'roles:orientador,direccion,admin']);
+$router->get('/api/protocol/case/{report_id}', [ProtocolController::class, 'getCaseData'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/phase', [ProtocolController::class, 'changePhase'], ['auth', 'roles:orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/classify', [ProtocolController::class, 'classify'], ['auth', 'roles:orientador,direccion,admin']);
 $router->post('/api/protocol/case/{id}/assign-team', [ProtocolWorkflowController::class, 'assignTeam'], ['auth', 'roles:orientador,direccion,admin']);
 $router->post('/api/protocol/case/{id}/communications', [ProtocolWorkflowController::class, 'updateComms'], ['auth', 'roles:orientador,direccion,admin']);
 $router->post('/api/protocol/case/{id}/security-map', [ProtocolWorkflowController::class, 'saveSecurityMapFull'], ['auth', 'roles:orientador,direccion,admin']);
@@ -101,6 +101,7 @@ $router->post('/logout', [AuthController::class, 'logout']);
 // -- Protocolo Aragón --
 $router->get("/protocol/aragon/anexo-1a", [AragonProtocolController::class, "createAnexo1a"], ["auth"]);
 $router->post("/protocol/aragon/anexo-1a", [AragonProtocolController::class, "storeAnexo1a"], ["auth"]);
+$router->get("/protocol/aragon/report/{id}", [AragonProtocolController::class, "showCaseByReport"], ["auth"]);
 $router->get("/protocol/aragon/case/{id}", [AragonProtocolController::class, "showCase"], ["auth"]);
 $router->post("/api/protocol/aragon/decision/{id}", [AragonProtocolController::class, "processDecision"], ["auth"]);
 $router->post("/api/protocol/aragon/constitute-team/{id}", [AragonProtocolController::class, "constituteTeam"], ["auth"]);
@@ -209,3 +210,4 @@ $router->post('/admin/update/maintenance/disable', [\App\Controllers\Admin\Updat
 $router->post('/admin/update/backup/restore', [\App\Controllers\Admin\UpdateController::class, 'restoreBackup'], ['auth', 'roles:admin,direccion']);
 $router->post('/admin/update/backup/create', [\App\Controllers\Admin\UpdateController::class, 'createBackupManual'], ['auth', 'roles:admin,direccion']);
 $router->get('/admin/update/integrity', [\App\Controllers\Admin\UpdateController::class, 'checkIntegrity'], ['auth', 'roles:admin,direccion']);
+ntegrity'], ['auth', 'roles:admin,direccion']);

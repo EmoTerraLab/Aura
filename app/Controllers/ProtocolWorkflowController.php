@@ -41,101 +41,10 @@ class ProtocolWorkflowController
         $this->protocolService = new ProtocolService();
     }
 
-    public function getCaseData($report_id): void
-    {
-        try {
-            header('Content-Type: application/json');
-            $report_id = (int)$report_id;
-            $ccaa = Config::get('ccaa_code');
-            
-            $protocol = \App\Services\Protocol\ProtocolFactory::make($ccaa);
-
-            $case = $this->caseModel->findByReport($report_id);
-            
-            if (!$case && $protocol->getInitialState() !== 'no_implementado') {
-                $case = $this->stateService->createInitialCase($report_id, $ccaa, $protocol->getInitialState());
-            }
-
-            // Auto-reparar fase si no corresponde a la CCAA actual (ej. cambio de región o error inicial)
-            if ($case) {
-                $allStates = $protocol->getAllStates();
-                // Permitimos BARNAHUS como estado global especial para Catalunya, o verificamos si está en los estados del protocolo
-                if (!in_array($case['current_phase'], $allStates) && $case['current_phase'] !== ProtocolCase::PHASE_BARNAHUS) {
-                    $newPhase = $protocol->getInitialState();
-                    $this->caseModel->updatePhase($case['id'], $newPhase);
-                    $this->caseModel->updateCcaa($case['id'], $ccaa);
-                    $case['current_phase'] = $newPhase;
-                    $case['ccaa_code'] = $ccaa;
-                }
-            }
-
-            $protocol_meta = [
-                'ccaa_name' => $protocol->getCcaaName(),
-                'legal_reference' => $protocol->getLegalReference(),
-                'timeline_steps' => $protocol->getTimelineSteps(),
-                'current_actions' => [],
-                'exclusive_tools' => $protocol->getExclusiveTools(),
-                'deadline_alert' => null,
-                'documents' => $protocol->getDocuments()
-            ];
-
-            if ($case) {
-                // Registro de acceso sensible si el protocolo lo requiere (ej. Barnahus)
-                if (in_array('barnahus', $protocol->getExclusiveTools()) && ($case['current_phase'] === ProtocolCase::PHASE_BARNAHUS || $case['severity_preliminary'] === 'violencia_sexual')) {
-                    $this->protocolService->logSensitiveAccess($case['id']);
-                }
-
-                $case['followups'] = $this->followupModel->findByCase($case['id']);
-                $case['closure_checks'] = json_decode($case['closure_checks'] ?? '{}', true);
-                $case['communications'] = json_decode($case['communications'] ?? '{}', true);
-                
-                $schoolDaysElapsed = $this->protocolService->calculateSchoolDays($case['created_at']);
-                $case['school_days_count'] = $schoolDaysElapsed;
-
-                $protocol_meta['current_actions'] = $protocol->getActionsForState($case['current_phase'], $case);
-                $protocol_meta['deadline_alert'] = $protocol->getDeadlineAlert($case['current_phase'], $schoolDaysElapsed);
-            }
-
-            echo json_encode([
-                'success' => true, 
-                'case' => $case, 
-                'ccaa' => $ccaa, 
-                'protocol_meta' => $protocol_meta
-            ]);
-        } catch (\Throwable $e) {
-            error_log("Error en getCaseData: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-    }
-
-    public function changePhase($id): void
+    public function assignTeam($id): void
     {
         header('Content-Type: application/json');
-        if (!Auth::hasRole(['orientador', 'direccion', 'admin']) && !Auth::isCocobe()) {
-            echo json_encode(['success' => false, 'error' => Lang::t('error.no_permission')]);
-            return;
-        }
-
-        $data = json_decode(file_get_contents('php://input'), true);
-        try {
-            $success = $this->stateService->transitionTo((int)$id, $data['phase'] ?? '');
-            echo json_encode(['success' => $success]);
-        } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-    }
-
-    public function classify($id): void
-    {
-        header('Content-Type: application/json');
-        $data = json_decode(file_get_contents('php://input'), true);
-        try {
-            $success = $this->stateService->classify((int)$id, $data['severity'] ?? '', $data['classification'] ?? '');
-            echo json_encode(['success' => $success]);
-        } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
+        echo json_encode(['success' => false, 'error' => 'Funcionalidad de equipo no disponible en esta versión.']);
     }
 
     public function getRevaSummary(int $id): void

@@ -1,6 +1,9 @@
 <?php
 namespace App\Services\Protocol;
 
+/**
+ * NullProtocol - Módulo vacío para CCAA sin implementar.
+ */
 class NullProtocol implements ProtocolInterface {
     private string $ccaaCode;
 
@@ -17,11 +20,11 @@ class NullProtocol implements ProtocolInterface {
     }
 
     public function getLegalReference(): string {
-        return "En fase d'implementació";
+        return "Protocol oficial en fase d'implementació";
     }
 
     public function getInitialState(): string {
-        return 'no_implementado';
+        return 'inicio';
     }
 
     public function getValidTransitions(string $currentState): array {
@@ -29,11 +32,11 @@ class NullProtocol implements ProtocolInterface {
     }
 
     public function getStateLabel(string $state): string {
-        return 'No Implementado';
+        return $state;
     }
 
     public function getAllStates(): array {
-        return ['no_implementado'];
+        return ['inicio'];
     }
 
     public function getTimelineSteps(): array {
@@ -41,15 +44,7 @@ class NullProtocol implements ProtocolInterface {
     }
 
     public function getActionsForState(string $state, array $case): array {
-        $nombre = ucfirst($this->ccaaCode);
-        return [
-            [
-                'key' => 'not_implemented',
-                'label' => "El protocolo automatizado para {$nombre} está en fase de implementación.",
-                'style' => 'alert',
-                'onclick' => ''
-            ]
-        ];
+        return [];
     }
 
     public function getDocuments(): array {
@@ -61,7 +56,10 @@ class NullProtocol implements ProtocolInterface {
     }
 
     public function getDeadlineAlert(string $state, int $schoolDaysElapsed): ?array {
-        return null;
+        return [
+            'level' => 'warning',
+            'message' => "El protocolo automatizado para " . $this->getCcaaName() . " está en fase de implementación."
+        ];
     }
 
     public function getExclusiveTools(): array {
@@ -69,6 +67,6 @@ class NullProtocol implements ProtocolInterface {
     }
 
     public function canTransition(string $fromState, string $toState, array $case): bool|string {
-        return false;
+        return "Protocol en fase d'implementació";
     }
 }

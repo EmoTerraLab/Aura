@@ -10,6 +10,7 @@ class ProtocolCase extends Model
     const PHASE_VALORACION = 'valoracion';
     const PHASE_COMUNICACION = 'comunicacio';
     const PHASE_INTERVENCION = 'intervencio';
+    const PHASE_SEGUIMIENTO_TANCAMENT = 'seguiment_tancament';
     const PHASE_CIERRE = 'tancament';
     const PHASE_BARNAHUS = 'violencia_sexual_actiu';
 

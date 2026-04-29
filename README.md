@@ -43,10 +43,13 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
 - **Staff (Dirección/Orientador/Profesor)**: Gestión de informes, respuestas internas y menciones.
 - **Alumno**: Creación de reportes y seguimiento de sus casos.
 
-### 📋 Gestión de Informes / Report Management
-- Sistema de tickets con estados (`new`, `in_progress`, `resolved`).
-- Mensajería interna y menciones entre el personal.
-- Opción de anonimato para mayor seguridad del alumno.
+### 📋 Gestión de Informes y Protocolos Legales / Report & Legal Protocol Management
+- **Multi-CCAA**: Soporte para protocolos legales específicos de cada Comunidad Autónoma (Aragón, Cataluña, etc.).
+- **Workflow Legal**: Seguimiento de fases, anexos oficiales y plazos legales automáticos.
+- **Prácticas Restaurativas**: Módulo para la gestión de medidas de reparación y convivencia.
+- **Evidencias**: Gestión segura de archivos y pruebas documentales.
+- **Mensajería interna**: Sistema de tickets con estados, respuestas internas y menciones entre el personal.
+- **Anonimato**: Opción de reportes anónimos para proteger al alumno.
 
 ---
 

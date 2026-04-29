@@ -34,6 +34,21 @@ Sube los archivos excluyendo `.env`, `database/*.sqlite` y `database/backups/`.
 
 ---
 
+## Historial de Versiones Recientes
+
+### v2.10.0 — 2026-04-29
+- **Arquitectura Multi-CCAA**: Refactorización del sistema de protocolos para soportar múltiples comunidades autónomas mediante `ProtocolInterface` y `ProtocolFactory`.
+- **Protocolo Aragón**: Implementación completa del flujo legal de Aragón (Anexos I a X, plazos legales, equipo de valoración).
+- **Módulo Restaurativo**: Gestión de reconocimientos y prácticas restaurativas dentro de los casos.
+- **Evidencias**: Sistema de subida y gestión de archivos adjuntos para pruebas en los protocolos.
+- **Seguimiento Avanzado**: Mejoras en el cronograma (timeline) y alertas de plazos legales basados en días lectivos.
+- **Optimización de Base de Datos**: Índices de rendimiento y logs de acceso a protocolos para auditoría.
+
+### v2.9.0
+- Mejoras en la interfaz de administración y gestión de centros.
+
+---
+
 ## Para el administrador del cliente
 
 1. Ve a **Administración → Actualizaciones del sistema**.

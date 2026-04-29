@@ -51,6 +51,10 @@ class ProtocolStateService
     {
         $protocol = \App\Services\Protocol\ProtocolFactory::make($ccaa);
         
+        if (!$protocol->isFullyImplemented()) {
+            return null; // No crear casos legales para protocolos no implementados
+        }
+
         if ($initialPhase === null) {
             $initialPhase = $protocol->getInitialState();
         }

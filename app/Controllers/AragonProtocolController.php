@@ -21,9 +21,14 @@ class AragonProtocolController
     public function __construct()
     {
         if (Config::get('ccaa_code') !== 'aragon') {
-            http_response_code(403);
-            header('Content-Type: application/json');
-            echo json_encode(['error' => 'Protocolo no disponible para esta CCAA']);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+                http_response_code(403);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'El protocolo de Aragón no está habilitado en este centro']);
+            } else {
+                http_response_code(403);
+                die('El protocolo de Aragón no está habilitado en este centro');
+            }
             exit;
         }
         $this->reportModel = new Report();
@@ -76,6 +81,19 @@ class AragonProtocolController
             header('Location: /protocol/aragon/anexo-1a?error=processing_failed');
             exit;
         }
+    }
+
+    public function showCaseByReport(int $reportId): void
+    {
+        $case = $this->caseModel->findByReport($reportId);
+        if (!$case) {
+            // Si no existe el caso, lo creamos (Anexo I-a ya existe si llegamos aquí normalmente)
+            // O redirigimos al formulario de creación del Anexo I-a si es necesario
+            header("Location: /protocol/aragon/anexo-1a?report_id=$reportId");
+            exit;
+        }
+        header("Location: /protocol/aragon/case/" . $case['id']);
+        exit;
     }
 
     public function showCase(int $id): void
