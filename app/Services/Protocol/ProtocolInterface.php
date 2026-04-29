@@ -14,7 +14,7 @@ interface ProtocolInterface {
     public function getAllStates(): array;
 
     // Timeline para la UI
-    public function getTimelineSteps(): array;  // [{id, label, special}]
+    public function getTimelineSteps(): array;  // [{key, label, icon, deadline_days}]
 
     // Acciones disponibles por fase
     public function getActionsForState(string $state, array $case): array;  // [{key, label, style, onclick}]

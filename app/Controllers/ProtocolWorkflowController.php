@@ -59,10 +59,13 @@ class ProtocolWorkflowController
             // Auto-reparar fase si no corresponde a la CCAA actual (ej. cambio de región o error inicial)
             if ($case) {
                 $allStates = $protocol->getAllStates();
+                // Permitimos BARNAHUS como estado global especial para Catalunya, o verificamos si está en los estados del protocolo
                 if (!in_array($case['current_phase'], $allStates) && $case['current_phase'] !== ProtocolCase::PHASE_BARNAHUS) {
                     $newPhase = $protocol->getInitialState();
                     $this->caseModel->updatePhase($case['id'], $newPhase);
+                    $this->caseModel->updateCcaa($case['id'], $ccaa);
                     $case['current_phase'] = $newPhase;
+                    $case['ccaa_code'] = $ccaa;
                 }
             }
 
@@ -77,6 +80,7 @@ class ProtocolWorkflowController
             ];
 
             if ($case) {
+                // Registro de acceso sensible si el protocolo lo requiere (ej. Barnahus)
                 if (in_array('barnahus', $protocol->getExclusiveTools()) && ($case['current_phase'] === ProtocolCase::PHASE_BARNAHUS || $case['severity_preliminary'] === 'violencia_sexual')) {
                     $this->protocolService->logSensitiveAccess($case['id']);
                 }
@@ -92,7 +96,12 @@ class ProtocolWorkflowController
                 $protocol_meta['deadline_alert'] = $protocol->getDeadlineAlert($case['current_phase'], $schoolDaysElapsed);
             }
 
-            echo json_encode(['success' => true, 'case' => $case, 'ccaa' => $ccaa, 'protocol_meta' => $protocol_meta]);
+            echo json_encode([
+                'success' => true, 
+                'case' => $case, 
+                'ccaa' => $ccaa, 
+                'protocol_meta' => $protocol_meta
+            ]);
         } catch (\Throwable $e) {
             error_log("Error en getCaseData: " . $e->getMessage());
             http_response_code(500);

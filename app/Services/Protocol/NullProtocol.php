@@ -17,7 +17,7 @@ class NullProtocol implements ProtocolInterface {
     }
 
     public function getLegalReference(): string {
-        return "En desenvolupament";
+        return "En fase d'implementació";
     }
 
     public function getInitialState(): string {

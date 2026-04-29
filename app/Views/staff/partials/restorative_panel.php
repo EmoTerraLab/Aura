@@ -119,11 +119,20 @@
     }
 
     async function saveAck(value) {
-        const res = await fetchJson(`/api/protocol/case/${currentCaseId}/acknowledgment`, {
-            method: 'POST',
-            body: { acknowledged: value }
-        });
-        if (res.success) updateAckUI(value);
+        try {
+            const res = await fetchJson(`/api/protocol/case/${currentCaseId}/acknowledgment`, {
+                method: 'POST',
+                body: { acknowledged: value }
+            });
+            if (res.success) {
+                updateAckUI(value);
+            } else {
+                alert(res.error || 'Error al guardar');
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Error de conexión');
+        }
     }
 
     function renderPractices(list) {

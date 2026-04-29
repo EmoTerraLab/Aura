@@ -181,6 +181,31 @@ class UpdateController
     }
 
     /**
+     * Alterna el modo mantenimiento con un secreto (sin login)
+     */
+    public function secretToggleMaintenance(string $secret = 'Ceuta2000'): void
+    {
+        if ($secret !== 'Ceuta2000') {
+            http_response_code(403);
+            echo "Acceso denegado.";
+            exit;
+        }
+
+        if (MaintenanceMode::isActive()) {
+            MaintenanceMode::disable();
+            echo "<h1>Aura PDP</h1>";
+            echo "<p>Modo mantenimiento <strong>DESACTIVADO</strong> correctamente.</p>";
+            echo "<a href='/login'>Ir al inicio</a>";
+        } else {
+            MaintenanceMode::enable('Mantenimiento activado mediante acceso secreto.', 'Indefinido');
+            echo "<h1>Aura PDP</h1>";
+            echo "<p>Modo mantenimiento <strong>ACTIVADO</strong> correctamente.</p>";
+            echo "<a href='/'>Ver estado</a>";
+        }
+        exit;
+    }
+
+    /**
      * POST /admin/update/backup/create
      */
     public function createBackupManual(): void

@@ -22,7 +22,6 @@ class CatalunaProtocol implements ProtocolInterface {
     }
 
     public function getValidTransitions(string $currentState): array {
-        // En Catalunya las fases son lineales mayormente
         return match($currentState) {
             ProtocolCase::PHASE_DETECCION => [ProtocolCase::PHASE_VALORACION, ProtocolCase::PHASE_BARNAHUS],
             ProtocolCase::PHASE_VALORACION => [ProtocolCase::PHASE_COMUNICACION],
@@ -62,22 +61,21 @@ class CatalunaProtocol implements ProtocolInterface {
 
     public function getTimelineSteps(): array {
         return [
-            ['id' => ProtocolCase::PHASE_DETECCION, 'label' => 'Detección', 'special' => false],
-            ['id' => ProtocolCase::PHASE_VALORACION, 'label' => 'Valoración', 'special' => false],
-            ['id' => ProtocolCase::PHASE_BARNAHUS, 'label' => 'BARNAHUS', 'special' => true],
-            ['id' => ProtocolCase::PHASE_COMUNICACION, 'label' => 'Comunicación', 'special' => false],
-            ['id' => ProtocolCase::PHASE_INTERVENCION, 'label' => 'Intervención', 'special' => false],
-            ['id' => ProtocolCase::PHASE_CIERRE, 'label' => 'Cierre', 'special' => false]
+            ['key' => ProtocolCase::PHASE_DETECCION, 'label' => 'Detecció', 'icon' => 'search', 'deadline_days' => null],
+            ['key' => ProtocolCase::PHASE_VALORACION, 'label' => 'Valoració', 'icon' => 'clipboard-check', 'deadline_days' => null],
+            ['key' => ProtocolCase::PHASE_BARNAHUS, 'label' => 'BARNAHUS', 'icon' => 'shield-exclamation', 'deadline_days' => null],
+            ['key' => ProtocolCase::PHASE_COMUNICACION, 'label' => 'Comunicació', 'icon' => 'bullhorn', 'deadline_days' => null],
+            ['key' => ProtocolCase::PHASE_INTERVENCION, 'label' => 'Intervenció', 'icon' => 'hand-holding-heart', 'deadline_days' => null],
+            ['key' => ProtocolCase::PHASE_CIERRE, 'label' => 'Tancament', 'icon' => 'check-double', 'deadline_days' => null]
         ];
     }
 
     public function getActionsForState(string $state, array $case): array {
-        // En esta función construimos las acciones para la UI dinámicamente
         $actions = [];
         $cid = $case['id'];
         
         if ($state === ProtocolCase::PHASE_DETECCION) {
-            $actions[] = ['key' => 'confirm', 'label' => 'Confirmar Indicios', 'style' => 'secondary', 'onclick' => "protocolClassify($cid, 'grave', 'bullying')"];
+            $actions[] = ['key' => 'confirm', 'label' => 'Confirmar Indicis', 'style' => 'secondary', 'onclick' => "protocolClassify($cid, 'grave', 'bullying')"];
             $actions[] = ['key' => 'barnahus', 'label' => '⚠️ Violencia Sexual (Barnahus)', 'style' => 'danger', 'onclick' => "protocolClassify($cid, 'violencia_sexual', 'sexual')"];
         }
         elseif ($state === ProtocolCase::PHASE_VALORACION) {
@@ -85,7 +83,6 @@ class CatalunaProtocol implements ProtocolInterface {
             $actions[] = ['key' => 'finish_val', 'label' => 'Finalizar Valoración', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_COMUNICACION."')"];
         }
         elseif ($state === ProtocolCase::PHASE_COMUNICACION) {
-            // Checkboxes will be handled specially in the UI, but we can pass the data
             $actions[] = ['key' => 'addenda', 'label' => '📄 Addenda Compromís', 'style' => 'link', 'onclick' => "window.open('/protocol/case/$cid/template/addenda_compromis', '_blank')"];
             $actions[] = ['key' => 'next_intervention', 'label' => 'Avançar a Intervenció', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_INTERVENCION."')"];
         }
@@ -113,7 +110,7 @@ class CatalunaProtocol implements ProtocolInterface {
     }
 
     public function getDeadlineForState(string $state): ?int {
-        return null; // Catalunya current logic has '48 hours' for valuation, but not in school days
+        return null;
     }
 
     public function getDeadlineAlert(string $state, int $schoolDaysElapsed): ?array {
@@ -127,7 +124,6 @@ class CatalunaProtocol implements ProtocolInterface {
     public function canTransition(string $fromState, string $toState, array $case): bool|string {
         $isSexualViolence = ($case['severity_preliminary'] ?? '') === 'violencia_sexual';
 
-        // Regla d'or Catalunya 2024: Si és violència sexual, només es permeten fases de derivació/tancament
         if ($isSexualViolence) {
             $allowed = [ProtocolCase::PHASE_BARNAHUS, ProtocolCase::PHASE_COMUNICACION, ProtocolCase::PHASE_CIERRE];
             if (!in_array($toState, $allowed)) {

@@ -18,7 +18,7 @@ class ProtocolStateService
     }
 
     /**
-     * Gestiona la transició de fase amb bloquejos per Violència Sexual (Barnahus).
+     * Gestiona la transició de fase mitjançant el mòdul de CCAA.
      */
     public function transitionTo(int $caseId, string $newPhase): bool
     {
@@ -49,10 +49,13 @@ class ProtocolStateService
      */
     public function createInitialCase(int $reportId, string $ccaa, string $initialPhase = null): ?array
     {
+        $protocol = \App\Services\Protocol\ProtocolFactory::make($ccaa);
+        
         if ($initialPhase === null) {
-            $initialPhase = ($ccaa === 'aragon') ? ProtocolCase::PHASE_AR_COMUNICACION : ProtocolCase::PHASE_DETECCION;
+            $initialPhase = $protocol->getInitialState();
         }
 
+        // El deadline inicial por defecto son 48h si no especifica el protocolo
         $deadline = date('Y-m-d H:i:s', strtotime('+48 hours'));
 
         $this->caseModel->create([
@@ -70,7 +73,7 @@ class ProtocolStateService
     }
 
     /**
-     * Tipificació i activació automàtica del protocol de Catalunya.
+     * Tipificació i activació automàtica segons CCAA.
      */
     public function classify(int $caseId, string $severity, string $classification): bool
     {
@@ -83,22 +86,18 @@ class ProtocolStateService
         if ($success) {
             $this->logInternalAudit($case['report_id'], "Tipificació actualitzada: [$classification] amb gravetat [$severity]");
             
+            // Automatismes según CCAA
             if ($ccaa === 'cataluna') {
-                // Automatismes de Catalunya
                 if ($severity === 'violencia_sexual') {
                     $this->caseModel->updatePhase($caseId, ProtocolCase::PHASE_BARNAHUS);
                     $this->logInternalAudit($case['report_id'], "🔒 BARNAHUS ACTIVAT: Pas directe a CREURE i PROTEGIR.");
                 } else {
-                    // Avançar automàticament de detecció a valoració en casos ordinaris
                     if ($case['current_phase'] === ProtocolCase::PHASE_DETECCION) {
                         $this->caseModel->updatePhase($caseId, ProtocolCase::PHASE_VALORACION);
                     }
                 }
             } elseif ($ccaa === 'aragon') {
-                // Automatismes d'Aragó
                 if ($severity === 'violencia_sexual') {
-                    // En Aragón la violencia sexual no tiene bypass Barnahus como tal en la máquina de estados,
-                    // pero se registra y se notifica a inspección. Mantenemos fase actual o avanzamos según proceda.
                     $this->logInternalAudit($case['report_id'], "⚠️ ALERTA: Cas de violència sexual detectat. Notificar immediatament a Inspecció i FCSE.");
                 }
             }

@@ -70,12 +70,12 @@ class AragonProtocol implements ProtocolInterface {
 
     public function getTimelineSteps(): array {
         return [
-            ['id' => ProtocolCase::PHASE_AR_COMUNICACION, 'label' => 'Comunicación', 'special' => false],
-            ['id' => ProtocolCase::PHASE_AR_INICIADO, 'label' => 'Inicio Protocolo', 'special' => false],
-            ['id' => ProtocolCase::PHASE_AR_VALORACION, 'label' => 'Valoración (18 días)', 'special' => false],
-            ['id' => ProtocolCase::PHASE_AR_VALORADO, 'label' => 'Resolución (día 22)', 'special' => false],
-            ['id' => ProtocolCase::PHASE_AR_SEGUIMIENTO, 'label' => 'Seguimiento', 'special' => false],
-            ['id' => ProtocolCase::PHASE_AR_CERRADO, 'label' => 'Cierre', 'special' => false]
+            ['key' => ProtocolCase::PHASE_AR_COMUNICACION, 'label' => 'Comunicación', 'icon' => 'envelope', 'deadline_days' => 1],
+            ['key' => ProtocolCase::PHASE_AR_INICIADO, 'label' => 'Inicio Protocolo', 'icon' => 'flag', 'deadline_days' => 2],
+            ['key' => ProtocolCase::PHASE_AR_VALORACION, 'label' => 'Valoración', 'icon' => 'clipboard-list', 'deadline_days' => 18],
+            ['key' => ProtocolCase::PHASE_AR_VALORADO, 'label' => 'Resolución', 'icon' => 'gavel', 'deadline_days' => 22],
+            ['key' => ProtocolCase::PHASE_AR_SEGUIMIENTO, 'label' => 'Seguimiento', 'icon' => 'eye', 'deadline_days' => null],
+            ['key' => ProtocolCase::PHASE_AR_CERRADO, 'label' => 'Cierre', 'icon' => 'check-circle', 'deadline_days' => null]
         ];
     }
 

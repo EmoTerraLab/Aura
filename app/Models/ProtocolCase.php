@@ -97,4 +97,10 @@ class ProtocolCase extends Model
         $stmt = $this->db->prepare("UPDATE {$this->table} SET aggressor_acknowledges_facts = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
         return $stmt->execute([$ack, $id]);
     }
+
+    public function updateCcaa(int $id, string $ccaa)
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET ccaa_code = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        return $stmt->execute([$ccaa, $id]);
+    }
 }
