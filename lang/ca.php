@@ -65,6 +65,8 @@ return array (
   'dashboard.help_chat' => 'Xat d\'Ajuda',
   'staff.mentions_title' => 'Mencions',
   'staff.inbox_title' => 'Bústia d\'Entrada',
+  'staff.search_placeholder' => 'Cercar alumne o aula...',
+  'staff.inbox_empty' => 'No hi ha avisos recents.',
   'staff.filter_all' => 'Tots',
   'staff.select_report' => 'Selecciona un avís',
   'staff.case' => 'Cas',

@@ -65,6 +65,8 @@ return array (
   'dashboard.help_chat' => 'Chat de Axuda',
   'staff.mentions_title' => 'Mencións',
   'staff.inbox_title' => 'Bandexa de Entrada',
+  'staff.search_placeholder' => 'Buscar alumno ou aula...',
+  'staff.inbox_empty' => 'Non hai avisos recentes.',
   'staff.filter_all' => 'Todos',
   'staff.select_report' => 'Selecciona un aviso',
   'staff.case' => 'Caso',

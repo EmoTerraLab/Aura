@@ -65,6 +65,8 @@ return array (
   'dashboard.help_chat' => 'Laguntza Txata',
   'staff.mentions_title' => 'Aipamenak',
   'staff.inbox_title' => 'Sarrera-ontzia',
+  'staff.search_placeholder' => 'Bilatu ikaslea edo gela...',
+  'staff.inbox_empty' => 'Ez dago azken abisurik.',
   'staff.filter_all' => 'Guztiak',
   'staff.select_report' => 'Hautatu jakinarazpen bat',
   'staff.case' => 'Kasua',

@@ -13,7 +13,7 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 ### 🛠️ Mejoras Técnicas
 - **Helper de Días Lectivos:** Nuevo componente `SchoolDaysHelper` para el cálculo preciso de plazos legales basados en el calendario escolar, excluyendo fines de semana y festivos.
 - **Optimización de Consultas:** Añadidos índices de rendimiento adicionales para las tablas de protocolo de Aragón y logs de acceso.
-- **Internacionalización (i18n):** Ampliación de diccionarios para cubrir el vocabulario legal de Aragón y el sistema restaurativo.
+- **Internacionalización (i18n):** Ampliación de diccionarios para cubrir el nuevo vocabulario legal de Aragón y el sistema restaurativo.
 
 ## [2026-04-29] - Optimización de Consultas y Rendimiento (v2.6.1-stable)
 

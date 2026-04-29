@@ -65,6 +65,8 @@ return array (
   'dashboard.help_chat' => 'Help Chat',
   'staff.mentions_title' => 'Mentions',
   'staff.inbox_title' => 'Inbox',
+  'staff.search_placeholder' => 'Search student or classroom...',
+  'staff.inbox_empty' => 'No recent notices.',
   'staff.filter_all' => 'All',
   'staff.select_report' => 'Select a notice',
   'staff.case' => 'Case',

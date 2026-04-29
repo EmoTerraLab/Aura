@@ -46,9 +46,28 @@ class ProtocolStateService
     }
 
     /**
+     * Crea el registro inicial del caso legal.
+     */
+    public function createInitialCase(int $reportId, string $ccaa): ?array
+    {
+        $deadline = date('Y-m-d H:i:s', strtotime('+48 hours'));
+        $this->caseModel->create([
+            'report_id' => $reportId,
+            'ccaa_code' => $ccaa,
+            'deadline_at' => $deadline
+        ]);
+        
+        $case = $this->caseModel->findByReport($reportId);
+        if ($case) {
+            $this->logInternalAudit($reportId, "Protocol de Catalunya activat. Termini de valoració: 48h.");
+        }
+        return $case;
+    }
+
+    /**
      * Tipificació i activació automàtica del protocol de Catalunya.
      */
-    public function classifyCase(int $caseId, string $severity, string $classification): bool
+    public function classify(int $caseId, string $severity, string $classification): bool
     {
         $case = $this->caseModel->find($caseId);
         if (!$case) return false;

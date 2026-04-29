@@ -1,122 +1,158 @@
 <?php $bodyClass = "bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col overflow-hidden"; ?>
 
 <!-- Mobile TopNavBar -->
-<nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant font-manrope">
+<nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b">
     <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
-            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">spa</span>
-        </div>
-        <h1 class="text-lg font-bold text-teal-700">Aura Staff</h1>
+        <button onclick="toggleSidebar()" class="p-2 -ml-2 text-slate-600">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <img src="/icono-sinfondo.png" class="w-8 h-8" alt="Aura">
     </div>
     <div class="flex items-center gap-2">
-        <button onclick="toggleMentions()" class="relative p-2 text-slate-500">
+        <button onclick="toggleMentions()" class="p-2 text-slate-500 relative">
             <span class="material-symbols-outlined">notifications</span>
-            <span id="mentions-badge-mobile" class="hidden absolute top-2 right-2 h-2 w-2 rounded-full bg-error"></span>
-        </button>
-        <button onclick="toggleSidebar()" class="p-2 text-slate-500">
-            <span class="material-symbols-outlined" id="menu-icon">menu</span>
+            <div id="mentions-badge-mobile" class="hidden absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-white"></div>
         </button>
     </div>
 </nav>
 
-<!-- Sidebar Overlay -->
-<div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] hidden lg:hidden"></div>
+<!-- App Shell -->
+<div class="flex flex-1 h-screen pt-16 lg:pt-0 overflow-hidden relative">
+    
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-[55] lg:hidden"></div>
 
-<!-- SideNavBar -->
-<nav id="app-sidebar" class="bg-slate-50 dark:bg-slate-950 shadow-[4px_0_24px_rgba(6,105,114,0.04)] h-screen w-64 fixed left-0 top-0 z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col py-6">
-    <div class="px-6 mb-8 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">spa</span></div>
-        <div><h1 class="font-h2 text-h2 text-teal-700 font-black tracking-tight leading-none">Aura</h1><p class="font-label-caps text-label-caps text-surface-tint opacity-70 mt-1">School Sanctuary</p></div>
-    </div>
-    <div class="flex-1 overflow-y-auto no-scrollbar space-y-1">
-        <a class="flex items-center gap-3 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 rounded-full mx-2 px-4 py-3 transition-colors scale-95 duration-150" href="/staff/inbox"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inbox</span><span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.inbox') ?></span></a>
-        <?php if (\App\Core\Auth::role() === 'admin'): ?><a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/admin"><span class="material-symbols-outlined">admin_panel_settings</span><span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.admin_panel') ?></span></a><?php endif; ?>
-        <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="#"><span class="material-symbols-outlined">folder_open</span><span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.active_cases') ?></span></a>
-        <?php if (\App\Core\Config::get('ccaa_protocol_active', '1') === '1'): ?>
-            <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/protocolo-acoso">
-                <span class="material-symbols-outlined">gavel</span>
-                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.title') ?></span>
+    <!-- Sidebar Navigation -->
+    <aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-72 bg-slate-50 dark:bg-slate-950 border-r z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col shadow-2xl lg:shadow-none">
+        <div class="p-8 flex items-center gap-3">
+            <img src="/icono-sinfondo.png" class="w-10 h-10" alt="Aura">
+            <h1 class="font-h2 text-h2 text-primary">Aura</h1>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar py-4 space-y-1">
+            <a class="flex items-center gap-3 bg-primary/10 text-primary px-4 py-3 mx-2 rounded-full transition-colors" href="/staff/inbox">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">inbox</span>
+                <span class="font-body-md text-body-md font-bold"><?= \App\Core\Lang::t('staff.inbox_title') ?></span>
             </a>
-        <?php endif; ?>
-        <div class="mt-8 px-4"><div class="bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden"><div class="absolute -right-4 -top-4 w-16 h-16 bg-white/20 rounded-full blur-xl"></div><span class="material-symbols-outlined text-secondary mb-2">hub</span><h3 class="font-body-md text-body-md font-semibold text-on-secondary-container leading-tight"><?= \App\Core\Lang::t('nav.sociograms') ?></h3><p class="font-label-caps text-label-caps text-secondary mt-1 normal-case"><?= \App\Core\Lang::t('nav.hidden_dynamics') ?></p></div></div>
-        
-        <div class="mt-4 px-2">
-            <?php if (!\App\Core\Auth::user()['totp_enabled']): ?>
-                <a href="/profile/2fa/totp/setup" class="flex items-center justify-between gap-3 text-amber-600 bg-amber-50 px-4 py-3 mx-2 hover:bg-amber-100 rounded-xl transition-colors text-sm font-bold border border-amber-200">
-                    <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">lock_open</span> Proteger Cuenta</span>
-                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                </a>
-            <?php else: ?>
-                <form method="POST" action="/profile/2fa/totp/disable" onsubmit="return confirm('¿Seguro que deseas desactivar la verificación en dos pasos? Tu cuenta será menos segura.')">
-                    <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>">
-                    <button type="submit" class="w-[calc(100%-16px)] flex items-center justify-between gap-3 text-emerald-700 bg-emerald-50 px-4 py-3 mx-2 hover:bg-emerald-100 rounded-xl transition-colors text-sm font-bold border border-emerald-200">
-                        <span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">lock</span> 2FA Activado</span>
-                        <span class="material-symbols-outlined text-[18px]">settings</span>
-                    </button>
-                </form>
+            
+            <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="#">
+                <span class="material-symbols-outlined">folder_open</span>
+                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.active_cases') ?></span>
+            </a>
+
+            <?php if (\App\Core\Config::get('ccaa_code') === 'cataluna'): ?>
+            <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/protocolos/dashboard">
+                <span class="material-symbols-outlined">dashboard_customize</span>
+                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?></span>
+            </a>
             <?php endif; ?>
-        </div>
-    </div>
-    <div class="mt-auto pt-4 border-t border-surface-variant/50 mx-4 flex flex-col gap-1">
-        <div class="px-4 py-2">
-            <?= \App\Core\Lang::renderSelector() ?>
-        </div>
-        <div class="px-4 py-2 flex items-center justify-between text-xs text-slate-500"><span><?= htmlspecialchars(\App\Core\Auth::user()['name']) ?></span><span class="font-bold uppercase"><?= htmlspecialchars(\App\Core\Auth::role()) ?></span></div>
-        <form action="/logout" method="POST"><input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>"/><button type="submit" class="w-full text-left flex items-center gap-3 text-slate-500 px-4 py-3 hover:bg-red-50 hover:text-red-600 rounded-full transition-colors"><span class="material-symbols-outlined">logout</span><span class="text-sm font-medium"><?= \App\Core\Lang::t('nav.logout_btn') ?></span></button></form>
-    </div>
-</nav>
 
-<!-- Dropdown Menciones -->
-<div id="mentions-dropdown" class="hidden fixed lg:absolute right-4 top-16 lg:top-20 mt-2 w-[calc(100%-32px)] sm:w-80 rounded-xl shadow-lg bg-surface-container-lowest ring-1 ring-black ring-opacity-5 z-[70] ambient-shadow overflow-hidden">
-    <div class="p-4 bg-surface-container-low border-b border-surface-variant flex justify-between items-center"><h3 class="text-sm font-bold text-on-surface"><?= \App\Core\Lang::t('staff.mentions_title') ?></h3><button onclick="toggleMentions()" class="lg:hidden text-slate-400">✕</button></div>
-    <div id="mentions-list" class="max-h-64 overflow-y-auto no-scrollbar"></div>
-</div>
+            <?php if (\App\Core\Config::get('ccaa_protocol_active', '1') === '1'): ?>
+                <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/protocolo-acoso">
+                    <span class="material-symbols-outlined">gavel</span>
+                    <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.title') ?></span>
+                </a>
+            <?php endif; ?>
 
-<main class="flex-1 lg:ml-64 flex flex-col md:flex-row h-screen pt-16 lg:pt-0 bg-surface">
-    <!-- Left Pane (Inbox) -->
-    <section id="inbox-pane" class="w-full md:w-[40%] lg:w-[30%] h-full flex flex-col bg-surface-container-lowest border-r border-surface-variant/30 ambient-shadow z-10 overflow-hidden">
-        <div class="p-6 pb-2">
-            <h2 class="font-h2 text-h2 text-on-surface mb-4"><?= \App\Core\Lang::t('staff.inbox_title') ?></h2>
-            <div class="flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
-                <button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-caps text-label-caps tracking-wide"><?= \App\Core\Lang::t('staff.filter_all') ?></button>
+            <div class="mt-8 px-4">
+                <div class="bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/20 rounded-full blur-xl"></div>
+                    <span class="material-symbols-outlined text-secondary mb-2">hub</span>
+                    <h3 class="font-body-md text-body-md font-semibold text-on-secondary-container leading-tight"><?= \App\Core\Lang::t('nav.sociograms') ?></h3>
+                    <p class="font-label-caps text-label-caps text-secondary mt-1 normal-case"><?= \App\Core\Lang::t('nav.hidden_dynamics') ?></p>
+                </div>
             </div>
         </div>
-        <div class="flex-1 overflow-y-auto no-scrollbar px-4 pb-6 space-y-2">
-            <?php foreach($reports as $report): ?>
-                <?php $badge = ($report['status'] === 'new') ? 'bg-[#f8d7da] text-[#721c24]' : (($report['status'] === 'in_progress') ? 'bg-[#fff3cd] text-[#856404]' : 'bg-[#d4edda] text-[#155724]'); ?>
-                <div class="bg-surface-container-lowest hover:bg-surface border-l-4 <?= $report['status']==='new'?'border-primary':'border-transparent' ?> p-4 rounded-DEFAULT cursor-pointer transition-colors shadow-sm" onclick="loadReport(<?= $report['id'] ?>)">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full <?= $badge ?> font-label-caps text-[10px] tracking-wider uppercase font-bold"><?= \App\Core\Lang::t('staff.aula') ?> <?= htmlspecialchars($report['classroom_name']) ?></span>
-                        <span class="font-label-caps text-[10px] text-outline"><?= date('d/m/y', strtotime($report['created_at'])) ?></span>
-                    </div>
-                    <h4 class="font-body-md text-[16px] font-semibold text-on-surface leading-tight mb-1 truncate"><?= htmlspecialchars($report['student_name']) ?></h4>
-                    <p class="font-body-md text-[13px] text-on-surface-variant line-clamp-2"><?= htmlspecialchars($report['content']) ?></p>
+
+        <div class="p-4 border-t bg-white dark:bg-slate-900">
+            <div class="flex items-center gap-3 p-3 rounded-2xl bg-surface-container-low border border-surface-variant/30">
+                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md"><?= substr($user['name'], 0, 1) ?></div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-bold truncate"><?= $user['name'] ?></p>
+                    <p class="text-[10px] text-outline uppercase font-black tracking-tighter opacity-60"><?= $user['role'] ?></p>
                 </div>
-            <?php endforeach; ?>
-            <?php if(empty($reports)): ?>
-                <div class="p-10 text-center text-slate-400 italic text-sm"><?= \App\Core\Lang::t('dashboard.no_activity') ?></div>
-            <?php endif; ?>
+                <form action="/logout" method="POST">
+                    <button class="p-2 text-error hover:bg-error-container rounded-full transition-colors"><span class="material-symbols-outlined">logout</span></button>
+                </form>
+            </div>
         </div>
-    </section>
+    </aside>
 
-    <!-- Right Pane (Detail) -->
-    <section id="report-detail-container" class="flex-1 h-full flex flex-col bg-surface-bright hidden md:flex relative z-20">
-        <div class="flex-1 flex flex-col items-center justify-center text-outline">
-            <span class="material-symbols-outlined text-6xl mb-4 opacity-50">forum</span>
-            <h3 class="font-h2 text-[20px] font-medium text-on-surface-variant"><?= \App\Core\Lang::t('staff.select_report') ?></h3>
+    <!-- Main Content -->
+    <main class="flex-1 flex overflow-hidden bg-white">
+        
+        <!-- List Pane -->
+        <div id="inbox-pane" class="w-full md:w-[400px] border-r flex flex-col shrink-0 bg-slate-50/30">
+            <div class="p-6 md:p-8 flex flex-col gap-4 border-b bg-white/50 backdrop-blur-sm sticky top-0 z-10">
+                <h2 class="font-h2 text-h2 text-on-surface"><?= \App\Core\Lang::t('staff.inbox_title') ?></h2>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-3 text-slate-400 text-lg">search</span>
+                    <input type="text" placeholder="<?= \App\Core\Lang::t('staff.search_placeholder') ?>" class="w-full bg-slate-100/80 border-0 rounded-full py-3 pl-12 pr-6 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto no-scrollbar">
+                <?php if (empty($reports)): ?>
+                    <div class="p-20 text-center space-y-4">
+                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-300">
+                            <span class="material-symbols-outlined text-4xl">inbox</span>
+                        </div>
+                        <p class="text-sm text-slate-400 italic"><?= \App\Core\Lang::t('staff.inbox_empty') ?></p>
+                    </div>
+                <?php else: ?>
+                    <div class="divide-y divide-slate-100">
+                        <?php foreach ($reports as $r): ?>
+                        <div onclick="loadReport(<?= $r['id'] ?>)" class="p-6 hover:bg-white cursor-pointer transition-all border-l-4 <?= $r['status'] === 'new' ? 'border-primary' : 'border-transparent' ?> group">
+                            <div class="flex justify-between items-start mb-2">
+                                <?php $urgency = $r['urgency_level'] ?? 'low'; ?>
+                                <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full <?= $urgency === 'high' ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-500' ?>">
+                                    <?= \App\Core\Lang::t('dashboard.urgency_' . $urgency) ?>
+                                </span>
+                                <span class="text-[10px] text-slate-400 font-bold"><?= date('H:i', strtotime($r['created_at'])) ?></span>
+                            </div>
+                            <h3 class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors mb-1"><?= $r['student_name'] ?></h3>
+                            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3"><?= $r['content'] ?></p>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
+                                    <span class="material-symbols-outlined text-xs">chat_bubble</span>
+                                    <span><?= $r['message_count'] ?? 0 ?></span>
+                                </div>
+                                <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
+                                    <span class="material-symbols-outlined text-xs">meeting_room</span>
+                                    <span><?= $r['classroom_name'] ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
-    </section>
-</main>
 
-<!-- Bottom Nav (Suppressed for detail focus on mobile) -->
-<nav id="mobile-bottom-nav" class="lg:hidden fixed bottom-0 w-full z-40 flex justify-around items-center px-4 pb-6 pt-3 bg-white/90 backdrop-blur-lg shadow-lg rounded-t-[32px] border-t border-surface-variant/30">
-    <a class="flex flex-col items-center text-slate-400 p-2" href="#"><span class="material-symbols-outlined">home</span><span class="text-[11px]"><?= \App\Core\Lang::t('nav.home') ?></span></a>
-    <a class="flex flex-col items-center bg-teal-100 text-teal-800 rounded-full w-12 h-12 justify-center" href="/staff/inbox"><span class="material-symbols-outlined">chat_bubble</span></a>
-    <form action="/logout" method="POST" class="flex flex-col items-center justify-center p-2">
-        <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>"/>
-        <button type="submit" class="text-slate-400"><span class="material-symbols-outlined">logout</span></button>
-    </form>
-</nav>
+        <!-- Detail Pane -->
+        <div id="report-detail-container" class="hidden md:flex flex-1 flex-col bg-white relative">
+            <div class="flex-1 flex flex-col items-center justify-center text-slate-300 p-20 text-center space-y-6">
+                <div class="w-32 h-32 bg-slate-50 rounded-[3rem] flex items-center justify-center border-2 border-dashed border-slate-200">
+                    <span class="material-symbols-outlined text-6xl">chat</span>
+                </div>
+                <div>
+                    <h3 class="font-h2 text-lg text-slate-400"><?= \App\Core\Lang::t('staff.select_case_title') ?></h3>
+                    <p class="text-sm text-slate-400 mt-2"><?= \App\Core\Lang::t('staff.select_case_desc') ?></p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- Mentions Dropdown -->
+<div id="mentions-dropdown" class="hidden fixed top-16 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-[100] overflow-hidden">
+    <div class="p-4 border-b bg-slate-50/50 flex justify-between items-center">
+        <h3 class="font-bold text-xs uppercase tracking-widest text-slate-500"><?= \App\Core\Lang::t('staff.mentions_title') ?></h3>
+        <button onclick="toggleMentions()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined text-sm">close</span></button>
+    </div>
+    <div id="mentions-list" class="max-h-96 overflow-y-auto no-scrollbar"></div>
+</div>
 
 <div id="premium-modal" class="fixed inset-0 z-[100] hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-xl p-6 md:p-8 text-center max-w-md w-full">
@@ -334,7 +370,7 @@
                 
             <!-- MÒDUL RESTAURATIU -->
             <div id="restorative-panel-container"></div>
-<div id="messages-flow">${mHtml || '<p class="text-center text-slate-400 py-10 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
+            <div id="messages-flow">${mHtml || '<p class="text-center text-slate-400 py-10 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
             </div>
             <div class="p-4 bg-white border-t shrink-0 relative">
                 <!-- Contenedor de Sugerencias de Menciones -->
@@ -349,20 +385,7 @@
             </div>
         `;
 
-        // Inicializar Módulo Restaurativo (Después de inyectar el HTML en el container)
-        if (protocolCase) {
-            currentCaseId = protocolCase.id;
-            const resPanel = document.getElementById('restorative-panel-container');
-            const originalModule = document.getElementById('restorative-module');
-            if (resPanel && originalModule) {
-                resPanel.appendChild(originalModule);
-                originalModule.classList.remove('hidden');
-                loadRestorativeModule(currentCaseId);
-            }
-        }
-    }
-
-        // Inicializar Módulo Restaurativo (Después de inyectar el HTML en el container)
+        // Inicializar Módulo Restaurativo
         if (protocolCase) {
             currentCaseId = protocolCase.id;
             const resPanel = document.getElementById('restorative-panel-container');
@@ -405,7 +428,7 @@
                     <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${colorClass}">
                         ${isPast ? '<span class="material-symbols-outlined text-xs">check</span>' : idx + 1}
                     </div>
-                    <span class="text-[10px] font-bold uppercase tracking-tight ${isActive || p.special && isActive ? (p.special ? 'text-red-700' : 'text-primary') : 'text-slate-400'}">${p.label}</span>
+                    <span class="text-[10px] font-bold uppercase tracking-tight ${isActive || (p.special && isActive) ? (p.special ? 'text-red-700' : 'text-primary') : 'text-slate-400'}">${p.label}</span>
                     ${idx < activePhases.length - 1 ? '<span class="material-symbols-outlined text-slate-200 text-sm">chevron_right</span>' : ''}
                 </div>
             `;
@@ -429,6 +452,9 @@
                         ${isBarnahus ? '⚠️ ALERTA BARNAHUS: VIOLÈNCIA SEXUAL' : 'Protocolo Legal: ' + c.current_phase.toUpperCase()}
                     </h4>
                     <div class="flex gap-2">
+                        <button onclick="copyRevaSummary(${c.id})" class="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded border border-teal-100 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">content_copy</span> REVA
+                        </button>
                         ${(isClosed || c.current_phase === 'intervencio') ? `<a href="/protocol/case/${c.id}/export" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-primary flex items-center gap-1"><span class="material-symbols-outlined text-sm">picture_as_pdf</span> Exportar</a>` : ''}
                         <button onclick="window.open('/protocolo-acoso', '_blank')" class="text-[10px] font-bold text-slate-400 hover:text-primary underline">Ver Guía CCAA</button>
                     </div>
@@ -522,6 +548,16 @@
                             <a href="/protocol/case/${c.id}/export" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-full text-xs font-bold shadow-lg shadow-emerald-600/20">
                                 <span class="material-symbols-outlined text-sm">download</span> Descarregar Informe Final
                             </a>
+                        </div>
+                    ` : ''}
+
+                    ${isBarnahus ? `
+                        <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
+                            <p class="text-xs text-red-800 font-medium">S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="/protocol/case/${c.id}/template/derivacio_barnahus" target="_blank" class="px-4 py-2 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase">📄 Fitxa de Derivació</a>
+                                <button onclick="nextPhase(${c.id}, 'comunicacio')" class="px-4 py-2 bg-white border border-red-200 text-red-600 rounded-lg text-[10px] font-black uppercase">He realitzat la derivació</button>
+                            </div>
                         </div>
                     ` : ''}
                 </div>

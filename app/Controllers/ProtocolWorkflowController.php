@@ -49,8 +49,7 @@ class ProtocolWorkflowController
             $case = $this->caseModel->findByReport($report_id);
             
             if (!$case && $ccaa === 'cataluna') {
-                $this->stateService->transitionTo($report_id, ProtocolCase::PHASE_DETECCION); // El servicio maneja creación
-                $case = $this->caseModel->findByReport($report_id);
+                $case = $this->stateService->createInitialCase($report_id, $ccaa);
             }
 
             if ($case) {

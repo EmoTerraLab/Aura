@@ -4,6 +4,95 @@ namespace App\Data;
 class BullyingProtocols {
     public static function getAll(): array {
         return [
+            'aragon' => [
+                'metadata' => [
+                    'code' => 'aragon',
+                    'name' => 'Aragón',
+                    'authority' => 'Gobierno de Aragón - Departamento de Educación',
+                    'document_title' => 'Protocolo de actuación inmediata ante posibles situaciones de acoso escolar',
+                    'document_date' => 'Resolución 19/10/2018',
+                    'document_url' => 'https://educa.aragon.es/convivencia',
+                    'color' => '#E30613',
+                    'main_tool' => 'Anexos I al X',
+                ],
+                'content' => [
+                    'key_principles' => [
+                        'Protección inmediata a la víctima',
+                        'Intervención eficaz, rápida y no precipitada',
+                        'Discreción y confidencialidad',
+                        'Transparencia y diálogo con las familias',
+                    ],
+                    'types_of_violence' => [
+                        'Física',
+                        'Psicológica',
+                        'Social / Relacional',
+                        'Ciberacoso',
+                        'Sexual',
+                    ],
+                    'applicable_to' => 'Centros públicos y privados concertados de Aragón.',
+                ],
+                'phases' => [
+                    [
+                        'id' => 'deteccion',
+                        'number' => 1,
+                        'title' => 'Fase 1: Detección, comunicación y planificación',
+                        'description' => 'Comunicación inicial y medidas urgentes de protección.',
+                        'responsible' => 'Dirección',
+                        'actions' => [
+                            'Comunicación (Anexo I-a)',
+                            'Decisión de inicio (Anexo I-b)',
+                            'Medidas de protección (Anexo II)',
+                        ],
+                        'timeframe' => '1-2 días lectivos',
+                        'tools' => 'Anexos I, II, III, IV',
+                    ],
+                    [
+                        'id' => 'investigacion',
+                        'number' => 2,
+                        'title' => 'Fase 2: Proceso de recogida de información',
+                        'description' => 'Investigación detallada mediante entrevistas y observación.',
+                        'responsible' => 'Equipo de Valoración',
+                        'actions' => [
+                            'Entrevistas (Anexo V)',
+                            'Registro de indicadores (Anexo VI)',
+                        ],
+                        'timeframe' => 'Hasta 18 días lectivos',
+                        'tools' => 'Anexos V, VI',
+                    ],
+                    [
+                        'id' => 'resolucion',
+                        'number' => 3,
+                        'title' => 'Fase 3: Análisis y toma de decisiones',
+                        'description' => 'Valoración final del caso y notificación a Inspección.',
+                        'responsible' => 'Dirección',
+                        'actions' => [
+                            'Acta de valoración (Anexo VII)',
+                            'Informe-Resumen (Anexo VIII)',
+                        ],
+                        'timeframe' => 'Día 20-22 lectivo',
+                        'tools' => 'Anexos VII, VIII',
+                    ],
+                    [
+                        'id' => 'seguimiento',
+                        'number' => 4,
+                        'title' => 'Fase 4: Plan de supervisión y seguimiento',
+                        'description' => 'Vigilancia periódica de la evolución de la situación.',
+                        'responsible' => 'Responsable de seguimiento',
+                        'actions' => [
+                            'Registro de seguimiento (Anexo IX)',
+                            'Acta de cierre (Anexo X)',
+                        ],
+                        'timeframe' => 'Indeterminado',
+                        'tools' => 'Anexos IX, X',
+                    ],
+                ],
+                'emergency_contacts' => [
+                    ['name' => 'Guardia Civil (Rural)', 'description' => 'Emergencias en ámbito rural', 'contact' => '062'],
+                    ['name' => 'Policía Nacional (Urbano)', 'description' => 'Emergencias en ámbito urbano', 'contact' => '091'],
+                    ['name' => 'GRUME Zaragoza', 'description' => 'Grupo de Menores de Policía', 'contact' => '976 344 393'],
+                    ['name' => 'EOE Convivencia Escolar', 'description' => 'Equipo de orientación autonómico', 'contact' => 'equipoconvivencia@aragon.es'],
+                ],
+            ],
             'cataluna' => [
                 'metadata' => [
                     'code' => 'cataluna',
