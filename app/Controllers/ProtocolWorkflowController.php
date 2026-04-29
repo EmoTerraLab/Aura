@@ -11,6 +11,7 @@ use App\Models\Report;
 use App\Models\SecurityMap;
 use App\Models\ProtocolFollowup;
 use App\Models\ReportMessage;
+use App\Models\RestorativePractice;
 use App\Services\ProtocolStateService;
 use App\Services\RevaExportService;
 use App\Services\ProtocolService;
@@ -22,6 +23,7 @@ class ProtocolWorkflowController
     private SecurityMap $mapModel;
     private ProtocolFollowup $followupModel;
     private ReportMessage $messageModel;
+    private RestorativePractice $restorativeModel;
     private ProtocolStateService $stateService;
     private RevaExportService $revaService;
     private ProtocolService $protocolService;
@@ -33,6 +35,7 @@ class ProtocolWorkflowController
         $this->mapModel = new SecurityMap();
         $this->followupModel = new ProtocolFollowup();
         $this->messageModel = new ReportMessage();
+        $this->restorativeModel = new RestorativePractice();
         $this->stateService = new ProtocolStateService();
         $this->revaService = new RevaExportService();
         $this->protocolService = new ProtocolService();
@@ -53,17 +56,28 @@ class ProtocolWorkflowController
                 $case = $this->stateService->createInitialCase($report_id, $ccaa, $protocol->getInitialState());
             }
 
+            // Auto-reparar fase si no corresponde a la CCAA actual (ej. cambio de región o error inicial)
+            if ($case) {
+                $allStates = $protocol->getAllStates();
+                if (!in_array($case['current_phase'], $allStates) && $case['current_phase'] !== ProtocolCase::PHASE_BARNAHUS) {
+                    $newPhase = $protocol->getInitialState();
+                    $this->caseModel->updatePhase($case['id'], $newPhase);
+                    $case['current_phase'] = $newPhase;
+                }
+            }
+
             $protocol_meta = [
                 'ccaa_name' => $protocol->getCcaaName(),
                 'legal_reference' => $protocol->getLegalReference(),
                 'timeline_steps' => $protocol->getTimelineSteps(),
                 'current_actions' => [],
                 'exclusive_tools' => $protocol->getExclusiveTools(),
-                'deadline_alert' => null
+                'deadline_alert' => null,
+                'documents' => $protocol->getDocuments()
             ];
 
             if ($case) {
-                if ($case['current_phase'] === ProtocolCase::PHASE_BARNAHUS || $case['severity_preliminary'] === 'violencia_sexual') {
+                if (in_array('barnahus', $protocol->getExclusiveTools()) && ($case['current_phase'] === ProtocolCase::PHASE_BARNAHUS || $case['severity_preliminary'] === 'violencia_sexual')) {
                     $this->protocolService->logSensitiveAccess($case['id']);
                 }
 
@@ -71,11 +85,8 @@ class ProtocolWorkflowController
                 $case['closure_checks'] = json_decode($case['closure_checks'] ?? '{}', true);
                 $case['communications'] = json_decode($case['communications'] ?? '{}', true);
                 
-                $schoolDaysElapsed = 0;
-                if ($ccaa === 'aragon') {
-                    $schoolDaysElapsed = $this->protocolService->calculateSchoolDays($case['created_at']);
-                    $case['school_days_count'] = $schoolDaysElapsed;
-                }
+                $schoolDaysElapsed = $this->protocolService->calculateSchoolDays($case['created_at']);
+                $case['school_days_count'] = $schoolDaysElapsed;
 
                 $protocol_meta['current_actions'] = $protocol->getActionsForState($case['current_phase'], $case);
                 $protocol_meta['deadline_alert'] = $protocol->getDeadlineAlert($case['current_phase'], $schoolDaysElapsed);
@@ -185,10 +196,11 @@ class ProtocolWorkflowController
         $case = $this->caseModel->find((int)$id);
         if (!$case) die("Cas no trobat");
         
+        $ccaa = $case['ccaa_code'];
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
         $schoolName = Config::get('school_name', 'Aura PDP');
 
-        View::render("protocol/templates/cataluna/{$templateName}", [
+        View::render("protocol/templates/{$ccaa}/{$templateName}", [
             'case' => $case,
             'report' => $report,
             'schoolName' => $schoolName
@@ -260,6 +272,65 @@ class ProtocolWorkflowController
         if ($success) {
             $this->logAction($case['report_id'], "Checklist de tancament actualitzat.");
         }
+        echo json_encode(['success' => $success]);
+    }
+
+    public function saveAcknowledgment(int $id): void
+    {
+        header('Content-Type: application/json');
+        $data = json_decode(file_get_contents('php://input'), true);
+        $ack = isset($data['acknowledged']) ? (int)$data['acknowledged'] : null;
+        
+        $success = $this->caseModel->updateAcknowledgment($id, $ack);
+        if ($success) {
+            $case = $this->caseModel->find($id);
+            $msg = ($ack === 1) ? "L'alumne RECONEIX els fets." : "L'alumne NO reconeix els fets.";
+            $this->logAction($case['report_id'], $msg);
+        }
+        echo json_encode(['success' => $success]);
+    }
+
+    public function getRestorativeData(int $id): void
+    {
+        header('Content-Type: application/json');
+        $case = $this->caseModel->find($id);
+        $practices = $this->restorativeModel->findByCase($id);
+        
+        echo json_encode([
+            'success' => true, 
+            'acknowledged' => $case['aggressor_acknowledges_facts'] ?? null,
+            'practices' => $practices
+        ]);
+    }
+
+    public function addRestorativePractice(int $id): void
+    {
+        header('Content-Type: application/json');
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        $practiceData = [
+            'protocol_case_id' => $id,
+            'practice_type'    => $data['practice_type'],
+            'facilitator_id'   => Auth::id(),
+            'session_date'     => $data['session_date'],
+            'participants'     => $data['participants'],
+            'agreements'       => $data['agreements'],
+            'status'           => 'pending'
+        ];
+
+        $newId = $this->restorativeModel->create($practiceData);
+        if ($newId) {
+            $case = $this->caseModel->find($id);
+            $this->logAction($case['report_id'], "Nova pràctica restaurativa programada: " . strtoupper($data['practice_type']));
+        }
+        echo json_encode(['success' => (bool)$newId]);
+    }
+
+    public function updatePracticeStatus(int $id): void
+    {
+        header('Content-Type: application/json');
+        $data = json_decode(file_get_contents('php://input'), true);
+        $success = $this->restorativeModel->updateStatus((int)$id, $data['status']);
         echo json_encode(['success' => $success]);
     }
 

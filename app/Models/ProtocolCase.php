@@ -91,4 +91,10 @@ class ProtocolCase extends Model
         $stmt = $this->db->prepare("UPDATE {$this->table} SET closure_checks = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
         return $stmt->execute([json_encode($checks), $id]);
     }
+
+    public function updateAcknowledgment(int $id, ?int $ack)
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET aggressor_acknowledges_facts = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        return $stmt->execute([$ack, $id]);
+    }
 }

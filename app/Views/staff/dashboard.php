@@ -390,58 +390,47 @@
             currentCaseId = protocolCase.id;
             const resPanel = document.getElementById('restorative-panel-container');
             const originalModule = document.getElementById('restorative-module');
+            
             if (resPanel && originalModule) {
-                resPanel.appendChild(originalModule);
-                originalModule.classList.remove('hidden');
-                loadRestorativeModule(currentCaseId);
+                const ccaa = caseRes.ccaa;
+                const phase = protocolCase.current_phase;
+                
+                // En Aragón solo mostramos el módulo restaurativo a partir de la Valoración
+                let showRestorative = (ccaa === 'cataluna');
+                if (ccaa === 'aragon') {
+                    const advancedPhases = ['en_valoracion', 'valorado', 'contrato_conducta', 'expediente_disciplinario', 'en_seguimiento', 'cerrado'];
+                    showRestorative = advancedPhases.includes(phase);
+                }
+
+                if (showRestorative) {
+                    resPanel.appendChild(originalModule);
+                    originalModule.classList.remove('hidden');
+                    loadRestorativeModule(currentCaseId);
+                } else {
+                    originalModule.classList.add('hidden');
+                    // Lo movemos de vuelta al body o un lugar seguro si estaba en el panel
+                    document.body.appendChild(originalModule);
+                }
             }
         }
     }
 
-    function renderTimelineHtml(c, ccaa) {
-        if (!c) return '<p class="text-[10px] text-slate-400 italic">Protocolo legal no activado para este caso.</p>';
-        
-        let phases = [];
-        let activePhases = [];
+    function renderTimelineHtml(c, meta) {
+        if (!c || !meta || !meta.timeline_steps) return '<p class="text-[10px] text-slate-400 italic">Protocolo legal no activado para este caso.</p>';
 
-        if (ccaa === 'cataluna') {
-            phases = [
-                { id: 'deteccion', label: 'Detecció' },
-                { id: 'valoracion', label: 'Valoració' },
-                { id: 'violencia_sexual_actiu', label: 'BARNAHUS', special: true },
-                { id: 'comunicacio', label: 'Comunicació' },
-                { id: 'intervencio', label: 'Intervenció' },
-                { id: 'seguiment_tancament', label: 'Seguiment' },
-                { id: 'tancament', label: 'Tancat' }
-            ];
-            activePhases = phases;
-            if (c.severity_preliminary === 'violencia_sexual') {
-                activePhases = phases.filter(p => !['valoracion', 'intervencio'].includes(p.id));
-            } else {
-                activePhases = phases.filter(p => p.id !== 'violencia_sexual_actiu');
-            }
-        } else if (ccaa === 'aragon') {
-            phases = [
-                { id: 'comunicacion_recibida', label: 'Comunicación' },
-                { id: 'protocolo_iniciado', label: 'Inicio Protocolo' },
-                { id: 'en_valoracion', label: 'Valoración (18 días)' },
-                { id: 'valorado', label: 'Resolución (día 22)' },
-                { id: 'en_seguimiento', label: 'Seguimiento' },
-                { id: 'cerrado', label: 'Cierre' }
-            ];
-            activePhases = phases;
-        }
+        const activePhases = meta.timeline_steps;
+        const currentPhaseId = c.current_phase;
 
         const timelineHtml = activePhases.map((p, idx) => {
-            const isActive = c.current_phase === p.id ||
-                             (ccaa === 'aragon' && p.id === 'valorado' && ['contrato_conducta', 'expediente_disciplinario'].includes(c.current_phase)) ||
-                             (ccaa === 'aragon' && p.id === 'cerrado' && c.current_phase === 'cerrado') ||
-                             (ccaa === 'aragon' && p.id === 'en_seguimiento' && c.current_phase === 'reabierto');
+            const isActive = currentPhaseId === p.id ||
+                             (meta.ccaa_code === 'aragon' && p.id === 'valorado' && ['contrato_conducta', 'expediente_disciplinario'].includes(currentPhaseId)) ||
+                             (meta.ccaa_code === 'aragon' && p.id === 'cerrado' && currentPhaseId === 'cerrado') ||
+                             (meta.ccaa_code === 'aragon' && p.id === 'en_seguimiento' && currentPhaseId === 'reabierto');
 
-            const currentIndex = activePhases.findIndex(x => x.id === c.current_phase ||
-                (ccaa === 'aragon' && x.id === 'valorado' && ['contrato_conducta', 'expediente_disciplinario'].includes(c.current_phase)) ||
-                (ccaa === 'aragon' && x.id === 'en_seguimiento' && c.current_phase === 'reabierto') ||
-                (ccaa === 'aragon' && x.id === 'comunicacion_recibida' && c.current_phase === 'protocolo_no_iniciado')
+            const currentIndex = activePhases.findIndex(x => x.id === currentPhaseId ||
+                (meta.ccaa_code === 'aragon' && x.id === 'valorado' && ['contrato_conducta', 'expediente_disciplinario'].includes(currentPhaseId)) ||
+                (meta.ccaa_code === 'aragon' && x.id === 'en_seguimiento' && currentPhaseId === 'reabierto') ||
+                (meta.ccaa_code === 'aragon' && x.id === 'comunicacion_recibida' && currentPhaseId === 'protocolo_no_iniciado')
             );
 
             const pIndex = idx;
@@ -461,31 +450,26 @@
             `;
         }).join('');
 
-        if (ccaa === 'aragon' && c.school_days_count !== undefined && (c.current_phase === 'en_valoracion' || c.current_phase === 'valorado')) {
-            const days = c.school_days_count;
-            let level = 'ok';
-            let msg = `Día ${days}`;
-            let color = 'text-emerald-600 bg-emerald-50';
-
-            if (c.current_phase === 'en_valoracion') {
-                if (days > 15 && days <= 18) { level = 'warning'; color = 'text-amber-600 bg-amber-50'; }
-                else if (days > 18) { level = 'danger'; color = 'text-red-600 bg-red-50'; }
-            } else if (c.current_phase === 'valorado') {
-                if (days <= 20) { level = 'warning'; color = 'text-amber-600 bg-amber-50'; }
-                else if (days <= 22) { level = 'danger'; msg = '¡Envío a Inspección obligatorio!'; color = 'text-red-600 bg-red-50 border-red-200'; }
-                else { level = 'overdue'; msg = 'PLAZO SUPERADO — Notificar a Inspección'; color = 'bg-red-900 text-white animate-pulse'; }
-            }
-
+        if (meta.deadline_alert) {
             return timelineHtml + `
-                <div class="ml-auto px-3 py-1 rounded-full text-[9px] font-black uppercase border ${color} flex items-center gap-1 shrink-0">
-                    <span class="material-symbols-outlined text-xs">schedule</span> ${msg}
+                <div class="ml-auto px-3 py-1 rounded-full text-[9px] font-black uppercase border ${getAlertColorClass(meta.deadline_alert.level)} flex items-center gap-1 shrink-0">
+                    <span class="material-symbols-outlined text-xs">schedule</span> ${meta.deadline_alert.message}
                 </div>
             `;
         }
 
         return timelineHtml;
+    }
+
+    function getAlertColorClass(level) {
+        switch(level) {
+            case 'ok': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
+            case 'warning': return 'text-amber-600 bg-amber-50 border-amber-100';
+            case 'danger': return 'text-red-600 bg-red-50 border-red-100';
+            case 'overdue': return 'bg-red-900 text-white animate-pulse border-red-900';
+            default: return 'text-slate-500 bg-slate-50 border-slate-100';
         }
-    function renderProtocolActionsCard(c, ccaa) {
+    }    function renderProtocolActionsCard(c, ccaa) {
         if (!c) return '';
         
         const isBarnahus = c.current_phase === 'violencia_sexual_actiu';

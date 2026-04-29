@@ -2,39 +2,51 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-29] - Prácticas Restaurativas y Consolidación CCAA (v2.9.0-stable)
+
+### 🚀 Nuevas Funcionalidades
+- **Módulo de Prácticas Restaurativas**: Implementación de un sistema para registrar círculos, reuniones y conversaciones restaurativas, incluyendo seguimiento de acuerdos y estados.
+- **Reconocimiento de Hechos**: Nueva funcionalidad para registrar si el alumno reconoce los hechos, integrando esta información en el flujo de valoración.
+- **Auto-reparación de Estados**: El sistema ahora detecta y corrige automáticamente estados de protocolo inconsistentes durante la transición entre CCAA.
+- **Documentación de Protocolos**: Visualización integrada de todos los anexos y documentos requeridos por la normativa de cada comunidad.
+
+### 🛠️ Mejoras Técnicas
+- **Arquitectura Polimórfica de Protocolos**: Refactorización completa mediante `ProtocolInterface` y `ProtocolFactory` para una gestión modular de normativas.
+- **Gestión Dinámica de UI**: El dashboard se adapta automáticamente a las herramientas exclusivas de cada protocolo (Barnahus, REVA, Anexos Aragón).
+- **Control de Acceso Sensible**: Registro automatizado de auditoría para accesos a casos de especial sensibilidad según la normativa aplicable.
+
+## [2026-04-29] - Activación de Protocolo de Aragón (v2.7.2-stable)
+
+### 🚀 Nuevas Funcionalidades
+- **Gestión Integral de Aragón:** Implementación del flujo completo y rutas específicas en `AragonProtocolController`, incluyendo la creación de anexos (Anexo I, Anexo 1a, etc.), decisiones de equipo, y resoluciones finales.
+- **Vistas Especializadas:** Nuevas vistas en `app/Views/protocol/aragon/` para el panel de control del protocolo aragonés y la redacción/exportación de anexos.
+- **Router y Flujos:** Añadidas rutas en `app/routes.php` para todas las acciones del protocolo de Aragón. Ajustes en `ProtocolWorkflowController` y `ProtocolStateService` para soportar las transiciones de estado y creación de casos específicos de esta CCAA.
+- **Modelos:** Ampliación en `ProtocolCase` con las constantes de fase (`PHASE_AR_COMUNICACION`, `PHASE_AR_INICIADO`, etc.) exclusivas para el flujo de Aragón.
+
+### 🛠️ Mejoras Técnicas
+- **Gestión de Errores en Router:** Mejora en `App\Core\Router` para la gestión de variables nulas o tipos incompatibles mediante un fallback en las llamadas dinámicas (`call_user_func_array`), aumentando la estabilidad de la aplicación.
+- **Dashboard Staff:** Actualización en el dashboard del personal docente para soportar y renderizar adecuadamente las acciones del protocolo avanzado de Aragón, junto al ya existente de Cataluña.
+
+## [2026-04-29] - Protocolo Legal Aragón y Gestión de Plazos (v2.7.1-stable)
+
+## [2026-04-29] - Optimización de Consultas y Rendimiento (v2.6.1-stable)
+
+## [2026-04-29] - Prácticas Restaurativas y Custodia de Evidencias (v2.6.0-stable)
+
+## [2026-04-28] - Protocolos de Intervención y Sociogramas (v2.5.0-stable)
+
+## [2026-04-28] - Fix: Dashboard Alumno y Localización de Estados (v2.4.1-stable)
+
+## [2026-04-28] - Modo Demo y Carga Automática de Datos (v2.4.0-stable)
+
+## [2026-04-28] - Excelencia en Comunicación e Identidad (v2.3.0-stable)
+
 ## [2026-04-28] - Estabilidad y Recuperación de Cuentas (v2.2.0-stable)
 
-### 🚀 Mejoras y Funcionalidades
-- **Recuperación de Contraseña:** Implementación completa del flujo de recuperación de contraseña, incluyendo la generación de tokens seguros y actualización de credenciales.
-- **Identidad Visual en Emails:** Rediseño total de la plantilla de correo de recuperación con soporte para modo oscuro, diseño responsivo e identidad visual de Aura.
-- **Personalización Dinámica:** Los correos ahora incluyen automáticamente el nombre de la institución en el asunto y el cuerpo del mensaje.
+## [2026-04-28] - Optimización de Envío y Corrección de Plantillas (v2.2.1-stable)
 
-### 🛡️ Seguridad y Estabilidad
-- **Modelo de Usuario:** Añadido método `updatePassword` al modelo de User para permitir la actualización segura de hashes.
-- **Codificación de Emails:** Corregido problema de codificación (UTF-8) en los asuntos de los correos electrónicos para soportar caracteres especiales.
-- **Motor de Migraciones:** Corregido fallo crítico en el motor de actualizaciones al soportar clases anónimas en las migraciones; ahora todas las migraciones siguen el patrón nominal requerido por el `Migrator`.
+## [2026-04-28] - Modernización de Interfaz y Sistema de Vistas (v2.2.0-stable)
+
+## [2026-04-28] - Correcciones Finales y Sincronización (v2.1.2-stable)
 
 ## [2024-04-27] - Consolidación de Producción (v1.7.0-stable)
-
-### 🚀 Lanzamiento de Producción
-- **Sincronización Total:** Consolidación final de todos los módulos de preproducción (PDP) en la versión estable de producción.
-- **Limpieza de Marca:** Eliminación definitiva de todas las referencias "PDP" en el código fuente, base de datos, configuraciones y manuales.
-- **Identidad Visual:** Integración completa de la nueva iconografía y logotipos institucionales en todas las interfaces.
-
-### 🛡️ Seguridad y Estabilidad
-- **Autoloading:** Corregido el sistema de carga de clases PSR-4 en el `composer.json` para garantizar la compatibilidad con el entorno del VPS.
-- **Fix OTP:** Activación del envío real de correos electrónicos para la autenticación de alumnos.
-
-## [2026-04-27] - Fix Crítico: Envío de OTP por Email (v1.6.3-stable)
-
-### 🛡️ Seguridad y Autenticación
-- **Envío Real de OTP:** Implementada la integración con `Mailer` en el `AuthController` para que los alumnos reciban realmente su código de acceso por correo electrónico. Anteriormente, el código solo se registraba en el log del servidor.
-- **Inyección de Dependencias:** Actualizado el `Router` para inyectar correctamente el servicio `Mailer` con sus configuraciones al controlador de autenticación.
-- **Plantilla de Email:** Creada una plantilla de correo profesional para el código OTP, personalizada con el nombre de la institución.
-
-### ⚙️ Mejoras en el Núcleo (Core)
-- **Plantilla de Migraciones:** Añadida plantilla profesional en `database/migrations/_template.php` con helpers de idempotencia para facilitar el escalado de la base de datos.
-- **Limpieza de Branding:** Unificación del nombre de la aplicación a "Aura" en toda la documentación y rutas para la versión estable de producción.
-
-## [2026-04-27] - Optimización de Actualizaciones y Migraciones (v1.6.0-stable)
-...

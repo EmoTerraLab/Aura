@@ -3,43 +3,24 @@ namespace App\Services\Protocol;
 
 use App\Models\ProtocolCase;
 
-/**
- * Implementación del protocolo de convivencia de Aragón.
- * Basado en la Resolución de 19 de octubre de 2018.
- */
 class AragonProtocol implements ProtocolInterface {
 
-    /**
-     * @return string Identificador único del protocolo.
-     */
     public function getCcaaCode(): string {
         return 'aragon';
     }
 
-    /**
-     * @return string Nombre amigable de la Comunidad Autónoma.
-     */
     public function getCcaaName(): string {
         return 'Aragón';
     }
 
-    /**
-     * @return string Referencia legal principal del protocolo.
-     */
     public function getLegalReference(): string {
         return 'Resolución 19/10/2018';
     }
 
-    /**
-     * Define el estado inicial cuando se detecta un posible caso.
-     */
     public function getInitialState(): string {
         return ProtocolCase::PHASE_AR_COMUNICACION;
     }
 
-    /**
-     * Define la máquina de estados y transiciones permitidas.
-     */
     public function getValidTransitions(string $currentState): array {
         return match($currentState) {
             ProtocolCase::PHASE_AR_COMUNICACION => [ProtocolCase::PHASE_AR_INICIADO, ProtocolCase::PHASE_AR_NO_INICIADO],
