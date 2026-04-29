@@ -11,6 +11,19 @@ class ProtocolStateService
     private ProtocolCase $caseModel;
     private ReportMessage $messageModel;
 
+    private array $aragon_transitions = [
+        ProtocolCase::PHASE_AR_COMUNICACION => [ProtocolCase::PHASE_AR_INICIADO, ProtocolCase::PHASE_AR_NO_INICIADO],
+        ProtocolCase::PHASE_AR_INICIADO    => [ProtocolCase::PHASE_AR_VALORACION],
+        ProtocolCase::PHASE_AR_NO_INICIADO => [ProtocolCase::PHASE_AR_COMUNICACION],
+        ProtocolCase::PHASE_AR_VALORACION  => [ProtocolCase::PHASE_AR_VALORADO],
+        ProtocolCase::PHASE_AR_VALORADO    => [ProtocolCase::PHASE_AR_SEGUIMIENTO, ProtocolCase::PHASE_AR_CONTRATO, ProtocolCase::PHASE_AR_EXPEDIENTE],
+        ProtocolCase::PHASE_AR_CONTRATO    => [ProtocolCase::PHASE_AR_SEGUIMIENTO],
+        ProtocolCase::PHASE_AR_EXPEDIENTE  => [ProtocolCase::PHASE_AR_SEGUIMIENTO],
+        ProtocolCase::PHASE_AR_SEGUIMIENTO => [ProtocolCase::PHASE_AR_CERRADO, ProtocolCase::PHASE_AR_REABIERTO],
+        ProtocolCase::PHASE_AR_REABIERTO   => [ProtocolCase::PHASE_AR_SEGUIMIENTO, ProtocolCase::PHASE_AR_EXPEDIENTE],
+        ProtocolCase::PHASE_AR_CERRADO     => [],
+    ];
+
     public function __construct()
     {
         $this->caseModel = new ProtocolCase();
@@ -26,13 +39,22 @@ class ProtocolStateService
         if (!$case) return false;
 
         $oldPhase = $case['current_phase'];
-        $isSexualViolence = $case['severity_preliminary'] === 'violencia_sexual';
+        $ccaa = $case['ccaa_code'];
 
-        // Regla d'or Catalunya 2024: Si és violència sexual, només es permeten fases de derivació/tancament
-        if ($isSexualViolence) {
-            $allowed = [ProtocolCase::PHASE_BARNAHUS, ProtocolCase::PHASE_COMUNICACION, ProtocolCase::PHASE_CIERRE];
+        if ($ccaa === 'cataluna') {
+            $isSexualViolence = $case['severity_preliminary'] === 'violencia_sexual';
+
+            // Regla d'or Catalunya 2024: Si és violència sexual, només es permeten fases de derivació/tancament
+            if ($isSexualViolence) {
+                $allowed = [ProtocolCase::PHASE_BARNAHUS, ProtocolCase::PHASE_COMUNICACION, ProtocolCase::PHASE_CIERRE];
+                if (!in_array($newPhase, $allowed)) {
+                    throw new \Exception("PROTOCOL BLOQUEJAT: Els casos de violència sexual requereixen derivació directa a Barnahus.");
+                }
+            }
+        } elseif ($ccaa === 'aragon') {
+            $allowed = $this->aragon_transitions[$oldPhase] ?? [];
             if (!in_array($newPhase, $allowed)) {
-                throw new \Exception("PROTOCOL BLOQUEJAT: Els casos de violència sexual requereixen derivació directa a Barnahus.");
+                throw new \Exception("TRANSICIÓN INVÁLIDA: No se puede pasar de '$oldPhase' a '$newPhase' en el protocolo de Aragón.");
             }
         }
 
@@ -51,15 +73,22 @@ class ProtocolStateService
     public function createInitialCase(int $reportId, string $ccaa): ?array
     {
         $deadline = date('Y-m-d H:i:s', strtotime('+48 hours'));
+        $initialPhase = ProtocolCase::PHASE_DETECCION;
+
+        if ($ccaa === 'aragon') {
+            $initialPhase = ProtocolCase::PHASE_AR_COMUNICACION;
+        }
+
         $this->caseModel->create([
             'report_id' => $reportId,
             'ccaa_code' => $ccaa,
+            'current_phase' => $initialPhase,
             'deadline_at' => $deadline
         ]);
         
         $case = $this->caseModel->findByReport($reportId);
         if ($case) {
-            $this->logInternalAudit($reportId, "Protocol de Catalunya activat. Termini de valoració: 48h.");
+            $this->logInternalAudit($reportId, "Protocol de $ccaa activat. Fase inicial: $initialPhase.");
         }
         return $case;
     }

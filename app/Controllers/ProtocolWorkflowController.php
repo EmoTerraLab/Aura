@@ -45,14 +45,14 @@ class ProtocolWorkflowController
             $report_id = (int)$report_id;
             $ccaa = Config::get('ccaa_code');
             
-            if ($ccaa !== 'cataluna') {
+            if (!in_array($ccaa, ['cataluna', 'aragon'])) {
                 echo json_encode(['success' => true, 'case' => null, 'ccaa' => $ccaa]);
                 return;
             }
 
             $case = $this->caseModel->findByReport($report_id);
             
-            if (!$case && $ccaa === 'cataluna') {
+            if (!$case && in_array($ccaa, ['cataluna', 'aragon'])) {
                 $case = $this->stateService->createInitialCase($report_id, $ccaa);
             }
 

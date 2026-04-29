@@ -317,7 +317,7 @@
         // Cargar datos del caso legal
         const caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
         const protocolCase = caseRes.case;
-        const isCataluna = caseRes.ccaa === 'cataluna';
+        const isAdvancedProtocol = ['cataluna', 'aragon'].includes(caseRes.ccaa);
 
         let mHtml = messages.map(m => {
             const isMe = m.is_current_user;
@@ -348,7 +348,7 @@
             </div>
 
             <!-- LEGAL PROTOCOL TIMELINE -->
-            ${isCataluna ? `
+            ${isAdvancedProtocol ? `
             <div id="protocol-timeline" class="bg-white border-b px-4 md:px-8 py-4 flex items-center justify-between overflow-x-auto no-scrollbar gap-4">
                 ${renderTimelineHtml(protocolCase)}
             </div>
@@ -361,7 +361,7 @@
                 </div>
                 
                 <!-- PROTOCOL ACTIONS CARD -->
-                ${isCataluna ? renderProtocolActionsCard(protocolCase) : `
+                ${isAdvancedProtocol ? renderProtocolActionsCard(protocolCase) : `
                     <div class="bg-white p-6 rounded-2xl border border-slate-100 italic text-slate-400 text-xs">
                         El flux de protocol automatitzat per a la CCAA <strong>${caseRes.ccaa}</strong> està en fase d'implementació. Podeu gestionar el cas mitjançant el xat.
                     </div>
@@ -435,7 +435,7 @@
         }).join('');
     }
 
-    function renderProtocolActionsCard(c) {
+    function renderProtocolActionsCard(c, ccaa) {
         if (!c) return '';
         
         const isBarnahus = c.current_phase === 'violencia_sexual_actiu';
@@ -452,9 +452,11 @@
                         ${isBarnahus ? '⚠️ ALERTA BARNAHUS: VIOLÈNCIA SEXUAL' : 'Protocolo Legal: ' + c.current_phase.toUpperCase()}
                     </h4>
                     <div class="flex gap-2">
+                        ${ccaa === 'cataluna' ? `
                         <button onclick="copyRevaSummary(${c.id})" class="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded border border-teal-100 flex items-center gap-1">
                             <span class="material-symbols-outlined text-sm">content_copy</span> REVA
                         </button>
+                        ` : ''}
                         ${(isClosed || c.current_phase === 'intervencio') ? `<a href="/protocol/case/${c.id}/export" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-primary flex items-center gap-1"><span class="material-symbols-outlined text-sm">picture_as_pdf</span> Exportar</a>` : ''}
                         <button onclick="window.open('/protocolo-acoso', '_blank')" class="text-[10px] font-bold text-slate-400 hover:text-primary underline">Ver Guía CCAA</button>
                     </div>
@@ -463,7 +465,9 @@
                 <div class="flex flex-wrap gap-2">
                     ${c.current_phase === 'deteccion' ? `
                         <button onclick="protocolClassify(${c.id}, 'grave', 'bullying')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[11px] font-bold text-slate-700 transition-colors">Confirmar Indicios</button>
+                        ${ccaa === 'cataluna' ? `
                         <button onclick="protocolClassify(${c.id}, 'violencia_sexual', 'sexual')" class="px-4 py-2 bg-red-50 hover:bg-red-100 rounded-full text-[11px] font-bold text-red-700 transition-colors">⚠️ Violencia Sexual (Barnahus)</button>
+                        ` : ''}
                     ` : ''}
                     
                     ${c.current_phase === 'valoracion' ? `
@@ -488,9 +492,11 @@
                                     <span class="text-xs font-bold text-slate-700">Comunicat a la família de l'agressor</span>
                                 </label>
                             </div>
+                            ${ccaa === 'cataluna' ? `
                             <div class="flex gap-2">
                                 <a href="/protocol/case/${c.id}/template/addenda_compromis" target="_blank" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase text-center hover:bg-slate-200 transition-colors">📄 Addenda Compromís</a>
                             </div>
+                            ` : ''}
                             <button id="btn-next-intervention" class="w-full py-3 bg-primary text-white rounded-xl text-xs font-bold" onclick="nextPhase(${c.id}, 'intervencio')">Avançar a Intervenció</button>
                         </div>
                     ` : ''}
@@ -501,7 +507,9 @@
                                 <button onclick="openSecurityMap(${c.id})" class="flex-1 py-3 bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 justify-center shadow-lg shadow-emerald-500/20">
                                     <span class="material-symbols-outlined text-sm">map</span> Mapa Seguretat
                                 </button>
+                                ${ccaa === 'cataluna' ? `
                                 <a href="/protocol/case/${c.id}/template/reconeixement_fets" target="_blank" class="flex-1 py-3 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase text-center flex items-center justify-center gap-2">📄 Reconeixement</a>
+                                ` : ''}
                                 <button onclick="openFollowupModal(${c.id})" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-2 justify-center">
                                     <span class="material-symbols-outlined text-sm">event_note</span> Seguiment
                                 </button>

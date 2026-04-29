@@ -45,6 +45,9 @@ class Router {
                 // Extraer parámetros con nombre
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                 
+                // Extraer los valores de los params para llamarlos en orden en caso de error
+                $paramValues = array_values($params);
+                
                 if (is_array($route['callback'])) {
                     $controllerClass = $route['callback'][0];
                     $method = $route['callback'][1];
@@ -70,9 +73,18 @@ class Router {
                         default => new $controllerClass()
                     };
 
-                    return call_user_func_array([$controller, $method], $params);
+                    try {
+                        return call_user_func_array([$controller, $method], $params);
+                    } catch (\TypeError $e) {
+                        return call_user_func_array([$controller, $method], $paramValues);
+                    }
                 }
-                return call_user_func_array($route['callback'], $params);
+                
+                try {
+                    return call_user_func_array($route['callback'], $params);
+                } catch (\TypeError $e) {
+                    return call_user_func_array($route['callback'], $paramValues);
+                }
             }
         }
         

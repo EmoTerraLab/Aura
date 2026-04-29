@@ -16,6 +16,8 @@ use App\Controllers\Admin\SettingsController;
 use App\Controllers\LangController;
 use App\Controllers\TotpController;
 use App\Controllers\WebAuthnController;
+use App\Controllers\AragonProtocolController;
+
 use App\Controllers\BullyingProtocolController;
 use App\Controllers\ProtocolWorkflowController;
 
@@ -94,6 +96,21 @@ $router->post('/password/reset', [PasswordResetController::class, 'resetPassword
 // POST /logout : Destruye sesión
 $router->post('/logout', [AuthController::class, 'logout']);
 
+
+
+// -- Protocolo Aragón --
+$router->get("/protocol/aragon/anexo-1a", [AragonProtocolController::class, "createAnexo1a"], ["auth"]);
+$router->post("/protocol/aragon/anexo-1a", [AragonProtocolController::class, "storeAnexo1a"], ["auth"]);
+$router->get("/protocol/aragon/case/{id}", [AragonProtocolController::class, "showCase"], ["auth"]);
+$router->post("/api/protocol/aragon/decision/{id}", [AragonProtocolController::class, "processDecision"], ["auth"]);
+$router->post("/api/protocol/aragon/constitute-team/{id}", [AragonProtocolController::class, "constituteTeam"], ["auth"]);
+$router->post("/api/protocol/aragon/interview/{id}", [AragonProtocolController::class, "addInterview"], ["auth"]);
+$router->post("/api/protocol/aragon/indicators/{id}", [AragonProtocolController::class, "saveIndicators"], ["auth"]);
+$router->post("/api/protocol/aragon/resolution/{id}", [AragonProtocolController::class, "processResolution"], ["auth"]);
+$router->post("/api/protocol/aragon/start-followup/{id}", [AragonProtocolController::class, "startFollowUp"], ["auth"]);
+$router->post("/api/protocol/aragon/followup/{id}", [AragonProtocolController::class, "addFollowUp"], ["auth"]);
+$router->post("/api/protocol/aragon/close/{id}", [AragonProtocolController::class, "closeCase"], ["auth"]);
+$router->get("/protocol/aragon/export/{id}/{type}", [AragonProtocolController::class, "exportAnnex"], ["auth"]);
 
 // -- Endpoints de Alumno --
 

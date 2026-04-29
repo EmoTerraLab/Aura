@@ -13,6 +13,18 @@ class ProtocolCase extends Model
     const PHASE_CIERRE = 'tancament';
     const PHASE_BARNAHUS = 'violencia_sexual_actiu';
 
+    // Estados del Workflow Aragón
+    const PHASE_AR_COMUNICACION = 'comunicacion_recibida';
+    const PHASE_AR_INICIADO = 'protocolo_iniciado';
+    const PHASE_AR_NO_INICIADO = 'protocolo_no_iniciado';
+    const PHASE_AR_VALORACION = 'en_valoracion';
+    const PHASE_AR_VALORADO = 'valorado';
+    const PHASE_AR_CONTRATO = 'contrato_conducta';
+    const PHASE_AR_EXPEDIENTE = 'expediente_disciplinario';
+    const PHASE_AR_SEGUIMIENTO = 'en_seguimiento';
+    const PHASE_AR_CERRADO = 'cerrado';
+    const PHASE_AR_REABIERTO = 'reabierto';
+
     public function findByReport(int $reportId)
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE report_id = :report_id");
