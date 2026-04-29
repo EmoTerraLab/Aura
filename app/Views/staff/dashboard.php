@@ -350,7 +350,7 @@
             <!-- LEGAL PROTOCOL TIMELINE -->
             ${isAdvancedProtocol ? `
             <div id="protocol-timeline" class="bg-white border-b px-4 md:px-8 py-4 flex items-center justify-between overflow-x-auto no-scrollbar gap-4">
-                ${renderTimelineHtml(protocolCase)}
+                ${renderTimelineHtml(protocolCase, caseRes.ccaa)}
             </div>
             ` : ''}
 
@@ -361,7 +361,7 @@
                 </div>
                 
                 <!-- PROTOCOL ACTIONS CARD -->
-                ${isAdvancedProtocol ? renderProtocolActionsCard(protocolCase) : `
+                ${isAdvancedProtocol ? renderProtocolActionsCard(protocolCase, caseRes.ccaa) : `
                     <div class="bg-white p-6 rounded-2xl border border-slate-100 italic text-slate-400 text-xs">
                         El flux de protocol automatitzat per a la CCAA <strong>${caseRes.ccaa}</strong> està en fase d'implementació. Podeu gestionar el cas mitjançant el xat.
                     </div>
@@ -398,81 +398,112 @@
         }
     }
 
-    function renderTimelineHtml(c) {
+    function renderTimelineHtml(c, ccaa) {
         if (!c) return '<p class="text-[10px] text-slate-400 italic">Protocolo legal no activado para este caso.</p>';
         
-        const phases = [
-            { id: 'deteccion', label: 'Detección' },
-            { id: 'valoracion', label: 'Valoración' },
-            { id: 'violencia_sexual_actiu', label: 'BARNAHUS', special: true },
-            { id: 'comunicacio', label: 'Comunicación' },
-            { id: 'intervencio', label: 'Intervención' },
-            { id: 'tancament', label: 'Cierre' }
-        ];
+        let phases = [];
+        let activePhases = [];
 
-        // Filtrar fases según el tipo de caso
-        let activePhases = phases;
-        if (c.severity_preliminary === 'violencia_sexual') {
-            activePhases = phases.filter(p => !['valoracion', 'intervencio'].includes(p.id));
-        } else {
-            activePhases = phases.filter(p => p.id !== 'violencia_sexual_actiu');
+        if (ccaa === 'cataluna') {
+            phases = [
+                { id: 'deteccion', label: 'Detecció' },
+                { id: 'valoracion', label: 'Valoració' },
+                { id: 'violencia_sexual_actiu', label: 'BARNAHUS', special: true },
+                { id: 'comunicacio', label: 'Comunicació' },
+                { id: 'intervencio', label: 'Intervenció' },
+                { id: 'seguiment_tancament', label: 'Seguiment' },
+                { id: 'tancament', label: 'Tancat' }
+            ];
+            activePhases = phases;
+            if (c.severity_preliminary === 'violencia_sexual') {
+                activePhases = phases.filter(p => !['valoracion', 'intervencio'].includes(p.id));
+            } else {
+                activePhases = phases.filter(p => p.id !== 'violencia_sexual_actiu');
+            }
+        } else if (ccaa === 'aragon') {
+            phases = [
+                { id: 'comunicacion_recibida', label: 'Comunicación' },
+                { id: 'protocolo_iniciado', label: 'Inicio Protocolo' },
+                { id: 'en_valoracion', label: 'Valoración (18 días)' },
+                { id: 'valorado', label: 'Resolución (día 22)' },
+                { id: 'en_seguimiento', label: 'Seguimiento' },
+                { id: 'cerrado', label: 'Cierre' }
+            ];
+            activePhases = phases;
         }
 
-        return activePhases.map((p, idx) => {
-            const isActive = c.current_phase === p.id;
-            const isPast = activePhases.findIndex(x => x.id === c.current_phase) > activePhases.findIndex(x => x.id === p.id);
-            const colorClass = p.special ? 'bg-red-600 text-white' : (isActive ? 'bg-primary text-white' : (isPast ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'));
-            
+        const timelineHtml = activePhases.map((p, idx) => {
+            const isActive = c.current_phase === p.id ||
+                             (ccaa === 'aragon' && p.id === 'valorado' && ['contrato_conducta', 'expediente_disciplinario'].includes(c.current_phase)) ||
+                             (ccaa === 'aragon' && p.id === 'cerrado' && c.current_phase === 'cerrado') ||
+                             (ccaa === 'aragon' && p.id === 'en_seguimiento' && c.current_phase === 'reabierto');
+
+            const currentIndex = activePhases.findIndex(x => x.id === c.current_phase ||
+                (ccaa === 'aragon' && x.id === 'valorado' && ['contrato_conducta', 'expediente_disciplinario'].includes(c.current_phase)) ||
+                (ccaa === 'aragon' && x.id === 'en_seguimiento' && c.current_phase === 'reabierto') ||
+                (ccaa === 'aragon' && x.id === 'comunicacion_recibida' && c.current_phase === 'protocolo_no_iniciado')
+            );
+
+            const pIndex = idx;
+            const isPast = currentIndex > pIndex;
+            const isActual = currentIndex === pIndex || isActive;
+
+            let colorClass = p.special ? 'bg-red-600 text-white' : (isActual ? 'bg-primary text-white' : (isPast ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'));
+
             return `
                 <div class="flex items-center gap-2 shrink-0">
                     <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${colorClass}">
                         ${isPast ? '<span class="material-symbols-outlined text-xs">check</span>' : idx + 1}
                     </div>
-                    <span class="text-[10px] font-bold uppercase tracking-tight ${isActive || (p.special && isActive) ? (p.special ? 'text-red-700' : 'text-primary') : 'text-slate-400'}">${p.label}</span>
+                    <span class="text-[10px] font-bold uppercase tracking-tight ${isActual || (p.special && isActual) ? (p.special ? 'text-red-700' : 'text-primary') : 'text-slate-400'}">${p.label}</span>
                     ${idx < activePhases.length - 1 ? '<span class="material-symbols-outlined text-slate-200 text-sm">chevron_right</span>' : ''}
                 </div>
             `;
         }).join('');
-    }
 
+        if (ccaa === 'aragon' && c.school_days_count !== undefined && (c.current_phase === 'en_valoracion' || c.current_phase === 'valorado')) {
+            const days = c.school_days_count;
+            let level = 'ok';
+            let msg = `Día ${days}`;
+            let color = 'text-emerald-600 bg-emerald-50';
+
+            if (c.current_phase === 'en_valoracion') {
+                if (days > 15 && days <= 18) { level = 'warning'; color = 'text-amber-600 bg-amber-50'; }
+                else if (days > 18) { level = 'danger'; color = 'text-red-600 bg-red-50'; }
+            } else if (c.current_phase === 'valorado') {
+                if (days <= 20) { level = 'warning'; color = 'text-amber-600 bg-amber-50'; }
+                else if (days <= 22) { level = 'danger'; msg = '¡Envío a Inspección obligatorio!'; color = 'text-red-600 bg-red-50 border-red-200'; }
+                else { level = 'overdue'; msg = 'PLAZO SUPERADO — Notificar a Inspección'; color = 'bg-red-900 text-white animate-pulse'; }
+            }
+
+            return timelineHtml + `
+                <div class="ml-auto px-3 py-1 rounded-full text-[9px] font-black uppercase border ${color} flex items-center gap-1 shrink-0">
+                    <span class="material-symbols-outlined text-xs">schedule</span> ${msg}
+                </div>
+            `;
+        }
+
+        return timelineHtml;
+        }
     function renderProtocolActionsCard(c, ccaa) {
         if (!c) return '';
         
         const isBarnahus = c.current_phase === 'violencia_sexual_actiu';
-        const isClosed = c.current_phase === 'tancament';
+        const isClosed = c.current_phase === 'tancament' || c.current_phase === 'cerrado';
         const borderColor = isBarnahus ? 'border-red-500' : (isClosed ? 'border-emerald-500' : 'border-primary');
         const textColor = isBarnahus ? 'text-red-700' : (isClosed ? 'text-emerald-700' : 'text-primary');
         const comms = typeof c.communications === 'string' ? JSON.parse(c.communications || '{}') : (c.communications || {});
         const checks = typeof c.closure_checks === 'string' ? JSON.parse(c.closure_checks || '{}') : (c.closure_checks || {});
 
-        return `
-            <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border-l-4 ${borderColor} border-t border-r border-b space-y-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-[10px] font-black uppercase ${textColor} tracking-widest">
-                        ${isBarnahus ? '⚠️ ALERTA BARNAHUS: VIOLÈNCIA SEXUAL' : 'Protocolo Legal: ' + c.current_phase.toUpperCase()}
-                    </h4>
-                    <div class="flex gap-2">
-                        ${ccaa === 'cataluna' ? `
-                        <button onclick="copyRevaSummary(${c.id})" class="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded border border-teal-100 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">content_copy</span> REVA
-                        </button>
-                        ` : ''}
-                        ${(isClosed || c.current_phase === 'intervencio') ? `<a href="/protocol/case/${c.id}/export" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-primary flex items-center gap-1"><span class="material-symbols-outlined text-sm">picture_as_pdf</span> Exportar</a>` : ''}
-                        <button onclick="window.open('/protocolo-acoso', '_blank')" class="text-[10px] font-bold text-slate-400 hover:text-primary underline">Ver Guía CCAA</button>
-                    </div>
-                </div>
-                
-                <div class="flex flex-wrap gap-2">
+        let catalunaActions = `
                     ${c.current_phase === 'deteccion' ? `
-                        <button onclick="protocolClassify(${c.id}, 'grave', 'bullying')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[11px] font-bold text-slate-700 transition-colors">Confirmar Indicios</button>
-                        ${ccaa === 'cataluna' ? `
-                        <button onclick="protocolClassify(${c.id}, 'violencia_sexual', 'sexual')" class="px-4 py-2 bg-red-50 hover:bg-red-100 rounded-full text-[11px] font-bold text-red-700 transition-colors">⚠️ Violencia Sexual (Barnahus)</button>
-                        ` : ''}
+                        <button onclick="protocolClassify(${c.id}, 'grave', 'bullying')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[11px] font-bold text-slate-700 transition-colors">Confirmar Indicis</button>
+                        <button onclick="protocolClassify(${c.id}, 'violencia_sexual', 'sexual')" class="px-4 py-2 bg-red-50 hover:bg-red-100 rounded-full text-[11px] font-bold text-red-700 transition-colors">⚠️ Violència Sexual (Barnahus)</button>
                     ` : ''}
                     
                     ${c.current_phase === 'valoracion' ? `
-                        <button class="px-4 py-2 bg-primary text-white rounded-full text-[11px] font-bold" onclick="alert('Asignación de equipo disponible en la versión PRO')">Asignar Equipo</button>
-                        <button onclick="nextPhase(${c.id}, 'comunicacio')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[11px] font-bold text-slate-700 transition-colors">Finalizar Valoración</button>
+                        <button class="px-4 py-2 bg-primary text-white rounded-full text-[11px] font-bold" onclick="alert('Assignació d\\'equip disponible a la versió PRO')">Assignar Equip</button>
+                        <button onclick="nextPhase(${c.id}, 'comunicacio')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[11px] font-bold text-slate-700 transition-colors">Finalitzar Valoració</button>
                     ` : ''}
 
                     ${c.current_phase === 'comunicacio' ? `
@@ -492,11 +523,9 @@
                                     <span class="text-xs font-bold text-slate-700">Comunicat a la família de l'agressor</span>
                                 </label>
                             </div>
-                            ${ccaa === 'cataluna' ? `
                             <div class="flex gap-2">
                                 <a href="/protocol/case/${c.id}/template/addenda_compromis" target="_blank" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase text-center hover:bg-slate-200 transition-colors">📄 Addenda Compromís</a>
                             </div>
-                            ` : ''}
                             <button id="btn-next-intervention" class="w-full py-3 bg-primary text-white rounded-xl text-xs font-bold" onclick="nextPhase(${c.id}, 'intervencio')">Avançar a Intervenció</button>
                         </div>
                     ` : ''}
@@ -507,9 +536,7 @@
                                 <button onclick="openSecurityMap(${c.id})" class="flex-1 py-3 bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 justify-center shadow-lg shadow-emerald-500/20">
                                     <span class="material-symbols-outlined text-sm">map</span> Mapa Seguretat
                                 </button>
-                                ${ccaa === 'cataluna' ? `
                                 <a href="/protocol/case/${c.id}/template/reconeixement_fets" target="_blank" class="flex-1 py-3 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase text-center flex items-center justify-center gap-2">📄 Reconeixement</a>
-                                ` : ''}
                                 <button onclick="openFollowupModal(${c.id})" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-2 justify-center">
                                     <span class="material-symbols-outlined text-sm">event_note</span> Seguiment
                                 </button>
@@ -545,13 +572,139 @@
                             </div>
                         </div>
                     ` : ''}
+        `;
+
+        // Contador y Alerta de Días Lectivos para Aragón
+        let aragonDeadlineInfo = '';
+        if (ccaa === 'aragon' && c.school_days_count !== undefined) {
+            const days = c.school_days_count;
+            let level = 'ok';
+            let msg = `Día lectivo ${days}`;
+            let color = 'text-emerald-600 bg-emerald-50';
+
+            if (c.current_phase === 'en_valoracion') {
+                if (days <= 15) { level = 'ok'; msg = `Día lectivo ${days} de 18 (Valoración)`; color = 'text-emerald-600 bg-emerald-50'; }
+                else if (days <= 18) { level = 'warning'; msg = `Día lectivo ${days} — Límite de valoración próximo`; color = 'text-amber-600 bg-amber-50'; }
+                else { level = 'danger'; msg = `PLAZO SUPERADO — Límite era día 18`; color = 'text-red-600 bg-red-50'; }
+            } else if (c.current_phase === 'valorado') {
+                if (days <= 20) { level = 'warning'; msg = `Día lectivo ${days} de 22 (Resolución)`; color = 'text-amber-600 bg-amber-50'; }
+                else if (days <= 22) { level = 'danger'; msg = `¡Envío a Inspección obligatorio! Día ${days} de 22`; color = 'text-red-600 bg-red-50 border-red-200'; }
+                else { level = 'overdue'; msg = `PLAZO SUPERADO — Notificar a Inspección`; color = 'bg-red-900 text-white animate-pulse'; }
+            }
+
+            aragonDeadlineInfo = `
+                <div class="px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest border ${color} mb-4 flex items-center justify-between">
+                    <span>${msg}</span>
+                    <span class="material-symbols-outlined text-sm">schedule</span>
+                </div>
+            `;
+        }
+
+        let aragonActions = `
+                    ${aragonDeadlineInfo}
+                    ${c.current_phase === 'comunicacion_recibida' ? `
+                        <button onclick="nextPhase(${c.id}, 'protocolo_iniciado')" class="px-4 py-2 bg-primary text-white rounded-full text-[11px] font-bold transition-colors">Iniciar Protocolo (ANEXO I-b)</button>
+                        <button onclick="nextPhase(${c.id}, 'protocolo_no_iniciado')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[11px] font-bold text-slate-700 transition-colors">No Iniciar (con medidas igualmente)</button>
+                    ` : ''}
+
+                    ${c.current_phase === 'protocolo_iniciado' ? `
+                        <button onclick="nextPhase(${c.id}, 'en_valoracion')" class="px-4 py-2 bg-primary text-white rounded-full text-[11px] font-bold transition-colors">Constituir Equipo de Valoración (ANEXO III)</button>
+                    ` : ''}
+                    
+                    ${c.current_phase === 'en_valoracion' ? `
+                        <div class="w-full space-y-3">
+                            <div class="flex gap-2">
+                                <button class="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Registrar Entrevista (ANEXO V)</button>
+                                <button class="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Registrar Indicadores (ANEXO VI)</button>
+                            </div>
+                            <button onclick="nextPhase(${c.id}, 'valorado')" class="w-full px-4 py-2 bg-primary text-white rounded-full text-[11px] font-bold transition-colors">Finalizar Valoración (Ir a Resolución)</button>
+                        </div>
+                    ` : ''}
+
+                    ${c.current_phase === 'valorado' ? `
+                        <div class="w-full space-y-3">
+                            <div class="flex gap-2">
+                                <button class="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Firmar Acta Valoración (ANEXO VII)</button>
+                                <button class="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Generar Informe-Resumen (ANEXO VIII)</button>
+                            </div>
+                            <button class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Enviar a Inspección</button>
+                            <div class="flex gap-2 mt-4 pt-4 border-t border-slate-100">
+                                <button onclick="nextPhase(${c.id}, 'contrato_conducta')" class="flex-1 px-2 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[10px] font-bold text-slate-700 transition-colors">Contrato Conducta</button>
+                                <button onclick="nextPhase(${c.id}, 'expediente_disciplinario')" class="flex-1 px-2 py-2 bg-slate-100 hover:bg-slate-200 rounded-full text-[10px] font-bold text-slate-700 transition-colors">Expediente Disciplinario</button>
+                                <button onclick="nextPhase(${c.id}, 'en_seguimiento')" class="flex-1 px-2 py-2 bg-primary text-white rounded-full text-[10px] font-bold transition-colors">A Seguimiento</button>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${(c.current_phase === 'contrato_conducta' || c.current_phase === 'expediente_disciplinario') ? `
+                        <div class="w-full space-y-3">
+                            <p class="text-[11px] font-bold text-slate-500 italic">Estado intermedio: ${c.current_phase.replace('_', ' ').toUpperCase()}</p>
+                            <button onclick="nextPhase(${c.id}, 'en_seguimiento')" class="w-full px-4 py-2 bg-primary text-white rounded-full text-[11px] font-bold transition-colors">Avanzar a Seguimiento</button>
+                        </div>
+                    ` : ''}
+
+                    ${(c.current_phase === 'en_seguimiento' || c.current_phase === 'reabierto') ? `
+                        <div class="w-full space-y-6">
+                            <button onclick="openFollowupModalAragon(${c.id})" class="w-full py-3 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-2 justify-center">
+                                <span class="material-symbols-outlined text-sm">event_note</span> Registrar Sesión de Seguimiento (ANEXO IX)
+                            </button>
+
+                            <div class="space-y-3">
+                                <h5 class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Historial de Seguimiento</h5>
+                                <div class="max-h-40 overflow-y-auto no-scrollbar space-y-2" id="followup-list">
+                                    ${(c.followups || []).map(f => `
+                                        <div class="p-3 bg-slate-50 rounded-xl text-[11px] border border-slate-100">
+                                            <div class="flex justify-between font-bold mb-1">
+                                                <span class="text-primary uppercase">${f.target_type}</span>
+                                                <span class="text-slate-400">${f.session_date}</span>
+                                            </div>
+                                            <p class="text-slate-600">${f.notes}</p>
+                                        </div>
+                                    `).join('') || '<p class="text-[10px] text-slate-400 italic">No hay sesiones registradas.</p>'}
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 pt-4 border-t border-slate-100">
+                                <button onclick="nextPhase(${c.id}, 'cerrado')" class="flex-1 py-3 bg-primary text-white rounded-xl text-xs font-bold">Cerrar Protocolo</button>
+                                <button onclick="nextPhase(${c.id}, 'reabierto')" class="px-4 py-3 bg-amber-100 text-amber-700 rounded-xl text-xs font-bold">Reabrir</button>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${c.current_phase === 'cerrado' ? `
+                        <div class="w-full space-y-3">
+                            <button class="w-full px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Generar Acta de Cierre (ANEXO X)</button>
+                            <button class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full text-[11px] font-bold transition-colors" onclick="alert('En desarrollo')">Enviar a Inspección y EOE</button>
+                        </div>
+                    ` : ''}
+        `;
+
+        return `
+            <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border-l-4 ${borderColor} border-t border-r border-b space-y-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="text-[10px] font-black uppercase ${textColor} tracking-widest">
+                        ${isBarnahus ? '⚠️ ALERTA BARNAHUS: VIOLÈNCIA SEXUAL' : 'Protocolo Legal: ' + c.current_phase.toUpperCase()}
+                    </h4>
+                    <div class="flex gap-2">
+                        ${ccaa === 'cataluna' ? `
+                        <button onclick="copyRevaSummary(${c.id})" class="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded border border-teal-100 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">content_copy</span> REVA
+                        </button>
+                        ` : ''}
+                        ${(isClosed || c.current_phase === 'intervencio' || c.current_phase === 'en_seguimiento') ? `<a href="/protocol/case/${c.id}/export" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-primary flex items-center gap-1"><span class="material-symbols-outlined text-sm">picture_as_pdf</span> Exportar</a>` : ''}
+                        <button onclick="window.open('/protocolo-acoso', '_blank')" class="text-[10px] font-bold text-slate-400 hover:text-primary underline">Ver Guía CCAA</button>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    ${ccaa === 'cataluna' ? catalunaActions : (ccaa === 'aragon' ? aragonActions : '')}
 
                     ${isClosed ? `
                         <div class="w-full bg-emerald-50 p-6 rounded-2xl text-center space-y-4">
                             <span class="material-symbols-outlined text-4xl text-emerald-500">verified</span>
                             <div class="space-y-1">
-                                <p class="text-sm font-black text-emerald-800 uppercase">Protocol Tancat i Resolt</p>
-                                <p class="text-xs text-emerald-600">L'expedient ha estat arxivat correctament segons la normativa vigent.</p>
+                                <p class="text-sm font-black text-emerald-800 uppercase">Protocol Tancat i Resolt / Protocolo Cerrado</p>
+                                <p class="text-xs text-emerald-600">L'expedient ha estat arxivat correctament / El expediente ha sido archivado.</p>
                             </div>
                             <a href="/protocol/case/${c.id}/export" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-full text-xs font-bold shadow-lg shadow-emerald-600/20">
                                 <span class="material-symbols-outlined text-sm">download</span> Descarregar Informe Final
@@ -571,6 +724,53 @@
                 </div>
             </div>
         `;
+    }
+
+    function openFollowupModalAragon(caseId) {
+        const html = `
+            <div id="modal-followup-aragon" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden animate-[scaleIn_0.3s_ease-out]">
+                    <div class="p-6 border-b flex items-center justify-between">
+                        <h3 class="font-black">Registro de Seguimiento (ANEXO IX)</h3>
+                        <button onclick="document.getElementById('modal-followup-aragon').remove()"><span class="material-symbols-outlined">close</span></button>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase text-slate-400 pl-4">Tipo de Sesión / Periodicidad</label>
+                            <select id="f-target-ar" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm">
+                                <option value="semanal_m1">Semanal (Primer mes)</option>
+                                <option value="quincenal_m2">Quincenal (Segundo mes)</option>
+                                <option value="mensual_m3">Mensual (A partir del tercer mes)</option>
+                                <option value="extraordinaria">Sesión Extraordinaria</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase text-slate-400 pl-4">Fecha de la sesión</label>
+                            <input type="date" id="f-date-ar" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm" value="${new Date().toISOString().split('T')[0]}">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase text-slate-400 pl-4">Actuaciones y acuerdos</label>
+                            <textarea id="f-notes-ar" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm" rows="4" placeholder="Escriba aquí los acuerdos alcanzados..."></textarea>
+                        </div>
+                        <button onclick="saveFollowupAragon(${caseId})" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg hover:scale-105 transition-transform">Guardar Registro Anexo IX</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', html);
+    }
+
+    async function saveFollowupAragon(caseId) {
+        const data = {
+            target_type: document.getElementById('f-target-ar').value,
+            session_date: document.getElementById('f-date-ar').value,
+            notes: document.getElementById('f-notes-ar').value
+        };
+        const res = await fetchJson(`/api/protocol/case/${caseId}/followup`, { method: 'POST', body: data });
+        if (res.success) {
+            document.getElementById('modal-followup-aragon').remove();
+            window.location.reload();
+        }
     }
 
     function renderClosureCheck(caseId, key, label, checked) {

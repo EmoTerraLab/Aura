@@ -70,4 +70,39 @@ class ProtocolService
             $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
         ]);
     }
+
+    /**
+     * Calcula los días lectivos transcurridos desde una fecha (para Aragón).
+     */
+    public function calculateSchoolDays(string $startDate): int
+    {
+        $db = Database::getInstance();
+        $dateOnly = date('Y-m-d', strtotime($startDate));
+        $today = date('Y-m-d');
+        
+        // Contar cuántos días lectivos han pasado en el calendario
+        $sql = "SELECT COUNT(*) FROM aragon_school_calendar 
+                WHERE calendar_date >= ? AND calendar_date <= ? AND is_school_day = 1";
+        
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$dateOnly, $today]);
+        $days = (int)$stmt->fetchColumn();
+        
+        // Si el calendario está vacío (no configurado aún), hacer un fallback básico (sin fines de semana)
+        if ($days === 0) {
+            $daysCount = 0;
+            $start = strtotime($dateOnly);
+            $end = strtotime($today);
+            while ($start <= $end) {
+                $dayOfWeek = date('N', $start);
+                if ($dayOfWeek < 6) { // 1-5 son Lunes-Viernes
+                    $daysCount++;
+                }
+                $start += 86400; // Avanzar 1 día
+            }
+            return $daysCount;
+        }
+
+        return $days;
+    }
 }

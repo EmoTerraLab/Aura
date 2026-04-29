@@ -45,16 +45,22 @@ class ProtocolWorkflowController
             $report_id = (int)$report_id;
             $ccaa = Config::get('ccaa_code');
             
-            if (!in_array($ccaa, ['cataluna', 'aragon'])) {
-                echo json_encode(['success' => true, 'case' => null, 'ccaa' => $ccaa]);
-                return;
-            }
+            $protocol = \App\Services\Protocol\ProtocolFactory::make($ccaa);
 
             $case = $this->caseModel->findByReport($report_id);
             
-            if (!$case && in_array($ccaa, ['cataluna', 'aragon'])) {
-                $case = $this->stateService->createInitialCase($report_id, $ccaa);
+            if (!$case && $protocol->getInitialState() !== 'no_implementado') {
+                $case = $this->stateService->createInitialCase($report_id, $ccaa, $protocol->getInitialState());
             }
+
+            $protocol_meta = [
+                'ccaa_name' => $protocol->getCcaaName(),
+                'legal_reference' => $protocol->getLegalReference(),
+                'timeline_steps' => $protocol->getTimelineSteps(),
+                'current_actions' => [],
+                'exclusive_tools' => $protocol->getExclusiveTools(),
+                'deadline_alert' => null
+            ];
 
             if ($case) {
                 if ($case['current_phase'] === ProtocolCase::PHASE_BARNAHUS || $case['severity_preliminary'] === 'violencia_sexual') {
@@ -64,9 +70,18 @@ class ProtocolWorkflowController
                 $case['followups'] = $this->followupModel->findByCase($case['id']);
                 $case['closure_checks'] = json_decode($case['closure_checks'] ?? '{}', true);
                 $case['communications'] = json_decode($case['communications'] ?? '{}', true);
+                
+                $schoolDaysElapsed = 0;
+                if ($ccaa === 'aragon') {
+                    $schoolDaysElapsed = $this->protocolService->calculateSchoolDays($case['created_at']);
+                    $case['school_days_count'] = $schoolDaysElapsed;
+                }
+
+                $protocol_meta['current_actions'] = $protocol->getActionsForState($case['current_phase'], $case);
+                $protocol_meta['deadline_alert'] = $protocol->getDeadlineAlert($case['current_phase'], $schoolDaysElapsed);
             }
 
-            echo json_encode(['success' => true, 'case' => $case, 'ccaa' => $ccaa]);
+            echo json_encode(['success' => true, 'case' => $case, 'ccaa' => $ccaa, 'protocol_meta' => $protocol_meta]);
         } catch (\Throwable $e) {
             error_log("Error en getCaseData: " . $e->getMessage());
             http_response_code(500);

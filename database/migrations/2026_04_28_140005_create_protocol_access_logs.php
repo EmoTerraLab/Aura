@@ -2,7 +2,7 @@
 /**
  * Migración: Registro de Accesos a Casos Sensibles (Audit Trail)
  */
-class Migration_2026_04_28_140000_create_protocol_access_logs
+class Migration_2026_04_28_140005_create_protocol_access_logs
 {
     private PDO $db;
     public function __construct(PDO $db) { $this->db = $db; }
