@@ -1,4 +1,4 @@
-<div id="restorative-module" class="mt-8 space-y-6 animate-[fadeIn_0.3s_ease-out]">
+<div id="restorative-module" class="hidden mt-8 space-y-6 animate-[fadeIn_0.3s_ease-out]">
     <div class="flex items-center justify-between">
         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
             <span class="material-symbols-outlined text-primary">groups</span>

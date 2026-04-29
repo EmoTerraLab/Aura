@@ -104,7 +104,7 @@
                         <?php foreach ($reports as $r): ?>
                         <div onclick="loadReport(<?= $r['id'] ?>)" class="p-6 hover:bg-white cursor-pointer transition-all border-l-4 <?= $r['status'] === 'new' ? 'border-primary' : 'border-transparent' ?> group">
                             <div class="flex justify-between items-start mb-2">
-                                <?php $urgency = $r['urgency_level'] ?? 'low'; ?>
+                                <?php $urgency = (!empty($r['urgency_level'])) ? $r['urgency_level'] : 'low'; ?>
                                 <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full <?= $urgency === 'high' ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-500' ?>">
                                     <?= \App\Core\Lang::t('dashboard.urgency_' . $urgency) ?>
                                 </span>

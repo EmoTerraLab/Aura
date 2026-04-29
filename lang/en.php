@@ -182,4 +182,8 @@ return array (
   'protocol.coming_soon' => 'Protocol not available for your region',
   'protocol.hint_title' => 'Protocol Guide',
   'protocol.hint_desc' => 'Based on your autonomous community regulation for bullying cases.',
+  'protocol.no_active_cases' => 'No recent notices.',
+  'dashboard.urgency_low' => 'Low Priority',
+  'dashboard.urgency_medium' => 'Follow-up',
+  'dashboard.urgency_high' => 'High Priority',
 );

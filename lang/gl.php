@@ -50,7 +50,7 @@ return array (
   'dashboard.step2_priority_label' => 'Nivel de prioridade',
   'dashboard.step2_priority_low' => 'Baixa Prioridade',
   'dashboard.step2_priority_med' => 'Seguimento',
-  'dashboard.step2_priority_high' => 'Alta Prioridad',
+  'dashboard.step2_priority_high' => 'Alta Prioridade',
   'dashboard.step2_anonymous_label' => 'Enviar de forma anónima',
   'dashboard.step2_anonymous_desc' => 'A túa identidade non será revelada a profesores. Só o equipo de soporte saberá quen es para poder axudarte.',
   'dashboard.back' => 'Atrás',
@@ -179,4 +179,9 @@ return array (
   'protocol.coming_soon' => 'Protocolo non dispoñible para a túa rexión',
   'protocol.hint_title' => 'Guía do Protocolo',
   'protocol.hint_desc' => 'Baseado na normativa da túa comunidade autónoma para casos de acoso.',
+  'protocol.active_expedients' => 'Expedientes Activos',
+  'protocol.no_active_cases' => 'Non hai avisos recentes.',
+  'dashboard.urgency_low' => 'Baixa Prioridade',
+  'dashboard.urgency_medium' => 'Seguimento',
+  'dashboard.urgency_high' => 'Alta Prioridade',
 );

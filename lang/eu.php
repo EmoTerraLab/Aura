@@ -140,7 +140,7 @@ return array (
   'breathing.follow_rhythm' => 'Jarraitu erritmoa · arnastu poliki',
   'error.404_title' => 'Orria ez da aurkitu',
   'error.404_message' => 'Hara, bidetik pixka bat urrundu zarela dirudi.',
-  'error.404_desc' => 'Ez kezkatu, honek gune segurua izaten jarraitzen du. Sakatu beheko botoia zure aginte-panelera itzultzeko.',
+  'error.404_desc' => 'Ez kezkatu, honek gune segurua izaten jarreatzen du. Sakatu beheko botoia zure aginte-panelera itzultzeko.',
   'error.back_to_start' => 'Itzuli Hasierara',
   'error.status_code' => 'Egoera-kodea',
   'lang.select' => 'Hizkuntza',
@@ -179,4 +179,8 @@ return array (
   'protocol.coming_soon' => 'Zure eskualderako protokoloa ez dago erabilgarri',
   'protocol.hint_title' => 'Protokoloaren gida',
   'protocol.hint_desc' => 'Zure autonomia-erkidegoko araudian oinarritua jazarpen-kasuetarako.',
+  'protocol.no_active_cases' => 'Ez dago azken abisurik.',
+  'dashboard.urgency_low' => 'Lehentasun Baxua',
+  'dashboard.urgency_medium' => 'Jarraipena',
+  'dashboard.urgency_high' => 'Lehentasun Altua',
 );

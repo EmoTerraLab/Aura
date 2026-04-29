@@ -222,4 +222,7 @@ return array (
   'protocol.phase' => 'Fase Actual',
   'protocol.days_active' => 'Días Activo',
   'protocol.no_active_cases' => 'No hay expedientes activos actualmente.',
+  'dashboard.urgency_low' => 'Baja Prioridad',
+  'dashboard.urgency_medium' => 'Seguimiento',
+  'dashboard.urgency_high' => 'Alta Prioridad',
 );

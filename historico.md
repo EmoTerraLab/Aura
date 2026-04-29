@@ -2,7 +2,7 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
-## [2026-04-29] - Protocolo Legal Aragón y Gestión de Plazos (v2.7.0-stable)
+## [2026-04-29] - Protocolo Legal Aragón y Gestión de Plazos (v2.7.1-stable)
 
 ### 🚀 Nuevas Funcionalidades
 - **Protocolo de Aragón:** Implementación del sistema legal de gestión de acoso para la CCAA de Aragón, incluyendo la gestión de anexos oficiales (Anexo III, IV, etc.) y flujo de estados normativo.
@@ -13,7 +13,7 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 ### 🛠️ Mejoras Técnicas
 - **Helper de Días Lectivos:** Nuevo componente `SchoolDaysHelper` para el cálculo preciso de plazos legales basados en el calendario escolar, excluyendo fines de semana y festivos.
 - **Optimización de Consultas:** Añadidos índices de rendimiento adicionales para las tablas de protocolo de Aragón y logs de acceso.
-- **Internacionalización (i18n):** Ampliación de diccionarios para cubrir el nuevo vocabulario legal de Aragón y el sistema restaurativo.
+- **Internacionalización (i18n):** Ampliación masiva de diccionarios (Català, Galego, Euskara, English, Español) para cubrir el nuevo vocabulario legal y restaurativo.
 
 ## [2026-04-29] - Optimización de Consultas y Rendimiento (v2.6.1-stable)
 
