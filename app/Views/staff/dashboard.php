@@ -130,6 +130,7 @@
 <?php ob_start(); ?>
 <script>
     let currentReportId = null;
+    let currentCaseId = null;
     let colleaguesList = [];
 
     // Lógica de Autocompletado de Menciones
@@ -261,6 +262,18 @@
         const res = await fetchJson(`/staff/reports/${id}`);
         if (!res.error) renderDetail(res.report, res.messages);
         else container.innerHTML = `<div class="p-10 text-center"><p class="text-error font-bold mb-4">${res.error}</p><button onclick="closeDetailMobile()" class="bg-primary text-white px-6 py-2 rounded-full">Volver</button></div>`;
+
+        // Inicializar Módulo Restaurativo (Después de inyectar el HTML en el container)
+        if (protocolCase) {
+            currentCaseId = protocolCase.id;
+            const resPanel = document.getElementById('restorative-panel-container');
+            const originalModule = document.getElementById('restorative-module');
+            if (resPanel && originalModule) {
+                resPanel.appendChild(originalModule);
+                originalModule.classList.remove('hidden');
+                loadRestorativeModule(currentCaseId);
+            }
+        }
     }
 
     function closeDetailMobile() {
@@ -280,6 +293,7 @@
         // Cargar datos del caso legal
         const caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
         const protocolCase = caseRes.case;
+        const isCataluna = caseRes.ccaa === 'cataluna';
 
         let mHtml = messages.map(m => {
             const isMe = m.is_current_user;
@@ -310,9 +324,11 @@
             </div>
 
             <!-- LEGAL PROTOCOL TIMELINE -->
+            ${isCataluna ? `
             <div id="protocol-timeline" class="bg-white border-b px-4 md:px-8 py-4 flex items-center justify-between overflow-x-auto no-scrollbar gap-4">
                 ${renderTimelineHtml(protocolCase)}
             </div>
+            ` : ''}
 
             <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50 no-scrollbar">
                 <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -320,10 +336,17 @@
                     <p class="text-sm text-slate-800 whitespace-pre-wrap">${report.content}</p>
                 </div>
                 
-                <!-- PROTOCOL ACTIONS CARD (Si está activo) -->
-                ${renderProtocolActionsCard(protocolCase)}
+                <!-- PROTOCOL ACTIONS CARD -->
+                ${isCataluna ? renderProtocolActionsCard(protocolCase) : `
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 italic text-slate-400 text-xs">
+                        El flux de protocol automatitzat per a la CCAA <strong>${caseRes.ccaa}</strong> està en fase d'implementació. Podeu gestionar el cas mitjançant el xat.
+                    </div>
+                `}
 
-                <div id="messages-flow">${mHtml || '<p class="text-center text-slate-400 py-10 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
+                
+            <!-- MÒDUL RESTAURATIU -->
+            <div id="restorative-panel-container"></div>
+<div id="messages-flow">${mHtml || '<p class="text-center text-slate-400 py-10 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
             </div>
             <div class="p-4 bg-white border-t shrink-0 relative">
                 <!-- Contenedor de Sugerencias de Menciones -->
@@ -337,6 +360,31 @@
                 </label>
             </div>
         `;
+
+        // Inicializar Módulo Restaurativo (Después de inyectar el HTML en el container)
+        if (protocolCase) {
+            currentCaseId = protocolCase.id;
+            const resPanel = document.getElementById('restorative-panel-container');
+            const originalModule = document.getElementById('restorative-module');
+            if (resPanel && originalModule) {
+                resPanel.appendChild(originalModule);
+                originalModule.classList.remove('hidden');
+                loadRestorativeModule(currentCaseId);
+            }
+        }
+    }
+
+        // Inicializar Módulo Restaurativo (Después de inyectar el HTML en el container)
+        if (protocolCase) {
+            currentCaseId = protocolCase.id;
+            const resPanel = document.getElementById('restorative-panel-container');
+            const originalModule = document.getElementById('restorative-module');
+            if (resPanel && originalModule) {
+                resPanel.appendChild(originalModule);
+                originalModule.classList.remove('hidden');
+                loadRestorativeModule(currentCaseId);
+            }
+        }
     }
 
     function renderTimelineHtml(c) {
@@ -426,18 +474,22 @@
                                     <span class="text-xs font-bold text-slate-700">Comunicat a la família de l'agressor</span>
                                 </label>
                             </div>
+                            <div class="flex gap-2">
+                                <a href="/protocol/case/${c.id}/template/addenda_compromis" target="_blank" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase text-center hover:bg-slate-200 transition-colors">📄 Addenda Compromís</a>
+                            </div>
                             <button id="btn-next-intervention" class="w-full py-3 bg-primary text-white rounded-xl text-xs font-bold" onclick="nextPhase(${c.id}, 'intervencio')">Avançar a Intervenció</button>
                         </div>
                     ` : ''}
 
                     ${(c.current_phase === 'intervencio' || c.current_phase === 'seguiment_tancament') ? `
                         <div class="w-full space-y-6">
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap gap-2">
                                 <button onclick="openSecurityMap(${c.id})" class="flex-1 py-3 bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 justify-center shadow-lg shadow-emerald-500/20">
-                                    <span class="material-symbols-outlined text-sm">map</span> Mapa de Seguretat
+                                    <span class="material-symbols-outlined text-sm">map</span> Mapa Seguretat
                                 </button>
+                                <a href="/protocol/case/${c.id}/template/reconeixement_fets" target="_blank" class="flex-1 py-3 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase text-center flex items-center justify-center gap-2">📄 Reconeixement</a>
                                 <button onclick="openFollowupModal(${c.id})" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-2 justify-center">
-                                    <span class="material-symbols-outlined text-sm">event_note</span> Nou Seguiment
+                                    <span class="material-symbols-outlined text-sm">event_note</span> Seguiment
                                 </button>
                             </div>
 
@@ -607,6 +659,33 @@
         }
     }
 
+    async function copyRevaSummary(caseId) {
+        const res = await fetchJson(`/api/protocol/case/${caseId}/reva`);
+        if (res.success) {
+            await navigator.clipboard.writeText(res.summary);
+            alert('Resum per al REVA copiat al porta-retalls.');
+        }
+    }
+
+    async function uploadEvidence(caseId, input) {
+        if (!input.files || input.files.length === 0) return;
+        
+        const formData = new FormData();
+        formData.append('evidence', input.files[0]);
+
+        try {
+            const res = await fetch(`/api/protocol/case/${caseId}/evidence`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) alert('Evidència guardada correctament en custòdia.');
+            else alert('Error: ' + data.error);
+        } catch (e) {
+            alert('Error en la pujada.');
+        }
+    }
+
     async function protocolClassify(id, severity, classification) {
         if (!confirm('¿Confirmas esta clasificación preliminar? Esto activará las fases legales correspondientes.')) return;
         const res = await fetchJson(`/api/protocol/case/${id}/classify`, { method: 'POST', body: { severity, classification } });
@@ -670,3 +749,5 @@
     function closePremiumModal() { document.getElementById('premium-modal').classList.add('hidden'); document.getElementById('premium-modal').classList.remove('flex'); }
 </script>
 <?php $scripts = ob_get_clean(); ?>
+
+<?php require __DIR__ . '/partials/restorative_panel.php'; ?>

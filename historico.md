@@ -2,24 +2,27 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-04-29] - Prácticas Restaurativas y Custodia de Evidencias (v2.6.0-stable)
+
+### 🚀 Nuevas Funcionalidades
+- **Módulo de Prácticas Restaurativas:** Implementación del enfoque ERG para la resolución de conflictos, permitiendo registrar conversaciones, reuniones y círculos restaurativos con seguimiento de acuerdos.
+- **Gestión de Evidencias Legales:** Nuevo sistema de subida y custodia de archivos vinculados a casos de protocolo con registro de trazabilidad.
+- **Registro de Acceso y Logs Legales:** Implementación de logs automáticos en el historial de los reportes para acciones administrativas de protocolo (cambios de fase, tipificación, exportaciones).
+- **Exportación de Plantillas Oficiales:** Sistema de generación de documentos basados en modelos legales de CCAA (Addenda de Compromiso, Reconocimiento de hechos, etc.).
+
+### 🛠️ Mejoras Técnicas
+- **Optimización de Sociogramas:** Refactorización de las consultas SQL del módulo sociométrico mediante agregaciones en un solo paso, mejorando significativamente el rendimiento en aulas grandes.
+- **Robustez WebAuthn:** Corrección en el intercambio de parámetros `pubKeyCredParams` para asegurar compatibilidad total con navegadores modernos en el registro biométrico.
+- **Internacionalización (i18n):** Ampliación de diccionarios para cubrir el nuevo vocabulario restaurativo y legal.
+
 ## [2026-04-28] - Protocolos de Intervención y Sociogramas (v2.5.0-stable)
 
 ### 🚀 Nuevas Funcionalidades
-- **Protocolos CCAA Dinámicos:** Implementación de un sistema de guía de protocolos de actuación ante acoso escolar, adaptado automáticamente según la Comunidad Autónoma configurada en el centro.
-- **Gestión de Casos de Protocolo:** Nuevo flujo de trabajo para el personal docente que permite abrir casos específicos de protocolo, realizar seguimiento, adjuntar comunicaciones y documentar el cierre del caso.
-- **Módulo Sociométrico:** Implementación de encuestas sociométricas para alumnos, permitiendo mapear las dinámicas relacionales del aula y detectar líderes, alumnos aislados o en riesgo de exclusión.
-- **Mapas de Seguridad:** Herramienta visual para que los centros identifiquen puntos negros de convivencia mediante el registro geolocalizado (dentro del centro) de incidentes.
-
-### 🛠️ Mejoras Técnicas
-- **Internacionalización Completa:** Actualización masiva de los diccionarios en Català, Galego, Euskara, English y Español, garantizando que el 100% de la interfaz sea bilingüe.
-- **Motor de Vistas:** Refactorización de componentes comunes en la administración y el dashboard de staff para soportar los nuevos módulos de protocolo.
-- **Seguridad de Datos:** Nuevas tablas de base de datos para la persistencia de casos de protocolo y resultados sociométricos con integridad referencial reforzada.
+- **Protocolos CCAA Dinámicos:** Sistema de guía de actuación ante acoso adaptado por Comunidad Autónoma.
+- **Módulo Sociométrico:** Encuestas para mapear dinámicas relacionales y detección de riesgos.
+- **Mapas de Seguridad:** Herramienta visual de puntos críticos.
 
 ## [2026-04-28] - Fix: Dashboard Alumno y Localización de Estados (v2.4.1-stable)
-
-### 🛠️ Correcciones y Mejoras
-- **Fix Dashboard Vacío:** Corregida la lógica de visualización en el dashboard del alumno que ocultaba el contenedor principal al cargar un chat.
-- **Localización de Estados:** Los estados de los reportes (`new`, `in_progress`, `resolved`) ahora se muestran traducidos correctamente.
 
 ## [2026-04-28] - Modo Demo y Carga Automática de Datos (v2.4.0-stable)
 

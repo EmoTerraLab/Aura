@@ -71,7 +71,9 @@
         $db = \App\Core\Database::getInstance();
         $userId = \App\Core\Auth::id();
         $profile = $db->query("SELECT classroom_id FROM student_profiles WHERE user_id = $userId")->fetch();
-        if ($profile) {
+        $isCataluna = \App\Core\Config::get('ccaa_code') === 'cataluna';
+        
+        if ($profile && $isCataluna) {
             $survey = $db->query("SELECT * FROM sociometric_surveys WHERE classroom_id = {$profile['classroom_id']} AND status = 'active' LIMIT 1")->fetch();
             if ($survey) {
                 $hasResponded = $db->query("SELECT COUNT(*) FROM sociometric_responses WHERE survey_id = {$survey['id']} AND student_id = $userId")->fetchColumn();

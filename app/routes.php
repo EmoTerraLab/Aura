@@ -35,6 +35,12 @@ $router->get('/protocolo-acoso', [BullyingProtocolController::class, 'index'], [
 $router->get('/api/protocol', [BullyingProtocolController::class, 'getApiProtocol'], ['auth']);
 
 // -- Workflow Legal del Protocolo --
+// -- Módulo Restaurativo --
+$router->post("/api/protocol/case/{id}/acknowledgment", [ProtocolWorkflowController::class, "saveAcknowledgment"], ["auth", "roles:orientador,direccion,admin"]);
+$router->get("/api/protocol/case/{id}/restorative", [ProtocolWorkflowController::class, "getRestorativeData"], ["auth"]);
+$router->post("/api/protocol/case/{id}/restorative/add", [ProtocolWorkflowController::class, "addRestorativePractice"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+$router->patch("/api/restorative/{id}/status", [ProtocolWorkflowController::class, "updatePracticeStatus"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+
 $router->get('/protocolos/dashboard', [\App\Controllers\ProtocolDashboardController::class, 'index'], ['auth', 'roles:direccion,admin']);
 
 // -- Sociogramas (CESC) --
@@ -52,6 +58,10 @@ $router->get('/api/protocol/case/{id}/security-map', [ProtocolWorkflowController
 $router->post('/api/protocol/case/{id}/followup', [ProtocolWorkflowController::class, 'addFollowup'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 $router->post('/api/protocol/case/{id}/closure', [ProtocolWorkflowController::class, 'updateClosure'], ['auth', 'roles:direccion,admin']);
 $router->get('/protocol/case/{id}/export', [ProtocolWorkflowController::class, 'exportPdf'], ['auth', 'roles:orientador,direccion,admin']);
+$router->get('/api/protocol/case/{id}/reva', [ProtocolWorkflowController::class, 'getRevaSummary'], ['auth', 'roles:orientador,direccion,admin']);
+$router->post('/api/protocol/case/{id}/evidence', [ProtocolWorkflowController::class, 'uploadEvidence'], ['auth', 'roles:orientador,direccion,admin']);
+$router->get('/protocol/evidence/{id}/download', [\App\Controllers\EvidenceController::class, 'download'], ['auth']);
+$router->get('/protocol/case/{id}/template/{templateName}', [ProtocolWorkflowController::class, 'exportTemplate'], ['auth', 'roles:orientador,direccion,admin']);
 
 // -- Verificación 2FA TOTP --
 $router->get('/auth/2fa/totp', [TotpController::class, 'showVerify']);

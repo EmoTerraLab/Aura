@@ -59,6 +59,12 @@ class Auth {
         return $user ? $user['role'] : null;
     }
 
+    public static function isCocobe(): bool
+    {
+        $user = self::user();
+        return (bool)($user['is_cocobe'] ?? false);
+    }
+
     public static function hasRole($roles) {
         $userRole = self::role();
         if (!$userRole) return false;

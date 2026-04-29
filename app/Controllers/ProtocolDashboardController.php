@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Core\Database;
 use App\Core\View;
 use App\Core\Lang;
+use App\Core\Auth;
 use App\Models\ProtocolCase;
 
 class ProtocolDashboardController
@@ -11,6 +12,9 @@ class ProtocolDashboardController
     public function index(): void
     {
         $db = Database::getInstance();
+
+        // Audit Trail: Registro de acceso al panel global
+        $this->logAccess();
 
         // 1. KPIs
         $totalActive = $db->query("SELECT COUNT(*) FROM protocol_cases WHERE current_phase != 'tancament'")->fetchColumn();
@@ -20,8 +24,9 @@ class ProtocolDashboardController
         $startOfWeek = date('Y-m-d H:i:s', strtotime('monday this week'));
         $totalFollowups = $db->query("SELECT COUNT(*) FROM protocol_followups WHERE session_date >= '$startOfWeek'")->fetchColumn();
 
-        // 2. Tabla de Expedientes
-        $sql = "SELECT c.*, r.content as initial_content, u.name as student_name, cl.name as classroom_name,
+        // 2. Tabla de Expedientes (Optimizado con JOINs necesarios)
+        $sql = "SELECT c.id, c.report_id, c.current_phase, c.created_at, 
+                r.content as initial_content, u.name as student_name, cl.name as classroom_name,
                 (julianday('now') - julianday(c.created_at)) as days_active
                 FROM protocol_cases c
                 JOIN reports r ON c.report_id = r.id
@@ -32,11 +37,11 @@ class ProtocolDashboardController
                 ORDER BY c.created_at DESC";
         $cases = $db->query($sql)->fetchAll();
 
-        // 3. Alertas de plazos (Simulación rápida para el dashboard)
+        // 3. Alertas de plazos
         $alerts = [];
         foreach ($cases as $case) {
             if ($case['current_phase'] === 'deteccion' && $case['days_active'] > 2) {
-                $alerts[] = "Cas #{$case['id']} excedeix les 48h de Valoració.";
+                $alerts[] = Lang::t('protocol.alert_valoracion_pending', ['id' => $case['id']]);
             }
         }
 
@@ -48,5 +53,17 @@ class ProtocolDashboardController
             'cases' => $cases,
             'alerts' => $alerts
         ], 'app');
+    }
+
+    private function logAccess(): void
+    {
+        $db = Database::getInstance();
+        $stmt = $db->prepare("INSERT INTO protocol_access_logs (protocol_case_id, user_id, ip_address, user_agent) VALUES (?, ?, ?, ?)");
+        $stmt->execute([
+            0, // Indica acceso al listado general
+            Auth::id(),
+            $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
+            $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
+        ]);
     }
 }

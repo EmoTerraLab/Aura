@@ -65,6 +65,7 @@ class Router {
                         \App\Controllers\Admin\UpdateController::class => new \App\Controllers\Admin\UpdateController(),
                         \App\Controllers\BullyingProtocolController::class => new \App\Controllers\BullyingProtocolController(new \App\Models\Setting()),
                         \App\Controllers\ProtocolWorkflowController::class => new \App\Controllers\ProtocolWorkflowController(),
+                        \App\Controllers\EvidenceController::class => new \App\Controllers\EvidenceController(),
                         default => new $controllerClass()
                     };
 

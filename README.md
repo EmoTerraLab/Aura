@@ -6,46 +6,30 @@
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![i18n](https://img.shields.io/badge/i18n-es%20|%20ca%20|%20gl%20|%20eu%20|%20en-blue)
 
-Aura es una solución integral para la gestión de informes y convivencia en centros educativos. Permite a los alumnos reportar incidencias de forma anónima o identificada y al personal del centro (profesores, orientadores y dirección) gestionar dichos casos mediante un sistema de tickets seguro, bilingüe y con soporte de protocolos regionales.
-
-Aura is a comprehensive solution for managing well-being reports in schools. It allows students to report incidents anonymously or identified, and school staff (teachers, counselors, and management) to manage these cases through a secure, bilingual ticket system with cutting-edge authentication.
+Aura es una solución integral para la gestión de informes y convivencia en centros educativos. Permite a los alumnos reportar incidencias de forma anónima o identificada y al personal del centro gestionar dichos casos mediante un sistema de tickets seguro, bilingüe, con soporte de protocolos regionales y enfoque restaurativo.
 
 ---
 
-## 📋 Índice / Table of Contents
-1. [Características / Features](#-características--features)
-2. [Requisitos / System Requirements](#-requisitos-del-sistema--system-requirements)
-3. [Instalación / Installation](#-instalación--installation)
-4. [Configuración / Configuration](#-configuración--configuration)
-5. [Arquitectura / Architecture](#-arquitectura--architecture)
-6. [Base de Datos / Database](#-base-de-datos--database)
-7. [Seguridad / Security](#-seguridad--security)
-8. [Rutas / Routes](#-rutas--routes)
-9. [Contribuir / Contributing](#-contribuir--contributing)
-10. [Licencia / License](#-licencia--license)
+## ✨ Características Principales / Key Features
 
----
-
-## ✨ Características / Features
-
-### 🔐 Seguridad / Security
-- **WebAuthn**: Autenticación biométrica (Face ID, huella, passkeys) para alumnos.
-- **TOTP 2FA**: Verificación en dos pasos mediante apps (Google Authenticator) para staff y admin.
-- **Protección**: CSRF, XSS, inyección SQL (PDO) y headers HTTP de seguridad.
+### 🔐 Seguridad y Acceso / Security & Access
+- **WebAuthn**: Autenticación biométrica (Face ID, huella) para alumnos.
+- **TOTP 2FA**: Verificación en dos pasos para staff y administradores.
+- **Custodia de Evidencias**: Sistema seguro de almacenamiento de archivos vinculados a protocolos.
 
 ### 📊 Análisis y Convivencia / Well-being Analysis
-- **Sociogramas Automáticos**: Generación de mapas relacionales del aula para detectar líderes, aislados o riesgos de exclusión.
-- **Mapas de Seguridad**: Identificación visual de zonas de riesgo dentro del centro educativo.
-- **Protocolos CCAA**: Guías de actuación integradas basadas en la normativa específica de cada Comunidad Autónoma.
+- **Sociogramas**: Sistema automático de detección de dinámicas de grupo y riesgos.
+- **Mapas de Seguridad**: Identificación visual de puntos críticos en el centro.
+- **Prácticas Restaurativas**: Módulo ERG para la gestión de círculos, reuniones y acuerdos.
 
-### 👥 Roles y Permisos / Roles & Permissions
-- **Admin**: Gestión total de usuarios, aulas, configuración del sistema y correo.
-- **Staff (Dirección/Orientador/Profesor)**: Gestión de informes, respuestas internas y menciones.
-- **Alumno**: Creación de reportes y seguimiento de sus casos.
+### 🎓 Protocolos Regionales / Regional Protocols
+- **Adaptación CCAA**: Guías de actuación integradas basadas en normativas autonómicas.
+- **Gestión Legal**: Flujo de trabajo reglado con trazabilidad total (logs de acceso y cambios).
+- **Plantillas Oficiales**: Exportación automática de documentos legales.
 
-### 🌍 Internacionalización / Internationalization
-- Soporte nativo para 5 idiomas: Español, Català, Galego, Euskara y English.
-- Cambio de idioma dinámico por usuario y configuración global.
+### 👥 Gestión y Comunicación / Management & Comms
+- **Sistema de Tickets**: Gestión eficiente de informes con estados y prioridades.
+- **Bilingüe**: Interfaz disponible en Español, Català, Galego, Euskara y English.
 
 ---
 
@@ -56,40 +40,7 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
 | PHP | 8.1 | 8.2+ |
 | Servidor web | Apache 2.4 con mod_rewrite | Apache 2.4+ |
 | Base de datos | SQLite 3 | SQLite 3.35+ |
-| Composer | 2.x | Última versión |
 | Extensiones PHP | openssl, pdo_sqlite, mbstring, gmp, json | + sodium |
-
----
-
-## 🚀 Instalación / Installation
-
-### Desarrollo Local / Local Development
-1. **Clonar el repositorio:**
-   ```bash
-   git clone [url-del-repo]
-   cd aura
-   ```
-2. **Instalar dependencias:**
-   ```bash
-   composer install
-   ```
-3. **Configurar base de datos:**
-   El sistema creará `database/aura.sqlite` automáticamente al iniciar por primera vez. Asegúrate de que la carpeta tenga permisos de escritura.
-4. **Permisos:**
-   ```bash
-   chmod -R 775 storage database
-   ```
-
----
-
-## 🏗️ Arquitectura / Architecture
-
-Aura sigue un patrón **MVC Nativo** sin frameworks pesados, optimizado para rendimiento y facilidad de despliegue.
-
----
-
-## 📄 Licencia / License
-Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 
 ---
 © 2026 EmoTerraLab — Aura Project

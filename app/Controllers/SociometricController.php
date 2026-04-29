@@ -124,20 +124,21 @@ class SociometricController
         $stmtSurvey->execute([$id]);
         $survey = $stmtSurvey->fetch();
 
-        // 2. Cálculo de métricas (Agregados)
-        $sql = "SELECT u.name, u.id,
-                (SELECT COUNT(*) FROM sociometric_responses WHERE nominated_student_id = u.id AND question_type = 'positive_affinity' AND survey_id = ?) as pos_count,
-                (SELECT COUNT(*) FROM sociometric_responses WHERE nominated_student_id = u.id AND question_type = 'negative_affinity' AND survey_id = ?) as neg_count,
-                (SELECT COUNT(*) FROM sociometric_responses WHERE nominated_student_id = u.id AND question_type = 'victimization_target' AND survey_id = ?) as victim_count
+        // 2. Cálculo de métricas mediante un solo JOIN con agrupamiento (Optimizado)
+        $sql = "SELECT u.id, u.name,
+                COUNT(CASE WHEN r.question_type = 'positive_affinity' THEN 1 END) as pos_count,
+                COUNT(CASE WHEN r.question_type = 'negative_affinity' THEN 1 END) as neg_count,
+                COUNT(CASE WHEN r.question_type = 'victimization_target' THEN 1 END) as victim_count
                 FROM users u
                 JOIN student_profiles sp ON u.id = sp.user_id
+                LEFT JOIN sociometric_responses r ON u.id = r.nominated_student_id AND r.survey_id = ?
                 WHERE sp.classroom_id = ?
+                GROUP BY u.id, u.name
                 ORDER BY pos_count DESC";
 
         $stmtMetrics = $this->db->prepare($sql);
-        $stmtMetrics->execute([$id, $id, $id, $survey['classroom_id']]);
+        $stmtMetrics->execute([$id, $survey['classroom_id']]);
         $metrics = $stmtMetrics->fetchAll();
-
         View::render('staff/sociometric_results', [
             'title' => 'Anàlisi Sociomètric: ' . $survey['title'],
             'survey' => $survey,
