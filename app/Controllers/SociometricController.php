@@ -5,25 +5,22 @@ use App\Core\Auth;
 use App\Core\Database;
 use App\Core\View;
 use App\Core\Lang;
+use App\Services\SociometricService;
 
 class SociometricController
 {
     private $db;
+    private SociometricService $sociometricService;
 
     public function __construct()
     {
         $this->db = Database::getInstance();
+        $this->sociometricService = new SociometricService();
     }
 
-    /**
-     * GET /alumno/sociograma
-     * Muestra la encuesta activa para el alumno.
-     */
     public function survey(): void
     {
         $userId = Auth::id();
-        
-        // Obtener el aula del alumno
         $stmtClass = $this->db->prepare("SELECT classroom_id FROM student_profiles WHERE user_id = ?");
         $stmtClass->execute([$userId]);
         $profile = $stmtClass->fetch();
@@ -33,7 +30,6 @@ class SociometricController
             exit;
         }
 
-        // Buscar encuesta activa para esa aula
         $stmtSurvey = $this->db->prepare("SELECT * FROM sociometric_surveys WHERE classroom_id = ? AND status = 'active' LIMIT 1");
         $stmtSurvey->execute([$profile['classroom_id']]);
         $survey = $stmtSurvey->fetch();
@@ -43,7 +39,6 @@ class SociometricController
             exit;
         }
 
-        // Verificar si ya respondió
         $stmtCheck = $this->db->prepare("SELECT COUNT(*) FROM sociometric_responses WHERE survey_id = ? AND student_id = ?");
         $stmtCheck->execute([$survey['id'], $userId]);
         if ($stmtCheck->fetchColumn() > 0) {
@@ -51,7 +46,6 @@ class SociometricController
             exit;
         }
 
-        // Obtener compañeros de clase (excluyéndose a sí mismo)
         $stmtStudents = $this->db->prepare("
             SELECT u.id, u.name 
             FROM users u
@@ -60,87 +54,43 @@ class SociometricController
             ORDER BY u.name ASC
         ");
         $stmtStudents->execute([$profile['classroom_id'], $userId]);
-        $classmates = $stmtStudents->fetchAll();
 
         View::render('alumno/sociometric_survey', [
             'title' => $survey['title'],
             'survey' => $survey,
-            'classmates' => $classmates
+            'classmates' => $stmtStudents->fetchAll()
         ], 'app');
     }
 
-    /**
-     * POST /api/sociometric/respond
-     */
     public function submitResponse(): void
     {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         
-        $surveyId = (int)$data['survey_id'];
-        $userId = Auth::id();
+        $success = $this->sociometricService->processResponses(
+            (int)$data['survey_id'], 
+            Auth::id(), 
+            $data
+        );
 
-        try {
-            $this->db->beginTransaction();
-
-            // Guardar Afinidad Positiva
-            foreach (($data['positive'] ?? []) as $sid) {
-                $this->saveNomination($surveyId, $userId, $sid, 'positive_affinity');
-            }
-
-            // Guardar Afinidad Negativa
-            foreach (($data['negative'] ?? []) as $sid) {
-                $this->saveNomination($surveyId, $userId, $sid, 'negative_affinity');
-            }
-
-            // Guardar Detección de Víctimas
-            foreach (($data['victims'] ?? []) as $sid) {
-                $this->saveNomination($surveyId, $userId, $sid, 'victimization_target');
-            }
-
-            $this->db->commit();
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
-            $this->db->rollBack();
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
+        echo json_encode(['success' => $success]);
     }
 
-    private function saveNomination($surveyId, $studentId, $nominatedId, $type)
-    {
-        $stmt = $this->db->prepare("INSERT INTO sociometric_responses (survey_id, student_id, nominated_student_id, question_type) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$surveyId, $studentId, $nominatedId, $type]);
-    }
-
-    /**
-     * GET /staff/sociogramas/{id}
-     * Dashboard de resultados para el Staff
-     */
     public function results($id): void
     {
         $id = (int)$id;
-        // 1. Obtener datos básicos de la encuesta
         $stmtSurvey = $this->db->prepare("SELECT s.*, c.name as classroom_name FROM sociometric_surveys s JOIN classrooms c ON s.classroom_id = c.id WHERE s.id = ?");
         $stmtSurvey->execute([$id]);
         $survey = $stmtSurvey->fetch();
 
-        // 2. Cálculo de métricas mediante un solo JOIN con agrupamiento (Optimizado)
-        $sql = "SELECT u.id, u.name,
-                COUNT(CASE WHEN r.question_type = 'positive_affinity' THEN 1 END) as pos_count,
-                COUNT(CASE WHEN r.question_type = 'negative_affinity' THEN 1 END) as neg_count,
-                COUNT(CASE WHEN r.question_type = 'victimization_target' THEN 1 END) as victim_count
-                FROM users u
-                JOIN student_profiles sp ON u.id = sp.user_id
-                LEFT JOIN sociometric_responses r ON u.id = r.nominated_student_id AND r.survey_id = ?
-                WHERE sp.classroom_id = ?
-                GROUP BY u.id, u.name
-                ORDER BY pos_count DESC";
+        if (!$survey) {
+            die("Enquesta no trobada.");
+        }
 
-        $stmtMetrics = $this->db->prepare($sql);
-        $stmtMetrics->execute([$id, $survey['classroom_id']]);
-        $metrics = $stmtMetrics->fetchAll();
+        $metrics = $this->sociometricService->getSurveyAnalysis($id, (int)$survey['classroom_id']);
+
         View::render('staff/sociometric_results', [
-            'title' => 'Anàlisi Sociomètric: ' . $survey['title'],
+            'title' => Lang::t('sociogram.analysis_header') . ': ' . $survey['title'],
             'survey' => $survey,
             'metrics' => $metrics
         ], 'app');
