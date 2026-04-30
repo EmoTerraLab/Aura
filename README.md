@@ -45,7 +45,7 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
 
 ### 📋 Gestión de Informes y Protocolos Legales / Report & Legal Protocol Management
 - **Multi-CCAA**: Soporte para protocolos legales específicos de cada Comunidad Autónoma (Aragón, Cataluña, etc.).
-- **Workflow Legal**: Seguimiento de fases, anexos oficiales y plazos legales automáticos.
+- **Workflow Legal**: Seguimiento de fases, anexos oficiales y plazos legales automáticos sincronizados entre Backend y Frontend.
 - **Prácticas Restaurativas**: Módulo para la gestión de medidas de reparación y convivencia.
 - **Evidencias**: Gestión segura de archivos y pruebas documentales.
 - **Mensajería interna**: Sistema de tickets con estados, respuestas internas y menciones entre el personal.

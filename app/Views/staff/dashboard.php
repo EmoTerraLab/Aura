@@ -40,12 +40,11 @@
                 <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.active_cases') ?></span>
             </a>
 
-            <?php 
             $ccaaProtocol = \App\Services\Protocol\ProtocolFactory::make();
-            if ($ccaaProtocol->isFullyImplemented()): ?>
+            if (!($ccaaProtocol instanceof \App\Services\Protocol\NullProtocol)): ?>
             <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/protocolos/dashboard">
                 <span class="material-symbols-outlined">dashboard_customize</span>
-                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?> (<?= $ccaaProtocol->getName() ?>)</span>
+                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?> (<?= $ccaaProtocol->getCcaaName() ?>)</span>
             </a>
             <?php endif; ?>
 
@@ -129,10 +128,10 @@
                                 $protocol = \App\Services\Protocol\ProtocolFactory::make();
                                 ?>
                                 <a href="<?= $protocol->getManageUrl($r['id']) ?>" class="text-[9px] font-black uppercase bg-primary/10 text-primary px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-all stop-propagation" onclick="event.stopPropagation()">
-                                    <?php if ($protocol->isFullyImplemented()): ?>
-                                        Gestionar Protocolo (<?= $protocol->getName() ?>)
+                                    <?php if (!($protocol instanceof \App\Services\Protocol\NullProtocol)): ?>
+                                        Gestionar Protocolo (<?= $protocol->getCcaaName() ?>)
                                     <?php else: ?>
-                                        Consultar Protocolo de <?= $protocol->getName() ?>
+                                        Consultar Protocolo de <?= $protocol->getCcaaName() ?>
                                     <?php endif; ?>
                                 </a>
                             </div>
@@ -404,14 +403,8 @@
             if (resPanel && originalModule) {
                 const activeProtocol = caseRes.ccaa;
                 
-                // Lógica de visibilidad del módulo restaurativo
+                // Solo Catalunya tiene prácticas restaurativas actualmente
                 let showRestorative = (activeProtocol === 'cataluna');
-                
-                // En Aragón también se usa el módulo, pero solo a partir de la fase de Valoración
-                if (activeProtocol === 'aragon') {
-                    const earlyPhases = ['comunicacion_recibida', 'protocolo_iniciado', 'protocolo_no_iniciado'];
-                    showRestorative = !earlyPhases.includes(protocolCase.current_phase);
-                }
 
                 if (showRestorative) {
                     resPanel.appendChild(originalModule);
@@ -429,21 +422,11 @@
         if (!c || !meta || !meta.timeline_steps) return '<p class="text-[10px] text-slate-400 italic">Protocolo legal no activado para este caso.</p>';
 
         const steps = meta.timeline_steps;
-        const currentPhase = c.current_phase;
-
-        // Determinar índice actual
-        let currentIndex = steps.findIndex(s => s.key === currentPhase);
-        
-        // Manejo de estados especiales de Aragón (vincular estados intermedios a hitos del timeline)
-        if (meta.ccaa_code === 'aragon') {
-            if (currentPhase === 'protocolo_no_iniciado') currentIndex = 0;
-            if (['contrato_conducta', 'expediente_disciplinario'].includes(currentPhase)) currentIndex = 3;
-            if (currentPhase === 'reabierto') currentIndex = 4;
-        }
+        const activeIndex = meta.active_step_index;
 
         const timelineHtml = steps.map((s, idx) => {
-            const isActual = s.key === currentPhase || currentIndex === idx;
-            const isPast = currentIndex > idx;
+            const isActual = idx === activeIndex;
+            const isPast = idx < activeIndex;
             
             let colorClass = isActual ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : (isPast ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400');
             let textColor = isActual ? 'text-primary' : (isPast ? 'text-emerald-600' : 'text-slate-400');
@@ -513,6 +496,10 @@
         const comms = typeof c.communications === 'string' ? JSON.parse(c.communications || '{}') : (c.communications || {});
         const checks = typeof c.closure_checks === 'string' ? JSON.parse(c.closure_checks || '{}') : (c.closure_checks || {});
 
+        const buttonActions = actions.filter(a => !['reva_checklist', 'closure_checklist'].includes(a.style));
+        const revaAction = actions.find(a => a.style === 'reva_checklist');
+        const closureAction = actions.find(a => a.style === 'closure_checklist');
+
         return `
             <div class="bg-white p-8 rounded-[2.5rem] border-2 border-primary/10 shadow-sm space-y-6">
                 <div class="flex items-center justify-between">
@@ -525,8 +512,8 @@
                     </div>
                 </div>
 
-                <div class="${actions.some(a => a.style === 'alert') ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-3'}">
-                    ${actions.map(a => {
+                <div class="${buttonActions.some(a => a.style === 'alert') ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-3'}">
+                    ${buttonActions.map(a => {
                         if (a.style === 'alert') {
                             return `<div class="${getStyleClass(a.style)}">${a.label}</div>`;
                         }
@@ -538,7 +525,7 @@
                     }).join('')}
                 </div>
                 
-                ${meta.exclusive_tools && meta.exclusive_tools.includes('reva') && c.current_phase === 'comunicacio' ? `
+                ${revaAction ? `
                     <div class="pt-4 border-t border-slate-50">
                         <p class="text-[9px] font-black uppercase text-slate-400 mb-2">Completar requeriments REVA</p>
                         <div class="space-y-2">
@@ -558,7 +545,7 @@
                     </div>
                 ` : ''}
 
-                ${meta.exclusive_tools && meta.exclusive_tools.includes('closure_checklist') && (c.current_phase === 'intervencio' || c.current_phase === 'seguiment_tancament') ? `
+                ${closureAction ? `
                     <div class="pt-4 border-t border-slate-50 space-y-4">
                         <h5 class="text-[9px] font-black uppercase text-primary tracking-widest">Checklist de Tancament Oficial</h5>
                         <div class="space-y-2">
@@ -567,18 +554,6 @@
                             ${renderClosureCheck(c.id, 'students_confirm', 'L\'alumnat confirma la millora', checks.students_confirm)}
                             ${renderClosureCheck(c.id, 'teachers_valorate', 'L\'equip docent valora resolució', checks.teachers_valorate)}
                         </div>
-                    </div>
-                ` : ''}
-
-                ${meta.ccaa_code === 'cataluna' && c.current_phase === 'violencia_sexual_actiu' ? `
-                    <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium">S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.</p>
-                    </div>
-                ` : ''}
-
-                ${meta.ccaa_code === 'aragon' && c.current_phase === 'violencia_sexual_activa' ? `
-                    <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium">S'ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.</p>
                     </div>
                 ` : ''}
             </div>

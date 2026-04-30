@@ -53,12 +53,30 @@ class ProtocolController
                 }
             }
 
+            // Calcular el paso activo en el cronograma legal para el Frontend
+            $timeline = $protocol->getTimelineSteps();
+            $activeStepIndex = -1;
+            $currentPhase = $case['current_phase'] ?? '';
+
+            // Intentar encontrar el índice exacto por key
+            $activeStepIndex = array_search($currentPhase, array_column($timeline, 'key'));
+
+            // Fallbacks específicos por protocolo si no se encuentra el estado exacto en el timeline
+            if ($activeStepIndex === false || $activeStepIndex === -1) {
+                if ($ccaa === 'aragon') {
+                    if ($currentPhase === 'protocolo_no_iniciado') $activeStepIndex = 0;
+                    elseif (in_array($currentPhase, ['contrato_conducta', 'expediente_disciplinario'])) $activeStepIndex = 3;
+                    elseif ($currentPhase === 'reabierto') $activeStepIndex = 4;
+                }
+            }
+
             $protocol_meta = [
                 'ccaa_code' => $protocol->getCcaaCode(),
                 'ccaa_name' => $protocol->getCcaaName(),
                 'legal_reference' => $protocol->getLegalReference(),
-                'timeline_steps' => $protocol->getTimelineSteps(),
-                'current_actions' => $protocol->getActionsForState($case['current_phase'] ?? '', $case ?: []),
+                'timeline_steps' => $timeline,
+                'active_step_index' => $activeStepIndex !== false ? $activeStepIndex : -1,
+                'current_actions' => $protocol->getActionsForState($currentPhase, $case ?: []),
                 'exclusive_tools' => $protocol->getExclusiveTools(),
                 'documents' => $protocol->getDocuments()
             ];

@@ -98,6 +98,22 @@ class CatalunaProtocol implements ProtocolInterface {
             $actions[] = ['key' => 'done_derivacio', 'label' => 'He realitzat la derivació', 'style' => 'danger-outline', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_COMUNICACION."')"];
         }
 
+        if ($state === 'violencia_sexual_actiu') {
+            $actions[] = [
+                'key' => 'sexual_alert',
+                'label' => "S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.",
+                'style' => 'alert'
+            ];
+        }
+
+        if ($state === ProtocolCase::PHASE_COMUNICACION && in_array('reva', $this->getExclusiveTools())) {
+            $actions[] = ['key' => 'reva_checklist', 'style' => 'reva_checklist'];
+        }
+
+        if (($state === ProtocolCase::PHASE_INTERVENCION || $state === ProtocolCase::PHASE_SEGUIMIENTO_TANCAMENT) && in_array('closure_checklist', $this->getExclusiveTools())) {
+            $actions[] = ['key' => 'closure_checklist', 'style' => 'closure_checklist'];
+        }
+
         return $actions;
     }
 

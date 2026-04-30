@@ -116,6 +116,14 @@ class AragonProtocol implements ProtocolInterface {
             $actions[] = ['key' => 'send_eoe', 'label' => 'Enviar a Inspección y EOE', 'style' => 'warning', 'onclick' => "alert('En desarrollo')"];
         }
 
+        if ($state === 'violencia_sexual_activa') {
+            $actions[] = [
+                'key' => 'sexual_alert',
+                'label' => "S'ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.",
+                'style' => 'alert'
+            ];
+        }
+
         return $actions;
     }
 
