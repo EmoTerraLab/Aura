@@ -151,11 +151,6 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
                 document.getElementById('otp-step-1').classList.add('hidden');
                 document.getElementById('otp-step-2').classList.remove('hidden');
                 document.getElementById('otp-step-2').classList.add('flex');
-                
-                if (res.dev_code) {
-                    console.log("DEV OTP CODE:", res.dev_code);
-                    document.getElementById('alumno-code').value = res.dev_code;
-                }
             } else {
                 errorEl.innerText = res.error || '<?= \App\Core\Lang::t('auth.error_otp_find') ?>';
                 errorEl.classList.remove('hidden');

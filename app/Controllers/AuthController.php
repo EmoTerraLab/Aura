@@ -124,8 +124,10 @@ class AuthController {
                 }
             }
 
-            // Registro en error_log para depuración
-            error_log("OTP generado para {$email}: {$code}");
+            // Registro para depuración (solo en desarrollo)
+            if (in_array(APP_ENV, ['dev', 'local', 'development'])) {
+                error_log("OTP generado para {$email}: {$code}");
+            }
 
             $response = ['ok' => true];
             if (in_array(APP_ENV, ['dev', 'local', 'development'])) {
