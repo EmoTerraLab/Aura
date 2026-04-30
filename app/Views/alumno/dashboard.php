@@ -441,7 +441,6 @@
         if (!deviceName) return;
 
         try {
-            console.log('Obteniendo opciones de registro...');
             const optRes = await fetchJson('/alumno/2fa/webauthn/register/options');
             if (optRes.error) throw new Error(optRes.error);
             
@@ -456,10 +455,8 @@
                 }
             }
 
-            console.log('Invocando biometría...');
             const credential = await navigator.credentials.create({ publicKey: options });
             
-            console.log('Verificando credencial en servidor...');
             const verifyRes = await fetchJson('/alumno/2fa/webauthn/register/verify', {
                 method: 'POST',
                 body: {

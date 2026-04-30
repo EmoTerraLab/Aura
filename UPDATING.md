@@ -34,6 +34,22 @@ Sube los archivos excluyendo `.env`, `database/*.sqlite` y `database/backups/`.
 
 ---
 
+## Historial de Versiones Recientes
+
+### v2.13.0 — 2026-05-01
+- **Expansión Nacional Multi-CCAA**: Soporte para las 19 comunidades y ciudades autónomas de España mediante una arquitectura de protocolos estandarizada.
+- **Seguridad**: Implementación de cambio de contraseña para personal y eliminación de logs de depuración en producción.
+- **Sincronización PDP**: Integración y estabilización de cambios provenientes de preproducción.
+
+### v2.12.0 — 2026-04-30
+- **Alertas Legales**: Implementación de alertas de violencia sexual en Aragón y Cataluña.
+- **Refactorización de Timeline**: Lógica de pasos activos movida al backend para consistencia total.
+
+### v2.11.0 — 2026-04-29
+- **Sincronización PDP**: Integración inicial de cambios desde la rama de preproducción.
+
+---
+
 ## Para el administrador del cliente
 
 1. Ve a **Administración → Actualizaciones del sistema**.

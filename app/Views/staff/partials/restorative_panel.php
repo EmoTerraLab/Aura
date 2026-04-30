@@ -166,14 +166,10 @@
     }
 
     async function updatePracticeStatus(id, status) {
-        const res = await fetchJson(`/api/restorative/${id}/status`, {
+        await fetchJson(`/api/restorative/${id}/status`, {
             method: 'PATCH',
             body: { status }
         });
-        if (res.success) {
-            // No recargar todo, solo feedback visual o recarga silenciosa
-            console.log('Status updated');
-        }
     }
 
     function showAddPracticeModal() { document.getElementById('modal-add-practice').classList.remove('hidden'); }
