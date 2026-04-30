@@ -5,16 +5,20 @@ use App\Models\ProtocolCase;
 
 class AragonProtocol implements ProtocolInterface {
 
-    public function getCcaaCode(): string {
-        return 'aragon';
+    public function getCode(): string {
+        return 'ARA';
     }
 
-    public function getCcaaName(): string {
+    public function getName(): string {
         return 'Aragón';
     }
 
-    public function getLegalReference(): string {
-        return 'Resolución de 19/10/2018 (Protocolo de actuación en casos de acoso escolar)';
+    public function isFullyImplemented(): bool {
+        return true;
+    }
+
+    public function getManageUrl(int $caseId): string {
+        return "/protocol/aragon/case/{$caseId}";
     }
 
     public function getInitialState(): string {
@@ -116,14 +120,6 @@ class AragonProtocol implements ProtocolInterface {
             $actions[] = ['key' => 'send_eoe', 'label' => 'Enviar a Inspección y EOE', 'style' => 'warning', 'onclick' => "alert('En desarrollo')"];
         }
 
-        if ($state === 'violencia_sexual_activa') {
-            $actions[] = [
-                'key' => 'sexual_alert',
-                'label' => "S'ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.",
-                'style' => 'alert'
-            ];
-        }
-
         return $actions;
     }
 
@@ -141,35 +137,6 @@ class AragonProtocol implements ProtocolInterface {
             ['code' => 'anexo_ix', 'name' => 'Seguimiento', 'annex_table' => 'aragon_annex_ix_followup', 'required_state' => ProtocolCase::PHASE_AR_SEGUIMIENTO],
             ['code' => 'anexo_x', 'name' => 'Cierre', 'annex_table' => 'aragon_annex_x_closure', 'required_state' => ProtocolCase::PHASE_AR_CERRADO]
         ];
-    }
-
-    public function getDeadlineForState(string $state): ?int {
-        return match($state) {
-            ProtocolCase::PHASE_AR_VALORACION => 18,
-            ProtocolCase::PHASE_AR_VALORADO => 22,
-            default => null
-        };
-    }
-
-    public function getDeadlineAlert(string $state, int $schoolDaysElapsed): ?array {
-        if ($state === ProtocolCase::PHASE_AR_VALORACION) {
-            if ($schoolDaysElapsed <= 15) {
-                return ['level' => 'ok', 'message' => "Día lectivo $schoolDaysElapsed de 18"];
-            } elseif ($schoolDaysElapsed <= 18) {
-                return ['level' => 'warning', 'message' => "Día lectivo $schoolDaysElapsed — Límite de valoración próximo"];
-            } else {
-                return ['level' => 'danger', 'message' => "PLAZO SUPERADO — Límite de valoración era día 18"];
-            }
-        } elseif ($state === ProtocolCase::PHASE_AR_VALORADO) {
-            if ($schoolDaysElapsed <= 20) {
-                return ['level' => 'warning', 'message' => "Día lectivo $schoolDaysElapsed de 22"];
-            } elseif ($schoolDaysElapsed <= 22) {
-                return ['level' => 'danger', 'message' => "¡Envío a Inspección obligatorio! Día $schoolDaysElapsed de 22"];
-            } else {
-                return ['level' => 'overdue', 'message' => "PLAZO SUPERADO — Notificar a Inspección urgentemente"];
-            }
-        }
-        return null;
     }
 
     public function getExclusiveTools(): array {

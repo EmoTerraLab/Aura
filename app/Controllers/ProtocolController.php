@@ -37,12 +37,12 @@ class ProtocolController
 
             $case = $this->caseModel->findByReport($report_id);
             
-            if (!$case) {
+            if (!$case && $protocol->isFullyImplemented()) {
                 $case = $this->stateService->createInitialCase($report_id, $ccaa, $protocol->getInitialState());
             }
 
             // Auto-reparar fase si no corresponde a la CCAA actual (ej. cambio de región o error inicial)
-            if ($case) {
+            if ($case && $protocol->isFullyImplemented()) {
                 $allStates = $protocol->getAllStates();
                 if (!in_array($case['current_phase'], $allStates)) {
                     $newPhase = $protocol->getInitialState();
@@ -53,38 +53,44 @@ class ProtocolController
                 }
             }
 
-            // Calcular el paso activo en el cronograma legal para el Frontend
-            $timeline = $protocol->getTimelineSteps();
+            $timeline = $protocol->isFullyImplemented() ? $protocol->getTimelineSteps() : [];
             $activeStepIndex = -1;
             $currentPhase = $case['current_phase'] ?? '';
 
-            // Intentar encontrar el índice exacto por key
-            $activeStepIndex = array_search($currentPhase, array_column($timeline, 'key'));
+            if ($protocol->isFullyImplemented()) {
+                // Intentar encontrar el índice exacto
+                $activeStepIndex = array_search($currentPhase, array_column($timeline, 'key'));
 
-            // Fallbacks específicos por protocolo si no se encuentra el estado exacto en el timeline
-            if ($activeStepIndex === false || $activeStepIndex === -1) {
-                if ($ccaa === 'aragon') {
-                    if ($currentPhase === 'protocolo_no_iniciado') $activeStepIndex = 0;
-                    elseif (in_array($currentPhase, ['contrato_conducta', 'expediente_disciplinario'])) $activeStepIndex = 3;
-                    elseif ($currentPhase === 'reabierto') $activeStepIndex = 4;
+                // Fallbacks específicos por protocolo si no se encuentra el estado exacto en el timeline
+                if ($activeStepIndex === false || $activeStepIndex === -1) {
+                    if ($ccaa === 'aragon') {
+                        if ($currentPhase === 'protocolo_no_iniciado') $activeStepIndex = 0;
+                        elseif (in_array($currentPhase, ['contrato_conducta', 'expediente_disciplinario'])) $activeStepIndex = 3;
+                        elseif ($currentPhase === 'reabierto') $activeStepIndex = 4;
+                    }
                 }
             }
 
             $protocol_meta = [
-                'ccaa_code' => $protocol->getCcaaCode(),
-                'ccaa_name' => $protocol->getCcaaName(),
-                'legal_reference' => $protocol->getLegalReference(),
+                'ccaa_code' => $protocol->getCode(),
+                'ccaa_name' => $protocol->getName(),
+                'is_fully_implemented' => $protocol->isFullyImplemented(),
+                'manage_url' => $protocol->getManageUrl($report_id),
                 'timeline_steps' => $timeline,
                 'active_step_index' => $activeStepIndex !== false ? $activeStepIndex : -1,
-                'current_actions' => $protocol->getActionsForState($currentPhase, $case ?: []),
-                'exclusive_tools' => $protocol->getExclusiveTools(),
-                'documents' => $protocol->getDocuments()
+                'current_actions' => $protocol->isFullyImplemented() ? $protocol->getActionsForState($currentPhase, $case ?: []) : [],
+                'exclusive_tools' => $protocol->isFullyImplemented() ? $protocol->getExclusiveTools() : [],
+                'documents' => $protocol->isFullyImplemented() ? $protocol->getDocuments() : []
             ];
 
             if ($case) {
                 $schoolDaysElapsed = $this->protocolService->calculateSchoolDays($case['created_at']);
                 $case['school_days_count'] = $schoolDaysElapsed;
-                $protocol_meta['deadline_alert'] = $protocol->getDeadlineAlert($case['current_phase'], $schoolDaysElapsed);
+                
+                // Solo si el protocolo está implementado buscamos alertas
+                if ($protocol->isFullyImplemented() && method_exists($protocol, 'getDeadlineAlert')) {
+                    $protocol_meta['deadline_alert'] = $protocol->getDeadlineAlert($case['current_phase'], $schoolDaysElapsed);
+                }
             }
 
             echo json_encode([

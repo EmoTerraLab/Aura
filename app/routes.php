@@ -172,6 +172,10 @@ $router->get('/profile/2fa/totp/setup', [TotpController::class, 'setup'], ['auth
 $router->post('/profile/2fa/totp/activate', [TotpController::class, 'activate'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 $router->post('/profile/2fa/totp/disable', [TotpController::class, 'disable'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
+// -- Cambio de contraseña (Staff & Admin) --
+$router->get('/profile/password', [StaffController::class, 'showPasswordForm'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+$router->post('/profile/password', [StaffController::class, 'updatePassword'], ['auth', 'roles:profesor,orientador,direccion,admin']);
+
 
 // -- Endpoints de Admin --
 

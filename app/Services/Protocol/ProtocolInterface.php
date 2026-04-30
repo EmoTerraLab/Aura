@@ -5,35 +5,30 @@ namespace App\Services\Protocol;
  * ProtocolInterface - Contrato obligatorio para todos los flujos de CCAA.
  */
 interface ProtocolInterface {
-    // Metadatos del protocolo
-    public function getCcaaCode(): string;
-    public function getCcaaName(): string;
-    public function getLegalReference(): string;
+    // Métodos obligatorios para el Interruptor Maestro
+    public function getCode(): string;
+    public function getName(): string;
+    public function isFullyImplemented(): bool;
+    public function getManageUrl(int $caseId): string;
 
-    // Máquina de estados
+    // Métodos de lógica interna (Máquina de estados)
     public function getInitialState(): string;
     public function getValidTransitions(string $currentState): array;
     public function getStateLabel(string $state): string;
     public function getAllStates(): array;
 
     // Timeline para la UI
-    public function getTimelineSteps(): array;  // [{key, label, icon, deadline_days}]
+    public function getTimelineSteps(): array;
 
     // Acciones disponibles por fase
-    public function getActionsForState(string $state, array $case): array;  // [{key, label, style, onclick}]
+    public function getActionsForState(string $state, array $case): array;
 
     // Documentos del protocolo
-    public function getDocuments(): array;  // [{code, name, annex_table, required_state}]
-
-    // Plazos en días lectivos (null si no aplica)
-    public function getDeadlineForState(string $state): ?int;
-
-    // Alertas de plazo
-    public function getDeadlineAlert(string $state, int $schoolDaysElapsed): ?array;  // {level: 'ok'|'warning'|'danger'|'overdue', message}
+    public function getDocuments(): array;
 
     // Herramientas exclusivas (REVA, Barnahus, etc.)
-    public function getExclusiveTools(): array;  // ['reva', 'barnahus', 'addenda_compromis', etc.]
+    public function getExclusiveTools(): array;
 
     // Validaciones antes de transición
-    public function canTransition(string $fromState, string $toState, array $case): bool|string;  // true o mensaje de error
+    public function canTransition(string $fromState, string $toState, array $case): bool|string;
 }

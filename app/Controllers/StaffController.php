@@ -60,4 +60,42 @@ class StaffController {
         header("Location: /staff/inbox?created=1");
         exit;
     }
+
+    public function showPasswordForm() {
+        View::render('staff/password_change', [
+            'title' => 'Aura - ' . Lang::t('auth.change_password')
+        ]);
+    }
+
+    public function updatePassword() {
+        \App\Core\Csrf::validateRequest();
+        $currentPassword = $_POST['current_password'] ?? '';
+        $newPassword = $_POST['new_password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+
+        $user = Auth::user();
+        
+        if (!password_verify($currentPassword, $user['password'])) {
+            header('Location: /profile/password?error=current_invalid');
+            exit;
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            header('Location: /profile/password?error=mismatch');
+            exit;
+        }
+
+        if (strlen($newPassword) < 8) {
+            header('Location: /profile/password?error=too_short');
+            exit;
+        }
+
+        $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
+        $db = \App\Core\Database::getInstance();
+        $stmt = $db->prepare('UPDATE users SET password = ? WHERE id = ?');
+        $stmt->execute([$hashed, $user['id']]);
+
+        header('Location: /staff/inbox?password_changed=1');
+        exit;
+    }
 }

@@ -30,6 +30,17 @@ class ProtocolWorkflowController
 
     public function __construct()
     {
+        if (Config::get('ccaa_code') !== 'cataluna') {
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+                http_response_code(403);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'El protocolo de Catalunya no está habilitado en este centro']);
+            } else {
+                http_response_code(403);
+                die('El protocolo de Catalunya no está habilitado en este centro');
+            }
+            exit;
+        }
         $this->caseModel = new ProtocolCase();
         $this->reportModel = new Report();
         $this->mapModel = new SecurityMap();

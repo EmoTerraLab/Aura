@@ -40,11 +40,12 @@
                 <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.active_cases') ?></span>
             </a>
 
-            $ccaaProtocol = \App\Services\Protocol\ProtocolFactory::make();
-            if (!($ccaaProtocol instanceof \App\Services\Protocol\NullProtocol)): ?>
+            <?php 
+            $ccaaProtocol = \App\Services\Protocol\ProtocolFactory::make(\App\Core\Config::get('ccaa_code'));
+            if ($ccaaProtocol->isFullyImplemented()): ?>
             <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/protocolos/dashboard">
                 <span class="material-symbols-outlined">dashboard_customize</span>
-                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?> (<?= $ccaaProtocol->getCcaaName() ?>)</span>
+                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?> (<?= $ccaaProtocol->getName() ?>)</span>
             </a>
             <?php endif; ?>
 
@@ -54,6 +55,11 @@
                     <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.title') ?></span>
                 </a>
             <?php endif; ?>
+
+            <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/profile/password">
+                <span class="material-symbols-outlined">lock</span>
+                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('auth.change_password') ?></span>
+            </a>
 
             <div class="mt-8 px-4">
                 <div class="bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden">
@@ -125,13 +131,13 @@
                                     </div>
                                 </div>
                                 <?php 
-                                $protocol = \App\Services\Protocol\ProtocolFactory::make();
+                                $protocol = \App\Services\Protocol\ProtocolFactory::make(\App\Core\Config::get('ccaa_code'));
                                 ?>
                                 <a href="<?= $protocol->getManageUrl($r['id']) ?>" class="text-[9px] font-black uppercase bg-primary/10 text-primary px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-all stop-propagation" onclick="event.stopPropagation()">
-                                    <?php if (!($protocol instanceof \App\Services\Protocol\NullProtocol)): ?>
-                                        Gestionar Protocolo (<?= $protocol->getCcaaName() ?>)
+                                    <?php if ($protocol->isFullyImplemented()): ?>
+                                        Gestionar Protocolo (<?= $protocol->getName() ?>)
                                     <?php else: ?>
-                                        Consultar Protocolo de <?= $protocol->getCcaaName() ?>
+                                        Consultar Normativa de <?= $protocol->getName() ?>
                                     <?php endif; ?>
                                 </a>
                             </div>
@@ -403,14 +409,8 @@
             if (resPanel && originalModule) {
                 const activeProtocol = caseRes.ccaa;
                 
-                // Lógica de visibilidad del módulo restaurativo
-                let showRestorative = (activeProtocol === 'cataluna');
-                
-                // En Aragón también se usa el módulo, pero solo a partir de la fase de Valoración
-                if (activeProtocol === 'aragon') {
-                    const earlyPhases = ['comunicacion_recibida', 'protocolo_iniciado', 'protocolo_no_iniciado'];
-                    showRestorative = !earlyPhases.includes(protocolCase.current_phase);
-                }
+                // Solo Catalunya tiene prácticas restaurativas actualmente
+                let showRestorative = (activeProtocol === 'CAT');
 
                 if (showRestorative) {
                     resPanel.appendChild(originalModule);
@@ -560,6 +560,18 @@
                             ${renderClosureCheck(c.id, 'students_confirm', 'L\'alumnat confirma la millora', checks.students_confirm)}
                             ${renderClosureCheck(c.id, 'teachers_valorate', 'L\'equip docent valora resolució', checks.teachers_valorate)}
                         </div>
+                    </div>
+                ` : ''}
+
+                ${meta.ccaa_code === 'CAT' && c.current_phase === 'violencia_sexual_actiu' ? `
+                    <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
+                        <p class="text-xs text-red-800 font-medium">S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.</p>
+                    </div>
+                ` : ''}
+
+                ${meta.ccaa_code === 'ARA' && c.current_phase === 'violencia_sexual_activa' ? `
+                    <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
+                        <p class="text-xs text-red-800 font-medium">S'ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.</p>
                     </div>
                 ` : ''}
             </div>

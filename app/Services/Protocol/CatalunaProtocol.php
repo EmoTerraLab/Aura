@@ -5,16 +5,21 @@ use App\Models\ProtocolCase;
 
 class CatalunaProtocol implements ProtocolInterface {
     
-    public function getCcaaCode(): string {
-        return 'cataluna';
+    public function getCode(): string {
+        return 'CAT';
     }
 
-    public function getCcaaName(): string {
+    public function getName(): string {
         return 'Catalunya';
     }
 
-    public function getLegalReference(): string {
-        return 'Resolució d\'1 de setembre de 2021 (Protocol Marc)';
+    public function isFullyImplemented(): bool {
+        return true;
+    }
+
+    public function getManageUrl(int $caseId): string {
+        // En Catalunya, el flujo se integra en la vista de detalle del reporte
+        return "/staff/reports/{$caseId}";
     }
 
     public function getInitialState(): string {
@@ -98,22 +103,6 @@ class CatalunaProtocol implements ProtocolInterface {
             $actions[] = ['key' => 'done_derivacio', 'label' => 'He realitzat la derivació', 'style' => 'danger-outline', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_COMUNICACION."')"];
         }
 
-        if ($state === 'violencia_sexual_actiu') {
-            $actions[] = [
-                'key' => 'sexual_alert',
-                'label' => "S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.",
-                'style' => 'alert'
-            ];
-        }
-
-        if ($state === ProtocolCase::PHASE_COMUNICACION && in_array('reva', $this->getExclusiveTools())) {
-            $actions[] = ['key' => 'reva_checklist', 'style' => 'reva_checklist'];
-        }
-
-        if (($state === ProtocolCase::PHASE_INTERVENCION || $state === ProtocolCase::PHASE_SEGUIMIENTO_TANCAMENT) && in_array('closure_checklist', $this->getExclusiveTools())) {
-            $actions[] = ['key' => 'closure_checklist', 'style' => 'closure_checklist'];
-        }
-
         return $actions;
     }
 
@@ -123,14 +112,6 @@ class CatalunaProtocol implements ProtocolInterface {
             ['code' => 'reconeixement_fets', 'name' => 'Reconeixement Fets', 'annex_table' => null, 'required_state' => ProtocolCase::PHASE_INTERVENCION],
             ['code' => 'derivacio_barnahus', 'name' => 'Derivació Barnahus', 'annex_table' => null, 'required_state' => ProtocolCase::PHASE_BARNAHUS],
         ];
-    }
-
-    public function getDeadlineForState(string $state): ?int {
-        return null;
-    }
-
-    public function getDeadlineAlert(string $state, int $schoolDaysElapsed): ?array {
-        return null;
     }
 
     public function getExclusiveTools(): array {
