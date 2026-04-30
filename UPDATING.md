@@ -36,10 +36,13 @@ Sube los archivos excluyendo `.env`, `database/*.sqlite` y `database/backups/`.
 
 ## Historial de Versiones Recientes
 
+### v2.12.0 — 2026-04-30
+- **Seguridad y Alertas**: Implementación de alertas visuales específicas para protocolos de violencia sexual en Aragón y Cataluña.
+- **Estabilización de Producción**: Sincronización final de cambios estables desde PDP y corrección de inconsistencias en el timeline.
+- **Limpieza**: Refactorización de controladores para asegurar logs de depuración seguros.
+
 ### v2.11.0 — 2026-04-29
 - **Refactorización de Timeline**: Lógica de cálculo de pasos activos movida al backend (`ProtocolController`) para mayor consistencia en la UI.
-- **Seguridad y Alertas**: Implementación de alertas de protocolos de violencia sexual para Aragón y Cataluña.
-- **Optimización de Base de Datos**: Añadidos índices de rendimiento y gestión de logs de acceso.
 - **Sincronización PDP**: Integración de cambios estables provenientes de la rama de preproducción.
 
 ### v2.10.0
