@@ -28,12 +28,12 @@ class SociometricController
     {
         $id = (int)$id;
         
-        // 1. Dades de l'enquesta
+        // 1. Datos de la encuesta
         $stmtSurvey = $this->db->prepare("SELECT s.*, c.name as classroom_name FROM sociometric_surveys s JOIN classrooms c ON s.classroom_id = c.id WHERE s.id = ?");
         $stmtSurvey->execute([$id]);
         $survey = $stmtSurvey->fetch();
 
-        if (!$survey) die("Enquesta no trobada.");
+        if (!$survey) die("Encuesta no encontrada.");
 
         // 2. Consulta agrupada de métriques (Optimitzada)
         $sql = "SELECT u.id, u.name,

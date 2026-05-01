@@ -71,7 +71,7 @@ class ProtocolWorkflowController
 
         if ($success) {
             $case = $this->caseModel->find($id);
-            $this->logAction($case['report_id'], "Nou seguiment registrat: " . strtoupper($data['target_type']));
+            $this->logAction($case['report_id'], "Nuevo seguimiento registrado: " . strtoupper($data['target_type']));
         }
         echo json_encode(['success' => $success]);
     }
@@ -117,7 +117,7 @@ class ProtocolWorkflowController
     public function exportTemplate($id, $templateName): void
     {
         $case = $this->caseModel->find((int)$id);
-        if (!$case) die("Cas no trobat");
+        if (!$case) die("Caso no encontrado");
         
         $ccaa = $case['ccaa_code'];
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
@@ -133,7 +133,7 @@ class ProtocolWorkflowController
     public function exportPdf($id): void
     {
         $case = $this->caseModel->find((int)$id);
-        if (!$case) die("Cas no trobat");
+        if (!$case) die("Caso no encontrado");
         
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
         $map = $this->mapModel->findByCase($case['id']);
@@ -141,7 +141,7 @@ class ProtocolWorkflowController
         $case['closure_checks'] = json_decode($case['closure_checks'] ?? '{}', true);
         $case['communications'] = json_decode($case['communications'] ?? '{}', true);
         
-        $this->logAction($case['report_id'], "Generat informe PDF consolidat.");
+        $this->logAction($case['report_id'], "Generado informe PDF consolidado.");
         View::render('protocol/pdf_export', ['case' => $case, 'report' => $report, 'map' => $map, 'followups' => $followups], 'app');
     }
 
