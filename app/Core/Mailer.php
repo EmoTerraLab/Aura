@@ -33,7 +33,7 @@ class Mailer
             }
 
             // Recipients
-            $fromAddress = $this->settings->get('mail_from_address', 'noreply@aurapdp.com') ?: 'noreply@aurapdp.com';
+            $fromAddress = $this->settings->get('mail_from_address', 'noreply@aura.emoterralab.com') ?: 'noreply@aura.emoterralab.com';
             $fromName = $this->settings->get('mail_from_name', 'Aura');
             $mail->setFrom($fromAddress, $fromName);
             $mail->addAddress($to);
