@@ -36,15 +36,13 @@ Sube los archivos excluyendo `.env`, `database/*.sqlite` y `database/backups/`.
 
 ## Historial de Versiones Recientes
 
-### v2.13.1 — 2026-05-01
-- **Estabilización Nacional**: Restauración de funcionalidades de Aragón (plazos legales y módulo restaurativo) y normalización de códigos CCAA (ARA, CAT, MAD, etc.).
-- **Limpieza de Marca**: Unificación definitiva a "Aura", eliminando referencias a pre-producción (PDP) en el núcleo y comunicaciones.
-- **Producción**: Endurecimiento de seguridad (hardening) y corrección de integridad en rutas.
+### v2.13.8 — 2026-05-01
+- **Pulido de UX y Estabilidad**: Vinculación de acciones del Dashboard con flujos legales y normalización nacional de códigos CCAA.
+- **Internacionalización**: Dashboard 100% traducible mediante sistema i18n (lang/*.php).
+- **Hardening**: Eliminación de logs de depuración y unificación de marca "Aura".
 
-### v2.13.0 — 2026-05-01
-- **Expansión Nacional Multi-CCAA**: Soporte para las 19 comunidades y ciudades autónomas de España mediante una arquitectura modular.
-- **Seguridad**: Implementación de cambio de contraseña para personal.
-
+### v2.13.0
+- **Expansión Nacional Multi-CCAA**: Soporte para las 19 comunidades autónomas mediante arquitectura modular.
 ### v2.12.0 — 2026-04-30
 - **Alertas Legales**: Implementación de alertas de violencia sexual en Aragón y Cataluña.
 - **Refactorización de Timeline**: Lógica de pasos activos movida al backend para consistencia total.
