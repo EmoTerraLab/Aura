@@ -102,7 +102,12 @@ class ProtocolWorkflowController
             $db = Database::getInstance();
             $stmt = $db->prepare("INSERT INTO protocol_evidence (protocol_case_id, filename, original_name, mime_type, uploaded_by) VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([$id, $newName, $file['name'], $file['type'], Auth::id()]);
-            $this->logAction($id, "Nova evidència pujada en custòdia: " . $file['name']);
+            
+            $case = $this->caseModel->find($id);
+            if ($case) {
+                $this->logAction($case['report_id'], "Nova evidència pujada en custòdia: " . $file['name']);
+            }
+            
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Error moviendo el archivo.']);
