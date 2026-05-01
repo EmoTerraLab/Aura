@@ -17,7 +17,6 @@ class ProtocolFactory {
             'CLM' => new CastillaLaManchaProtocol(),
             'CAT' => new CatalunaProtocol(),
             'VAL' => new ComunidadValencianaProtocol(),
-            'comunidad_valenciana' => new ComunidadValencianaProtocol(),
             'EXT' => new ExtremaduraProtocol(),
             'GAL' => new GaliciaProtocol(),
             'MAD' => new MadridProtocol(),

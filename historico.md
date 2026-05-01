@@ -2,6 +2,20 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-02] - Protocolo de Murcia (v2.21.0-stable)
+
+### 🚀 Mejoras y Funcionalidades
+- **Protocolo de Murcia:** Implementación completa del flujo legal y administrativo para la Región de Murcia.
+- **Módulos Regionales:** Adaptación de los flujos de trabajo y plazos según la normativa específica de Murcia.
+- **Interfaz de Usuario:** Personalización de los paneles y reportes para alinearse con los requerimientos regionales.
+
+## [2026-05-01] - Auditoría de Seguridad y Estabilidad (v2.20.1-stable)
+
+### 🛡️ Seguridad y Calidad
+- Inicio de auditoría exhaustiva de seguridad, arquitectura y calidad de código.
+- Revisión de vulnerabilidades (XSS, CSRF, Inyecciones SQL).
+- Limpieza de código muerto y optimización de flujos lógicos.
+
 ## [2026-04-30] - Enrutamiento Dinámico y Multi-CCAA (v2.19.0)
 
 ### 🚀 Mejoras y Funcionalidades

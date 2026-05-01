@@ -21,7 +21,7 @@ class ComunidadValencianaProtocol implements ProtocolInterface {
     public const STATE_REOBERT = 'reobert';
 
     public function getCode(): string {
-        return 'comunidad_valenciana';
+        return 'VAL';
     }
 
     public function getName(): string {

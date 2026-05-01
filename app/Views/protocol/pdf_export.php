@@ -16,7 +16,7 @@ use App\Core\Lang;
         <div class="flex justify-between items-start border-b-2 border-slate-900 pb-6">
             <div>
                 <h1 class="text-3xl font-black uppercase">Informe de Protocol d'Actuació</h1>
-                <p class="text-slate-500 font-bold">Aura - Gestió de Convivència</p>
+                <p class="text-slate-500 font-bold">Aura PDP - Gestió de Convivència</p>
             </div>
             <div class="text-right">
                 <p class="font-bold">Cas #<?= $case['id'] ?></p>

@@ -4,9 +4,9 @@ namespace App\Data;
 class BullyingProtocols {
     public static function getAll(): array {
         return [
-            'aragon' => [
+            'ARA' => [
                 'metadata' => [
-                    'code' => 'aragon',
+                    'code' => 'ARA',
                     'name' => 'Aragón',
                     'authority' => 'Gobierno de Aragón - Departamento de Educación',
                     'document_title' => 'Protocolo de actuación inmediata ante posibles situaciones de acoso escolar',
@@ -33,7 +33,7 @@ class BullyingProtocols {
                 ],
                 'phases' => [
                     [
-                        'id' => 'deteccion',
+                        'id' => 'deteccio',
                         'number' => 1,
                         'title' => 'Fase 1: Detección, comunicación y planificación',
                         'description' => 'Comunicación inicial y medidas urgentes de protección.',
@@ -93,9 +93,9 @@ class BullyingProtocols {
                     ['name' => 'EOE Convivencia Escolar', 'description' => 'Equipo de orientación autonómico', 'contact' => 'equipoconvivencia@aragon.es'],
                 ],
             ],
-            'cataluna' => [
+            'CAT' => [
                 'metadata' => [
-                    'code' => 'cataluna',
+                    'code' => 'CAT',
                     'name' => 'Catalunya',
                     'authority' => "Departament d'Educació - Generalitat de Catalunya",
                     'document_title' => "Protocol d'actuació davant de qualsevol tipus de violència en l'àmbit educatiu",
@@ -215,9 +215,242 @@ class BullyingProtocols {
                     ]
                 ]
             ],
-            'andalucia' => [
+            'VAL' => [
                 'metadata' => [
-                    'code' => 'andalucia',
+                    'code' => 'VAL',
+                    'name' => 'Comunitat Valenciana',
+                    'authority' => 'Conselleria d’Educació, Cultura i Esport (Generalitat Valenciana)',
+                    'document_title' => "Annex I de l'Ordre 62/2014, de 28 de juliol",
+                    'document_date' => '2014-2019',
+                    'document_url' => 'https://ceice.gva.es/va/web/convivencia-escolar/assetjament-escolar',
+                    'color' => '#f97316',
+                    'main_tool' => 'PREVI-ITACA',
+                ],
+                'content' => [
+                    'key_principles' => [
+                        "Prioritat absoluta a la protecció de l'alumnat.",
+                        "Intervenció immediata (termini de 24h per a constituir l'equip).",
+                        "Confidencialitat i cura en el tractament de la informació.",
+                        "Coordinació amb la UEO (Unitat Especialitzada d’Orientació)."
+                    ],
+                    'types_of_violence' => [
+                        "Física i verbal.",
+                        "Psicològica i social.",
+                        "Ciberassetjament.",
+                        "LGTBIfòbia o per motius de discapacitat."
+                    ],
+                    'applicable_to' => "Tots els centres docents de la Comunitat Valenciana."
+                ],
+                'phases' => [
+                    [
+                        'id' => 'deteccio',
+                        'number' => 1,
+                        'title' => 'Detecció i Comunicació',
+                        'description' => "Qualsevol indici ha de ser comunicat immediatament a la direcció del centre.",
+                        'responsible' => 'Direcció / Equip Docent',
+                        'actions' => [
+                            'Recollida de dades inicials.',
+                            'Comunicació urgent a la direcció.'
+                        ],
+                        'timeframe' => 'Immediat',
+                        'tools' => 'Informe inicial'
+                    ],
+                    [
+                        'id' => 'primeres_actuacions',
+                        'number' => 2,
+                        'title' => 'Primeres Actuacions (24h)',
+                        'description' => "Constitució de l'equip d'intervenció i mesures urgents de protecció.",
+                        'responsible' => "Equip Directiu",
+                        'actions' => [
+                            "Constitució de l'equip d'intervenció.",
+                            "Organització de la protecció i vigilància.",
+                            "Assignació de tutoria afectiva.",
+                            "Registre a PREVI-ITACA."
+                        ],
+                        'timeframe' => '24 hores',
+                        'tools' => 'PREVI-ITACA'
+                    ],
+                    [
+                        'id' => 'recollida',
+                        'number' => 3,
+                        'title' => "Recollida d'Informació",
+                        'description' => "Anàlisi detallada mitjançant entrevistes i observació directa.",
+                        'responsible' => "Equip d'intervenció",
+                        'actions' => [
+                            "Entrevistes individuals amb alumnat.",
+                            "Entrevistes amb les famílies.",
+                            "Custòdia d'evidències."
+                        ],
+                        'timeframe' => 'Màxim 10 dies lectivos',
+                        'tools' => 'Annex I (Ordre 62/2014)'
+                    ],
+                    [
+                        'id' => 'valoracio',
+                        'number' => 4,
+                        'title' => 'Valoració i Classificació',
+                        'description' => "Determinació de si la situació es classifica com a assetjament o no.",
+                        'responsible' => "Direcció / Equip d'intervenció",
+                        'actions' => [
+                            "Emissió de l'informe de valoració.",
+                            "Classificació (Acreditat / No acreditat).",
+                            "Comunicació a les famílies."
+                        ],
+                        'timeframe' => 'Immediat després de la recollida',
+                        'tools' => 'PREVI-ITACA'
+                    ],
+                    [
+                        'id' => 'intervencio',
+                        'number' => 5,
+                        'title' => "Pla d'Intervenció",
+                        'description' => "Aplicació de mesures educatives, disciplinàries i de suport.",
+                        'responsible' => "Equip docent i orientació",
+                        'actions' => [
+                            "Mesures educatives correctores.",
+                            "Mesures disciplinàries si s'escau.",
+                            "Intervenció en grup classe.",
+                            "Comunicació a Fiscalia de Menors (si escau)."
+                        ],
+                        'timeframe' => 'Continuat',
+                        'tools' => 'Mesures de suport'
+                    ],
+                    [
+                        'id' => 'seguiment',
+                        'number' => 6,
+                        'title' => 'Seguiment i Tancament',
+                        'description' => "Avaluació periòdica de les mesures i tancament del protocol.",
+                        'responsible' => "Direcció",
+                        'actions' => [
+                            "Sessions de seguiment.",
+                            "Informe final de la direcció.",
+                            "Tancament a PREVI-ITACA."
+                        ],
+                        'timeframe' => 'Variable',
+                        'tools' => 'PREVI-ITACA'
+                    ]
+                ],
+                'emergency_contacts' => [
+                    [
+                        'name' => "Emergències (Generalitat Valenciana)",
+                        'description' => "Atenció d'emergències.",
+                        'contact' => "112"
+                    ],
+                    [
+                        'name' => "Assistència a la Infància",
+                        'description' => "Servei d'atenció telefònica gratuïta.",
+                        'contact' => "116 111"
+                    ],
+                    [
+                        'name' => "UEO - Unitat Especialitzada d’Orientació",
+                        'description' => "Suport tècnic en convivència.",
+                        'contact' => "ceice.gva.es"
+                    ]
+                ]
+            ],
+            'MUR' => [
+                'metadata' => [
+                    'code' => 'MUR',
+                    'name' => 'Región de Murcia',
+                    'authority' => 'Consejería de Educación, Formación Profesional y Empleo (Región de Murcia)',
+                    'document_title' => 'Protocolo de actuación ante situaciones de acoso escolar en centros docentes',
+                    'document_date' => '2024',
+                    'document_url' => 'https://www.carm.es/web/pagina?IDCONTENIDO=15053&IDTIPO=100&RASTRO=c77$m',
+                    'color' => '#facc15',
+                    'main_tool' => 'Anexos I al VI',
+                ],
+                'content' => [
+                    'key_principles' => [
+                        'Adopción inmediata de medidas de protección urgentes',
+                        'Designación de equipo de intervención (Día 0)',
+                        'Orden estricto de entrevistas',
+                        'Colaboración con EOEP Específico de Convivencia',
+                    ],
+                    'types_of_violence' => [
+                        'Física y verbal',
+                        'Exclusión social y psicológica',
+                        'Ciberacoso',
+                        'Acoso por identidad de género o discapacidad',
+                    ],
+                    'applicable_to' => 'Todos los centros docentes de la Región de Murcia.',
+                ],
+                'phases' => [
+                    [
+                        'id' => 'mur_inicial',
+                        'number' => 1,
+                        'title' => 'Designación y Medidas Urgentes',
+                        'description' => 'Inicio del protocolo, designación del equipo y comunicación a Inspección (Anexo I).',
+                        'responsible' => 'Dirección',
+                        'actions' => [
+                            'Designación del equipo de intervención',
+                            'Medidas urgentes de seguridad',
+                            'Envío de Anexo I a Inspección',
+                        ],
+                        'timeframe' => 'Día 0',
+                        'tools' => 'Anexo I',
+                    ],
+                    [
+                        'id' => 'mur_intervencio',
+                        'number' => 2,
+                        'title' => 'Intervención y Entrevistas',
+                        'description' => 'Realización de entrevistas en orden estricto y recogida de datos.',
+                        'responsible' => 'Jefatura de Estudios / Equipo Intervención',
+                        'actions' => [
+                            'Entrevistas (Víctima -> Observadores -> Familias -> Agresores)',
+                            'Asesoramiento EOEP',
+                        ],
+                        'timeframe' => 'Días 1-20 lectivos',
+                        'tools' => 'Pautas de entrevista oficiales',
+                    ],
+                    [
+                        'id' => 'mur_informe',
+                        'number' => 3,
+                        'title' => 'Emisión del Informe',
+                        'description' => 'Redacción del informe final del equipo de intervención (Anexo IV).',
+                        'responsible' => 'Equipo de Intervención',
+                        'actions' => [
+                            'Elaboración del informe de intervención',
+                            'Entrega a la dirección del centro',
+                        ],
+                        'timeframe' => 'Máximo 20 días lectivos',
+                        'tools' => 'Anexo IV',
+                    ],
+                    [
+                        'id' => 'mur_valoracion',
+                        'number' => 4,
+                        'title' => 'Valoración y Decisión',
+                        'description' => 'Reunión conjunta para determinar la existencia de acoso (Anexo V).',
+                        'responsible' => 'Dirección',
+                        'actions' => [
+                            'Acta de reunión conjunta',
+                            'Determinación de evidencias',
+                            'Elaboración Plan Seguimiento (Anexo VI) si procede',
+                        ],
+                        'timeframe' => 'Inmediato tras el informe',
+                        'tools' => 'Acta y Anexo V',
+                    ],
+                    [
+                        'id' => 'mur_cierre',
+                        'number' => 5,
+                        'title' => 'Cierre y Actuaciones Posteriores',
+                        'description' => 'Comunicación a familias, Inspección y autoridades legales según edad.',
+                        'responsible' => 'Dirección',
+                        'actions' => [
+                            'Entrega individualizada de Anexo V',
+                            'Comunicación Servicios Sociales / Fiscalía / FCSE',
+                        ],
+                        'timeframe' => 'Variable',
+                        'tools' => 'Anexo V / Notificaciones Legales',
+                    ],
+                ],
+                'emergency_contacts' => [
+                    ['name' => 'Emergencias Murcia', 'description' => 'Atención de emergencias 112', 'contact' => '112'],
+                    ['name' => 'EOEP Específico Convivencia', 'description' => 'Equipo orientación específico', 'contact' => 'convivencia.escolar@murciaeduca.es'],
+                    ['name' => 'Fiscalía de Menores Murcia', 'description' => 'Casos > 14 años', 'contact' => '968 27 75 00'],
+                    ['name' => 'Servicios Sociales (Ayto)', 'description' => 'Casos < 14 años', 'contact' => 'Consultar municipio'],
+                ],
+            ],
+            'AND' => [
+                'metadata' => [
+                    'code' => 'AND',
                     'name' => 'Andalucía',
                     'authority' => "Junta de Andalucía - Consejería de Desarrollo Educativo y Formación Profesional",
                     'document_title' => "Protocolo de actuación en casos de acoso escolar",
@@ -326,9 +559,9 @@ class BullyingProtocols {
                     ]
                 ]
             ],
-            'madrid' => [
+            'MAD' => [
                 'metadata' => [
-                    'code' => 'madrid',
+                    'code' => 'MAD',
                     'name' => 'Madrid',
                     'authority' => "Comunidad de Madrid - Consejería de Educación",
                     'document_title' => "Protocolo de actuación ante situaciones de acoso escolar",
@@ -348,9 +581,9 @@ class BullyingProtocols {
                 ],
                 'emergency_contacts' => [['name' => 'Emergencias', 'description' => 'General', 'contact' => '112']]
             ],
-            'pais_vasco' => [
+            'PV' => [
                 'metadata' => [
-                    'code' => 'pais_vasco',
+                    'code' => 'PV',
                     'name' => 'País Vasco',
                     'authority' => "Eusko Jaurlaritza - Departamento de Educación",
                     'document_title' => "Eskola-jazarpenari aurre egiteko protokoloa",

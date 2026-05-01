@@ -1,6 +1,6 @@
 {
-    "name": "aura/aura",
-    "version": "2.20.0",
+    "name": "aura/pdp",
+    "version": "2.21.0",
     "require": {
         "phpmailer/phpmailer": "^7.0",
         "spomky-labs/otphp": "^11.4",
@@ -10,11 +10,6 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/"
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
         }
     }
 }

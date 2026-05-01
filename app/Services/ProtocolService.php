@@ -61,6 +61,12 @@ class ProtocolService
      */
     public function logSensitiveAccess(int $caseId): void
     {
+        // Si el caseId es 0, es un acceso general al dashboard. 
+        // Actualmente la tabla requiere un ID válido de caso.
+        if ($caseId <= 0) {
+            return;
+        }
+
         $db = Database::getInstance();
         $stmt = $db->prepare("INSERT INTO protocol_access_logs (protocol_case_id, user_id, ip_address, user_agent) VALUES (?, ?, ?, ?)");
         $stmt->execute([

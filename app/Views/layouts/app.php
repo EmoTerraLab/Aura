@@ -9,7 +9,7 @@
     <title><?= $title ?? \App\Core\Config::get('school_name', 'Aura') ?></title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.19.0">
+    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.21.0">
 
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>

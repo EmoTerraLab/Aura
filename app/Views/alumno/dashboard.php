@@ -71,7 +71,7 @@
         $db = \App\Core\Database::getInstance();
         $userId = \App\Core\Auth::id();
         $profile = $db->query("SELECT classroom_id FROM student_profiles WHERE user_id = $userId")->fetch();
-        $isCataluna = \App\Core\Config::get('ccaa_code') === 'cataluna';
+        $isCataluna = \App\Core\Config::get('ccaa_code') === 'CAT';
         
         if ($profile && $isCataluna) {
             $survey = $db->query("SELECT * FROM sociometric_surveys WHERE classroom_id = {$profile['classroom_id']} AND status = 'active' LIMIT 1")->fetch();

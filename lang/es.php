@@ -69,6 +69,8 @@ return array (
   'staff.inbox_empty' => 'No hay avisos recientes.',
   'staff.filter_all' => 'Todos',
   'staff.select_report' => 'Selecciona un aviso',
+  'staff.select_case_title' => 'Selecciona un aviso',
+  'staff.select_case_desc' => 'Elige un aviso de la lista de la izquierda para ver los detalles y comenzar a gestionar el caso.',
   'staff.case' => 'Caso',
   'staff.aula' => 'Aula',
   'staff.ia_elos' => 'IA ELOS',

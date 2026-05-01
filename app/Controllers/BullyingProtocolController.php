@@ -50,7 +50,7 @@ class BullyingProtocolController
         ], 'app');
     }
 
-    public function apiGet(): void
+    public function getApiProtocol(): void
     {
         header('Content-Type: application/json');
         $protocol = $this->protocolDataService->getCurrentProtocol();
@@ -61,5 +61,28 @@ class BullyingProtocolController
         }
         
         echo json_encode($protocol);
+    }
+
+    /**
+     * API: Obtiene los datos de un protocolo específico por código (para previsualización)
+     */
+    public function apiGetInfo(): void
+    {
+        header('Content-Type: application/json');
+        $code = $_GET['code'] ?? '';
+        
+        if (empty($code)) {
+            echo json_encode(['success' => false, 'error' => 'No code provided']);
+            return;
+        }
+
+        $protocol = \App\Data\BullyingProtocols::getByCode($code);
+        
+        if (!$protocol) {
+            echo json_encode(['success' => false, 'error' => 'Protocol not found']);
+            return;
+        }
+
+        echo json_encode(['success' => true, 'protocol' => $protocol]);
     }
 }

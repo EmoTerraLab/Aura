@@ -69,6 +69,8 @@ return array (
   'staff.inbox_empty' => 'No recent notices.',
   'staff.filter_all' => 'All',
   'staff.select_report' => 'Select a notice',
+  'staff.select_case_title' => 'Select a notice',
+  'staff.select_case_desc' => 'Choose a notice from the list on the left to see the details and start managing the case.',
   'staff.case' => 'Case',
   'staff.aula' => 'Classroom',
   'staff.ia_elos' => 'ELOS AI',

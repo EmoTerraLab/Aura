@@ -26,6 +26,13 @@ class ProtocolCase extends Model
     const PHASE_AR_CERRADO = 'cerrado';
     const PHASE_AR_REABIERTO = 'reabierto';
 
+    // Estados del Workflow Murcia
+    const PHASE_MUR_INICIAL = 'mur_inicial';
+    const PHASE_MUR_INTERVENCION = 'mur_intervencion';
+    const PHASE_MUR_INFORME = 'mur_informe';
+    const PHASE_MUR_VALORACION = 'mur_valoracion';
+    const PHASE_MUR_CIERRE = 'mur_cierre';
+
     public function findByReport(int $reportId)
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE report_id = :report_id");

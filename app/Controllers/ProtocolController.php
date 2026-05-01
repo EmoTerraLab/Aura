@@ -63,7 +63,7 @@ class ProtocolController
 
                 // Fallbacks específicos por protocolo si no se encuentra el estado exacto en el timeline
                 if ($activeStepIndex === false || $activeStepIndex === -1) {
-                    if ($ccaa === 'aragon') {
+                    if ($ccaa === 'ARA') {
                         if ($currentPhase === 'protocolo_no_iniciado') $activeStepIndex = 0;
                         elseif (in_array($currentPhase, ['contrato_conducta', 'expediente_disciplinario'])) $activeStepIndex = 3;
                         elseif ($currentPhase === 'reabierto') $activeStepIndex = 4;

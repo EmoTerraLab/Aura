@@ -30,7 +30,7 @@ class ProtocolWorkflowController
 
     public function __construct()
     {
-        if (Config::get('ccaa_code') !== 'cataluna') {
+        if (Config::get('ccaa_code') !== 'CAT') {
             if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
                 http_response_code(403);
                 header('Content-Type: application/json');
@@ -127,7 +127,7 @@ class ProtocolWorkflowController
         
         $ccaa = $case['ccaa_code'];
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
-        $schoolName = Config::get('school_name', 'Aura');
+        $schoolName = Config::get('school_name', 'Aura PDP');
 
         View::render("protocol/templates/{$ccaa}/{$templateName}", [
             'case' => $case,

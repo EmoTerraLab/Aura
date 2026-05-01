@@ -334,9 +334,15 @@
         const container = document.getElementById('report-detail-container');
         
         // Cargar datos del caso legal
-        const caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
+        let caseRes = { success: false, protocol_meta: { current_actions: [] } };
+        try {
+            caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
+        } catch (e) {
+            console.error("Error cargando protocolo:", e);
+        }
+
         const protocolCase = caseRes.case;
-        const isAdvancedProtocol = !caseRes.protocol_meta.current_actions.some(a => a.key === 'not_implemented');
+        const isAdvancedProtocol = caseRes.success && caseRes.protocol_meta && !caseRes.protocol_meta.current_actions.some(a => a.key === 'not_implemented');
 
         let mHtml = messages.map(m => {
             const isMe = m.is_current_user;

@@ -5,25 +5,25 @@ use App\Data\BullyingProtocols;
 
 $ccaaList = [
     '' => '-- Selecciona una Comunidad Autónoma --',
-    'andalucia' => 'Andalucía',
-    'aragon' => 'Aragón',
-    'asturias' => 'Asturias',
-    'baleares' => 'Baleares',
-    'canarias' => 'Canarias',
-    'cantabria' => 'Cantabria',
-    'castilla_leon' => 'Castilla y León',
-    'castilla_la_mancha' => 'Castilla-La Mancha',
-    'cataluna' => 'Catalunya',
-    'comunidad_valenciana' => 'Comunidad Valenciana',
-    'extremadura' => 'Extremadura',
-    'galicia' => 'Galicia',
-    'madrid' => 'Madrid',
-    'murcia' => 'Murcia',
-    'navarra' => 'Navarra',
-    'pais_vasco' => 'País Vasco',
-    'rioja' => 'La Rioja',
-    'ceuta' => 'Ceuta',
-    'melilla' => 'Melilla'
+    'AND' => 'Andalucía',
+    'ARA' => 'Aragón',
+    'AST' => 'Asturias',
+    'BAL' => 'Baleares',
+    'CAN' => 'Canarias',
+    'CNT' => 'Cantabria',
+    'CYL' => 'Castilla y León',
+    'CLM' => 'Castilla-La Mancha',
+    'CAT' => 'Catalunya',
+    'VAL' => 'Comunitat Valenciana',
+    'EXT' => 'Extremadura',
+    'GAL' => 'Galicia',
+    'MAD' => 'Madrid',
+    'MUR' => 'Murcia',
+    'NAV' => 'Navarra',
+    'PV'  => 'País Vasco / Euskadi',
+    'RIO' => 'La Rioja',
+    'CEU' => 'Ceuta',
+    'MEL' => 'Melilla'
 ];
 
 $selectedCcaa = $settings['ccaa_code'] ?? '';
@@ -48,7 +48,7 @@ $protocolData = $selectedCcaa ? BullyingProtocols::getByCode($selectedCcaa) : nu
         <div class="space-y-4">
             <div class="space-y-2">
                 <label class="font-bold text-sm text-slate-700">Comunidad Autónoma</label>
-                <select name="ccaa_code" class="w-full bg-white border border-surface-variant rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+                <select name="ccaa_code" onchange="updateDynamicPreview(this.value)" class="w-full bg-white border border-surface-variant rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
                     <?php foreach ($ccaaList as $code => $name): ?>
                         <option value="<?= $code ?>" <?= $selectedCcaa === $code ? 'selected' : '' ?>><?= $name ?></option>
                     <?php endforeach; ?>
@@ -78,35 +78,37 @@ $protocolData = $selectedCcaa ? BullyingProtocols::getByCode($selectedCcaa) : nu
         </div>
 
         <div class="bg-slate-50 rounded-3xl p-6 border border-slate-200/60 relative overflow-hidden">
-            <div class="relative z-10">
+            <div class="relative z-10" id="preview-container">
                 <h3 class="font-black text-slate-400 uppercase tracking-widest text-[10px] mb-4">Previsualización Dinámica</h3>
                 
-                <?php if ($protocolData): ?>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style="background-color: <?= $protocolData['metadata']['color'] ?>">
-                                <span class="material-symbols-outlined">assured_workload</span>
+                <div id="preview-content">
+                    <?php if ($protocolData): ?>
+                        <div class="space-y-4 animate-[fadeIn_0.3s_ease-out]">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style="background-color: <?= $protocolData['metadata']['color'] ?>">
+                                    <span class="material-symbols-outlined">assured_workload</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 leading-tight"><?= $protocolData['metadata']['name'] ?></h4>
+                                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-tight"><?= $protocolData['metadata']['authority'] ?></p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="font-bold text-slate-800 leading-tight"><?= $protocolData['metadata']['name'] ?></h4>
-                                <p class="text-[10px] text-slate-500 uppercase font-bold tracking-tight"><?= $protocolData['metadata']['authority'] ?></p>
+                            <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2">
+                                <p class="text-[13px] font-bold text-slate-700"><?= $protocolData['metadata']['document_title'] ?></p>
+                                <div class="flex gap-2">
+                                    <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-500"><?= count($protocolData['phases']) ?> FASES</span>
+                                    <span class="px-2 py-0.5 bg-teal-50 rounded text-[10px] font-bold text-teal-600"><?= $protocolData['metadata']['main_tool'] ?></span>
+                                </div>
                             </div>
+                            <p class="text-[11px] text-slate-400 text-center italic mt-4 italic">El color de acento de la interfaz cambiará automáticamente a <span style="color: <?= $protocolData['metadata']['color'] ?>; font-weight: bold;"><?= $protocolData['metadata']['color'] ?></span> para este protocolo.</p>
                         </div>
-                        <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2">
-                            <p class="text-[13px] font-bold text-slate-700"><?= $protocolData['metadata']['document_title'] ?></p>
-                            <div class="flex gap-2">
-                                <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-500"><?= count($protocolData['phases']) ?> FASES</span>
-                                <span class="px-2 py-0.5 bg-teal-50 rounded text-[10px] font-bold text-teal-600"><?= $protocolData['metadata']['main_tool'] ?></span>
-                            </div>
+                    <?php else: ?>
+                        <div class="flex flex-col items-center justify-center py-12 text-center animate-[fadeIn_0.3s_ease-out]">
+                            <span class="material-symbols-outlined text-slate-300 text-5xl mb-2">map</span>
+                            <p class="text-sm text-slate-400 font-medium italic">Selecciona una CCAA para ver los detalles del protocolo.</p>
                         </div>
-                        <p class="text-[11px] text-slate-400 text-center italic mt-4 italic">El color de acento de la interfaz cambiará automáticamente a <span style="color: <?= $protocolData['metadata']['color'] ?>; font-weight: bold;"><?= $protocolData['metadata']['color'] ?></span> para este protocolo.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="flex flex-col items-center justify-center py-12 text-center">
-                        <span class="material-symbols-outlined text-slate-300 text-5xl mb-2">map</span>
-                        <p class="text-sm text-slate-400 font-medium italic">Selecciona una CCAA para ver los detalles del protocolo.</p>
-                    </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
@@ -117,3 +119,59 @@ $protocolData = $selectedCcaa ? BullyingProtocols::getByCode($selectedCcaa) : nu
         </button>
     </div>
 </form>
+
+<script>
+async function updateDynamicPreview(code) {
+    const content = document.getElementById('preview-content');
+    if (!code) {
+        content.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-12 text-center animate-[fadeIn_0.3s_ease-out]">
+                <span class="material-symbols-outlined text-slate-300 text-5xl mb-2">map</span>
+                <p class="text-sm text-slate-400 font-medium italic">Selecciona una CCAA para ver los detalles del protocolo.</p>
+            </div>
+        `;
+        return;
+    }
+
+    content.innerHTML = '<div class="flex flex-col items-center justify-center py-12"><span class="material-symbols-outlined animate-spin text-primary text-4xl">refresh</span></div>';
+
+    try {
+        const res = await fetch(`/api/protocol-info?code=${code}`);
+        const data = await res.json();
+
+        if (data.success && data.protocol) {
+            const p = data.protocol;
+            content.innerHTML = `
+                <div class="space-y-4 animate-[fadeIn_0.3s_ease-out]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style="background-color: ${p.metadata.color}">
+                            <span class="material-symbols-outlined">assured_workload</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 leading-tight">${p.metadata.name}</h4>
+                            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-tight">${p.metadata.authority}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2">
+                        <p class="text-[13px] font-bold text-slate-700">${p.metadata.document_title}</p>
+                        <div class="flex gap-2">
+                            <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-500">${p.phases.length} FASES</span>
+                            <span class="px-2 py-0.5 bg-teal-50 rounded text-[10px] font-bold text-teal-600">${p.metadata.main_tool}</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 text-center italic mt-4 italic">El color de acento de la interfaz cambiará automáticamente a <span style="color: ${p.metadata.color}; font-weight: bold;">${p.metadata.color}</span> para este protocolo.</p>
+                </div>
+            `;
+        } else {
+            content.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-12 text-center animate-[fadeIn_0.3s_ease-out]">
+                    <span class="material-symbols-outlined text-amber-500 text-5xl mb-2">warning</span>
+                    <p class="text-sm text-slate-400 font-medium">No hay información detallada disponible para esta región todavía.</p>
+                </div>
+            `;
+        }
+    } catch (e) {
+        content.innerHTML = '<p class="text-error text-xs text-center p-8">Error cargando previsualización.</p>';
+    }
+}
+</script>

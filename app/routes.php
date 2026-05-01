@@ -35,6 +35,7 @@ $router->post('/lang/switch', [LangController::class, 'switch']);
 // -- Protocolo de Acoso (Público/Consulta) --
 $router->get('/protocolo-acoso', [BullyingProtocolController::class, 'index'], ['auth']);
 $router->get('/api/protocol', [BullyingProtocolController::class, 'getApiProtocol'], ['auth']);
+$router->get('/api/protocol-info', [BullyingProtocolController::class, 'apiGetInfo'], ['auth', 'roles:admin']);
 
 // -- Workflow Legal del Protocolo --
 // -- Módulo Restaurativo --
@@ -112,6 +113,16 @@ $router->post("/api/protocol/aragon/start-followup/{id}", [AragonProtocolControl
 $router->post("/api/protocol/aragon/followup/{id}", [AragonProtocolController::class, "addFollowUp"], ["auth"]);
 $router->post("/api/protocol/aragon/close/{id}", [AragonProtocolController::class, "closeCase"], ["auth"]);
 $router->get("/protocol/aragon/export/{id}/{type}", [AragonProtocolController::class, "exportAnnex"], ["auth"]);
+
+// -- Protocolo Murcia --
+$router->get("/protocol/murcia/case/{id}", [\App\Controllers\MurciaProtocolController::class, "showCase"], ["auth"]);
+$router->post("/api/protocol/murcia/designation/{id}", [\App\Controllers\MurciaProtocolController::class, "storeDesignation"], ["auth"]);
+$router->post("/api/protocol/murcia/urgency-measures/{id}", [\App\Controllers\MurciaProtocolController::class, "storeUrgencyMeasures"], ["auth"]);
+$router->post("/api/protocol/murcia/anexo-i/{id}", [\App\Controllers\MurciaProtocolController::class, "storeAnexoI"], ["auth"]);
+$router->post("/api/protocol/murcia/interview/{id}", [\App\Controllers\MurciaProtocolController::class, "addInterview"], ["auth"]);
+$router->post("/api/protocol/murcia/anexo-iv/{id}", [\App\Controllers\MurciaProtocolController::class, "storeAnexoIV"], ["auth"]);
+$router->post("/api/protocol/murcia/valuation/{id}", [\App\Controllers\MurciaProtocolController::class, "storeValuation"], ["auth"]);
+$router->post("/api/protocol/murcia/legal-comm/{id}", [\App\Controllers\MurciaProtocolController::class, "storeLegalCommunication"], ["auth"]);
 
 // -- Endpoints de Alumno --
 
