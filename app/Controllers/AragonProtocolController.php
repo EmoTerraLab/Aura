@@ -20,7 +20,7 @@ class AragonProtocolController
 
     public function __construct()
     {
-        if (Config::get('ccaa_code') !== 'aragon') {
+        if (Config::get('ccaa_code') !== 'ARA') {
             if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
                 http_response_code(403);
                 header('Content-Type: application/json');

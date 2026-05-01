@@ -264,6 +264,13 @@
     document.addEventListener("DOMContentLoaded", () => {
         loadMentions();
         loadColleagues();
+
+        // Deep linking: cargar reporte si viene en la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const reportId = urlParams.get('report_id');
+        if (reportId) {
+            loadReport(reportId);
+        }
     });
 
     async function loadColleagues() {
@@ -334,9 +341,15 @@
         const container = document.getElementById('report-detail-container');
         
         // Cargar datos del caso legal
-        const caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
+        let caseRes = { success: false, protocol_meta: { current_actions: [] } };
+        try {
+            caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
+        } catch (e) {
+            console.error("Error cargando protocolo:", e);
+        }
+
         const protocolCase = caseRes.case;
-        const isAdvancedProtocol = !caseRes.protocol_meta.current_actions.some(a => a.key === 'not_implemented');
+        const isAdvancedProtocol = caseRes.success && caseRes.protocol_meta && !caseRes.protocol_meta.current_actions.some(a => a.key === 'not_implemented');
 
         let mHtml = messages.map(m => {
             const isMe = m.is_current_user;
@@ -369,7 +382,7 @@
             <!-- LEGAL PROTOCOL TIMELINE -->
             ${isAdvancedProtocol ? `
             <div id="protocol-timeline" class="bg-white border-b px-4 md:px-8 py-4 flex items-center justify-between overflow-x-auto no-scrollbar gap-4">
-                ${renderTimelineHtml(protocolCase, caseRes.protocol_meta)}
+                ${renderTimelineHtml(protocolCase, protocolMeta)}
             </div>
             ` : ''}
 
@@ -380,7 +393,7 @@
                 </div>
                 
                 <!-- PROTOCOL ACTIONS CARD -->
-                ${renderProtocolActionsCard(protocolCase, caseRes.protocol_meta)}
+                ${renderProtocolActionsCard(protocolCase, protocolMeta)}
 
                 
             <!-- MÒDUL RESTAURATIU -->
@@ -473,10 +486,15 @@
     }
 
     function renderProtocolActionsCard(c, meta) {
-        if (!c || !meta || !meta.current_actions || meta.current_actions.length === 0) {
+        if (!c || !meta || !meta.current_actions || !Array.isArray(meta.current_actions) || meta.current_actions.length === 0) {
+             let msg = 'No hay acciones disponibles para esta fase.';
+             if (!meta) msg = 'Cargando datos del protocolo...';
+             else if (!c) msg = 'No se ha podido vincular el expediente legal.';
+             else if (!meta.current_actions) msg = 'Error en la configuración de acciones del protocolo.';
+
              return `
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 italic text-slate-400 text-xs text-center">
-                    No hay acciones disponibles para esta fase.
+                    ${msg}
                 </div>
             `;
         }
@@ -499,8 +517,8 @@
             }
         };
 
-        const comms = typeof c.communications === 'string' ? JSON.parse(c.communications || '{}') : (c.communications || {});
-        const checks = typeof c.closure_checks === 'string' ? JSON.parse(c.closure_checks || '{}') : (c.closure_checks || {});
+        const comms = c.communications ? (typeof c.communications === 'string' ? JSON.parse(c.communications) : c.communications) : {};
+        const checks = c.closure_checks ? (typeof c.closure_checks === 'string' ? JSON.parse(c.closure_checks) : c.closure_checks) : {};
 
         const buttonActions = actions.filter(a => !['reva_checklist', 'closure_checklist'].includes(a.style));
         const revaAction = actions.find(a => a.style === 'reva_checklist');
@@ -533,19 +551,19 @@
                 
                 ${revaAction ? `
                     <div class="pt-4 border-t border-slate-50">
-                        <p class="text-[9px] font-black uppercase text-slate-400 mb-2"><?= \App\Core\Lang::t('protocol.reva_requirements') ?></p>
+                        <p class="text-[9px] font-black uppercase text-slate-400 mb-2">Completar requeriments REVA</p>
                         <div class="space-y-2">
                              <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.inspeccio ? 'checked' : ''} onchange="toggleComm(${c.id}, 'inspeccio', this.checked)">
-                                <span class="text-xs font-bold text-slate-700"><?= \App\Core\Lang::t('protocol.comm_inspeccion') ?></span>
+                                <span class="text-xs font-bold text-slate-700">Comunicat a la Inspecció d'Educació (REVA)</span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.familia_victima ? 'checked' : ''} onchange="toggleComm(${c.id}, 'familia_victima', this.checked)">
-                                <span class="text-xs font-bold text-slate-700"><?= \App\Core\Lang::t('protocol.comm_familia_victima') ?></span>
+                                <span class="text-xs font-bold text-slate-700">Comunicat a la família de la víctima</span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.familia_agressor ? 'checked' : ''} onchange="toggleComm(${c.id}, 'familia_agressor', this.checked)">
-                                <span class="text-xs font-bold text-slate-700"><?= \App\Core\Lang::t('protocol.comm_familia_agresor') ?></span>
+                                <span class="text-xs font-bold text-slate-700">Comunicat a la família de l'agressor</span>
                             </label>
                         </div>
                     </div>
@@ -553,25 +571,25 @@
 
                 ${closureAction ? `
                     <div class="pt-4 border-t border-slate-50 space-y-4">
-                        <h5 class="text-[9px] font-black uppercase text-primary tracking-widest"><?= \App\Core\Lang::t('protocol.closure_checklist') ?></h5>
+                        <h5 class="text-[9px] font-black uppercase text-primary tracking-widest">Checklist de Tancament Oficial</h5>
                         <div class="space-y-2">
-                            ${renderClosureCheck(c.id, 'eradicated', '<?= \App\Core\Lang::t('protocol.closure_eradicated') ?>', checks.eradicated)}
-                            ${renderClosureCheck(c.id, 'reparation', '<?= \App\Core\Lang::t('protocol.closure_reparation') ?>', checks.reparation)}
-                            ${renderClosureCheck(c.id, 'students_confirm', '<?= \App\Core\Lang::t('protocol.closure_students_confirm') ?>', checks.students_confirm)}
-                            ${renderClosureCheck(c.id, 'teachers_valorate', '<?= \App\Core\Lang::t('protocol.closure_teachers_valorate') ?>', checks.teachers_valorate)}
+                            ${renderClosureCheck(c.id, 'eradicated', 'La violència s\'ha eradicat definitivament', checks.eradicated)}
+                            ${renderClosureCheck(c.id, 'reparation', 'S\'ha dut a terme un procés de reparació', checks.reparation)}
+                            ${renderClosureCheck(c.id, 'students_confirm', 'L\'alumnat confirma la millora', checks.students_confirm)}
+                            ${renderClosureCheck(c.id, 'teachers_valorate', 'L\'equip docent valora resolució', checks.teachers_valorate)}
                         </div>
                     </div>
                 ` : ''}
 
                 ${meta.ccaa_code === 'CAT' && c.current_phase === 'violencia_sexual_actiu' ? `
                     <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium"><?= \App\Core\Lang::t('protocol.sexual_violence_alert_cat') ?></p>
+                        <p class="text-xs text-red-800 font-medium">S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.</p>
                     </div>
                 ` : ''}
 
                 ${meta.ccaa_code === 'ARA' && c.current_phase === 'violencia_sexual_activa' ? `
                     <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium"><?= \App\Core\Lang::t('protocol.sexual_violence_alert_ara') ?></p>
+                        <p class="text-xs text-red-800 font-medium">S'ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.</p>
                     </div>
                 ` : ''}
             </div>
@@ -640,24 +658,26 @@
         await fetchJson(`/api/protocol/case/${caseId}/closure`, { method: 'POST', body: { checks: currentClosureChecks } });
     }
 
-    function openFollowupModal(caseId) {
+    function openFollowupModal(caseId, type = null) {
+        const title = type ? `Registre d'Actuació: ${type.replace(/_/g, ' ').toUpperCase()}` : 'Nou Registre de Seguiment';
         const html = `
             <div id="modal-followup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
                 <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden">
                     <div class="p-6 border-b flex items-center justify-between">
-                        <h3 class="font-black"><?= \App\Core\Lang::t('protocol.followup_new_title') ?></h3>
+                        <h3 class="font-black">${title}</h3>
                         <button onclick="document.getElementById('modal-followup').remove()"><span class="material-symbols-outlined">close</span></button>
                     </div>
                     <div class="p-6 space-y-4">
-                        <select id="f-target" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm">
-                            <option value="victima"><?= \App\Core\Lang::t('protocol.followup_target_victima') ?></option>
-                            <option value="agressor"><?= \App\Core\Lang::t('protocol.followup_target_agresor') ?></option>
-                            <option value="familia"><?= \App\Core\Lang::t('protocol.followup_target_familia') ?></option>
-                            <option value="grup_classe"><?= \App\Core\Lang::t('protocol.followup_target_clase') ?></option>
+                        <select id="f-target" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm ${type ? 'hidden' : ''}">
+                            <option value="victima">Víctima</option>
+                            <option value="agressor">Agressor</option>
+                            <option value="familia">Família</option>
+                            <option value="grup_classe">Grup Classe</option>
+                            ${type ? `<option value="${type}" selected>${type}</option>` : ''}
                         </select>
                         <input type="date" id="f-date" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm" value="${new Date().toISOString().split('T')[0]}">
-                        <textarea id="f-notes" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm" rows="4" placeholder="<?= \App\Core\Lang::t('protocol.followup_notes_placeholder') ?>"></textarea>
-                        <button onclick="saveFollowup(${caseId})" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg"><?= \App\Core\Lang::t('protocol.followup_save_btn') ?></button>
+                        <textarea id="f-notes" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm" rows="4" placeholder="Notes de la sessió..."></textarea>
+                        <button onclick="saveFollowup(${caseId}, '${type || ''}')" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg">Guardar Sessió</button>
                     </div>
                 </div>
             </div>
@@ -665,9 +685,9 @@
         document.body.insertAdjacentHTML('beforeend', html);
     }
 
-    async function saveFollowup(caseId) {
+    async function saveFollowup(caseId, type = null) {
         const data = {
-            target_type: document.getElementById('f-target').value,
+            target_type: type || document.getElementById('f-target').value,
             session_date: document.getElementById('f-date').value,
             notes: document.getElementById('f-notes').value
         };

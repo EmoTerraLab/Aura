@@ -9,7 +9,7 @@
     <title><?= $title ?? \App\Core\Config::get('school_name', 'Aura') ?></title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.19.0">
+    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.21.1">
 
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -155,19 +155,57 @@
         }
     </style>
     <script>
+        /**
+         * fetchJson - Versión Blindada (Solución Definitiva)
+         * - Cabeceras AJAX automáticas para evitar redirecciones de middleware.
+         * - Time-out integrado para evitar bloqueos por red.
+         * - Sistema de guardián para limpiar spinners infinitos.
+         */
         async function fetchJson(url, opts = {}) {
-            const token = document.querySelector('meta[name="csrf-token"]').content;
-            const headers = { 
-                'Content-Type': 'application/json', 
-                'X-CSRF-TOKEN': token 
-            };
-            if (opts.headers) { Object.assign(headers, opts.headers); }
-            const res = await fetch(url, {
-                ...opts,
-                headers: headers,
-                body: opts.body ? JSON.stringify(opts.body) : undefined
-            });
-            return res.json();
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+            try {
+                const token = document.querySelector('meta[name="csrf-token"]').content;
+                const headers = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': token
+                };
+                
+                if (opts.headers) { Object.assign(headers, opts.headers); }
+
+                const res = await fetch(url, {
+                    ...opts,
+                    headers: headers,
+                    signal: controller.signal,
+                    body: opts.body ? JSON.stringify(opts.body) : undefined
+                });
+
+                clearTimeout(timeoutId);
+
+                if (res.status === 503) {
+                    const maintenance = await res.json();
+                    window.location.reload(); // Recargar para ver pantalla de mantenimiento
+                    return { error: 'Sistema en mantenimiento' };
+                }
+
+                if (!res.ok && res.status !== 400 && res.status !== 403) {
+                    throw new Error(`Error del servidor: ${res.status}`);
+                }
+
+                return await res.json();
+            } catch (err) {
+                clearTimeout(timeoutId);
+                console.error("Fetch error:", err);
+                
+                // Si el error es por timeout o red, avisar al usuario
+                if (err.name === 'AbortError') {
+                    return { error: "La petición ha tardado demasiado tiempo. Revisa tu conexión." };
+                }
+                return { error: "Error de conexión con el servidor." };
+            }
         }
     </script>
 </head>

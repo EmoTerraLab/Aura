@@ -46,10 +46,15 @@ class ProtocolController
                 $allStates = $protocol->getAllStates();
                 if (!in_array($case['current_phase'], $allStates)) {
                     $newPhase = $protocol->getInitialState();
-                    $this->caseModel->updatePhase($case['id'], $newPhase);
-                    $this->caseModel->updateCcaa($case['id'], $ccaa);
-                    $case['current_phase'] = $newPhase;
-                    $case['ccaa_code'] = $ccaa;
+                    try {
+                        $this->caseModel->updatePhase($case['id'], $newPhase);
+                        $this->caseModel->updateCcaa($case['id'], $ccaa);
+                        $case['current_phase'] = $newPhase;
+                        $case['ccaa_code'] = $ccaa;
+                    } catch (\Throwable $repairError) {
+                        // Si falla la auto-reparación (ej. por bloqueo Barnahus), mantenemos la fase actual
+                        error_log("Error auto-reparando caso protocol: " . $repairError->getMessage());
+                    }
                 }
             }
 
@@ -63,7 +68,7 @@ class ProtocolController
 
                 // Fallbacks específicos por protocolo si no se encuentra el estado exacto en el timeline
                 if ($activeStepIndex === false || $activeStepIndex === -1) {
-                    if ($ccaa === 'aragon') {
+                    if ($ccaa === 'ARA') {
                         if ($currentPhase === 'protocolo_no_iniciado') $activeStepIndex = 0;
                         elseif (in_array($currentPhase, ['contrato_conducta', 'expediente_disciplinario'])) $activeStepIndex = 3;
                         elseif ($currentPhase === 'reabierto') $activeStepIndex = 4;
@@ -93,15 +98,26 @@ class ProtocolController
                 }
             }
 
-            echo json_encode([
+            $response = [
                 'success' => true, 
                 'case' => $case, 
                 'ccaa' => $ccaa, 
                 'protocol_meta' => $protocol_meta
-            ]);
+            ];
+
+            $json = json_encode($response, JSON_UNESCAPED_UNICODE);
+            if ($json === false) {
+                throw new \Exception("Error encoding JSON: " . json_last_error_msg());
+            }
+            
+            // Forzar limpieza absoluta de cualquier aviso PHP previo
+            while (ob_get_level()) ob_end_clean();
+            header('Content-Type: application/json');
+            echo $json;
+            exit;
         } catch (\Throwable $e) {
             error_log("Error en getCaseData: " . $e->getMessage());
-            http_response_code(500);
+            if (!headers_sent()) http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }

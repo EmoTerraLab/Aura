@@ -23,12 +23,22 @@ class ReportManagementController {
             return;
         }
 
+        // Si no es una petición AJAX/JSON, redirigir al dashboard con el reporte seleccionado
+        $isAjax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') 
+               || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
+
+        if (!$isAjax && !isset($_GET['json'])) {
+            header("Location: /staff/inbox?report_id=$id");
+            exit;
+        }
+
         // Anonimato
         if ($report['is_anonymous']) {
             if (Auth::role() === 'profesor') {
                 $report['student_name'] = 'Alumno Anónimo';
-            } else if (in_array(Auth::role(), ['direccion', 'orientador'])) {
-                $report['student_name'] .= ' (Anónimo)';
+            } else if (in_array(Auth::role(), ['direccion', 'orientador', 'admin'])) {
+                $name = $report['student_name'] ?? 'Alumno';
+                $report['student_name'] = $name . ' (Anónimo)';
             }
         }
 

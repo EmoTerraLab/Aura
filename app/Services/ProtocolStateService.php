@@ -47,7 +47,7 @@ class ProtocolStateService
     /**
      * Crea el registro inicial del caso legal.
      */
-    public function createInitialCase(int $reportId, string $ccaa, string $initialPhase = null): ?array
+    public function createInitialCase(int $reportId, string $ccaa, ?string $initialPhase = null): ?array
     {
         $protocol = \App\Services\Protocol\ProtocolFactory::make($ccaa);
         
@@ -91,7 +91,7 @@ class ProtocolStateService
             $this->logInternalAudit($case['report_id'], "Tipificació actualitzada: [$classification] amb gravetat [$severity]");
             
             // Automatismes según CCAA
-            if ($ccaa === 'cataluna') {
+            if ($ccaa === 'CAT') {
                 if ($severity === 'violencia_sexual') {
                     $this->caseModel->updatePhase($caseId, ProtocolCase::PHASE_BARNAHUS);
                     $this->logInternalAudit($case['report_id'], "🔒 BARNAHUS ACTIVAT: Pas directe a CREURE i PROTEGIR.");
@@ -100,7 +100,7 @@ class ProtocolStateService
                         $this->caseModel->updatePhase($caseId, ProtocolCase::PHASE_VALORACION);
                     }
                 }
-            } elseif ($ccaa === 'aragon') {
+            } elseif ($ccaa === 'ARA') {
                 if ($severity === 'violencia_sexual') {
                     $this->logInternalAudit($case['report_id'], "⚠️ ALERTA: Cas de violència sexual detectat. Notificar immediatament a Inspecció i FCSE.");
                 }

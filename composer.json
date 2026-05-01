@@ -1,6 +1,6 @@
 {
-    "name": "aura/production",
-    "version": "2.14.0",
+    "name": "aura/pdp",
+    "version": "2.21.1",
     "require": {
         "phpmailer/phpmailer": "^7.0",
         "spomky-labs/otphp": "^11.4",

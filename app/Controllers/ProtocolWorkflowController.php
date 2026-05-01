@@ -30,7 +30,7 @@ class ProtocolWorkflowController
 
     public function __construct()
     {
-        if (Config::get('ccaa_code') !== 'cataluna') {
+        if (Config::get('ccaa_code') !== 'CAT') {
             if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
                 http_response_code(403);
                 header('Content-Type: application/json');
@@ -268,7 +268,7 @@ class ProtocolWorkflowController
         $this->messageModel->create([
             'report_id' => $reportId,
             'sender_id' => Auth::id(),
-            'message' => "📋 [REGISTRE LEGAL] " . $message,
+            'message' => "📋 [AUDITORIA LEGAL] " . $message,
             'is_internal' => 1
         ]);
     }

@@ -17,23 +17,22 @@ class GenericProtocol implements ProtocolInterface {
 
     public function getName(): string {
         $names = [
-            'andalucia'       => 'Andalucía',
-            'asturias'        => 'Asturias',
-            'baleares'        => 'Baleares',
-            'canarias'        => 'Canarias',
-            'cantabria'       => 'Cantabria',
-            'castilla_leon'   => 'Castilla y León',
-            'castilla_mancha' => 'Castilla-La Mancha',
-            'valencia'        => 'Comunidad Valenciana',
-            'extremadura'     => 'Extremadura',
-            'galicia'         => 'Galicia',
-            'madrid'          => 'Madrid',
-            'murcia'          => 'Murcia',
-            'navarra'         => 'Navarra',
-            'pais_vasco'      => 'País Vasco',
-            'rioja'           => 'La Rioja',
-            'ceuta'           => 'Ceuta',
-            'melilla'         => 'Melilla'
+            'AND' => 'Andalucía',
+            'AST' => 'Asturias',
+            'BAL' => 'Baleares',
+            'CAN' => 'Canarias',
+            'CNT' => 'Cantabria',
+            'CYL' => 'Castilla y León',
+            'CLM' => 'Castilla-La Mancha',
+            'EXT' => 'Extremadura',
+            'GAL' => 'Galicia',
+            'MAD' => 'Madrid',
+            'MUR' => 'Murcia',
+            'NAV' => 'Navarra',
+            'PV'  => 'País Vasco',
+            'RIO' => 'La Rioja',
+            'CEU' => 'Ceuta',
+            'MEL' => 'Melilla'
         ];
         return $names[$this->ccaaCode] ?? ucfirst($this->ccaaCode);
     }

@@ -100,9 +100,9 @@ class AragonProtocol implements ProtocolInterface {
             $actions[] = ['key' => 'finish_val', 'label' => 'Finalizar Valoración (Ir a Resolución)', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_VALORADO."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_VALORADO) {
-            $actions[] = ['key' => 'acta_val', 'label' => 'Firmar Acta Valoración (ANEXO VII)', 'style' => 'success', 'onclick' => "alert('Funcionalidad en desarrollo.')"];
-            $actions[] = ['key' => 'informe', 'label' => 'Generar Informe-Resumen (ANEXO VIII)', 'style' => 'success', 'onclick' => "alert('Funcionalidad en desarrollo.')"];
-            $actions[] = ['key' => 'inspeccion', 'label' => 'Enviar a Inspección', 'style' => 'warning', 'onclick' => "alert('Funcionalidad en desarrollo.')"];
+            $actions[] = ['key' => 'acta_val', 'label' => 'Firmar Acta Valoración (ANEXO VII)', 'style' => 'success', 'onclick' => "alert('En desarrollo')"];
+            $actions[] = ['key' => 'informe', 'label' => 'Generar Informe-Resumen (ANEXO VIII)', 'style' => 'success', 'onclick' => "alert('En desarrollo')"];
+            $actions[] = ['key' => 'inspeccion', 'label' => 'Enviar a Inspección', 'style' => 'warning', 'onclick' => "alert('En desarrollo')"];
             $actions[] = ['key' => 'contrato', 'label' => 'Contrato Conducta', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_CONTRATO."')"];
             $actions[] = ['key' => 'expediente', 'label' => 'Expediente Disciplinario', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_EXPEDIENTE."')"];
             $actions[] = ['key' => 'seguimiento', 'label' => 'A Seguimiento', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_SEGUIMIENTO."')"];
