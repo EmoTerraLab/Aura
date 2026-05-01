@@ -214,4 +214,3 @@ $router->post('/admin/update/maintenance/disable', [\App\Controllers\Admin\Updat
 $router->post('/admin/update/backup/restore', [\App\Controllers\Admin\UpdateController::class, 'restoreBackup'], ['auth', 'roles:admin,direccion']);
 $router->post('/admin/update/backup/create', [\App\Controllers\Admin\UpdateController::class, 'createBackupManual'], ['auth', 'roles:admin,direccion']);
 $router->get('/admin/update/integrity', [\App\Controllers\Admin\UpdateController::class, 'checkIntegrity'], ['auth', 'roles:admin,direccion']);
-

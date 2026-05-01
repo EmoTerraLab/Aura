@@ -119,16 +119,16 @@ class ComunidadValencianaProtocol implements ProtocolInterface {
                 ['key' => 'sollicitar_assessorament_ueo', 'label' => 'Sol·licitar Assessorament UEO', 'style' => 'link', 'onclick' => "openFollowupModal($cid, 'ueo_assessorament')"]
             ],
             self::STATE_PRIMERES_ACTUACIONS => [
-                ['key' => 'constituir_equip', 'label' => "Constituir Equip d'Intervenció", 'style' => 'primary', 'onclick' => "alert('Equip constituït (Dins de les 24h)')"],
+                ['key' => 'constituir_equip', 'label' => "Constituir Equip d'Intervenció", 'style' => 'primary', 'onclick' => "openFollowupModal($cid, 'constitucio_equip')"],
                 ['key' => 'organitzar_proteccio', 'label' => 'Organitzar Protecció i Vigilància', 'style' => 'warning', 'onclick' => "openSecurityMap($cid)"],
-                ['key' => 'tutoria_afectiva', 'label' => 'Assignar Tutoria Afectiva', 'style' => 'secondary', 'onclick' => "alert('Tutoria afectiva assignada')"],
-                ['key' => 'registre_previ', 'label' => 'Registre a PREVI-ITACA', 'style' => 'indigo', 'onclick' => "alert('Registre realitzat')"],
+                ['key' => 'tutoria_afectiva', 'label' => 'Assignar Tutoria Afectiva', 'style' => 'secondary', 'onclick' => "openFollowupModal($cid, 'tutoria_afectiva')"],
+                ['key' => 'registre_previ', 'label' => 'Registre a PREVI-ITACA', 'style' => 'indigo', 'onclick' => "openFollowupModal($cid, 'registre_previ_inicial')"],
                 ['key' => 'passar_recollida', 'label' => "Passar a Recollida d'Informació", 'style' => 'success', 'onclick' => "nextPhase($cid, '".self::STATE_RECOLLIDA_INFORMACIO."')"]
             ],
             self::STATE_RECOLLIDA_INFORMACIO => [
-                ['key' => 'entrevista_alumnat', 'label' => 'Entrevistes Individuals Alumnat', 'style' => 'primary', 'onclick' => "alert('Entrevistes registrades')"],
-                ['key' => 'entrevista_families', 'label' => 'Entrevistes Famílies', 'style' => 'primary', 'onclick' => "alert('Entrevistes families registrades')"],
-                ['key' => 'custodia_evidencies', 'label' => "Custòdia d'Evidències", 'style' => 'warning', 'onclick' => "alert('Evidències custodiades')"],
+                ['key' => 'entrevista_alumnat', 'label' => 'Entrevistes Individuals Alumnat', 'style' => 'primary', 'onclick' => "openFollowupModal($cid, 'entrevista_alumnat')"],
+                ['key' => 'entrevista_families', 'label' => 'Entrevistes Famílies', 'style' => 'primary', 'onclick' => "openFollowupModal($cid, 'entrevista_families')"],
+                ['key' => 'custodia_evidencies', 'label' => "Custòdia d'Evidències", 'style' => 'warning', 'onclick' => "openFollowupModal($cid, 'custodia_evidencies')"],
                 ['key' => 'passar_valoracio', 'label' => 'Passar a Valoració', 'style' => 'success', 'onclick' => "nextPhase($cid, '".self::STATE_VALORACIO."')"]
             ],
             self::STATE_VALORACIO => [
@@ -136,23 +136,23 @@ class ComunidadValencianaProtocol implements ProtocolInterface {
                 ['key' => 'no_acreditat', 'label' => 'No Acreditat', 'style' => 'secondary', 'onclick' => "protocolClassify($cid, '".self::STATE_NO_ACREDITAT."')"]
             ],
             self::STATE_ACREDITAT => [
-                ['key' => 'comunicar_families', 'label' => 'Comunicar a Famílies', 'style' => 'primary', 'onclick' => "alert('Famílies comunicades')"],
-                ['key' => 'notificar_previ', 'label' => 'Notificar a PREVI-ITACA', 'style' => 'indigo', 'onclick' => "alert('Notificació realitzada')"],
-                ['key' => 'informar_comissio', 'label' => "Informar Comissió d'Igualtat", 'style' => 'secondary', 'onclick' => "alert('Comissió informada')"],
-                ['key' => 'nomenar_instructor', 'label' => "Nomenar Instructor/a", 'style' => 'warning', 'onclick' => "alert('Instructor nomenat')"],
+                ['key' => 'comunicar_families', 'label' => 'Comunicar a Famílies', 'style' => 'primary', 'onclick' => "openFollowupModal($cid, 'comunicacio_families_acreditat')"],
+                ['key' => 'notificar_previ', 'label' => 'Notificar a PREVI-ITACA', 'style' => 'indigo', 'onclick' => "openFollowupModal($cid, 'notificacio_previ')"],
+                ['key' => 'informar_comissio', 'label' => "Informar Comissió d'Igualtat", 'style' => 'secondary', 'onclick' => "openFollowupModal($cid, 'informacio_comissio')"],
+                ['key' => 'nomenar_instructor', 'label' => "Nomenar Instructor/a", 'style' => 'warning', 'onclick' => "openFollowupModal($cid, 'nomenament_instructor')"],
                 ['key' => 'iniciar_pla', 'label' => "Iniciar Pla d'Intervenció", 'style' => 'success', 'onclick' => "nextPhase($cid, '".self::STATE_PLA_INTERVENCIO."')"]
             ],
             self::STATE_NO_ACREDITAT => [
-                ['key' => 'comunicar_families_no_acreditat', 'label' => 'Comunicar No Acreditació', 'style' => 'secondary', 'onclick' => "alert('Famílies informades')"],
+                ['key' => 'comunicar_families_no_acreditat', 'label' => 'Comunicar No Acreditació', 'style' => 'secondary', 'onclick' => "openFollowupModal($cid, 'comunicacio_families_no_acreditat')"],
                 ['key' => 'pla_esbrinar', 'label' => "Pla per esbrinar causes", 'style' => 'primary', 'onclick' => "nextPhase($cid, '".self::STATE_PLA_INTERVENCIO."')"],
                 ['key' => 'tancar_directament', 'label' => 'Tancar Directament', 'style' => 'dark', 'onclick' => "nextPhase($cid, '".self::STATE_TANCAMENT."')"]
             ],
             self::STATE_PLA_INTERVENCIO => [
-                ['key' => 'mesures_educatives', 'label' => 'Mesures Educatives Correctores', 'style' => 'primary', 'onclick' => "alert('Mesures aplicades')"],
-                ['key' => 'mesures_disciplinaries', 'label' => 'Mesures Disciplinàries', 'style' => 'warning', 'onclick' => "alert('Disciplinària aplicada')"],
-                ['key' => 'mesures_suport', 'label' => 'Mesures de Suport i Acompanyament', 'style' => 'secondary', 'onclick' => "alert('Suport aplicat')"],
-                ['key' => 'fiscalia_menors', 'label' => 'Comunicar Fiscalia de Menors', 'style' => 'danger', 'onclick' => "alert('Fiscalia comunicada')"],
-                ['key' => 'intervencio_grupal', 'label' => 'Intervenció en Grup Classe', 'style' => 'indigo', 'onclick' => "alert('Intervenció realitzada')"],
+                ['key' => 'mesures_educatives', 'label' => 'Mesures Educatives Correctores', 'style' => 'primary', 'onclick' => "openFollowupModal($cid, 'mesures_educatives')"],
+                ['key' => 'mesures_disciplinaries', 'label' => 'Mesures Disciplinàries', 'style' => 'warning', 'onclick' => "openFollowupModal($cid, 'mesures_disciplinaries')"],
+                ['key' => 'mesures_suport', 'label' => 'Mesures de Suport i Acompanyament', 'style' => 'secondary', 'onclick' => "openFollowupModal($cid, 'mesures_suport')"],
+                ['key' => 'fiscalia_menors', 'label' => 'Comunicar Fiscalia de Menors', 'style' => 'danger', 'onclick' => "openFollowupModal($cid, 'fiscalia_menors')"],
+                ['key' => 'intervencio_grupal', 'label' => 'Intervenció en Grup Classe', 'style' => 'indigo', 'onclick' => "openFollowupModal($cid, 'intervencio_grupal')"],
                 ['key' => 'passar_seguiment', 'label' => 'Passar a Seguiment', 'style' => 'success', 'onclick' => "nextPhase($cid, '".self::STATE_SEGUIMENT."')"]
             ],
             self::STATE_SEGUIMENT => [
@@ -222,8 +222,16 @@ class ComunidadValencianaProtocol implements ProtocolInterface {
     public function canTransition(string $fromState, string $toState, array $case): bool|string {
         $allowed = $this->getValidTransitions($fromState);
         
-        if (!in_array($toState, $allowed)) {
-            return "Transició no vàlida de '$fromState' a '$toState' en el protocol de la Comunitat Valenciana.";
+        if (!in_array($toState, $allowed, true)) {
+            return sprintf('Transició no permesa: de «%s» a «%s».', $this->getStateLabel($fromState), $this->getStateLabel($toState));
+        }
+
+        if (in_array($toState, [self::STATE_ACREDITAT, self::STATE_NO_ACREDITAT], true) && $fromState !== self::STATE_VALORACIO) {
+            return 'La classificació com a acreditat o no acreditat només pot fer-se des de la fase de valoració.';
+        }
+
+        if ($toState === self::STATE_TANCAMENT && $fromState !== self::STATE_SEGUIMENT && $fromState !== self::STATE_NO_ACREDITAT) {
+            return 'El tancament requereix haver completat la fase de seguiment.';
         }
 
         return true;

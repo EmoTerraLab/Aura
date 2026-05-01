@@ -193,12 +193,12 @@ class UpdateController
 
         if (MaintenanceMode::isActive()) {
             MaintenanceMode::disable();
-            echo "<h1>Aura PDP</h1>";
+            echo "<h1>Aura</h1>";
             echo "<p>Modo mantenimiento <strong>DESACTIVADO</strong> correctamente.</p>";
             echo "<a href='/login'>Ir al inicio</a>";
         } else {
             MaintenanceMode::enable('Mantenimiento activado mediante acceso secreto.', 'Indefinido');
-            echo "<h1>Aura PDP</h1>";
+            echo "<h1>Aura</h1>";
             echo "<p>Modo mantenimiento <strong>ACTIVADO</strong> correctamente.</p>";
             echo "<a href='/'>Ver estado</a>";
         }

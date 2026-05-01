@@ -50,7 +50,7 @@ class PasswordResetController
             ]);
 
             $resetUrl = $this->getBaseUrl() . '/password/reset?token=' . $token;
-            $schoolName = Config::get('school_name', 'Aura PDP');
+            $schoolName = Config::get('school_name', 'Aura');
             $subject = Lang::t('auth.reset_email_subject', ['school' => $schoolName]);
             $body = $this->buildResetEmailBody($user['name'], $resetUrl, $schoolName);
             try {
@@ -209,7 +209,7 @@ class PasswordResetController
               <hr class="email-divider" style="border:0;border-top:1px solid #e5e7eb;margin:0 0 1.25rem;">
 
               <p class="footer-text" style="color:#6b7280;font-size:0.75rem;margin:0;line-height:1.6;">
-                Este email fue enviado por <strong>' . $schoolEsc . '</strong> a través de Aura PDP. Si no esperabas este correo, puedes ignorarlo.<br><br>
+                Este email fue enviado por <strong>' . $schoolEsc . '</strong> a través de Aura. Si no esperabas este correo, puedes ignorarlo.<br><br>
                 <img src="https://app.aura.emoterralab.com/icono-sinfondo.png" alt="" width="12" height="12" style="vertical-align:middle;margin-right:3px;">
                 <strong style="color:#4f46e5;">Aura</strong> &middot; Powered by <a href="https://emoterralab.com" style="color:#7c3aed;text-decoration:none;">EmoTerraLab</a>
               </p>

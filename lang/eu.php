@@ -167,6 +167,8 @@ return array (
   'auth.password_mismatch' => 'Pasahitzak ez datoz bat',
   'protocol.title' => 'Esku-hartze Protokoloa',
   'protocol.not_configured' => 'Administratzaileak ez du CCAA oraindik konfiguratu',
+  'protocol.not_configured_desc' => 'Jazarpen-kasuen aurrean jarduteko gida gaitzeko, hautatu zure Autonomia Erkidegoa ezarpenen panelean.',
+  'protocol.go_to_settings' => 'Joan Ezarpenetara',
   'protocol.not_found' => 'Ez dira aurkitu hautatutako eskualderako protokoloaren datuak.',
   'protocol.view_guide' => 'Ikusi Protokolo Gida',
   'protocol.nav_title' => 'Jazarpen Protokoloa',

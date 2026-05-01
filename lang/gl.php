@@ -167,6 +167,8 @@ return array (
   'auth.password_mismatch' => 'Os contrasinais non coinciden',
   'protocol.title' => 'Protocolo de Actuación',
   'protocol.not_configured' => 'O administrador non configurou a CCAA todavía',
+  'protocol.not_configured_desc' => 'Para habilitar a guía de actuación ante casos de acoso, selecciona a túa Comunidade Autónoma no panel de axustes.',
+  'protocol.go_to_settings' => 'Ir a Axustes',
   'protocol.not_found' => 'Non se atoparon os datos do protocolo para a rexión seleccionada.',
   'protocol.view_guide' => 'Ver Guía de Protocolo',
   'protocol.nav_title' => 'Protocolo Acoso',
