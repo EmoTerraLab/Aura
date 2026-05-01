@@ -32,9 +32,14 @@ class MurciaProtocolController
 
     public function showCase(int $id): void
     {
+        // El ID que viene puede ser el del caso de Murcia o el report_id
         $case = $this->caseModel->find($id);
+        if (!$case) {
+            $case = $this->caseModel->findByReportId($id);
+        }
+        
         if (!$case) die("Expediente no encontrado.");
-        $annexes = $this->annexModel->findByCase($id);
+        $annexes = $this->annexModel->findByCase($case['id']);
         
         $db = Database::getInstance();
         $staff = $db->query("SELECT id, name FROM users WHERE role != 'alumno'")->fetchAll();

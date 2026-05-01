@@ -349,7 +349,8 @@
         }
 
         const protocolCase = caseRes.case;
-        const isAdvancedProtocol = caseRes.success && caseRes.protocol_meta && !caseRes.protocol_meta.current_actions.some(a => a.key === 'not_implemented');
+        const protocolMeta = caseRes.protocol_meta;
+        const isAdvancedProtocol = caseRes.success && protocolMeta && protocolMeta.current_actions && !protocolMeta.current_actions.some(a => a.key === 'not_implemented');
 
         let mHtml = messages.map(m => {
             const isMe = m.is_current_user;

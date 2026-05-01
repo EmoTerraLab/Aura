@@ -1,7 +1,7 @@
 # 📚 Manual de Usuario y Técnico — Aura
 # User & Technical Manual — Aura
 
-> **Versión:** 2.21.1-stable
+> **Versión:** 2.22.0-stable
 > **Última actualización:** jueves, 30 de abril de 2026
 > **Idiomas / Languages:** Español · English
 

@@ -109,12 +109,8 @@ class ProtocolController
             if ($json === false) {
                 throw new \Exception("Error encoding JSON: " . json_last_error_msg());
             }
-            
-            // Forzar limpieza absoluta de cualquier aviso PHP previo
-            while (ob_get_level()) ob_end_clean();
-            header('Content-Type: application/json');
+            if (ob_get_length()) ob_clean();
             echo $json;
-            exit;
         } catch (\Throwable $e) {
             error_log("Error en getCaseData: " . $e->getMessage());
             if (!headers_sent()) http_response_code(500);
