@@ -216,7 +216,7 @@ async function runUpdate() {
     btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> EJECUTANDO...';
     
     logContainer.classList.remove('hidden');
-    log.textContent = '> Aura Update Engine v2.21.1\n> Iniciando proceso de sincronización...\n';
+    log.textContent = '> Aura Update Engine v2.22.0\n> Iniciando proceso de sincronización...\n';
 
     try {
         const res = await fetch('/admin/update/run', {
