@@ -47,7 +47,7 @@ class ProtocolStateService
     /**
      * Crea el registro inicial del caso legal.
      */
-    public function createInitialCase(int $reportId, string $ccaa, string $initialPhase = null): ?array
+    public function createInitialCase(int $reportId, string $ccaa, ?string $initialPhase = null): ?array
     {
         $protocol = \App\Services\Protocol\ProtocolFactory::make($ccaa);
         

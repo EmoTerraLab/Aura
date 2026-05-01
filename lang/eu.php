@@ -69,6 +69,8 @@ return array (
   'staff.inbox_empty' => 'Ez dago azken abisurik.',
   'staff.filter_all' => 'Guztiak',
   'staff.select_report' => 'Hautatu jakinarazpen bat',
+  'staff.select_case_title' => 'Hautatu jakinarazpen bat',
+  'staff.select_case_desc' => 'Aukeratu ezkerreko zerrendako ohar bat xehetasunak ikusteko eta kasua kudeatzen hasteko.',
   'staff.case' => 'Kasua',
   'staff.aula' => 'Gela',
   'staff.ia_elos' => 'IA ELOS',

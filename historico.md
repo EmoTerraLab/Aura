@@ -2,6 +2,26 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-02] - Consolidación de Protocolos y Blindaje de UI (v2.22.0-stable)
+
+### 🚀 Mejoras y Funcionalidades
+- **Protocolo Comunitat Valenciana:** Implementada la vista de gestión avanzada (`case_detail`) y controlador específico para la normativa valenciana, permitiendo un seguimiento más exhaustivo.
+- **Protocolo de Murcia:** Finalizada la integración de la vista de detalle de casos con soporte para registros de actuación especializados.
+- **Blindaje de Peticiones AJAX:** Refactorizado el sistema de comunicación con el backend (`fetchJson`) para incluir gestión de timeouts, detección de modo mantenimiento y eliminación de errores silenciosos.
+
+### 🛡️ Seguridad y Estabilidad
+- **Optimización de JSON:** Implementado escape Unicode y limpieza de buffers en las respuestas de API para garantizar la compatibilidad con caracteres especiales.
+- **Manejo de Errores:** Mejorada la captura de excepciones en la auto-reparación de protocolos para evitar interrupciones en la experiencia de usuario ante fallos de base de datos.
+- **Internacionalización:** Añadidas cadenas de traducción críticas para los módulos de protocolos en todos los idiomas soportados.
+
+## [2026-05-02] - Correcciones y Estabilidad (v2.21.1-stable)
+
+### 🛡️ Seguridad y Estabilidad
+- **Corrección de Interfaz:** Solucionado error crítico de JavaScript en el panel de staff que provocaba un bucle de carga infinito (spinner) al consultar ciertos casos.
+- **Robustez del Protocolo:** Mejorada la lógica de auto-reparación de fases en el controlador de protocolos para evitar bloqueos al cambiar de normativa regional.
+- **Internacionalización (i18n):** Corregidas claves de traducción faltantes en Catalán, Euskera y Gallego que mostraban texto técnico en la interfaz.
+- **Mejora de Seguimientos:** Actualizado el sistema de registros de actuación para soportar tipos específicos de intervención requeridos por el protocolo de Murcia.
+
 ## [2026-05-02] - Protocolo de Murcia (v2.21.0-stable)
 
 ### 🚀 Mejoras y Funcionalidades

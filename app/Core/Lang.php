@@ -17,6 +17,8 @@ class Lang
     private static string $currentLang = 'es';
     private static array $supported = ['es', 'ca', 'gl', 'eu', 'en'];
 
+    private static array $fallbackTranslations = [];
+
     /**
      * Inicializa el sistema de idiomas. Llamar una vez en el bootstrap (index.php).
      */
@@ -25,15 +27,23 @@ class Lang
         $lang = self::resolveLanguage();
         self::$currentLang = $lang;
         self::load($lang);
+        
+        // Cargar fallback (es) si el idioma actual no es es
+        if ($lang !== 'es') {
+            $fallbackFile = __DIR__ . '/../../lang/es.php';
+            if (file_exists($fallbackFile)) {
+                self::$fallbackTranslations = require $fallbackFile;
+            }
+        }
     }
 
     /**
-     * Traduce una clave. Si no existe, devuelve la clave como fallback.
-     * Soporta reemplazos: t('welcome', ['name' => 'Ana']) con clave 'Hola, :name'
+     * Traduce una clave. Si no existe en el idioma actual, busca en el fallback (es).
+     * Si tampoco existe, devuelve la clave.
      */
     public static function t(string $key, array $replacements = []): string
     {
-        $text = self::$translations[$key] ?? $key;
+        $text = self::$translations[$key] ?? self::$fallbackTranslations[$key] ?? $key;
         foreach ($replacements as $placeholder => $value) {
             $text = str_replace(':' . $placeholder, htmlspecialchars((string)$value), $text);
         }

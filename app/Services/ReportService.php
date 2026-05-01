@@ -24,8 +24,9 @@ class ReportService {
             if ($report['is_anonymous']) {
                 if ($role === 'profesor') {
                     $report['student_name'] = 'Alumno Anónimo';
-                } else if (in_array($role, ['direccion', 'orientador'])) {
-                    $report['student_name'] .= ' (Anónimo)';
+                } else if (in_array($role, ['direccion', 'orientador', 'admin'])) {
+                    $name = $report['student_name'] ?? 'Alumno';
+                    $report['student_name'] = $name . ' (Anónimo)';
                 }
             }
         }

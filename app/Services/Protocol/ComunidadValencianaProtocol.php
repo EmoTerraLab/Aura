@@ -33,8 +33,7 @@ class ComunidadValencianaProtocol implements ProtocolInterface {
     }
 
     public function getManageUrl(int $caseId): string {
-        // Seguint el patró de Catalunya, s'integra en el dashboard de staff
-        return "/staff/reports/{$caseId}";
+        return "/protocol/valencia/case/{$caseId}";
     }
 
     public function getLegalReference(): string {
@@ -98,11 +97,11 @@ class ComunidadValencianaProtocol implements ProtocolInterface {
     public function getTimelineSteps(): array {
         return [
             ['key' => self::STATE_DETECCIO, 'label' => 'Detecció', 'icon' => 'search', 'deadline_days' => null],
-            ['key' => self::STATE_COMUNICACIO_DIRECCIO, 'label' => 'Comunicació direcció', 'icon' => 'envelope', 'deadline_days' => null],
-            ['key' => self::STATE_PRIMERES_ACTUACIONS, 'label' => 'Primeres actuacions', 'icon' => 'shield-exclamation', 'deadline_days' => 1],
-            ['key' => self::STATE_RECOLLIDA_INFORMACIO, 'label' => "Recollida d'informació", 'icon' => 'clipboard-list', 'deadline_days' => null],
+            ['key' => self::STATE_COMUNICACIO_DIRECCIO, 'label' => 'Comunicació', 'icon' => 'envelope', 'deadline_days' => null],
+            ['key' => self::STATE_PRIMERES_ACTUACIONS, 'label' => 'Actuacions', 'icon' => 'shield-exclamation', 'deadline_days' => 1],
+            ['key' => self::STATE_RECOLLIDA_INFORMACIO, 'label' => "Informació", 'icon' => 'clipboard-list', 'deadline_days' => null],
             ['key' => self::STATE_VALORACIO, 'label' => 'Valoració', 'icon' => 'gavel', 'deadline_days' => null],
-            ['key' => self::STATE_PLA_INTERVENCIO, 'label' => "Pla d'intervenció", 'icon' => 'flag', 'deadline_days' => null],
+            ['key' => self::STATE_PLA_INTERVENCIO, 'label' => "Intervenció", 'icon' => 'flag', 'deadline_days' => null],
             ['key' => self::STATE_SEGUIMENT, 'label' => 'Seguiment', 'icon' => 'eye', 'deadline_days' => null],
             ['key' => self::STATE_TANCAMENT, 'label' => 'Tancament', 'icon' => 'check-circle', 'deadline_days' => null]
         ];
@@ -116,7 +115,7 @@ class ComunidadValencianaProtocol implements ProtocolInterface {
             ],
             self::STATE_COMUNICACIO_DIRECCIO => [
                 ['key' => 'iniciar_primeres_actuacions', 'label' => 'Iniciar Primeres Actuacions', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".self::STATE_PRIMERES_ACTUACIONS."')"],
-                ['key' => 'sollicitar_assessorament_ueo', 'label' => 'Sol·licitar Assessorament UEO', 'style' => 'link', 'onclick' => "openFollowupModal($cid, 'ueo_assessorament')"]
+                ['key' => 'sollicitar_assessorament_ueo', 'label' => 'Sol.licitar Assessorament UEO', 'style' => 'link', 'onclick' => "openFollowupModal($cid, 'ueo_assessorament')"]
             ],
             self::STATE_PRIMERES_ACTUACIONS => [
                 ['key' => 'constituir_equip', 'label' => "Constituir Equip d'Intervenció", 'style' => 'primary', 'onclick' => "openFollowupModal($cid, 'constitucio_equip')"],
@@ -223,7 +222,7 @@ class ComunidadValencianaProtocol implements ProtocolInterface {
         $allowed = $this->getValidTransitions($fromState);
         
         if (!in_array($toState, $allowed, true)) {
-            return sprintf('Transició no permesa: de «%s» a «%s».', $this->getStateLabel($fromState), $this->getStateLabel($toState));
+            return sprintf('Transició no permesa: de "%s" a "%s".', $this->getStateLabel($fromState), $this->getStateLabel($toState));
         }
 
         if (in_array($toState, [self::STATE_ACREDITAT, self::STATE_NO_ACREDITAT], true) && $fromState !== self::STATE_VALORACIO) {

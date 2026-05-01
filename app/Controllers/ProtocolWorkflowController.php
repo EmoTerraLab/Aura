@@ -268,7 +268,7 @@ class ProtocolWorkflowController
         $this->messageModel->create([
             'report_id' => $reportId,
             'sender_id' => Auth::id(),
-            'message' => "📋 [REGISTRE LEGAL] " . $message,
+            'message' => "📋 [AUDITORIA LEGAL] " . $message,
             'is_internal' => 1
         ]);
     }

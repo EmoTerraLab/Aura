@@ -180,6 +180,44 @@ use App\Models\ProtocolCase;
             </div>
             <?php endif; ?>
 
+            <?php if ($case['status'] === ProtocolCase::PHASE_MUR_CIERRE): ?>
+            <div class="bg-white rounded-[2.5rem] border-2 border-amber-500/20 p-10 space-y-8 animate-[fadeIn_0.5s]">
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Fase 5: Actuaciones Posteriores y Cierre</h2>
+                    <p class="text-slate-500 text-sm">Entrega de Anexo V a familias y comunicación a autoridades competentes.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <h4 class="font-black text-slate-700">Concurrencia con Orden Penal</h4>
+                        <div class="space-y-4">
+                            <label class="block text-xs font-bold text-slate-400 uppercase">Edad del Alumno / Trámite Extra</label>
+                            <select id="age_group" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm">
+                                <option value="menor_14">Menor de 14 años (Servicios Sociales)</option>
+                                <option value="mayor_14">Mayor de 14 años (Fiscalía de Menores)</option>
+                                <option value="adulto">Mayor de edad (Fuerzas de Seguridad - FCSE)</option>
+                            </select>
+                            <button onclick="submitLegalComm()" class="w-full py-4 bg-indigo-500 text-white rounded-full font-black text-xs uppercase tracking-widest shadow-lg">Registrar Comunicación Legal</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h4 class="font-black text-slate-700">Acciones Finales</h4>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="alert('Funcionalidad de impresión de Anexo V en desarrollo')" class="p-4 bg-slate-50 rounded-2xl text-left flex items-center gap-3 border border-slate-100 hover:bg-white transition-all">
+                                <span class="material-symbols-outlined text-slate-400">print</span>
+                                <span class="text-xs font-bold text-slate-700">Generar Copia Individualizada Anexo V</span>
+                            </button>
+                            <button onclick="nextStep('tancament')" class="p-4 bg-emerald-500 text-white rounded-2xl text-left flex items-center gap-3 shadow-lg hover:scale-[1.02] transition-all">
+                                <span class="material-symbols-outlined">verified</span>
+                                <span class="text-xs font-black uppercase tracking-widest">Finalizar y Cerrar Expediente</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+
         </div>
     </div>
 </div>
@@ -233,6 +271,14 @@ function openMurciaModal(type, extra = '') {
                 <button onclick="saveInterview('${extra}')" class="w-full py-5 bg-amber-500 text-white rounded-full font-black shadow-lg">Guardar Registro</button>
             </div>
         `;
+    } else if(type === 'medidas') {
+        html = `
+            <div class="p-10 space-y-6">
+                <h3 class="text-xl font-black">Medidas de Urgencia</h3>
+                <textarea id="urgency_notes" class="w-full bg-slate-50 border-0 rounded-3xl p-6 text-sm" rows="6" placeholder="Describe las medidas inmediatas adoptadas..."></textarea>
+                <button onclick="saveUrgencyMeasures()" class="w-full py-5 bg-amber-500 text-white rounded-full font-black shadow-lg">Registrar Medidas</button>
+            </div>
+        `;
     }
     
     content.innerHTML = html + `<button onclick="closeMurciaModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-800"><span class="material-symbols-outlined">close</span></button>`;
@@ -249,6 +295,17 @@ async function saveDesignation() {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `coordinator_id=${coordId}&csrf_token=<?= \App\Core\Csrf::generateToken() ?>`
+    });
+    const data = await res.json();
+    if(data.success) window.location.reload();
+}
+
+async function saveUrgencyMeasures() {
+    const notes = document.getElementById('urgency_notes').value;
+    const res = await fetch(`/api/protocol/murcia/urgency-measures/<?= $case['id'] ?>`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `measures=${encodeURIComponent(notes)}&csrf_token=<?= \App\Core\Csrf::generateToken() ?>`
     });
     const data = await res.json();
     if(data.success) window.location.reload();
@@ -302,7 +359,18 @@ async function submitValuation() {
     const data = await res.json();
     if(data.success) {
         alert('Valoración registrada. Pasando a actuaciones posteriores.');
-        nextStep('<?= ProtocolCase::PHASE_MUR_CIERRE ?>');
+        window.location.reload();
     }
+}
+
+async function submitLegalComm() {
+    const ageGroup = document.getElementById('age_group').value;
+    const res = await fetch(`/api/protocol/murcia/legal-comm/<?= $case['id'] ?>`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `age_group=${ageGroup}&csrf_token=<?= \App\Core\Csrf::generateToken() ?>`
+    });
+    const data = await res.json();
+    if(data.success) alert('Comunicación a ' + data.entity + ' registrada.');
 }
 </script>

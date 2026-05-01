@@ -124,6 +124,9 @@ $router->post("/api/protocol/murcia/anexo-iv/{id}", [\App\Controllers\MurciaProt
 $router->post("/api/protocol/murcia/valuation/{id}", [\App\Controllers\MurciaProtocolController::class, "storeValuation"], ["auth"]);
 $router->post("/api/protocol/murcia/legal-comm/{id}", [\App\Controllers\MurciaProtocolController::class, "storeLegalCommunication"], ["auth"]);
 
+// -- Protocolo Comunitat Valenciana --
+$router->get("/protocol/valencia/case/{id}", [\App\Controllers\ComunidadValencianaController::class, "showCase"], ["auth"]);
+
 // -- Endpoints de Alumno --
 
 // GET /alumno/dashboard : Dashboard alumno con historial de reportes

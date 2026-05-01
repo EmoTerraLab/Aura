@@ -264,6 +264,13 @@
     document.addEventListener("DOMContentLoaded", () => {
         loadMentions();
         loadColleagues();
+
+        // Deep linking: cargar reporte si viene en la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const reportId = urlParams.get('report_id');
+        if (reportId) {
+            loadReport(reportId);
+        }
     });
 
     async function loadColleagues() {
@@ -479,10 +486,15 @@
     }
 
     function renderProtocolActionsCard(c, meta) {
-        if (!c || !meta || !meta.current_actions || meta.current_actions.length === 0) {
+        if (!c || !meta || !meta.current_actions || !Array.isArray(meta.current_actions) || meta.current_actions.length === 0) {
+             let msg = 'No hay acciones disponibles para esta fase.';
+             if (!meta) msg = 'Cargando datos del protocolo...';
+             else if (!c) msg = 'No se ha podido vincular el expediente legal.';
+             else if (!meta.current_actions) msg = 'Error en la configuración de acciones del protocolo.';
+
              return `
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 italic text-slate-400 text-xs text-center">
-                    No hay acciones disponibles para esta fase.
+                    ${msg}
                 </div>
             `;
         }
@@ -505,8 +517,8 @@
             }
         };
 
-        const comms = typeof c.communications === 'string' ? JSON.parse(c.communications || '{}') : (c.communications || {});
-        const checks = typeof c.closure_checks === 'string' ? JSON.parse(c.closure_checks || '{}') : (c.closure_checks || {});
+        const comms = c.communications ? (typeof c.communications === 'string' ? JSON.parse(c.communications) : c.communications) : {};
+        const checks = c.closure_checks ? (typeof c.closure_checks === 'string' ? JSON.parse(c.closure_checks) : c.closure_checks) : {};
 
         const buttonActions = actions.filter(a => !['reva_checklist', 'closure_checklist'].includes(a.style));
         const revaAction = actions.find(a => a.style === 'reva_checklist');
@@ -646,24 +658,26 @@
         await fetchJson(`/api/protocol/case/${caseId}/closure`, { method: 'POST', body: { checks: currentClosureChecks } });
     }
 
-    function openFollowupModal(caseId) {
+    function openFollowupModal(caseId, type = null) {
+        const title = type ? `Registre d'Actuació: ${type.replace(/_/g, ' ').toUpperCase()}` : 'Nou Registre de Seguiment';
         const html = `
             <div id="modal-followup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
                 <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden">
                     <div class="p-6 border-b flex items-center justify-between">
-                        <h3 class="font-black">Nou Registre de Seguiment</h3>
+                        <h3 class="font-black">${title}</h3>
                         <button onclick="document.getElementById('modal-followup').remove()"><span class="material-symbols-outlined">close</span></button>
                     </div>
                     <div class="p-6 space-y-4">
-                        <select id="f-target" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm">
+                        <select id="f-target" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm ${type ? 'hidden' : ''}">
                             <option value="victima">Víctima</option>
                             <option value="agressor">Agressor</option>
                             <option value="familia">Família</option>
                             <option value="grup_classe">Grup Classe</option>
+                            ${type ? `<option value="${type}" selected>${type}</option>` : ''}
                         </select>
                         <input type="date" id="f-date" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm" value="${new Date().toISOString().split('T')[0]}">
                         <textarea id="f-notes" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm" rows="4" placeholder="Notes de la sessió..."></textarea>
-                        <button onclick="saveFollowup(${caseId})" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg">Guardar Sessió</button>
+                        <button onclick="saveFollowup(${caseId}, '${type || ''}')" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg">Guardar Sessió</button>
                     </div>
                 </div>
             </div>
@@ -671,9 +685,9 @@
         document.body.insertAdjacentHTML('beforeend', html);
     }
 
-    async function saveFollowup(caseId) {
+    async function saveFollowup(caseId, type = null) {
         const data = {
-            target_type: document.getElementById('f-target').value,
+            target_type: type || document.getElementById('f-target').value,
             session_date: document.getElementById('f-date').value,
             notes: document.getElementById('f-notes').value
         };

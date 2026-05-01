@@ -46,10 +46,15 @@ class ProtocolController
                 $allStates = $protocol->getAllStates();
                 if (!in_array($case['current_phase'], $allStates)) {
                     $newPhase = $protocol->getInitialState();
-                    $this->caseModel->updatePhase($case['id'], $newPhase);
-                    $this->caseModel->updateCcaa($case['id'], $ccaa);
-                    $case['current_phase'] = $newPhase;
-                    $case['ccaa_code'] = $ccaa;
+                    try {
+                        $this->caseModel->updatePhase($case['id'], $newPhase);
+                        $this->caseModel->updateCcaa($case['id'], $ccaa);
+                        $case['current_phase'] = $newPhase;
+                        $case['ccaa_code'] = $ccaa;
+                    } catch (\Throwable $repairError) {
+                        // Si falla la auto-reparación (ej. por bloqueo Barnahus), mantenemos la fase actual
+                        error_log("Error auto-reparando caso protocol: " . $repairError->getMessage());
+                    }
                 }
             }
 
@@ -93,15 +98,22 @@ class ProtocolController
                 }
             }
 
-            echo json_encode([
+            $response = [
                 'success' => true, 
                 'case' => $case, 
                 'ccaa' => $ccaa, 
                 'protocol_meta' => $protocol_meta
-            ]);
+            ];
+
+            $json = json_encode($response, JSON_UNESCAPED_UNICODE);
+            if ($json === false) {
+                throw new \Exception("Error encoding JSON: " . json_last_error_msg());
+            }
+            if (ob_get_length()) ob_clean();
+            echo $json;
         } catch (\Throwable $e) {
             error_log("Error en getCaseData: " . $e->getMessage());
-            http_response_code(500);
+            if (!headers_sent()) http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
