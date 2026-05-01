@@ -30,17 +30,6 @@ class ProtocolWorkflowController
 
     public function __construct()
     {
-        if (Config::get('ccaa_code') !== 'cataluna') {
-            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
-                http_response_code(403);
-                header('Content-Type: application/json');
-                echo json_encode(['error' => 'El protocolo de Catalunya no está habilitado en este centro']);
-            } else {
-                http_response_code(403);
-                die('El protocolo de Catalunya no está habilitado en este centro');
-            }
-            exit;
-        }
         $this->caseModel = new ProtocolCase();
         $this->reportModel = new Report();
         $this->mapModel = new SecurityMap();
@@ -127,7 +116,7 @@ class ProtocolWorkflowController
         
         $ccaa = $case['ccaa_code'];
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
-        $schoolName = Config::get('school_name', 'Aura PDP');
+        $schoolName = Config::get('school_name', 'Aura');
 
         View::render("protocol/templates/{$ccaa}/{$templateName}", [
             'case' => $case,

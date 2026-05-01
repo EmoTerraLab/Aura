@@ -139,6 +139,27 @@ class AragonProtocol implements ProtocolInterface {
         ];
     }
 
+    public function getDeadlineAlert(string $state, int $schoolDaysElapsed): ?array {
+        if ($state === ProtocolCase::PHASE_AR_VALORACION) {
+            if ($schoolDaysElapsed <= 15) {
+                return ['level' => 'ok', 'message' => "Día lectivo $schoolDaysElapsed de 18"];
+            } elseif ($schoolDaysElapsed <= 18) {
+                return ['level' => 'warning', 'message' => "Día lectivo $schoolDaysElapsed — Límite de valoración próximo"];
+            } else {
+                return ['level' => 'danger', 'message' => "PLAZO SUPERADO — Límite de valoración era día 18"];
+            }
+        } elseif ($state === ProtocolCase::PHASE_AR_VALORADO) {
+            if ($schoolDaysElapsed <= 20) {
+                return ['level' => 'warning', 'message' => "Día lectivo $schoolDaysElapsed de 22"];
+            } elseif ($schoolDaysElapsed <= 22) {
+                return ['level' => 'danger', 'message' => "¡Envío a Inspección obligatorio! Día $schoolDaysElapsed de 22"];
+            } else {
+                return ['level' => 'overdue', 'message' => "PLAZO SUPERADO — Notificar a Inspección urgentemente"];
+            }
+        }
+        return null;
+    }
+
     public function getExclusiveTools(): array {
         return [
             'anexo_i_a', 'anexo_i_b', 'anexo_ii', 'anexo_iii', 'anexo_iv', 
