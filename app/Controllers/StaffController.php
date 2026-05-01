@@ -61,19 +61,12 @@ class StaffController {
         exit;
     }
 
-    /**
-     * Muestra el formulario para que el personal cambie su contraseña.
-     */
     public function showPasswordForm() {
         View::render('staff/password_change', [
             'title' => 'Aura - ' . Lang::t('auth.change_password')
         ]);
     }
 
-    /**
-     * Procesa el cambio de contraseña del usuario autenticado.
-     * Valida la contraseña actual y la fortaleza de la nueva.
-     */
     public function updatePassword() {
         \App\Core\Csrf::validateRequest();
         $currentPassword = $_POST['current_password'] ?? '';

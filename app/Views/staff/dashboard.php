@@ -409,14 +409,8 @@
             if (resPanel && originalModule) {
                 const activeProtocol = caseRes.ccaa;
                 
-                // Lógica de visibilidad del módulo restaurativo
+                // Solo Catalunya tiene prácticas restaurativas actualmente
                 let showRestorative = (activeProtocol === 'CAT');
-                
-                // En Aragón también se usa el módulo, pero solo a partir de la fase de Valoración
-                if (activeProtocol === 'ARA') {
-                    const earlyPhases = ['comunicacion_recibida', 'protocolo_iniciado', 'protocolo_no_iniciado'];
-                    showRestorative = !earlyPhases.includes(protocolCase.current_phase);
-                }
 
                 if (showRestorative) {
                     resPanel.appendChild(originalModule);
@@ -841,6 +835,3 @@
 <?php $scripts = ob_get_clean(); ?>
 
 <?php require __DIR__ . '/partials/restorative_panel.php'; ?>
-p'; ?>
-hp'; ?>
-p'; ?>

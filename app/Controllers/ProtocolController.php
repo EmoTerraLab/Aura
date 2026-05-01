@@ -34,12 +34,11 @@ class ProtocolController
             $ccaa = Config::get('ccaa_code', 'generic');
             
             $protocol = ProtocolFactory::make($ccaa);
-            $normalizedCcaa = $protocol->getCode();
 
             $case = $this->caseModel->findByReport($report_id);
             
             if (!$case && $protocol->isFullyImplemented()) {
-                $case = $this->stateService->createInitialCase($report_id, $normalizedCcaa, $protocol->getInitialState());
+                $case = $this->stateService->createInitialCase($report_id, $ccaa, $protocol->getInitialState());
             }
 
             // Auto-reparar fase si no corresponde a la CCAA actual (ej. cambio de región o error inicial)
@@ -48,9 +47,9 @@ class ProtocolController
                 if (!in_array($case['current_phase'], $allStates)) {
                     $newPhase = $protocol->getInitialState();
                     $this->caseModel->updatePhase($case['id'], $newPhase);
-                    $this->caseModel->updateCcaa($case['id'], $normalizedCcaa);
+                    $this->caseModel->updateCcaa($case['id'], $ccaa);
                     $case['current_phase'] = $newPhase;
-                    $case['ccaa_code'] = $normalizedCcaa;
+                    $case['ccaa_code'] = $ccaa;
                 }
             }
 
@@ -64,7 +63,7 @@ class ProtocolController
 
                 // Fallbacks específicos por protocolo si no se encuentra el estado exacto en el timeline
                 if ($activeStepIndex === false || $activeStepIndex === -1) {
-                    if ($normalizedCcaa === 'ARA') {
+                    if ($ccaa === 'aragon') {
                         if ($currentPhase === 'protocolo_no_iniciado') $activeStepIndex = 0;
                         elseif (in_array($currentPhase, ['contrato_conducta', 'expediente_disciplinario'])) $activeStepIndex = 3;
                         elseif ($currentPhase === 'reabierto') $activeStepIndex = 4;
@@ -73,7 +72,7 @@ class ProtocolController
             }
 
             $protocol_meta = [
-                'ccaa_code' => $normalizedCcaa,
+                'ccaa_code' => $protocol->getCode(),
                 'ccaa_name' => $protocol->getName(),
                 'is_fully_implemented' => $protocol->isFullyImplemented(),
                 'manage_url' => $protocol->getManageUrl($report_id),
@@ -97,7 +96,7 @@ class ProtocolController
             echo json_encode([
                 'success' => true, 
                 'case' => $case, 
-                'ccaa' => $normalizedCcaa, 
+                'ccaa' => $ccaa, 
                 'protocol_meta' => $protocol_meta
             ]);
         } catch (\Throwable $e) {

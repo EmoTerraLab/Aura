@@ -2,6 +2,19 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-01] - Consolidación de Protocolos y Limpieza de Producción (v2.14.0-stable)
+
+### 🚀 Mejoras y Funcionalidades
+- **Arquitectura de Protocolos:** Sincronización completa con el motor de preproducción (PDP) para la gestión dinámica de protocolos autonómicos.
+- **Protocolo de Aragón:** Actualización de flujos legales, anexos oficiales (I-X) y vinculación directa con el Dashboard de gestión.
+- **Internacionalización (i18n):** Restauración del sistema de traducciones dinámicas en todos los módulos de protocolo y seguimiento.
+- **Documentación:** Reescritura total del `README.md` con manuales de instalación, arquitectura y seguridad en bilingüe.
+
+### 🛡️ Seguridad y Estabilidad
+- **Sanitización de Código:** Corrección de errores de corrupción en rutas y vistas derivados del despliegue manual.
+- **Hardening:** Unificación de la identidad visual "Aura" eliminando referencias a entornos de desarrollo en correos y logs.
+- **Integridad de Datos:** Limpieza de migraciones duplicadas y normalización del esquema de base de datos.
+
 ## [2026-05-01] - Pulido de UX y Estabilización Técnica (v2.13.8-stable)
 
 ### 🚀 Mejoras y Funcionalidades
@@ -18,14 +31,25 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 ## [2026-04-30] - Estabilización de Producción y Alertas Legales (v2.12.0-stable)
 
 ### 🚀 Mejoras y Funcionalidades
-- **Protocolos CCAA (Aragón/Cataluña):** Implementación de alertas visuales críticas y bloqueos de flujo para casos de presunta violencia sexual, alineando el sistema con las normativas legales vigentes.
-- **Refactorización de Timeline:** Se ha centralizado la lógica del cálculo de fases activas en el backend (`ProtocolController`), garantizando una sincronización perfecta entre el estado del servidor y la representación visual en el Dashboard.
-- **Sincronización PDP:** Integración y estabilización de los cambios provenientes de la rama de preproducción (PDP) en la rama estable de producción.
+- **Protocolos CCAA (Aragón/Cataluña):** Implementación de alertas visuales críticas y bloqueos de flujo para casos de presunta violencia sexual.
+- **Refactorización de Timeline:** Centralización de la lógica del cálculo de fases activas en el backend.
+- **Sincronización PDP:** Integración y estabilización de los cambios provenientes de la rama de preproducción.
+
+## [2026-04-28] - Estabilidad y Recuperación de Cuentas (v2.2.0-stable)
+
+### 🚀 Mejoras y Funcionalidades
+- **Recuperación de Contraseña:** Implementación completa del flujo de recuperación de contraseña.
+- **Identidad Visual en Emails:** Rediseño total de la plantilla de correo de recuperación.
+- **Personalización Dinámica:** Inclusión automática del nombre de la institución en correos.
 
 ### 🛡️ Seguridad y Estabilidad
-- **Hardening de Producción:** Eliminación de logs de depuración (`console.log`) y desactivación del auto-rellenado de OTP en la interfaz de login para fortalecer la seguridad en el entorno real.
-- **Gestión de Migraciones:** Limpieza de inconsistencias en los archivos de migración y verificación de la integridad de la base de datos en el VPS.
-- **Documentación:** Actualización exhaustiva del `README.md` y `UPDATING.md` para reflejar el estado actual de los protocolos multi-comunidad y prácticas restaurativas.
+- **Modelo de Usuario:** Añadido método `updatePassword`.
+- **Codificación de Emails:** Corregido problema de codificación (UTF-8) en asuntos.
+- **Motor de Migraciones:** Soporte para clases anónimas y patrón nominal.
 
-## [2026-04-29] - Estabilidad y Recuperación de Cuentas (v2.2.0-stable)
-... rest of file ...
+## [2024-04-27] - Consolidación de Producción (v1.7.0-stable)
+
+### 🚀 Lanzamiento de Producción
+- **Sincronización Total:** Consolidación final de todos los módulos de preproducción (PDP) en la versión estable de producción.
+- **Limpieza de Marca:** Eliminación definitiva de todas las referencias "PDP" en el código fuente, base de datos, configuraciones y manuales.
+- **Identidad Visual:** Integración completa de la nueva iconografía y logotipos institucionales en todas las interfaces.

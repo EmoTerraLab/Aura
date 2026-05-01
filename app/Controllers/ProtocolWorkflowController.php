@@ -30,6 +30,17 @@ class ProtocolWorkflowController
 
     public function __construct()
     {
+        if (Config::get('ccaa_code') !== 'cataluna') {
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+                http_response_code(403);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'El protocolo de Catalunya no está habilitado en este centro']);
+            } else {
+                http_response_code(403);
+                die('El protocolo de Catalunya no está habilitado en este centro');
+            }
+            exit;
+        }
         $this->caseModel = new ProtocolCase();
         $this->reportModel = new Report();
         $this->mapModel = new SecurityMap();
@@ -71,7 +82,7 @@ class ProtocolWorkflowController
 
         if ($success) {
             $case = $this->caseModel->find($id);
-            $this->logAction($case['report_id'], "Nuevo seguimiento registrado: " . strtoupper($data['target_type']));
+            $this->logAction($case['report_id'], "Nou seguiment registrat: " . strtoupper($data['target_type']));
         }
         echo json_encode(['success' => $success]);
     }
@@ -102,12 +113,7 @@ class ProtocolWorkflowController
             $db = Database::getInstance();
             $stmt = $db->prepare("INSERT INTO protocol_evidence (protocol_case_id, filename, original_name, mime_type, uploaded_by) VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([$id, $newName, $file['name'], $file['type'], Auth::id()]);
-            
-            $case = $this->caseModel->find($id);
-            if ($case) {
-                $this->logAction($case['report_id'], "Nova evidència pujada en custòdia: " . $file['name']);
-            }
-            
+            $this->logAction($id, "Nova evidència pujada en custòdia: " . $file['name']);
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Error moviendo el archivo.']);
@@ -117,11 +123,11 @@ class ProtocolWorkflowController
     public function exportTemplate($id, $templateName): void
     {
         $case = $this->caseModel->find((int)$id);
-        if (!$case) die("Caso no encontrado");
+        if (!$case) die("Cas no trobat");
         
         $ccaa = $case['ccaa_code'];
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
-        $schoolName = Config::get('school_name', 'Aura');
+        $schoolName = Config::get('school_name', 'Aura PDP');
 
         View::render("protocol/templates/{$ccaa}/{$templateName}", [
             'case' => $case,
@@ -133,7 +139,7 @@ class ProtocolWorkflowController
     public function exportPdf($id): void
     {
         $case = $this->caseModel->find((int)$id);
-        if (!$case) die("Caso no encontrado");
+        if (!$case) die("Cas no trobat");
         
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
         $map = $this->mapModel->findByCase($case['id']);
@@ -141,7 +147,7 @@ class ProtocolWorkflowController
         $case['closure_checks'] = json_decode($case['closure_checks'] ?? '{}', true);
         $case['communications'] = json_decode($case['communications'] ?? '{}', true);
         
-        $this->logAction($case['report_id'], "Generado informe PDF consolidado.");
+        $this->logAction($case['report_id'], "Generat informe PDF consolidat.");
         View::render('protocol/pdf_export', ['case' => $case, 'report' => $report, 'map' => $map, 'followups' => $followups], 'app');
     }
 

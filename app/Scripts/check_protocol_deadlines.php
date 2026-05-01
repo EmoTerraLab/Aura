@@ -57,7 +57,7 @@ $sqlFol = "SELECT c.id, u.name
 $overdueFol = $db->query($sqlFol)->fetchAll();
 
 foreach ($overdueFol as $row) {
-    echo "📅 SEGUIMIENTO: Caso #{$row['id']} ({$row['name']}) requiere sesión de control semanal.\n";
+    echo "📅 SEGUIMENT: Cas #{$row['id']} ({$row['name']}) requereix sessió de control setmanal.\n";
 }
 
-echo "[DONE] Revisión finalizada.\n";
+echo "[DONE] Revisió finalitzada.\n";

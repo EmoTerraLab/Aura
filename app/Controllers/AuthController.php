@@ -132,10 +132,8 @@ class AuthController {
                 }
             }
 
-            // Registro para depuración (solo en desarrollo)
-            if (in_array(APP_ENV, ['dev', 'local', 'development'])) {
-                error_log("OTP generado para {$email}: {$code}");
-            }
+            // Registro en error_log para depuración
+            error_log("OTP generado para {$email}: {$code}");
 
             $response = ['ok' => true];
             if (in_array(APP_ENV, ['dev', 'local', 'development'])) {
@@ -145,7 +143,7 @@ class AuthController {
             return;
         }
 
-        echo json_encode(['ok' => false, 'error' => \App\Core\Lang::t('auth.error_otp_find')]);
+        echo json_encode(['ok' => false, 'error' => 'No se encontró un alumno con ese correo.']);
     }
 
     public function verifyOTP() {

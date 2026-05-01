@@ -15,7 +15,7 @@ class EvidenceController
         $id = (int)$id;
         $db = Database::getInstance();
 
-        // 1. Recuperar metadatos
+        // 1. Recuperar metadades
         $stmt = $db->prepare("SELECT * FROM protocol_evidence WHERE id = ?");
         $stmt->execute([$id]);
         $evidence = $stmt->fetch();

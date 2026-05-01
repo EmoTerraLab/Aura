@@ -5,20 +5,6 @@
 ### 1. Crear una migración nueva
 Crea un archivo en `database/migrations/` siguiendo el formato `YYYY_MM_DD_HHMMSS_descripcion.php`.
 
-Ejemplo de estructura:
-```php
-<?php
-class Migration_YYYY_MM_DD_HHMMSS_descripcion
-{
-    private PDO $db;
-    public function __construct(PDO $db) { $this->db = $db; }
-    public function up(): void {
-        $this->db->exec("...");
-    }
-    public function down(): void {}
-}
-```
-
 ### 2. Probar la migración en local
 ```bash
 php migrate.php status    # Ver que aparece como pendiente
@@ -26,29 +12,22 @@ php migrate.php run       # Ejecutar
 php migrate.php integrity # Verificar
 ```
 
-### 3. Actualizar la versión en composer.json
-Incrementar semver: MAJOR.MINOR.PATCH en el campo "version".
-
-### 4. Subir el código al servidor del cliente
-Sube los archivos excluyendo `.env`, `database/*.sqlite` y `database/backups/`.
+### 3. Actualizar la versión
+Incrementar semver en `VERSION` y `composer.json`.
 
 ---
 
 ## Historial de Versiones Recientes
 
-### v2.13.8 — 2026-05-01
-- **Pulido de UX y Estabilidad**: Vinculación de acciones del Dashboard con flujos legales y normalización nacional de códigos CCAA.
-- **Internacionalización**: Dashboard 100% traducible mediante sistema i18n (lang/*.php).
-- **Hardening**: Eliminación de logs de depuración y unificación de marca "Aura".
+### v2.14.0 — 2026-05-01
+- **Consolidación PDP**: Sincronización completa con el motor de preproducción.
+- **Protocolo de Aragón**: Actualización de flujos legales y anexos oficiales (I-X).
+- **Internacionalización**: Restauración del sistema i18n en módulos de protocolo.
+- **Documentación**: Nuevo README.md integral y bilingüe.
 
-### v2.13.0
-- **Expansión Nacional Multi-CCAA**: Soporte para las 19 comunidades autónomas mediante arquitectura modular.
-### v2.12.0 — 2026-04-30
-- **Alertas Legales**: Implementación de alertas de violencia sexual en Aragón y Cataluña.
-- **Refactorización de Timeline**: Lógica de pasos activos movida al backend para consistencia total.
-
-### v2.11.0 — 2026-04-29
-- **Sincronización PDP**: Integración inicial de cambios desde la rama de preproducción.
+### v2.13.8
+- **Pulido de UX**: Vinculación de acciones del Dashboard con flujos legales.
+- **Hardening**: Eliminación de logs y unificación de marca.
 
 ---
 
@@ -57,5 +36,3 @@ Sube los archivos excluyendo `.env`, `database/*.sqlite` y `database/backups/`.
 1. Ve a **Administración → Actualizaciones del sistema**.
 2. Verifica las migraciones pendientes.
 3. Haz clic en **Ejecutar actualización**.
-4. El sistema gestionará el backup, las migraciones y la integridad automáticamente.
-5. Si ocurre un error, se restaurará el backup y el sistema permanecerá en mantenimiento por seguridad.

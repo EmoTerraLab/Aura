@@ -88,21 +88,24 @@ class AragonProtocol implements ProtocolInterface {
         $cid = $case['id'];
 
         if ($state === ProtocolCase::PHASE_AR_COMUNICACION) {
-            $actions[] = ['key' => 'manage', 'label' => 'Gestionar Fase Inicial (ANEXO I)', 'style' => 'primary', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
+            $actions[] = ['key' => 'init_protocol', 'label' => 'Iniciar Protocolo (ANEXO I-b)', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_INICIADO."')"];
+            $actions[] = ['key' => 'no_init_protocol', 'label' => 'No Iniciar (con medidas igualmente)', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_NO_INICIADO."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_INICIADO) {
-            $actions[] = ['key' => 'manage', 'label' => 'Configurar Equipo (ANEXO III)', 'style' => 'primary', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
+            $actions[] = ['key' => 'team', 'label' => 'Constituir Equipo de Valoración (ANEXO III)', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_VALORACION."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_VALORACION) {
-            $actions[] = ['key' => 'manage', 'label' => 'Registrar Entrevistas / Indicadores', 'style' => 'indigo', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
+            $actions[] = ['key' => 'entrevista', 'label' => 'Registrar Entrevista (ANEXO V)', 'style' => 'indigo', 'onclick' => "alert('En desarrollo')"];
+            $actions[] = ['key' => 'indicadores', 'label' => 'Registrar Indicadores (ANEXO VI)', 'style' => 'indigo', 'onclick' => "alert('En desarrollo')"];
             $actions[] = ['key' => 'finish_val', 'label' => 'Finalizar Valoración (Ir a Resolución)', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_VALORADO."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_VALORADO) {
-            $actions[] = ['key' => 'manage', 'label' => 'Generar Informe Oficial (ANEXO VIII)', 'style' => 'success', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
-            $actions[] = ['key' => 'inspeccion', 'label' => 'Enviar a Inspección', 'style' => 'warning', 'onclick' => "alert('Funcionalidad de envío automático disponible próximamente. Por ahora, descargue el PDF y envíelo por los canales habituales.')"];
+            $actions[] = ['key' => 'acta_val', 'label' => 'Firmar Acta Valoración (ANEXO VII)', 'style' => 'success', 'onclick' => "alert('Funcionalidad en desarrollo.')"];
+            $actions[] = ['key' => 'informe', 'label' => 'Generar Informe-Resumen (ANEXO VIII)', 'style' => 'success', 'onclick' => "alert('Funcionalidad en desarrollo.')"];
+            $actions[] = ['key' => 'inspeccion', 'label' => 'Enviar a Inspección', 'style' => 'warning', 'onclick' => "alert('Funcionalidad en desarrollo.')"];
             $actions[] = ['key' => 'contrato', 'label' => 'Contrato Conducta', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_CONTRATO."')"];
             $actions[] = ['key' => 'expediente', 'label' => 'Expediente Disciplinario', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_EXPEDIENTE."')"];
-            $actions[] = ['key' => 'seguimiento', 'label' => 'Avanzar a Seguimiento', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_SEGUIMIENTO."')"];
+            $actions[] = ['key' => 'seguimiento', 'label' => 'A Seguimiento', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_SEGUIMIENTO."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_CONTRATO || $state === ProtocolCase::PHASE_AR_EXPEDIENTE) {
             $actions[] = ['key' => 'to_seguimiento', 'label' => 'Avanzar a Seguimiento', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_SEGUIMIENTO."')"];
@@ -113,7 +116,8 @@ class AragonProtocol implements ProtocolInterface {
             $actions[] = ['key' => 'reabrir', 'label' => 'Reabrir', 'style' => 'warning-outline', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_REABIERTO."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_CERRADO) {
-            $actions[] = ['key' => 'manage', 'label' => 'Ver Acta de Cierre (ANEXO X)', 'style' => 'success', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
+            $actions[] = ['key' => 'acta_cierre', 'label' => 'Generar Acta de Cierre (ANEXO X)', 'style' => 'success', 'onclick' => "alert('En desarrollo')"];
+            $actions[] = ['key' => 'send_eoe', 'label' => 'Enviar a Inspección y EOE', 'style' => 'warning', 'onclick' => "alert('En desarrollo')"];
         }
 
         return $actions;
@@ -133,27 +137,6 @@ class AragonProtocol implements ProtocolInterface {
             ['code' => 'anexo_ix', 'name' => 'Seguimiento', 'annex_table' => 'aragon_annex_ix_followup', 'required_state' => ProtocolCase::PHASE_AR_SEGUIMIENTO],
             ['code' => 'anexo_x', 'name' => 'Cierre', 'annex_table' => 'aragon_annex_x_closure', 'required_state' => ProtocolCase::PHASE_AR_CERRADO]
         ];
-    }
-
-    public function getDeadlineAlert(string $state, int $schoolDaysElapsed): ?array {
-        if ($state === ProtocolCase::PHASE_AR_VALORACION) {
-            if ($schoolDaysElapsed <= 15) {
-                return ['level' => 'ok', 'message' => "Día lectivo $schoolDaysElapsed de 18"];
-            } elseif ($schoolDaysElapsed <= 18) {
-                return ['level' => 'warning', 'message' => "Día lectivo $schoolDaysElapsed — Límite de valoración próximo"];
-            } else {
-                return ['level' => 'danger', 'message' => "PLAZO SUPERADO — Límite de valoración era día 18"];
-            }
-        } elseif ($state === ProtocolCase::PHASE_AR_VALORADO) {
-            if ($schoolDaysElapsed <= 20) {
-                return ['level' => 'warning', 'message' => "Día lectivo $schoolDaysElapsed de 22"];
-            } elseif ($schoolDaysElapsed <= 22) {
-                return ['level' => 'danger', 'message' => "¡Envío a Inspección obligatorio! Día $schoolDaysElapsed de 22"];
-            } else {
-                return ['level' => 'overdue', 'message' => "PLAZO SUPERADO — Notificar a Inspección urgentemente"];
-            }
-        }
-        return null;
     }
 
     public function getExclusiveTools(): array {
