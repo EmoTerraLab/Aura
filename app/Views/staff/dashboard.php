@@ -559,25 +559,25 @@
 
                 ${closureAction ? `
                     <div class="pt-4 border-t border-slate-50 space-y-4">
-                        <h5 class="text-[9px] font-black uppercase text-primary tracking-widest">Checklist de Tancament Oficial</h5>
+                        <h5 class="text-[9px] font-black uppercase text-primary tracking-widest">Checklist de Cierre Oficial</h5>
                         <div class="space-y-2">
-                            ${renderClosureCheck(c.id, 'eradicated', 'La violència s\'ha eradicat definitivament', checks.eradicated)}
-                            ${renderClosureCheck(c.id, 'reparation', 'S\'ha dut a terme un procés de reparació', checks.reparation)}
-                            ${renderClosureCheck(c.id, 'students_confirm', 'L\'alumnat confirma la millora', checks.students_confirm)}
-                            ${renderClosureCheck(c.id, 'teachers_valorate', 'L\'equip docent valora resolució', checks.teachers_valorate)}
+                            ${renderClosureCheck(c.id, 'eradicated', 'La violencia se ha erradicado definitivamente', checks.eradicated)}
+                            ${renderClosureCheck(c.id, 'reparation', 'Se ha llevado a cabo un proceso de reparación', checks.reparation)}
+                            ${renderClosureCheck(c.id, 'students_confirm', 'El alumnado confirma la mejora', checks.students_confirm)}
+                            ${renderClosureCheck(c.id, 'teachers_valorate', 'El equipo docente valora la resolución', checks.teachers_valorate)}
                         </div>
                     </div>
                 ` : ''}
 
                 ${meta.ccaa_code === 'CAT' && c.current_phase === 'violencia_sexual_actiu' ? `
                     <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium">S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.</p>
+                        <p class="text-xs text-red-800 font-medium">Se ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario para proteger al menor.</p>
                     </div>
                 ` : ''}
 
                 ${meta.ccaa_code === 'ARA' && c.current_phase === 'violencia_sexual_activa' ? `
                     <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium">S'ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.</p>
+                        <p class="text-xs text-red-800 font-medium">Se ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.</p>
                     </div>
                 ` : ''}
             </div>
@@ -841,3 +841,6 @@
 <?php $scripts = ob_get_clean(); ?>
 
 <?php require __DIR__ . '/partials/restorative_panel.php'; ?>
+p'; ?>
+hp'; ?>
+p'; ?>
