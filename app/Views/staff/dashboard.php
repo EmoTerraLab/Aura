@@ -539,19 +539,19 @@
                 
                 ${revaAction ? `
                     <div class="pt-4 border-t border-slate-50">
-                        <p class="text-[9px] font-black uppercase text-slate-400 mb-2">Completar requerimientos REVA</p>
+                        <p class="text-[9px] font-black uppercase text-slate-400 mb-2"><?= \App\Core\Lang::t('protocol.reva_requirements') ?></p>
                         <div class="space-y-2">
                              <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.inspeccio ? 'checked' : ''} onchange="toggleComm(${c.id}, 'inspeccio', this.checked)">
-                                <span class="text-xs font-bold text-slate-700">Comunicado a la Inspección de Educación (REVA)</span>
+                                <span class="text-xs font-bold text-slate-700"><?= \App\Core\Lang::t('protocol.comm_inspeccion') ?></span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.familia_victima ? 'checked' : ''} onchange="toggleComm(${c.id}, 'familia_victima', this.checked)">
-                                <span class="text-xs font-bold text-slate-700">Comunicado a la familia de la víctima</span>
+                                <span class="text-xs font-bold text-slate-700"><?= \App\Core\Lang::t('protocol.comm_familia_victima') ?></span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.familia_agressor ? 'checked' : ''} onchange="toggleComm(${c.id}, 'familia_agressor', this.checked)">
-                                <span class="text-xs font-bold text-slate-700">Comunicado a la familia del agresor</span>
+                                <span class="text-xs font-bold text-slate-700"><?= \App\Core\Lang::t('protocol.comm_familia_agresor') ?></span>
                             </label>
                         </div>
                     </div>
@@ -559,25 +559,25 @@
 
                 ${closureAction ? `
                     <div class="pt-4 border-t border-slate-50 space-y-4">
-                        <h5 class="text-[9px] font-black uppercase text-primary tracking-widest">Checklist de Cierre Oficial</h5>
+                        <h5 class="text-[9px] font-black uppercase text-primary tracking-widest"><?= \App\Core\Lang::t('protocol.closure_checklist') ?></h5>
                         <div class="space-y-2">
-                            ${renderClosureCheck(c.id, 'eradicated', 'La violencia se ha erradicado definitivamente', checks.eradicated)}
-                            ${renderClosureCheck(c.id, 'reparation', 'Se ha llevado a cabo un proceso de reparación', checks.reparation)}
-                            ${renderClosureCheck(c.id, 'students_confirm', 'El alumnado confirma la mejora', checks.students_confirm)}
-                            ${renderClosureCheck(c.id, 'teachers_valorate', 'El equipo docente valora la resolución', checks.teachers_valorate)}
+                            ${renderClosureCheck(c.id, 'eradicated', '<?= \App\Core\Lang::t('protocol.closure_eradicated') ?>', checks.eradicated)}
+                            ${renderClosureCheck(c.id, 'reparation', '<?= \App\Core\Lang::t('protocol.closure_reparation') ?>', checks.reparation)}
+                            ${renderClosureCheck(c.id, 'students_confirm', '<?= \App\Core\Lang::t('protocol.closure_students_confirm') ?>', checks.students_confirm)}
+                            ${renderClosureCheck(c.id, 'teachers_valorate', '<?= \App\Core\Lang::t('protocol.closure_teachers_valorate') ?>', checks.teachers_valorate)}
                         </div>
                     </div>
                 ` : ''}
 
                 ${meta.ccaa_code === 'CAT' && c.current_phase === 'violencia_sexual_actiu' ? `
                     <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium">Se ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario para proteger al menor.</p>
+                        <p class="text-xs text-red-800 font-medium"><?= \App\Core\Lang::t('protocol.sexual_violence_alert_cat') ?></p>
                     </div>
                 ` : ''}
 
                 ${meta.ccaa_code === 'ARA' && c.current_phase === 'violencia_sexual_activa' ? `
                     <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium">Se ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.</p>
+                        <p class="text-xs text-red-800 font-medium"><?= \App\Core\Lang::t('protocol.sexual_violence_alert_ara') ?></p>
                     </div>
                 ` : ''}
             </div>
@@ -651,19 +651,19 @@
             <div id="modal-followup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
                 <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden">
                     <div class="p-6 border-b flex items-center justify-between">
-                        <h3 class="font-black">Nuevo Registro de Seguimiento</h3>
+                        <h3 class="font-black"><?= \App\Core\Lang::t('protocol.followup_new_title') ?></h3>
                         <button onclick="document.getElementById('modal-followup').remove()"><span class="material-symbols-outlined">close</span></button>
                     </div>
                     <div class="p-6 space-y-4">
                         <select id="f-target" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm">
-                            <option value="victima">Víctima</option>
-                            <option value="agressor">Agresor</option>
-                            <option value="familia">Familia</option>
-                            <option value="grup_classe">Grupo Clase</option>
+                            <option value="victima"><?= \App\Core\Lang::t('protocol.followup_target_victima') ?></option>
+                            <option value="agressor"><?= \App\Core\Lang::t('protocol.followup_target_agresor') ?></option>
+                            <option value="familia"><?= \App\Core\Lang::t('protocol.followup_target_familia') ?></option>
+                            <option value="grup_classe"><?= \App\Core\Lang::t('protocol.followup_target_clase') ?></option>
                         </select>
                         <input type="date" id="f-date" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm" value="${new Date().toISOString().split('T')[0]}">
-                        <textarea id="f-notes" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm" rows="4" placeholder="Notas de la sesión..."></textarea>
-                        <button onclick="saveFollowup(${caseId})" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg">Guardar Sesión</button>
+                        <textarea id="f-notes" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm" rows="4" placeholder="<?= \App\Core\Lang::t('protocol.followup_notes_placeholder') ?>"></textarea>
+                        <button onclick="saveFollowup(${caseId})" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg"><?= \App\Core\Lang::t('protocol.followup_save_btn') ?></button>
                     </div>
                 </div>
             </div>
