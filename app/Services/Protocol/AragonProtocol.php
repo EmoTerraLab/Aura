@@ -88,24 +88,21 @@ class AragonProtocol implements ProtocolInterface {
         $cid = $case['id'];
 
         if ($state === ProtocolCase::PHASE_AR_COMUNICACION) {
-            $actions[] = ['key' => 'init_protocol', 'label' => 'Iniciar Protocolo (ANEXO I-b)', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_INICIADO."')"];
-            $actions[] = ['key' => 'no_init_protocol', 'label' => 'No Iniciar (con medidas igualmente)', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_NO_INICIADO."')"];
+            $actions[] = ['key' => 'manage', 'label' => 'Gestionar Fase Inicial (ANEXO I)', 'style' => 'primary', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_INICIADO) {
-            $actions[] = ['key' => 'team', 'label' => 'Constituir Equipo de Valoración (ANEXO III)', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_VALORACION."')"];
+            $actions[] = ['key' => 'manage', 'label' => 'Configurar Equipo (ANEXO III)', 'style' => 'primary', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_VALORACION) {
-            $actions[] = ['key' => 'entrevista', 'label' => 'Registrar Entrevista (ANEXO V)', 'style' => 'indigo', 'onclick' => "alert('En desarrollo')"];
-            $actions[] = ['key' => 'indicadores', 'label' => 'Registrar Indicadores (ANEXO VI)', 'style' => 'indigo', 'onclick' => "alert('En desarrollo')"];
+            $actions[] = ['key' => 'manage', 'label' => 'Registrar Entrevistas / Indicadores', 'style' => 'indigo', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
             $actions[] = ['key' => 'finish_val', 'label' => 'Finalizar Valoración (Ir a Resolución)', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_VALORADO."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_VALORADO) {
-            $actions[] = ['key' => 'acta_val', 'label' => 'Firmar Acta Valoración (ANEXO VII)', 'style' => 'success', 'onclick' => "alert('En desarrollo')"];
-            $actions[] = ['key' => 'informe', 'label' => 'Generar Informe-Resumen (ANEXO VIII)', 'style' => 'success', 'onclick' => "alert('En desarrollo')"];
-            $actions[] = ['key' => 'inspeccion', 'label' => 'Enviar a Inspección', 'style' => 'warning', 'onclick' => "alert('En desarrollo')"];
+            $actions[] = ['key' => 'manage', 'label' => 'Generar Informe Oficial (ANEXO VIII)', 'style' => 'success', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
+            $actions[] = ['key' => 'inspeccion', 'label' => 'Enviar a Inspección', 'style' => 'warning', 'onclick' => "alert('Funcionalidad de envío automático disponible próximamente. Por ahora, descargue el PDF y envíelo por los canales habituales.')"];
             $actions[] = ['key' => 'contrato', 'label' => 'Contrato Conducta', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_CONTRATO."')"];
             $actions[] = ['key' => 'expediente', 'label' => 'Expediente Disciplinario', 'style' => 'secondary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_EXPEDIENTE."')"];
-            $actions[] = ['key' => 'seguimiento', 'label' => 'A Seguimiento', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_SEGUIMIENTO."')"];
+            $actions[] = ['key' => 'seguimiento', 'label' => 'Avanzar a Seguimiento', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_SEGUIMIENTO."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_CONTRATO || $state === ProtocolCase::PHASE_AR_EXPEDIENTE) {
             $actions[] = ['key' => 'to_seguimiento', 'label' => 'Avanzar a Seguimiento', 'style' => 'primary', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_SEGUIMIENTO."')"];
@@ -116,8 +113,7 @@ class AragonProtocol implements ProtocolInterface {
             $actions[] = ['key' => 'reabrir', 'label' => 'Reabrir', 'style' => 'warning-outline', 'onclick' => "nextPhase($cid, '".ProtocolCase::PHASE_AR_REABIERTO."')"];
         }
         elseif ($state === ProtocolCase::PHASE_AR_CERRADO) {
-            $actions[] = ['key' => 'acta_cierre', 'label' => 'Generar Acta de Cierre (ANEXO X)', 'style' => 'success', 'onclick' => "alert('En desarrollo')"];
-            $actions[] = ['key' => 'send_eoe', 'label' => 'Enviar a Inspección y EOE', 'style' => 'warning', 'onclick' => "alert('En desarrollo')"];
+            $actions[] = ['key' => 'manage', 'label' => 'Ver Acta de Cierre (ANEXO X)', 'style' => 'success', 'onclick' => "window.location.href='/protocol/aragon/case/$cid'"];
         }
 
         return $actions;
