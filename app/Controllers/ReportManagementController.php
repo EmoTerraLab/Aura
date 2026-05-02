@@ -15,6 +15,7 @@ class ReportManagementController {
     }
 
     public function show($id) {
+        $id = (int)$id;
         $report = $this->reportModel->findByIdWithDetails($id, Auth::id(), Auth::role());
 
         if (!$report) {
@@ -49,14 +50,16 @@ class ReportManagementController {
             $msg['is_current_user'] = ($msg['sender_id'] == $currentUserId);
         }
 
+        header('Content-Type: application/json');
         echo json_encode([
             'report' => $report,
             'messages' => $messages,
             'current_user_id' => $currentUserId
         ]);
     }
-public function updateStatus($id) {
-    \App\Core\Csrf::validateRequest();
+    public function updateStatus($id) {
+        \App\Core\Csrf::validateRequest();
+        header('Content-Type: application/json');
 
     $data = json_decode(file_get_contents('php://input'), true);
         $status = $data['status'] ?? null;
@@ -74,6 +77,7 @@ public function updateStatus($id) {
 
     public function addMessage($id) {
         \App\Core\Csrf::validateRequest();
+        header('Content-Type: application/json');
 
         $data = json_decode(file_get_contents('php://input'), true);
         $message = trim($data['message'] ?? '');

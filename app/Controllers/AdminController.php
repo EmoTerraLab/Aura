@@ -36,11 +36,13 @@ class AdminController {
     // --- API Usuarios ---
 
     public function getUsers() {
+        header('Content-Type: application/json');
         echo json_encode(['data' => $this->userModel->allWithProfiles()]);
     }
 
     public function storeUser() {
         Csrf::validateRequest();
+        header('Content-Type: application/json');
         
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data['name']) || empty($data['email']) || empty($data['role'])) {
@@ -200,6 +202,7 @@ class AdminController {
 
     public function updateUser($id) {
         Csrf::validateRequest();
+        header('Content-Type: application/json');
         
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data['name']) || empty($data['email']) || empty($data['role'])) {
@@ -234,8 +237,9 @@ class AdminController {
 
     public function deleteUser($id) {
         Csrf::validateRequest();
+        header('Content-Type: application/json');
 
-        if ($id == Auth::id()) {
+        if ((int)$id === (int)Auth::id()) {
             echo json_encode(['error' => 'No puedes eliminarte a ti mismo.']);
             return;
         }
@@ -251,11 +255,13 @@ class AdminController {
     // --- API Aulas ---
 
     public function getClassrooms() {
+        header('Content-Type: application/json');
         echo json_encode(['data' => $this->classroomModel->allWithTutors()]);
     }
 
     public function storeClassroom() {
         Csrf::validateRequest();
+        header('Content-Type: application/json');
         
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data['name'])) {
@@ -273,6 +279,7 @@ class AdminController {
 
     public function updateClassroom($id) {
         Csrf::validateRequest();
+        header('Content-Type: application/json');
         
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data['name'])) {
@@ -290,6 +297,7 @@ class AdminController {
 
     public function deleteClassroom($id) {
         Csrf::validateRequest();
+        header('Content-Type: application/json');
 
         try {
             $this->classroomModel->delete($id);
@@ -302,6 +310,7 @@ class AdminController {
     // --- API Settings ---
 
     public function getSettings() {
+        header('Content-Type: application/json');
         echo json_encode([
             'default_lang' => $this->settingModel->get('default_lang') ?? 'es'
         ]);
@@ -309,6 +318,7 @@ class AdminController {
 
     public function updateDefaultLang() {
         Csrf::validateRequest();
+        header('Content-Type: application/json');
         
         $data = json_decode(file_get_contents('php://input'), true);
         $lang = $data['default_lang'] ?? 'es';

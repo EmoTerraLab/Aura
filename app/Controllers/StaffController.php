@@ -30,12 +30,14 @@ class StaffController {
     }
 
     public function mentions() {
+        header('Content-Type: application/json');
         $mentions = $this->mentionModel->findUnreadByUserWithDetails(Auth::id());
         echo json_encode(["success" => true, "mentions" => $mentions]);
     }
 
     public function markMentionsRead() {
         \App\Core\Csrf::validateRequest();
+        header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         $mentionId = $data['id'] ?? null;
         
@@ -46,6 +48,7 @@ class StaffController {
     }
 
     public function getColleagues() {
+        header('Content-Type: application/json');
         $db = \App\Core\Database::getInstance();
         $stmt = $db->query("SELECT id, name, role FROM users WHERE role != 'alumno' ORDER BY name ASC");
         echo json_encode(['success' => true, 'colleagues' => $stmt->fetchAll()]);

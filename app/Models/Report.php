@@ -32,7 +32,7 @@ class Report extends Model {
             'classroom_id'  => $data['classroom_id'] ?? $this->resolveDefaultClassroom(),
             'content'       => $data['description'] ?? $data['title'] ?? '',
             'target'        => 'compañero',
-            'urgency_level' => ($data['urgency'] === 'urgente') ? 'high' : 'medium',
+            'urgency_level' => (($data['urgency'] ?? '') === 'urgente') ? 'high' : 'medium',
             'is_anonymous'  => $data['is_confidential'] ?? 0,
             'status'        => $data['status'] ?? 'new'
         ]);

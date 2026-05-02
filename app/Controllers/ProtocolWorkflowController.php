@@ -71,12 +71,17 @@ class ProtocolWorkflowController
         $this->requireCat();
         header('Content-Type: application/json');
         $case = $this->caseModel->find($id);
+        if (!$case) {
+            echo json_encode(['success' => false, 'error' => 'Case not found']);
+            return;
+        }
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
         echo json_encode(['success' => true, 'summary' => $this->revaService->generateSummary($case, $report)]);
     }
 
     public function addFollowup($id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
@@ -112,6 +117,12 @@ class ProtocolWorkflowController
         $allowed = ['jpg', 'jpeg', 'png', 'pdf', 'docx'];
         if (!in_array($ext, $allowed)) {
             echo json_encode(['success' => false, 'error' => 'Extensión no permitida.']);
+            return;
+        }
+
+        // Límite de tamaño: 10 MB
+        if ($file['size'] > 10 * 1024 * 1024) {
+            echo json_encode(['success' => false, 'error' => 'El archivo excede el límite de 10 MB.']);
             return;
         }
 
@@ -179,6 +190,7 @@ class ProtocolWorkflowController
 
     public function saveSecurityMapFull($id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
@@ -195,6 +207,7 @@ class ProtocolWorkflowController
 
     public function updateComms($id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
@@ -209,6 +222,7 @@ class ProtocolWorkflowController
 
     public function updateClosure($id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
@@ -223,6 +237,7 @@ class ProtocolWorkflowController
 
     public function saveAcknowledgment(int $id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         $ack = isset($data['acknowledged']) ? (int)$data['acknowledged'] : null;
@@ -276,6 +291,7 @@ class ProtocolWorkflowController
 
     public function updatePracticeStatus(int $id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         $success = $this->restorativeModel->updateStatus((int)$id, $data['status']);
