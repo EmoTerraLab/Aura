@@ -52,10 +52,13 @@ use App\Models\ProtocolCase;
                         <p class="text-[10px] text-white/30 italic">Ningún documento oficial cargado aún.</p>
                     <?php else: ?>
                         <?php foreach($annexes as $annex): ?>
-                        <div class="flex items-center justify-between group">
-                            <span class="text-[10px] font-bold text-white/70"><?= strtoupper($annex['annex_type']) ?></span>
+                        <a href="/protocol/murcia/export/<?= $case['id'] ?>/<?= urlencode($annex['annex_type']) ?>" target="_blank" class="flex items-center justify-between group hover:bg-white/10 rounded-lg px-2 py-1.5 -mx-2 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-white/40 text-sm group-hover:text-amber-400 transition-colors">description</span>
+                                <span class="text-[10px] font-bold text-white/70 group-hover:text-white transition-colors"><?= strtoupper(str_replace('_', ' ', $annex['annex_type'])) ?></span>
+                            </div>
                             <span class="text-[9px] text-white/40"><?= date('d/m/y', strtotime($annex['created_at'])) ?></span>
-                        </div>
+                        </a>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
@@ -204,10 +207,10 @@ use App\Models\ProtocolCase;
                     <div class="space-y-6">
                         <h4 class="font-black text-slate-700">Acciones Finales</h4>
                         <div class="flex flex-col gap-3">
-                            <button onclick="alert('Funcionalidad de impresión de Anexo V en desarrollo')" class="p-4 bg-slate-50 rounded-2xl text-left flex items-center gap-3 border border-slate-100 hover:bg-white transition-all">
-                                <span class="material-symbols-outlined text-slate-400">print</span>
+                            <a href="/protocol/murcia/export/<?= $case['id'] ?>/anexo_v" target="_blank" class="p-4 bg-slate-50 rounded-2xl text-left flex items-center gap-3 border border-slate-100 hover:bg-white transition-all no-underline">
+                                <span class="material-symbols-outlined text-amber-500">print</span>
                                 <span class="text-xs font-bold text-slate-700">Generar Copia Individualizada Anexo V</span>
-                            </button>
+                            </a>
                             <button onclick="nextStep('tancament')" class="p-4 bg-emerald-500 text-white rounded-2xl text-left flex items-center gap-3 shadow-lg hover:scale-[1.02] transition-all">
                                 <span class="material-symbols-outlined">verified</span>
                                 <span class="text-xs font-black uppercase tracking-widest">Finalizar y Cerrar Expediente</span>

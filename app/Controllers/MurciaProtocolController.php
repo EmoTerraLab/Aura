@@ -217,4 +217,37 @@ class MurciaProtocolController
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
+    public function exportAnnex(int $id, string $type): void
+    {
+        $case = $this->caseModel->find($id);
+        if (!$case) {
+            http_response_code(404);
+            echo "Expediente no encontrado.";
+            return;
+        }
+
+        $annex = $this->annexModel->findLatestByType($id, $type);
+        if (!$annex) {
+            http_response_code(404);
+            echo "El documento solicitado (" . htmlspecialchars($type) . ") no ha sido generado aún.";
+            return;
+        }
+
+        $content = json_decode($annex['content'], true) ?: [];
+
+        // Resolve submitter name
+        $db = Database::getInstance();
+        $submitterStmt = $db->prepare("SELECT name FROM users WHERE id = ?");
+        $submitterStmt->execute([$annex['submitted_by']]);
+        $submitter = $submitterStmt->fetch();
+
+        View::render('protocol/murcia/print_annex', [
+            'case' => $case,
+            'annex' => $annex,
+            'type' => $type,
+            'content' => $content,
+            'school_name' => Config::get('school_name', 'Centro Educativo'),
+            'submitted_by_name' => $submitter['name'] ?? 'Personal autorizado'
+        ], null);
+    }
 }
