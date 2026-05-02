@@ -70,14 +70,23 @@ class ProtocolService
             return;
         }
 
-        $db = Database::getInstance();
-        $stmt = $db->prepare("INSERT INTO protocol_access_logs (protocol_case_id, user_id, ip_address, user_agent) VALUES (?, ?, ?, ?)");
-        $stmt->execute([
-            $caseId,
-            Auth::id(),
-            $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
-            $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
-        ]);
+        $userId = Auth::id();
+        if ($userId === null) {
+            return; // Sesión expirada o no autenticado
+        }
+
+        try {
+            $db = Database::getInstance();
+            $stmt = $db->prepare("INSERT INTO protocol_access_logs (protocol_case_id, user_id, ip_address, user_agent) VALUES (?, ?, ?, ?)");
+            $stmt->execute([
+                $caseId,
+                $userId,
+                $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
+                $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
+            ]);
+        } catch (\Throwable $e) {
+            error_log("logSensitiveAccess failed: " . $e->getMessage());
+        }
     }
 
     /**

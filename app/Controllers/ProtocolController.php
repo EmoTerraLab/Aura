@@ -28,6 +28,10 @@ class ProtocolController
      */
     public function getCaseData($report_id): void
     {
+        // Suprimir errores HTML para que NUNCA se contaminen las respuestas JSON
+        $prevDisplayErrors = ini_get('display_errors');
+        ini_set('display_errors', '0');
+        
         ob_start();
         try {
             header('Content-Type: application/json');
