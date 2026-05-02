@@ -6,7 +6,7 @@ Este documento registra las modificaciones, mejoras y correcciones realizadas en
 
 ### 🚀 Mejoras y Funcionalidades
 - **Protocolo Comunitat Valenciana:** Implementada la vista de gestión avanzada (`case_detail`) y controlador específico para la normativa valenciana, permitiendo un seguimiento más exhaustivo.
-- **Protocolo de Murcia:** Finalizada la integración de la vista de detalle de casos con soporte para registros de actuación especializados.
+- **Protocolo de Murcia:** Finalizada la integración de la vista de detalle de casos con soporte para registros de actuación especializados y sistema de exportación de anexos oficiales.
 - **Blindaje de Peticiones AJAX:** Refactorizado el sistema de comunicación con el backend (`fetchJson`) para incluir gestión de timeouts, detección de modo mantenimiento y eliminación de errores silenciosos.
 
 ### 🛡️ Seguridad y Estabilidad
