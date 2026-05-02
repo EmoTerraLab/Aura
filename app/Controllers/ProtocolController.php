@@ -28,6 +28,7 @@ class ProtocolController
      */
     public function getCaseData($report_id): void
     {
+        ob_start();
         try {
             header('Content-Type: application/json');
             $report_id = (int)$report_id;
@@ -109,12 +110,16 @@ class ProtocolController
             if ($json === false) {
                 throw new \Exception("Error encoding JSON: " . json_last_error_msg());
             }
-            if (ob_get_length()) ob_clean();
+            
+            ob_end_clean();
             echo $json;
+            exit;
         } catch (\Throwable $e) {
+            if (ob_get_level()) ob_end_clean();
             error_log("Error en getCaseData: " . $e->getMessage());
             if (!headers_sent()) http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            exit;
         }
     }
 
