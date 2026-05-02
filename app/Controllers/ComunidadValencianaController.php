@@ -20,7 +20,8 @@ class ComunidadValencianaController
     {
         if (Config::get('ccaa_code') !== 'VAL') {
             http_response_code(403);
-            die('El protocolo de la Comunitat Valenciana no está habilitado');
+            echo 'El protocolo de la Comunitat Valenciana no está habilitado';
+            exit;
         }
         $this->reportModel = new Report();
         $this->caseModel = new ProtocolCase();
@@ -37,7 +38,11 @@ class ComunidadValencianaController
             $case = $this->caseModel->find($id);
         }
         
-        if (!$case) die("Expediente no encontrado.");
+        if (!$case) {
+            http_response_code(404);
+            echo "Expediente no encontrado.";
+            return;
+        }
         
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
         

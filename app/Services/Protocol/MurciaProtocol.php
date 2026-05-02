@@ -69,7 +69,8 @@ class MurciaProtocol implements ProtocolInterface {
 
     public function getActionsForState(string $state, array $case): array {
         $actions = [];
-        $cid = $case['id'];
+        $cid = $case['id'] ?? 0;
+        if (!$cid) return [];
 
         if ($state === ProtocolCase::PHASE_MUR_INICIAL) {
             $actions[] = ['key' => 'designar_equipo', 'label' => 'Designar Equipo Intervención', 'style' => 'primary', 'onclick' => "openFollowupModal($cid, 'mur_designacio')"];

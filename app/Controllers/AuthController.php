@@ -180,25 +180,25 @@ class AuthController {
     }
 
     private function isRateLimited($ip) {
-        // Implementación básica de rate limiting (5 intentos / 15 min)
         $db = \App\Core\Database::getInstance();
-        $db->exec("CREATE TABLE IF NOT EXISTS rate_limits (ip TEXT, attempts INTEGER, last_attempt DATETIME)");
         
-        // Limpiar antiguos
-        $db->exec("DELETE FROM rate_limits WHERE last_attempt < datetime('now', '-15 minutes')");
+        // Limpiar entradas expiradas (más de 15 minutos)
+        $db->prepare("DELETE FROM rate_limits WHERE last_attempt < datetime('now', '-15 minutes')")->execute();
         
         $stmt = $db->prepare("SELECT attempts FROM rate_limits WHERE ip = :ip");
         $stmt->execute(['ip' => $ip]);
         $record = $stmt->fetch();
         
+        $maxAttempts = 5;
+        
         if ($record) {
-            if ($record['attempts'] >= 5) {
+            if ($record['attempts'] >= $maxAttempts) {
                 return true;
             }
             $stmt = $db->prepare("UPDATE rate_limits SET attempts = attempts + 1, last_attempt = CURRENT_TIMESTAMP WHERE ip = :ip");
             $stmt->execute(['ip' => $ip]);
         } else {
-            $stmt = $db->prepare("INSERT INTO rate_limits (ip, attempts, last_attempt) VALUES (:ip, 1, CURRENT_TIMESTAMP)");
+            $stmt = $db->prepare("INSERT OR IGNORE INTO rate_limits (ip, attempts, last_attempt) VALUES (:ip, 1, CURRENT_TIMESTAMP)");
             $stmt->execute(['ip' => $ip]);
         }
         

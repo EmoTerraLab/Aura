@@ -22,7 +22,8 @@ class View {
         $viewPath = __DIR__ . '/../Views/' . $view . '.php';
         
         if (!file_exists($viewPath)) {
-            die("Vista no encontrada: {$viewPath}");
+            error_log("Vista no encontrada: {$viewPath}");
+            throw new \RuntimeException("Vista no encontrada: {$view}");
         }
 
         ob_start();
