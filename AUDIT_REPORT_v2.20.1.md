@@ -1,4 +1,4 @@
-# Informe de Auditoría de Seguridad y Calidad de Código — Aura PDP v2.20.1-stable
+# Informe de Auditoría de Seguridad y Calidad de Código — Aura v2.20.1-stable
 **Fecha:** 2026-05-01
 **Objetivo:** Auditoría exhaustiva de seguridad, arquitectura y calidad de código del núcleo del proyecto.
 
