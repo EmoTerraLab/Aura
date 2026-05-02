@@ -151,7 +151,7 @@ class ProtocolWorkflowController
         
         $ccaa = $case['ccaa_code'];
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
-        $schoolName = Config::get('school_name', 'Aura PDP');
+        $schoolName = Config::get('school_name', 'Aura');
 
         View::render("protocol/templates/{$ccaa}/{$templateName}", [
             'case' => $case,

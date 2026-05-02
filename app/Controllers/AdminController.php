@@ -85,7 +85,7 @@ class AdminController {
 
     private function sendWelcomeEmail(string $name, string $email, string $role): void
     {
-        $schoolName = $this->settingModel->get('school_name', 'Aura PDP');
+        $schoolName = $this->settingModel->get('school_name', 'Aura');
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
         $urlLogin = $protocol . '://' . $host . '/login';
@@ -181,7 +181,7 @@ class AdminController {
               <hr class="email-divider" style="border:0;border-top:1px solid #e5e7eb;margin:0 0 1.25rem;">
 
               <p class="footer-text" style="color:#6b7280;font-size:0.75rem;margin:0;line-height:1.6;">
-                Este email fue enviado por <strong>' . htmlspecialchars($schoolName) . '</strong> a través de Aura PDP. Si no esperabas este correo, puedes ignorarlo.<br><br>
+                Este email fue enviado por <strong>' . htmlspecialchars($schoolName) . '</strong> a través de Aura. Si no esperabas este correo, puedes ignorarlo.<br><br>
                 <img src="https://app.aura.emoterralab.com/icono-sinfondo.png" alt="" width="12" height="12" style="vertical-align:middle;margin-right:3px;">
                 <strong style="color:#4f46e5;">Aura</strong> · Powered by <a href="https://emoterralab.com" style="color:#7c3aed;text-decoration:none;">EmoTerraLab</a>
               </p>

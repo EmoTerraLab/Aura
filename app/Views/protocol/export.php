@@ -99,7 +99,7 @@
     </section>
 
     <div style="margin-top: 4rem; border-top: 1px solid #ddd; padding-top: 1rem; font-size: 8pt; color: #999; text-align: center;">
-        Documento confidencial generado por Aura PDP Control Center. El uso de esta información está sujeto a la Ley de Protección de Datos.
+        Documento confidencial generado por Aura Control Center. El uso de esta información está sujeto a la Ley de Protección de Datos.
     </div>
 </body>
 </html>
