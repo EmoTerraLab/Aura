@@ -23,7 +23,8 @@ class MurciaProtocolController
     {
         if (Config::get('ccaa_code') !== 'MUR') {
             http_response_code(403);
-            die('El protocolo de Murcia no está habilitado');
+            echo 'El protocolo de Murcia no está habilitado';
+            exit;
         }
         $this->reportModel = new Report();
         $this->caseModel = new MurciaProtocolCase();

@@ -27,7 +27,7 @@ class AragonProtocolController
                 echo json_encode(['error' => 'El protocolo de Aragón no está habilitado en este centro']);
             } else {
                 http_response_code(403);
-                die('El protocolo de Aragón no está habilitado en este centro');
+                echo 'El protocolo de Aragón no está habilitado en este centro';
             }
             exit;
         }

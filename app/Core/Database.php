@@ -27,7 +27,8 @@ class Database {
                 $this->initSchema();
             }
         } catch (PDOException $e) {
-            die("Error de conexión a la base de datos: " . $e->getMessage());
+            error_log("Error de conexión a la base de datos: " . $e->getMessage());
+            throw new \RuntimeException("Error de conexión a la base de datos. Revise la configuración.");
         }
     }
 
