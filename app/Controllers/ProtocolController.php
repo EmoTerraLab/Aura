@@ -111,11 +111,27 @@ class ProtocolController
                 throw new \Exception("Error encoding JSON: " . json_last_error_msg());
             }
             
-            ob_end_clean();
+            // CAPTURAR RUIDO PARA DEBUG
+            $noise = ob_get_contents();
+            if (!empty($noise)) {
+                file_put_contents(__DIR__ . '/../../storage/logs/debug_protocol.log', "NOISE DETECTED: " . $noise . "\n", FILE_APPEND);
+            }
+
+            // Forzar limpieza absoluta de cualquier aviso PHP previo (incluso fuera de esta clase)
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+            
+            header('Content-Type: application/json');
             echo $json;
             exit;
         } catch (\Throwable $e) {
-            if (ob_get_level()) ob_end_clean();
+            $errorMsg = "EXCEPTION: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString();
+            file_put_contents(__DIR__ . '/../../storage/logs/debug_protocol.log', $errorMsg . "\n", FILE_APPEND);
+            
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
             error_log("Error en getCaseData: " . $e->getMessage());
             if (!headers_sent()) http_response_code(500);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);

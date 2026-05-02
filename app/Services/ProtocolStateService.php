@@ -19,12 +19,22 @@ class ProtocolStateService
 
     /**
      * Gestiona la transició de fase mitjançant el mòdul de CCAA.
+     * Soporta tanto caseId (id de protocol_cases) como reportId para mayor robustez.
      */
-    public function transitionTo(int $caseId, string $newPhase): bool
+    public function transitionTo(int $id, string $newPhase): bool
     {
-        $case = $this->caseModel->find($caseId);
-        if (!$case) return false;
+        // Intentar encontrar por ID de caso primero, luego por report_id
+        $case = $this->caseModel->find($id);
+        if (!$case) {
+            $case = $this->caseModel->findByReport($id);
+        }
 
+        if (!$case) {
+            throw new \Exception("Expediente de protocolo no encontrado (ID: $id).");
+        }
+
+        $caseId = $case['id'];
+        $reportId = $case['report_id'];
         $oldPhase = $case['current_phase'];
         $ccaa = $case['ccaa_code'];
         
@@ -38,7 +48,17 @@ class ProtocolStateService
         $success = $this->caseModel->updatePhase($caseId, $newPhase);
 
         if ($success) {
-            $this->logInternalAudit($case['report_id'], "Canvi de fase legal: de " . strtoupper($oldPhase) . " a " . strtoupper($newPhase));
+            // Sincronización con tablas específicas de CCAA
+            $db = \App\Core\Database::getInstance();
+            if ($ccaa === 'MUR') {
+                $db->prepare("UPDATE murcia_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
+                   ->execute([$newPhase, $reportId]);
+            } elseif ($ccaa === 'ARA') {
+                $db->prepare("UPDATE aragon_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
+                   ->execute([$newPhase, $reportId]);
+            }
+
+            $this->logInternalAudit($reportId, "Canvi de fase legal: de " . strtoupper($oldPhase) . " a " . strtoupper($newPhase));
         }
 
         return $success;

@@ -232,7 +232,7 @@ use App\Models\ProtocolCase;
 <script>
 async function nextStep(phase) {
     if(!confirm('¿Seguro que quieres pasar a la siguiente fase?')) return;
-    const res = await fetch(`/api/protocol/case/<?= $case['id'] ?>/phase`, {
+    const res = await fetch(`/api/protocol/case/<?= $generalCase['id'] ?>/phase`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phase, csrf_token: '<?= \App\Core\Csrf::generateToken() ?>' })

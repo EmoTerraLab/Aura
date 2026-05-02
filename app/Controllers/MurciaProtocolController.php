@@ -46,12 +46,17 @@ class MurciaProtocolController
         }
         $annexes = $this->annexModel->findByCase($case['id']);
         
+        // Cargar el caso general para tener el ID correcto para la API genérica
+        $protocolCaseModel = new ProtocolCase();
+        $generalCase = $protocolCaseModel->findByReport($case['report_id']);
+        
         $db = Database::getInstance();
         $staff = $db->query("SELECT id, name FROM users WHERE role != 'alumno'")->fetchAll();
         
         View::render('protocol/murcia/case_detail', [
             'title' => 'Gestión Murcia',
             'case' => $case,
+            'generalCase' => $generalCase,
             'annexes' => $annexes,
             'staff' => $staff
         ], 'app');
@@ -137,7 +142,12 @@ class MurciaProtocolController
                 'report_content' => $content,
                 'date' => date('Y-m-d')
             ], Auth::id());
-            $this->caseModel->updateStatus($id, ProtocolCase::PHASE_MUR_VALORACION);
+            
+            // Usar el servicio de estado para asegurar sincronización con la tabla general
+            $murciaCase = $this->caseModel->find($id);
+            $stateService = new \App\Services\ProtocolStateService();
+            $stateService->transitionTo($murciaCase['report_id'], ProtocolCase::PHASE_MUR_VALORACION);
+            
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
@@ -170,6 +180,11 @@ class MurciaProtocolController
                     'date' => date('Y-m-d')
                 ], Auth::id());
             }
+
+            // Usar el servicio de estado para asegurar sincronización con la tabla general
+            $murciaCase = $this->caseModel->find($id);
+            $stateService = new \App\Services\ProtocolStateService();
+            $stateService->transitionTo($murciaCase['report_id'], ProtocolCase::PHASE_MUR_CIERRE);
             
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {

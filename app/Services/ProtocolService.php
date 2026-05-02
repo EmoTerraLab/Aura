@@ -50,9 +50,9 @@ class ProtocolService
                 (SELECT COUNT(*) FROM protocol_followups f WHERE f.protocol_case_id = c.id) as total_followups
                 FROM protocol_cases c
                 JOIN reports r ON c.report_id = r.id
-                JOIN student_profiles sp ON r.student_id = sp.id
-                JOIN users u ON sp.user_id = u.id
-                JOIN classrooms cl ON r.classroom_id = cl.id
+                LEFT JOIN student_profiles sp ON r.student_id = sp.id
+                LEFT JOIN users u ON sp.user_id = u.id
+                LEFT JOIN classrooms cl ON r.classroom_id = cl.id
                 WHERE c.current_phase != 'tancament'
                 ORDER BY c.created_at DESC";
         
@@ -85,33 +85,39 @@ class ProtocolService
      */
     public function calculateSchoolDays(string $startDate): int
     {
-        $db = Database::getInstance();
         $dateOnly = date('Y-m-d', strtotime($startDate));
         $today = date('Y-m-d');
+        $ccaa = \App\Core\Config::get('ccaa_code', 'generic');
         
-        // Contar cuántos días lectivos han pasado en el calendario
-        $sql = "SELECT COUNT(*) FROM aragon_school_calendar 
-                WHERE calendar_date >= ? AND calendar_date <= ? AND is_school_day = 1";
-        
-        $stmt = $db->prepare($sql);
-        $stmt->execute([$dateOnly, $today]);
-        $days = (int)$stmt->fetchColumn();
-        
-        // Si el calendario está vacío (no configurado aún), hacer un fallback básico (sin fines de semana)
-        if ($days === 0) {
-            $daysCount = 0;
-            $start = strtotime($dateOnly);
-            $end = strtotime($today);
-            while ($start <= $end) {
-                $dayOfWeek = date('N', $start);
-                if ($dayOfWeek < 6) { // 1-5 son Lunes-Viernes
-                    $daysCount++;
+        // Solo Aragón tiene tabla de calendario escolar
+        if ($ccaa === 'ARA') {
+            try {
+                $db = Database::getInstance();
+                $sql = "SELECT COUNT(*) FROM aragon_school_calendar 
+                        WHERE calendar_date >= ? AND calendar_date <= ? AND is_school_day = 1";
+                $stmt = $db->prepare($sql);
+                $stmt->execute([$dateOnly, $today]);
+                $days = (int)$stmt->fetchColumn();
+                if ($days > 0) {
+                    return $days;
                 }
-                $start += 86400; // Avanzar 1 día
+            } catch (\Throwable $e) {
+                // Tabla no existe o error de consulta — usar fallback
+                error_log("calculateSchoolDays: " . $e->getMessage());
             }
-            return $daysCount;
         }
-
-        return $days;
+        
+        // Fallback genérico: contar días laborables (L-V)
+        $daysCount = 0;
+        $start = strtotime($dateOnly);
+        $end = strtotime($today);
+        while ($start <= $end) {
+            $dayOfWeek = date('N', $start);
+            if ($dayOfWeek < 6) {
+                $daysCount++;
+            }
+            $start += 86400;
+        }
+        return $daysCount;
     }
 }

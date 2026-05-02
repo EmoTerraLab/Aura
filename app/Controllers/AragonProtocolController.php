@@ -125,7 +125,11 @@ class AragonProtocolController
             if ($decision === 'iniciar') {
                 $this->annexModel->createAnnex($id, 'II', ['measures' => $_POST['measures'] ?? [], 'other_measures' => $_POST['other_measures'] ?? ''], Auth::id());
             }
-            $this->caseModel->updateStatus($id, $newStatus);
+            
+            $case = $this->caseModel->find($id);
+            $stateService = new \App\Services\ProtocolStateService();
+            $stateService->transitionTo($case['report_id'], $newStatus);
+            
             $db->commit();
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
@@ -142,7 +146,11 @@ class AragonProtocolController
         try {
             $db->beginTransaction();
             $this->annexModel->createAnnex($id, 'III', ['team_ids' => $_POST['team_ids'] ?? [], 'constitution_date' => date('Y-m-d')], Auth::id());
-            $this->caseModel->updateStatus($id, AragonProtocolCase::STATE_EN_VALORACION);
+            
+            $case = $this->caseModel->find($id);
+            $stateService = new \App\Services\ProtocolStateService();
+            $stateService->transitionTo($case['report_id'], AragonProtocolCase::STATE_EN_VALORACION);
+            
             $db->commit();
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
@@ -210,7 +218,11 @@ class AragonProtocolController
                 'measures' => htmlspecialchars($_POST['measures'] ?? ''), 'date_resolution' => date('Y-m-d H:i:s'), 'signed_by' => Auth::id()
             ];
             $this->annexModel->createAnnex($id, 'VIII', $res, Auth::id());
-            $this->caseModel->updateStatus($id, AragonProtocolCase::STATE_VALORADO);
+            
+            $case = $this->caseModel->find($id);
+            $stateService = new \App\Services\ProtocolStateService();
+            $stateService->transitionTo($case['report_id'], AragonProtocolCase::STATE_VALORADO);
+            
             $db->commit();
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {
@@ -223,7 +235,14 @@ class AragonProtocolController
     {
         Csrf::validateRequest();
         header('Content-Type: application/json');
-        if ($this->caseModel->updateStatus($id, AragonProtocolCase::STATE_EN_SEGUIMIENTO)) { echo json_encode(['success' => true]); } else { echo json_encode(['success' => false]); }
+        try {
+            $case = $this->caseModel->find($id);
+            $stateService = new \App\Services\ProtocolStateService();
+            $success = $stateService->transitionTo($case['report_id'], AragonProtocolCase::STATE_EN_SEGUIMIENTO);
+            echo json_encode(['success' => $success]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 
     public function addFollowUp(int $id): void
@@ -261,7 +280,11 @@ class AragonProtocolController
             $db->beginTransaction();
             $closureData = ['evolution_favorable' => isset($_POST['evolution_favorable']), 'can_be_closed' => isset($_POST['can_be_closed']), 'justification' => htmlspecialchars($_POST['justification'] ?? ''), 'closure_date' => date('Y-m-d H:i:s')];
             $this->annexModel->createAnnex($id, 'X', $closureData, Auth::id());
-            $this->caseModel->updateStatus($id, AragonProtocolCase::STATE_CERRADO);
+            
+            $case = $this->caseModel->find($id);
+            $stateService = new \App\Services\ProtocolStateService();
+            $stateService->transitionTo($case['report_id'], AragonProtocolCase::STATE_CERRADO);
+            
             $db->commit();
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {

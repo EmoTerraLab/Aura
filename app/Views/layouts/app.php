@@ -204,7 +204,7 @@
                 if (err.name === 'AbortError') {
                     return { error: "La petición ha tardado demasiado tiempo. Revisa tu conexión." };
                 }
-                return { error: "Error de conexión con el servidor." };
+                return { error: "Error de conexión con el servidor: " + err.message };
             }
         }
     </script>

@@ -341,7 +341,7 @@
         const container = document.getElementById('report-detail-container');
         
         // Cargar datos del caso legal
-        let caseRes = { success: false, case: null, protocol_meta: null, error: 'Iniciando...' };
+        let caseRes = { success: false, error: 'Iniciando...' };
         try {
             caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
         } catch (e) {
@@ -350,7 +350,7 @@
 
         const protocolCase = caseRes.success ? caseRes.case : null;
         const protocolMeta = caseRes.success ? caseRes.protocol_meta : null;
-        const protocolError = caseRes.success ? null : (caseRes.error || 'Error desconocido');
+        const protocolError = caseRes.success ? null : (caseRes.error || 'Respuesta no válida');
         const isAdvancedProtocol = caseRes.success && protocolMeta && protocolMeta.current_actions && !protocolMeta.current_actions.some(a => a.key === 'not_implemented');
 
         let mHtml = messages.map(m => {
@@ -397,9 +397,10 @@
                 <!-- PROTOCOL ACTIONS CARD -->
                 ${protocolError ? `
                     <div class="bg-red-50 p-6 rounded-[2rem] border border-red-100 text-red-600 text-xs text-center font-bold">
-                        Error cargando protocolo: ${protocolError}
+                        Error cargando protocolo: ${protocolError}<br>
+                        <pre class="mt-2 text-[8px] text-left overflow-auto">${JSON.stringify(caseRes, null, 2)}</pre>
                     </div>
-                ` : renderProtocolActionsCard(protocolCase, protocolMeta)}
+                ` : (protocolMeta ? renderProtocolActionsCard(protocolCase, protocolMeta) : `<div class="bg-amber-50 p-6 rounded-[2rem] border border-amber-100 text-amber-600 text-xs text-center font-bold">Protocol Meta Null - Response: <pre class="text-[8px] text-left overflow-auto">${JSON.stringify(caseRes, null, 2)}</pre></div>`)}
 
                 
             <!-- MÒDUL RESTAURATIU -->
