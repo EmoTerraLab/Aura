@@ -30,17 +30,6 @@ class ProtocolWorkflowController
 
     public function __construct()
     {
-        if (Config::get('ccaa_code') !== 'CAT') {
-            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
-                http_response_code(403);
-                header('Content-Type: application/json');
-                echo json_encode(['error' => 'El protocolo de Catalunya no está habilitado en este centro']);
-            } else {
-                http_response_code(403);
-                die('El protocolo de Catalunya no está habilitado en este centro');
-            }
-            exit;
-        }
         $this->caseModel = new ProtocolCase();
         $this->reportModel = new Report();
         $this->mapModel = new SecurityMap();
@@ -52,6 +41,25 @@ class ProtocolWorkflowController
         $this->protocolService = new ProtocolService();
     }
 
+    /**
+     * Verifica que el centro tiene configurado el protocolo de Catalunya.
+     * Usar al inicio de métodos exclusivos de CAT.
+     */
+    private function requireCat(): void
+    {
+        if (Config::get('ccaa_code') !== 'CAT') {
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+                http_response_code(403);
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'El protocolo de Catalunya no está habilitado en este centro']);
+            } else {
+                http_response_code(403);
+                echo 'El protocolo de Catalunya no está habilitado en este centro';
+            }
+            exit;
+        }
+    }
+
     public function assignTeam($id): void
     {
         header('Content-Type: application/json');
@@ -60,6 +68,7 @@ class ProtocolWorkflowController
 
     public function getRevaSummary(int $id): void
     {
+        $this->requireCat();
         header('Content-Type: application/json');
         $case = $this->caseModel->find($id);
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
@@ -123,7 +132,11 @@ class ProtocolWorkflowController
     public function exportTemplate($id, $templateName): void
     {
         $case = $this->caseModel->find((int)$id);
-        if (!$case) die("Cas no trobat");
+        if (!$case) {
+            http_response_code(404);
+            echo "Cas no trobat";
+            return;
+        }
         
         $ccaa = $case['ccaa_code'];
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
@@ -139,7 +152,11 @@ class ProtocolWorkflowController
     public function exportPdf($id): void
     {
         $case = $this->caseModel->find((int)$id);
-        if (!$case) die("Cas no trobat");
+        if (!$case) {
+            http_response_code(404);
+            echo "Cas no trobat";
+            return;
+        }
         
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
         $map = $this->mapModel->findByCase($case['id']);
@@ -221,6 +238,7 @@ class ProtocolWorkflowController
 
     public function getRestorativeData(int $id): void
     {
+        $this->requireCat();
         header('Content-Type: application/json');
         $case = $this->caseModel->find($id);
         $practices = $this->restorativeModel->findByCase($id);
@@ -234,6 +252,7 @@ class ProtocolWorkflowController
 
     public function addRestorativePractice(int $id): void
     {
+        $this->requireCat();
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         

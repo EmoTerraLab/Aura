@@ -33,7 +33,11 @@ class SociometricController
         $stmtSurvey->execute([$id]);
         $survey = $stmtSurvey->fetch();
 
-        if (!$survey) die("Enquesta no trobada.");
+        if (!$survey) {
+            http_response_code(404);
+            echo "Enquesta no trobada.";
+            return;
+        }
 
         // 2. Consulta agrupada de métriques (Optimitzada)
         $sql = "SELECT u.id, u.name,

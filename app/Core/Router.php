@@ -50,7 +50,7 @@ class Router {
                 
                 if (is_array($route['callback'])) {
                     $controllerClass = $route['callback'][0];
-                    $method = $route['callback'][1];
+                    $controllerMethod = $route['callback'][1];
 
                     // [MEJORA] Inyección de Dependencias simple
                     $controller = match($controllerClass) {
@@ -74,9 +74,9 @@ class Router {
                     };
 
                     try {
-                        return call_user_func_array([$controller, $method], $params);
+                        return call_user_func_array([$controller, $controllerMethod], $params);
                     } catch (\TypeError $e) {
-                        return call_user_func_array([$controller, $method], $paramValues);
+                        return call_user_func_array([$controller, $controllerMethod], $paramValues);
                     }
                 }
                 

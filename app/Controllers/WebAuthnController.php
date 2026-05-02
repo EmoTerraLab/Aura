@@ -173,13 +173,6 @@ class WebAuthnController
 
             error_log("WebAuthn registerVerify: Dispositivo registrado con éxito para user " . $user['id']);
 
-            // Asegurar que pubKeyCredParams esté presente (requerido por el navegador)
-            if (!isset($createArgs->pubKeyCredParams)) {
-                $createArgs->pubKeyCredParams = [
-                    ['type' => 'public-key', 'alg' => -7],  // ES256
-                    ['type' => 'public-key', 'alg' => -257] // RS256
-                ];
-            }
             header('Content-Type: application/json');
             echo json_encode(['success' => true]);
         } catch (\Throwable $e) {
@@ -215,13 +208,6 @@ class WebAuthnController
                 }
             }
 
-            // Asegurar que pubKeyCredParams esté presente (requerido por el navegador)
-            if (!isset($createArgs->pubKeyCredParams)) {
-                $createArgs->pubKeyCredParams = [
-                    ['type' => 'public-key', 'alg' => -7],  // ES256
-                    ['type' => 'public-key', 'alg' => -257] // RS256
-                ];
-            }
             header('Content-Type: application/json');
             echo json_encode($getArgs);
         } catch (\Throwable $e) {
@@ -292,13 +278,6 @@ class WebAuthnController
 
             error_log("WebAuthn authVerify: Login biométrico exitoso para user " . $user['id']);
 
-            // Asegurar que pubKeyCredParams esté presente (requerido por el navegador)
-            if (!isset($createArgs->pubKeyCredParams)) {
-                $createArgs->pubKeyCredParams = [
-                    ['type' => 'public-key', 'alg' => -7],  // ES256
-                    ['type' => 'public-key', 'alg' => -257] // RS256
-                ];
-            }
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'redirect' => '/alumno/dashboard']);
         } catch (\Throwable $e) {
@@ -378,13 +357,6 @@ class WebAuthnController
     private function sendError(string $message): void
     {
         if (!headers_sent()) {
-            // Asegurar que pubKeyCredParams esté presente (requerido por el navegador)
-            if (!isset($createArgs->pubKeyCredParams)) {
-                $createArgs->pubKeyCredParams = [
-                    ['type' => 'public-key', 'alg' => -7],  // ES256
-                    ['type' => 'public-key', 'alg' => -257] // RS256
-                ];
-            }
             header('Content-Type: application/json');
         }
         echo json_encode(['error' => $message]);

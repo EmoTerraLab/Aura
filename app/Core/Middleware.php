@@ -26,7 +26,7 @@ class Middleware
     private static function requireAuth(): void
     {
         if (!Auth::check()) {
-            http_response_code(403);
+            http_response_code(302);
             header('Location: /login');
             exit;
         }

@@ -99,7 +99,11 @@ class AragonProtocolController
     public function showCase(int $id): void
     {
         $case = $this->caseModel->find($id);
-        if (!$case) die("Expediente no encontrado.");
+        if (!$case) {
+            http_response_code(404);
+            echo "Expediente no encontrado.";
+            return;
+        }
         $annexes = $this->annexModel->findByCase($id);
         $db = Database::getInstance();
         $stmt = $db->query("SELECT id, name FROM users WHERE role != 'alumno'");
@@ -217,6 +221,7 @@ class AragonProtocolController
 
     public function startFollowUp(int $id): void
     {
+        Csrf::validateRequest();
         header('Content-Type: application/json');
         if ($this->caseModel->updateStatus($id, AragonProtocolCase::STATE_EN_SEGUIMIENTO)) { echo json_encode(['success' => true]); } else { echo json_encode(['success' => false]); }
     }
@@ -268,12 +273,20 @@ class AragonProtocolController
     public function exportAnnex(int $id, string $type): void
     {
         $case = $this->caseModel->find($id);
-        if (!$case) die("Expediente no encontrado.");
+        if (!$case) {
+            http_response_code(404);
+            echo "Expediente no encontrado.";
+            return;
+        }
         $db = Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM aragon_protocol_annexes WHERE protocol_case_id = ? AND annex_type = ? LIMIT 1");
         $stmt->execute([$id, $type]);
         $annex = $stmt->fetch();
-        if (!$annex) die("El Anexo solicitado ($type) no ha sido generado aún.");
+        if (!$annex) {
+            http_response_code(404);
+            echo "El Anexo solicitado ($type) no ha sido generado aún.";
+            return;
+        }
         $report = $this->reportModel->find($case['report_id']);
         View::render('protocol/aragon/print_annex', ['case' => $case, 'report' => $report, 'annex' => $annex, 'type' => $type, 'content' => json_decode($annex['content'], true), 'school_name' => Config::get('school_name', 'Centro')], null);
     }

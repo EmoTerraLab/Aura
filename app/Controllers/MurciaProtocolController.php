@@ -38,7 +38,11 @@ class MurciaProtocolController
             $case = $this->caseModel->findByReportId($id);
         }
         
-        if (!$case) die("Expediente no encontrado.");
+        if (!$case) {
+            http_response_code(404);
+            echo "Expediente no encontrado.";
+            return;
+        }
         $annexes = $this->annexModel->findByCase($case['id']);
         
         $db = Database::getInstance();

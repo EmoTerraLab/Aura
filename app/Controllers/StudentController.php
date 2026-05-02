@@ -53,7 +53,7 @@ class StudentController {
 
         $report = $this->reportModel->find($id);
 
-        if (!$report || $report['student_id'] !== $profile['id']) {
+        if (!$report || (int)$report['student_id'] !== (int)$profile['id']) {
             http_response_code(404);
             echo json_encode(['error' => 'Reporte no encontrado o no tienes acceso.']);
             return;
@@ -92,7 +92,7 @@ class StudentController {
         $report = $this->reportModel->find($id);
 
         // Validate ownership and status
-        if (!$report || $report['student_id'] !== $profile['id']) {
+        if (!$report || (int)$report['student_id'] !== (int)$profile['id']) {
             http_response_code(404);
             echo json_encode(['error' => 'Reporte no encontrado.']);
             return;

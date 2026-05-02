@@ -22,7 +22,8 @@ class EvidenceController
 
         if (!$evidence) {
             http_response_code(404);
-            die("Evidència no trobada.");
+            echo "Evidència no trobada.";
+            return;
         }
 
         // 2. Control d'accés (RBAC + COCOBE)
@@ -32,7 +33,8 @@ class EvidenceController
 
         if (!$isAuthorized) {
             http_response_code(403);
-            die("Accés denegat: No teniu permisos per veure aquesta prova.");
+            echo "Accés denegat: No teniu permisos per veure aquesta prova.";
+            return;
         }
 
         // 3. Validació de seguretat del path (Prevé LFI)
@@ -41,7 +43,8 @@ class EvidenceController
 
         if (!file_exists($filePath)) {
             http_response_code(404);
-            die("El fitxer físic ha estat eliminat o mogut.");
+            echo "El fitxer físic ha estat eliminat o mogut.";
+            return;
         }
 
         // 4. Stream segur

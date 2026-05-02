@@ -22,6 +22,7 @@ class Session {
                 'samesite' => 'Lax'
             ]);
             
+            session_name('aura_sid');
             session_start();
         }
     }

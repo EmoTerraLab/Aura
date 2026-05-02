@@ -28,10 +28,13 @@ class ProtocolService
         $db = Database::getInstance();
         $startOfWeek = date('Y-m-d H:i:s', strtotime('monday this week'));
 
+        $stmtFollowups = $db->prepare("SELECT COUNT(*) FROM protocol_followups WHERE session_date >= ?");
+        $stmtFollowups->execute([$startOfWeek]);
+
         return [
             'total_active' => $db->query("SELECT COUNT(*) FROM protocol_cases WHERE current_phase != 'tancament'")->fetchColumn(),
             'total_barnahus' => $db->query("SELECT COUNT(*) FROM protocol_cases WHERE current_phase = 'violencia_sexual_actiu'")->fetchColumn(),
-            'weekly_followups' => $db->query("SELECT COUNT(*) FROM protocol_followups WHERE session_date >= '$startOfWeek'")->fetchColumn()
+            'weekly_followups' => $stmtFollowups->fetchColumn()
         ];
     }
 

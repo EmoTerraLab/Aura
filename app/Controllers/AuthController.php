@@ -82,7 +82,7 @@ class AuthController {
         if ($user && $user['role'] === 'alumno') {
             // Bypass para usuario de pruebas
             if ($email === 'alumno@aura.test') {
-                $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+                $code = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
                 $this->otpModel->create($user['id'], $code);
                 echo json_encode(['ok' => true, 'dev_code' => $code]);
                 return;
@@ -105,7 +105,7 @@ class AuthController {
             }
 
             // Fallback a OTP por email
-            $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $code = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
             $this->otpModel->create($user['id'], $code);
 
             // Envío real si el mailer está configurado
@@ -132,8 +132,10 @@ class AuthController {
                 }
             }
 
-            // Registro en error_log para depuración
-            error_log("OTP generado para {$email}: {$code}");
+            // Registro en error_log para depuración (solo en desarrollo)
+            if (in_array(APP_ENV, ['dev', 'local', 'development'])) {
+                error_log("OTP generado para {$email}: {$code}");
+            }
 
             $response = ['ok' => true];
             if (in_array(APP_ENV, ['dev', 'local', 'development'])) {
@@ -206,6 +208,7 @@ class AuthController {
     public function logout() {
         Auth::logout();
         header('Location: /login');
+        exit;
     }
 
     private function redirectBasedOnRole() {
@@ -217,5 +220,6 @@ class AuthController {
         } else {
             header('Location: /staff/inbox');
         }
+        exit;
     }
 }

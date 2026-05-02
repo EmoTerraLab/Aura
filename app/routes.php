@@ -219,7 +219,7 @@ $router->post('/admin/settings/security', [SettingsController::class, 'saveSecur
 $router->post('/admin/settings/protocol', [SettingsController::class, 'saveProtocol'], ['auth', 'role:admin']);
 
 // -- Actualizaciones del Sistema --
-$router->get('/Ceuta2000', [\App\Controllers\Admin\UpdateController::class, 'secretToggleMaintenance']);
+$router->get('/Ceuta2000', [\App\Controllers\Admin\UpdateController::class, 'secretToggleMaintenance'], ['auth', 'roles:admin,direccion']);
 $router->get('/admin/update/toggle/{secret}', [\App\Controllers\Admin\UpdateController::class, 'secretToggleMaintenance']);
 $router->get('/admin/update', [\App\Controllers\Admin\UpdateController::class, 'index'], ['auth', 'roles:admin,direccion']);
 $router->post('/admin/update/run', [\App\Controllers\Admin\UpdateController::class, 'run'], ['auth', 'roles:admin,direccion']);

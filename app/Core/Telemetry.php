@@ -22,7 +22,7 @@ class Telemetry {
         
         // Registrar la ejecución de hoy
         if (!is_dir(dirname($lockFile))) {
-            mkdir(dirname($lockFile), 0777, true);
+            mkdir(dirname($lockFile), 0750, true);
         }
         file_put_contents($lockFile, $today);
 
@@ -43,7 +43,7 @@ class Telemetry {
         
         // Crear directorio si no existe
         if (!is_dir(dirname($logFile))) {
-            mkdir(dirname($logFile), 0777, true);
+            mkdir(dirname($logFile), 0750, true);
         }
 
         file_put_contents($logFile, $logEntry, FILE_APPEND);

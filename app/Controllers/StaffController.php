@@ -57,7 +57,37 @@ class StaffController {
 
     public function storeReport() {
         \App\Core\Csrf::validateRequest();
-        header("Location: /staff/inbox?created=1");
+
+        $content = trim($_POST['content'] ?? '');
+        $category = trim($_POST['category'] ?? 'acoso');
+        $urgency = trim($_POST['urgency'] ?? 'medium');
+        $isConfidential = isset($_POST['is_confidential']) ? 1 : 0;
+        $targetStudentId = !empty($_POST['target_student_id']) ? (int)$_POST['target_student_id'] : null;
+        $classroomId = !empty($_POST['classroom_id']) ? (int)$_POST['classroom_id'] : null;
+
+        if (empty($content)) {
+            header("Location: /staff/reports/create?error=empty_content");
+            exit;
+        }
+
+        try {
+            $this->reportModel->createStaffReport([
+                'title'             => $category,
+                'description'       => $content,
+                'target_student_id' => $targetStudentId,
+                'classroom_id'      => $classroomId,
+                'created_by'        => Auth::id(),
+                'created_by_role'   => Auth::role(),
+                'category'          => $category,
+                'urgency'           => $urgency,
+                'is_confidential'   => $isConfidential,
+                'status'            => 'new'
+            ]);
+            header("Location: /staff/inbox?created=1");
+        } catch (\Exception $e) {
+            error_log("[StaffController] Error creating report: " . $e->getMessage());
+            header("Location: /staff/reports/create?error=creation_failed");
+        }
         exit;
     }
 

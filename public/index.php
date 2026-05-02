@@ -95,11 +95,11 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-i
 // Inicializar y ejecutar Router
 $router = new \App\Core\Router();
 
-// Cumplimiento: Ejecución de Telemetría (Poor Man's Cron)
-\App\Core\Telemetry::checkAndRunCron();
-
 // Cargar rutas
 require_once __DIR__ . '/../app/routes.php';
 
 // Resolver la petición actual
 $router->resolve($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+
+// Cumplimiento: Ejecución de Telemetría (Poor Man's Cron) — después del dispatch para no añadir latencia
+\App\Core\Telemetry::checkAndRunCron();

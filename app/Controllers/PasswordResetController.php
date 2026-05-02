@@ -75,7 +75,7 @@ class PasswordResetController
             return;
         }
 
-        View::render('auth/password_reset_form', ['title' => Lang::t('auth.reset_new_password'), 'token' => $token ?? $token_val ?? '', 'errors' => $errors ?? []]);
+        View::render('auth/password_reset_form', ['title' => Lang::t('auth.reset_new_password'), 'token' => $token, 'errors' => []]);
     }
 
     public function resetPassword(): void
@@ -101,8 +101,7 @@ class PasswordResetController
         }
 
         if (!empty($errors)) {
-            $token_val = htmlspecialchars($token);
-            View::render('auth/password_reset_form', ['title' => Lang::t('auth.reset_new_password'), 'token' => $token ?? $token_val ?? '', 'errors' => $errors ?? []]);
+            View::render('auth/password_reset_form', ['title' => Lang::t('auth.reset_new_password'), 'token' => htmlspecialchars($token), 'errors' => $errors]);
             return;
         }
 

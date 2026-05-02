@@ -17,6 +17,39 @@ class Report extends Model {
         return $this->db->lastInsertId();
     }
 
+    /**
+     * Crea un reporte originado por el staff (no por un alumno).
+     * Utilizado por el flujo de Aragón (Anexo I-a) y reportes manuales del personal.
+     */
+    public function createStaffReport(array $data): int
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO {$this->table} (student_id, classroom_id, content, target, urgency_level, is_anonymous, status)
+             VALUES (:student_id, :classroom_id, :content, :target, :urgency_level, :is_anonymous, :status)"
+        );
+        $stmt->execute([
+            'student_id'    => $data['target_student_id'] ?? null,
+            'classroom_id'  => $data['classroom_id'] ?? $this->resolveDefaultClassroom(),
+            'content'       => $data['description'] ?? $data['title'] ?? '',
+            'target'        => 'compañero',
+            'urgency_level' => ($data['urgency'] === 'urgente') ? 'high' : 'medium',
+            'is_anonymous'  => $data['is_confidential'] ?? 0,
+            'status'        => $data['status'] ?? 'new'
+        ]);
+        return (int)$this->db->lastInsertId();
+    }
+
+    /**
+     * Resuelve un classroom_id por defecto cuando no se proporciona.
+     * Retorna el primer aula disponible o null.
+     */
+    private function resolveDefaultClassroom(): ?int
+    {
+        $stmt = $this->db->query("SELECT id FROM classrooms LIMIT 1");
+        $row = $stmt->fetch();
+        return $row ? (int)$row['id'] : null;
+    }
+
     public function findByStudent($student_id) {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE student_id = :student_id ORDER BY created_at DESC");
         $stmt->execute(['student_id' => $student_id]);
