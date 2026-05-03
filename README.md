@@ -1,96 +1,96 @@
 <div align="center">
   <img src="public/assets/images/logo.png" alt="Aura Logo" width="150" height="auto" />
   <h1>Aura PDP</h1>
-  <p><em>Enterprise-Grade School Well-being & Anti-Bullying Management Platform</em></p>
+  <p><em>Plataforma Empresarial de Gestión de Convivencia Escolar y Prevención del Acoso</em></p>
 
   <p>
-    <a href="https://php.net"><img src="https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php&logoColor=white&style=for-the-badge" alt="PHP Version"></a>
-    <a href="#"><img src="https://img.shields.io/badge/Security-Bank_Grade-red?style=for-the-badge&logo=security" alt="Security Level"></a>
-    <a href="#"><img src="https://img.shields.io/badge/Architecture-Native_MVC-blueviolet?style=for-the-badge" alt="Architecture"></a>
-    <a href="#"><img src="https://img.shields.io/badge/License-Proprietary-darkgreen?style=for-the-badge" alt="License"></a>
+    <a href="https://php.net"><img src="https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php&logoColor=white&style=for-the-badge" alt="Versión PHP"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Seguridad-Nivel_Bancario-red?style=for-the-badge&logo=security" alt="Nivel de Seguridad"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Arquitectura-MVC_Nativo-blueviolet?style=for-the-badge" alt="Arquitectura"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Licencia-Propietaria-darkgreen?style=for-the-badge" alt="Licencia"></a>
   </p>
 </div>
 
 ---
 
-Aura is a robust, highly secure reporting and management platform built specifically for educational institutions. It empowers students to safely report incidents (anonymously or identified) and equips school administration with legally-compliant, regional workflow automation.
+Aura es una plataforma de gestión y reportes altamente segura, construida específicamente para instituciones educativas. Permite a los alumnos reportar incidentes de manera segura (de forma anónima o identificada) y dota a la administración del centro escolar de una automatización de flujos de trabajo regionales que cumplen con la normativa legal vigente.
 
-## 🚀 Key Features
+## 🚀 Características Principales
 
-### 🛡️ Uncompromising Security
-*   **Bank-Grade Hardening:** Strict IDOR (Insecure Direct Object Reference) prevention via cryptographic ownership verification (`findByIdWithDetails`).
-*   **Multi-Factor Authentication (MFA):** Biometric WebAuthn (FaceID/TouchID) for students, and AES-256-GCM encrypted TOTP for staff.
-*   **DDoS & Brute Force Mitigation:** Composite Rate Limiting (IP + Identifier) to prevent credential stuffing.
-*   **Immutable Audit Trails:** Tamper-evident forensic logging of all system interactions (`audit_logs`).
+### 🛡️ Seguridad Sin Compromisos
+*   **Blindaje de Nivel Bancario:** Prevención estricta de IDOR (Insecure Direct Object Reference) mediante verificación criptográfica de propiedad (`findByIdWithDetails`).
+*   **Autenticación Multifactor (MFA):** WebAuthn biométrico (FaceID/TouchID) para alumnos, y TOTP cifrado con AES-256-GCM para el personal del centro.
+*   **Mitigación de DDoS y Fuerza Bruta:** Limitación de peticiones compuesta (IP + Identificador) para prevenir ataques de "Credential Stuffing".
+*   **Registros de Auditoría Inmutables:** Registro forense a prueba de manipulaciones de todas las interacciones críticas del sistema (`audit_logs`).
 
-### 🗺️ Regional Legal Protocols (State Machine)
-Aura dynamically adapts its legal workflows based on regional directives (Comunidades Autónomas):
-*   **Galicia (v2.23):** 6-phase legal state machine, 16 auto-generated PDF annexes, and integrated "Medidas Urxentes" modules.
-*   **Aragón:** Enforces Anexo I-a tracking, team constitution, and specialized checklists.
-*   **Murcia & C. Valenciana:** Custom workflows and strict compliance guards preventing out-of-order phase transitions.
+### 🗺️ Protocolos Legales Autonómicos (Máquina de Estados)
+Aura adapta dinámicamente sus flujos de trabajo legales en base a las directivas regionales (Comunidades Autónomas):
+*   **Galicia (v2.23):** Máquina de estados legal de 6 fases, 16 anexos en PDF autogenerados y módulos integrados de "Medidas Urxentes" y "Ciberacoso".
+*   **Aragón:** Obliga al seguimiento del Anexo I-a, constitución de equipos de valoración y checklists normativos especializados.
+*   **Murcia y C. Valenciana:** Flujos de trabajo personalizados y salvaguardias de cumplimiento estrictas que evitan transiciones de fase desordenadas.
 
-### 🌐 Internationalization & Accessibility
-*   **5 Native Languages:** Fully localized in Spanish, Català, Galego, Euskara, and English.
-*   **Interactive Sociograms:** Built-in `Cytoscape.js` integration to map classroom relationships and detect vulnerabilities visually.
+### 🌐 Internacionalización y Accesibilidad
+*   **5 Idiomas Nativos:** Totalmente localizado en Español, Català, Galego, Euskara e Inglés.
+*   **Sociogramas Interactivos:** Integración nativa de `Cytoscape.js` para mapear las relaciones del aula y detectar vulnerabilidades visualmente.
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Arquitectura del Sistema
 
-Aura operates on a **Native MVC** (Model-View-Controller) architecture. By actively avoiding monolithic frameworks, Aura maintains a zero-bloat footprint, lightning-fast response times, and minimal dependency supply chain risks.
+Aura opera sobre una arquitectura **MVC Nativa** (Modelo-Vista-Controlador). Al evitar activamente los frameworks monolíticos (como Laravel), Aura mantiene un tamaño mínimo sin sobrecarga, tiempos de respuesta ultra rápidos y reduce drásticamente los riesgos de seguridad en la cadena de suministro de dependencias.
 
 <details>
-<summary><b>📂 Click to view Directory Structure</b></summary>
+<summary><b>📂 Haz clic para ver la Estructura de Directorios</b></summary>
 
 ```text
 aura/
 ├── app/
-│   ├── Controllers/    # Endpoints & IDOR validation
+│   ├── Controllers/    # Endpoints y validación estricta IDOR
 │   ├── Core/           # Framework: Router, Auth, Middleware, AuditLogger
-│   ├── Models/         # Parameterized SQLite PDO interactions
-│   └── Views/          # PHP Templates with automatic XSS escaping
+│   ├── Models/         # Interacciones PDO parametrizadas con SQLite
+│   └── Views/          # Plantillas PHP con escape XSS automático
 ├── database/
-│   ├── .htaccess       # Denies HTTP access to DB
-│   └── aura.sqlite     # Portable persistence layer
+│   ├── .htaccess       # Deniega acceso HTTP a la base de datos
+│   └── aura.sqlite     # Capa de persistencia portable
 ├── public/             
-│   ├── index.php       # Front Controller (Single Entry Point)
-│   └── .htaccess       # Mod_rewrite rules
-└── storage/            # Evidence and logs
+│   ├── index.php       # Front Controller (Punto de Entrada Único)
+│   └── .htaccess       # Reglas de enrutamiento (Mod_rewrite)
+└── storage/            # Evidencias, anexos y registros
 ```
 </details>
 
 ---
 
-## 💻 Quick Start & Deployment
+## 💻 Inicio Rápido y Despliegue
 
-Aura is designed for seamless on-premise installation, eliminating the need for complex external database daemons via its highly optimized SQLite 3.35+ engine.
+Aura está diseñado para una instalación local (on-premise) sin fricciones, eliminando la necesidad de gestionar demonios de bases de datos externas complejos gracias a su motor SQLite 3.35+ altamente optimizado.
 
-### Prerequisites
-*   Apache 2.4+ (with `mod_rewrite`)
-*   PHP 8.2+ (`pdo_sqlite`, `sodium`, `mbstring`)
+### Requisitos Previos
+*   Apache 2.4+ (con `mod_rewrite` activado)
+*   PHP 8.2+ (extensiones: `pdo_sqlite`, `sodium`, `mbstring`)
 *   Composer 2.x
 
-### Installation Steps
+### Pasos de Instalación
 
-1. **Clone the Repository**
+1. **Clonar el Repositorio**
    ```bash
-   git clone https://github.com/your-org/aura-pdp.git
+   git clone https://github.com/tu-org/aura-pdp.git
    cd aura-pdp
    ```
 
-2. **Install Dependencies**
+2. **Instalar Dependencias**
    ```bash
    composer install --no-dev --optimize-autoloader
    ```
 
-3. **Set Permissions**
-   Grant the webserver write access to the persistence directories:
+3. **Configurar Permisos**
+   Concede al servidor web permisos de escritura sobre los directorios de persistencia:
    ```bash
    chmod -R 775 storage database
    ```
 
-4. **Web Server Configuration**
-   > ⚠️ **CRITICAL:** The Apache `DocumentRoot` must point **EXCLUSIVELY** to the `public/` directory.
+4. **Configuración del Servidor Web**
+   > ⚠️ **CRÍTICO:** El `DocumentRoot` de Apache debe apuntar **EXCLUSIVAMENTE** al directorio `public/`. Nunca a la raíz del proyecto.
 
    ```apache
    <VirtualHost *:443>
@@ -106,13 +106,14 @@ Aura is designed for seamless on-premise installation, eliminating the need for 
 
 ---
 
-## 🔐 Administration & Initial Setup
+## 🔐 Administración y Configuración Inicial
 
-Upon the first execution, the database will be auto-generated. Log in using the default administrative credentials provided by your deployment lead. 
-**Immediate Post-Install Actions Required:**
-1. Configure the `APP_KEY` environment variable.
-2. Update the Admin Password and enable TOTP.
-3. Configure the SMTP Gateway for automated notifications.
+Al ejecutar la aplicación por primera vez, la base de datos se generará automáticamente. Inicia sesión utilizando las credenciales administrativas por defecto proporcionadas por el líder de despliegue. 
+
+**Acciones Críticas Inmediatas Post-Instalación:**
+1. Configurar la variable de entorno `APP_KEY` (32 bytes en formato hexadecimal).
+2. Cambiar la Contraseña del Administrador y habilitar TOTP obligatoriamente.
+3. Configurar el Gateway SMTP (para el envío de correos automatizados) desde el panel de ajustes.
 
 ---
 
