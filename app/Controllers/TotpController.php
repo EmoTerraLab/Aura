@@ -74,9 +74,10 @@ class TotpController
         if ($totp->verify($code)) {
             $userId = Auth::id();
 
-            // Guardar secret en BD
+            // SEC-004 FIX: Cifrar secret antes de guardarlo en BD
+            $encryptedSecret = self::encryptSecret($secret);
             $stmt = $this->db->prepare('UPDATE users SET totp_secret = ?, totp_enabled = 1, totp_verified_at = CURRENT_TIMESTAMP WHERE id = ?');
-            $stmt->execute([$secret, $userId]);
+            $stmt->execute([$encryptedSecret, $userId]);
 
             // Eliminar secret temporal
             Session::remove('temp_totp_secret');
@@ -175,8 +176,12 @@ class TotpController
         $isValid = false;
 
         if (!empty($code)) {
-            $totp = TOTP::create($user['totp_secret']);
-            $isValid = $totp->verify($code);
+            // SEC-004 FIX: Descifrar secret antes de verificar
+            $decryptedSecret = self::decryptSecret($user['totp_secret']);
+            if ($decryptedSecret) {
+                $totp = TOTP::create($decryptedSecret);
+                $isValid = $totp->verify($code);
+            }
         } elseif (!empty($recoveryCode)) {
             // Comprobar código de recuperación
             $stmtRec = $this->db->prepare('SELECT id, code FROM totp_recovery_codes WHERE user_id = ? AND used = 0');
@@ -209,5 +214,41 @@ class TotpController
             header('Location: /auth/2fa/totp?error=invalid');
         }
         exit;
+    }
+
+    // ─────────────────────────────────────────────────
+    // SEC-004: Cifrado de TOTP secrets en reposo
+    // ─────────────────────────────────────────────────
+
+    private static function getEncryptionKey(): ?string {
+        $key = $_ENV['APP_KEY'] ?? getenv('APP_KEY') ?: null;
+        return $key ? hash('sha256', $key, true) : null;
+    }
+
+    private static function encryptSecret(string $plaintext): string {
+        $key = self::getEncryptionKey();
+        if (!$key) return $plaintext; // Fallback si no hay APP_KEY
+
+        $iv = random_bytes(12);
+        $encrypted = openssl_encrypt($plaintext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+        return base64_encode($iv . $tag . $encrypted);
+    }
+
+    private static function decryptSecret(string $ciphertext): ?string {
+        $key = self::getEncryptionKey();
+        if (!$key) return $ciphertext; // Fallback
+
+        $raw = base64_decode($ciphertext, true);
+        if ($raw === false || strlen($raw) < 28) {
+            // Probable texto plano legacy — devolver tal cual
+            return $ciphertext;
+        }
+
+        $iv = substr($raw, 0, 12);
+        $tag = substr($raw, 12, 16);
+        $encrypted = substr($raw, 28);
+
+        $decrypted = openssl_decrypt($encrypted, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+        return $decrypted !== false ? $decrypted : null;
     }
 }

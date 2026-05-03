@@ -48,5 +48,16 @@ class Csrf {
             echo json_encode(['error' => 'CSRF token inválido o expirado.']);
             exit;
         }
+
+        // SEC-010 FIX: Rotar token después de validación exitosa para prevenir replay
+        self::regenerate();
+    }
+
+    /**
+     * Regenera el token CSRF. Se llama después de cada validación exitosa.
+     */
+    public static function regenerate(): void {
+        Session::start();
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
 }

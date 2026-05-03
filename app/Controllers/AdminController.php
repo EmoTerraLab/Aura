@@ -51,7 +51,8 @@ class AdminController {
         }
 
         if (!empty($data['password'])) {
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            // SEC-016 FIX: Consistencia en coste de hashing (cost=12 en todo el proyecto)
+            $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]);
         } else {
             $data['password'] = null; // Alumnos no tienen password por defecto
         }
@@ -211,7 +212,7 @@ class AdminController {
         }
 
         if (!empty($data['password'])) {
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]);
         } else {
             unset($data['password']); // No actualizar si viene vacío
         }

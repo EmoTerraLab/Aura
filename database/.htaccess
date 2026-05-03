@@ -1,0 +1,9 @@
+# SEC-005: Protect database files from direct HTTP access
+<FilesMatch "\.(sqlite|sqlite3|db|sql)$">
+    Require all denied
+</FilesMatch>
+
+# Also block backup files
+<FilesMatch "\.(bak|backup|old|orig|save)$">
+    Require all denied
+</FilesMatch>

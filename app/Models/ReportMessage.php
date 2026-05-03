@@ -5,11 +5,14 @@ class ReportMessage extends Model {
     protected $table = 'report_messages';
 
     public function create($data) {
+        // SEC-014 FIX: Sanitizar mensaje antes de almacenar para prevenir XSS almacenado
+        $message = htmlspecialchars($data['message'] ?? '', ENT_QUOTES, 'UTF-8');
+        
         $stmt = $this->db->prepare("INSERT INTO {$this->table} (report_id, sender_id, message, is_internal) VALUES (:report_id, :sender_id, :message, :is_internal)");
         $stmt->execute([
             'report_id' => $data['report_id'],
             'sender_id' => $data['sender_id'],
-            'message' => $data['message'],
+            'message' => $message,
             'is_internal' => $data['is_internal'] ?? 0
         ]);
         return $this->db->lastInsertId();
