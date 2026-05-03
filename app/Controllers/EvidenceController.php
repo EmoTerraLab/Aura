@@ -48,8 +48,10 @@ class EvidenceController
         }
 
         // 4. Stream segur
+        // SEC-008 FIX: Sanitizar nombre para prevenir header injection
+        $safeName = preg_replace('/[^\x20-\x7E]/', '_', basename($evidence['original_name'] ?? 'download'));
         header('Content-Type: ' . ($evidence['mime_type'] ?? 'application/octet-stream'));
-        header('Content-Disposition: attachment; filename="' . $evidence['original_name'] . '"');
+        header('Content-Disposition: attachment; filename="' . $safeName . '"');
         header('Content-Length: ' . filesize($filePath));
         header('X-Content-Type-Options: nosniff');
         

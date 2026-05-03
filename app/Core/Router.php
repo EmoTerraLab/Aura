@@ -70,6 +70,7 @@ class Router {
                         \App\Controllers\ProtocolWorkflowController::class => new \App\Controllers\ProtocolWorkflowController(),
                         \App\Controllers\ProtocolDashboardController::class => new \App\Controllers\ProtocolDashboardController(),
                         \App\Controllers\EvidenceController::class => new \App\Controllers\EvidenceController(),
+                        \App\Controllers\GaliciaProtocolController::class => new \App\Controllers\GaliciaProtocolController(),
                         default => new $controllerClass()
                     };
 

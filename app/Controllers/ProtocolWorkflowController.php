@@ -120,6 +120,15 @@ class ProtocolWorkflowController
             return;
         }
 
+        // SEC-009 FIX: Validar MIME real del contenido del archivo
+        $allowedMimes = ['image/jpeg', 'image/png', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $realMime = $finfo->file($file['tmp_name']);
+        if (!in_array($realMime, $allowedMimes, true)) {
+            echo json_encode(['success' => false, 'error' => 'El tipo de archivo no coincide con la extensión.']);
+            return;
+        }
+
         // Límite de tamaño: 10 MB
         if ($file['size'] > 10 * 1024 * 1024) {
             echo json_encode(['success' => false, 'error' => 'El archivo excede el límite de 10 MB.']);

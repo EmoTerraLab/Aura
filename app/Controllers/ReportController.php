@@ -18,6 +18,7 @@ class ReportController {
 
     public function store() {
         Csrf::validateRequest();
+        header('Content-Type: application/json');
 
         $data = json_decode(file_get_contents('php://input'), true);
         $content = trim($data['content'] ?? '');

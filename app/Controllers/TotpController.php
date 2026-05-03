@@ -108,8 +108,20 @@ class TotpController
     {
         Csrf::validateRequest();
         
-        // Se requiere la contraseña actual por seguridad (por hacer en UI del perfil)
-        // Por simplificar, si está autenticado lo desactiva. 
+        // SEC-006 FIX: Requiere contraseña actual antes de desactivar 2FA
+        $password = $_POST['current_password'] ?? '';
+        $user = Auth::user();
+        
+        if (!$user || empty($password) || !password_verify($password, $user['password'] ?? '')) {
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Contraseña incorrecta. Se requiere la contraseña actual para desactivar 2FA.']);
+            } else {
+                header('Location: /staff/inbox?error=wrong_password');
+            }
+            exit;
+        }
+
         $userId = Auth::id();
 
         $stmt = $this->db->prepare('UPDATE users SET totp_secret = NULL, totp_enabled = 0, totp_verified_at = NULL WHERE id = ?');
@@ -119,7 +131,7 @@ class TotpController
         $stmtDel = $this->db->prepare('DELETE FROM totp_recovery_codes WHERE user_id = ?');
         $stmtDel->execute([$userId]);
 
-        header('Location: /staff/inbox'); // o página de perfil
+        header('Location: /staff/inbox');
         exit;
     }
 

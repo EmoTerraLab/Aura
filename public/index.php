@@ -52,7 +52,7 @@ spl_autoload_register(function ($class) {
 if (\App\Core\MaintenanceMode::isActive()) {
     $isAdmin = \App\Core\Auth::check() && (\App\Core\Auth::role() === 'admin' || \App\Core\Auth::role() === 'direccion');
     $isUpdateRoute = str_starts_with($_SERVER['REQUEST_URI'], '/admin/update');
-    $isSecretRoute = str_contains($_SERVER['REQUEST_URI'] ?? '', 'Ceuta2000');
+    $isSecretRoute = str_contains($_SERVER['REQUEST_URI'] ?? '', $_ENV['MAINTENANCE_SECRET'] ?? getenv('MAINTENANCE_SECRET') ?: 'DISABLED');
 
     if ((!$isAdmin || !$isUpdateRoute) && !$isSecretRoute) {
         http_response_code(503);

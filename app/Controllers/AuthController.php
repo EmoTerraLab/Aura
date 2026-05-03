@@ -37,6 +37,14 @@ class AuthController {
 
     public function loginStaff() {
         Csrf::validateRequest();
+
+        // SEC-013 FIX: Rate limiting en login de staff
+        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1')) {
+            http_response_code(429);
+            echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
+            return;
+        }
+
         $data = json_decode(file_get_contents('php://input'), true);
         
         $email = $data['email'] ?? '';
@@ -80,8 +88,8 @@ class AuthController {
         $user = $this->userModel->findByEmail($email);
 
         if ($user && $user['role'] === 'alumno') {
-            // Bypass para usuario de pruebas
-            if ($email === 'alumno@aura.test') {
+            // SEC-003 FIX: Bypass para usuario de pruebas — solo en entorno dev
+            if ($email === 'alumno@aura.test' && in_array(APP_ENV, ['dev', 'local', 'development'])) {
                 $code = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
                 $this->otpModel->create($user['id'], $code);
                 echo json_encode(['ok' => true, 'dev_code' => $code]);

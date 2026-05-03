@@ -50,6 +50,11 @@ class LangController
             echo json_encode(['success' => true, 'lang' => $lang]);
         } else {
             $redirect = $_SERVER['HTTP_REFERER'] ?? '/';
+            // SEC-002 FIX: Prevenir open redirect
+            $parsed = parse_url($redirect);
+            if (!empty($parsed['host']) && $parsed['host'] !== ($_SERVER['HTTP_HOST'] ?? 'localhost')) {
+                $redirect = '/';
+            }
             header('Location: ' . $redirect);
         }
         exit;
