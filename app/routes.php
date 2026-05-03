@@ -115,15 +115,23 @@ $router->post("/api/protocol/aragon/close/{id}", [AragonProtocolController::clas
 $router->get("/protocol/aragon/export/{id}/{type}", [AragonProtocolController::class, "exportAnnex"], ["auth"]);
 
 // -- Protocolo Murcia --
-$router->get("/protocol/murcia/case/{id}", [\App\Controllers\MurciaProtocolController::class, "showCase"], ["auth"]);
-$router->post("/api/protocol/murcia/designation/{id}", [\App\Controllers\MurciaProtocolController::class, "storeDesignation"], ["auth"]);
-$router->post("/api/protocol/murcia/urgency-measures/{id}", [\App\Controllers\MurciaProtocolController::class, "storeUrgencyMeasures"], ["auth"]);
-$router->post("/api/protocol/murcia/anexo-i/{id}", [\App\Controllers\MurciaProtocolController::class, "storeAnexoI"], ["auth"]);
-$router->post("/api/protocol/murcia/interview/{id}", [\App\Controllers\MurciaProtocolController::class, "addInterview"], ["auth"]);
-$router->post("/api/protocol/murcia/anexo-iv/{id}", [\App\Controllers\MurciaProtocolController::class, "storeAnexoIV"], ["auth"]);
-$router->post("/api/protocol/murcia/valuation/{id}", [\App\Controllers\MurciaProtocolController::class, "storeValuation"], ["auth"]);
-$router->post("/api/protocol/murcia/legal-comm/{id}", [\App\Controllers\MurciaProtocolController::class, "storeLegalCommunication"], ["auth"]);
-$router->get("/protocol/murcia/export/{id}/{type}", [\App\Controllers\MurciaProtocolController::class, "exportAnnex"], ["auth"]);
+$router->get("/protocol/murcia/case/{id}", [\App\Controllers\MurciaProtocolController::class, "showCase"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/murcia/designation/{id}", [\App\Controllers\MurciaProtocolController::class, "storeDesignation"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/murcia/urgency-measures/{id}", [\App\Controllers\MurciaProtocolController::class, "storeUrgencyMeasures"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/murcia/anexo-i/{id}", [\App\Controllers\MurciaProtocolController::class, "storeAnexoI"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/murcia/interview/{id}", [\App\Controllers\MurciaProtocolController::class, "addInterview"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+$router->post("/api/protocol/murcia/anexo-iv/{id}", [\App\Controllers\MurciaProtocolController::class, "storeAnexoIV"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/murcia/valuation/{id}", [\App\Controllers\MurciaProtocolController::class, "storeValuation"], ["auth", "roles:direccion,admin"]);
+$router->post("/api/protocol/murcia/legal-comm/{id}", [\App\Controllers\MurciaProtocolController::class, "storeLegalCommunication"], ["auth", "roles:direccion,admin"]);
+$router->get("/protocol/murcia/export/{id}/{type}", [\App\Controllers\MurciaProtocolController::class, "exportAnnex"], ["auth", "roles:orientador,direccion,admin"]);
+
+// -- Protocolo Galicia --
+$router->get("/protocol/galicia/case/{id}", [\App\Controllers\GaliciaProtocolController::class, "showCase"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/galicia/annex/{id}", [\App\Controllers\GaliciaProtocolController::class, "storeAnnex"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/galicia/medidas-urxentes/{id}", [\App\Controllers\GaliciaProtocolController::class, "storeMedidasUrxentes"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/galicia/tools/ciberacoso/{id}", [\App\Controllers\GaliciaProtocolController::class, "storeCiberacoso"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/galicia/transition/{id}", [\App\Controllers\GaliciaProtocolController::class, "transitionState"], ["auth", "roles:orientador,direccion,admin"]);
+$router->get("/protocol/galicia/export/{id}/{type}", [\App\Controllers\GaliciaProtocolController::class, "exportAnnex"], ["auth", "roles:orientador,direccion,admin"]);
 
 // -- Protocolo Comunitat Valenciana --
 $router->get("/protocol/valencia/case/{id}", [\App\Controllers\ComunidadValencianaController::class, "showCase"], ["auth"]);

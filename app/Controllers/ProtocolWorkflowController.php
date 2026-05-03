@@ -150,14 +150,31 @@ class ProtocolWorkflowController
         }
         
         $ccaa = $case['ccaa_code'];
+        
+        // P1 FIX: Validar templateName contra traversal y caracteres peligrosos
+        $templateName = basename($templateName);
+        if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $templateName)) {
+            http_response_code(400);
+            echo "Nom de plantilla no vàlid.";
+            return;
+        }
+
+        $templatePath = "protocol/templates/{$ccaa}/{$templateName}";
+        $fullPath = __DIR__ . '/../Views/' . $templatePath . '.php';
+        if (!file_exists($fullPath)) {
+            http_response_code(404);
+            echo "Plantilla no trobada.";
+            return;
+        }
+
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
         $schoolName = Config::get('school_name', 'Aura');
 
-        View::render("protocol/templates/{$ccaa}/{$templateName}", [
+        View::render($templatePath, [
             'case' => $case,
             'report' => $report,
             'schoolName' => $schoolName
-        ], 'app');
+        ], null);
     }
     
     public function exportPdf($id): void

@@ -145,6 +145,7 @@ class ProtocolController
 
     public function changePhase($id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         if (!\App\Core\Auth::hasRole(['orientador', 'direccion', 'admin']) && !\App\Core\Auth::isCocobe()) {
             echo json_encode(['success' => false, 'error' => 'Permiso denegado.']);
@@ -156,7 +157,7 @@ class ProtocolController
             $success = $this->stateService->transitionTo((int)$id, $data['phase'] ?? '');
             echo json_encode(['success' => $success]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 

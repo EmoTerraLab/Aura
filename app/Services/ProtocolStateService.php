@@ -56,6 +56,9 @@ class ProtocolStateService
             } elseif ($ccaa === 'ARA') {
                 $db->prepare("UPDATE aragon_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
                    ->execute([$newPhase, $reportId]);
+            } elseif ($ccaa === 'GAL') {
+                $db->prepare("UPDATE galicia_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
+                   ->execute([$newPhase, $reportId]);
             }
 
             $this->logInternalAudit($reportId, "Canvi de fase legal: de " . strtoupper($oldPhase) . " a " . strtoupper($newPhase));

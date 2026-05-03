@@ -307,7 +307,7 @@ class AragonProtocolController
         $annex = $stmt->fetch();
         if (!$annex) {
             http_response_code(404);
-            echo "El Anexo solicitado ($type) no ha sido generado aún.";
+            echo "El Anexo solicitado (" . htmlspecialchars($type, ENT_QUOTES, 'UTF-8') . ") no ha sido generado aún.";
             return;
         }
         $report = $this->reportModel->find($case['report_id']);
