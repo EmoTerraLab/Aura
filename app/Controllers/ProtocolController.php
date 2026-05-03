@@ -157,7 +157,7 @@ class ProtocolController
             $success = $this->stateService->transitionTo((int)$id, $data['phase'] ?? '');
             echo json_encode(['success' => $success]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 

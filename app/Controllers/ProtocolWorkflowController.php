@@ -174,7 +174,7 @@ class ProtocolWorkflowController
             'case' => $case,
             'report' => $report,
             'schoolName' => $schoolName
-        ], null);
+        ], 'app');
     }
     
     public function exportPdf($id): void

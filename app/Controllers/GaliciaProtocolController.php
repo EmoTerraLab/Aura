@@ -50,6 +50,24 @@ class GaliciaProtocolController
             $case = $this->caseModel->findByReportId($id);
         }
 
+        // Si no existe el caso específico de Galicia, pero sí el reporte, lo intentamos crear
+        if (!$case) {
+            $protocolCaseModel = new ProtocolCase();
+            $generalCase = $protocolCaseModel->findByReport($id);
+            if (!$generalCase) {
+                // Si el ID pasado era el del caso y no lo encontramos, probamos a ver si es report_id
+                $generalCase = $protocolCaseModel->find($id);
+            }
+
+            if ($generalCase) {
+                $this->caseModel->createCase([
+                    'report_id' => $generalCase['report_id'],
+                    'status' => $generalCase['current_phase']
+                ]);
+                $case = $this->caseModel->findByReportId($generalCase['report_id']);
+            }
+        }
+
         if (!$case) {
             http_response_code(404);
             echo "Expediente non atopado.";

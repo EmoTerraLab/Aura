@@ -95,6 +95,19 @@ class ProtocolStateService
         $case = $this->caseModel->findByReport($reportId);
         if ($case) {
             $this->logInternalAudit($reportId, "Protocol de $ccaa activat. Fase inicial: $initialPhase.");
+
+            // Crear entradas en tablas específicas de CCAA si es necesario
+            $db = \App\Core\Database::getInstance();
+            if ($ccaa === 'MUR') {
+                $db->prepare("INSERT OR IGNORE INTO murcia_protocol_cases (report_id, status) VALUES (?, ?)")
+                   ->execute([$reportId, $initialPhase]);
+            } elseif ($ccaa === 'ARA') {
+                $db->prepare("INSERT OR IGNORE INTO aragon_protocol_cases (report_id, status) VALUES (?, ?)")
+                   ->execute([$reportId, $initialPhase]);
+            } elseif ($ccaa === 'GAL') {
+                $db->prepare("INSERT OR IGNORE INTO galicia_protocol_cases (report_id, status) VALUES (?, ?)")
+                   ->execute([$reportId, $initialPhase]);
+            }
         }
         return $case;
     }
