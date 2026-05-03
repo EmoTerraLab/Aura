@@ -18,6 +18,7 @@ use App\Controllers\TotpController;
 use App\Controllers\WebAuthnController;
 use App\Controllers\AragonProtocolController;
 use App\Controllers\GaliciaProtocolController;
+use App\Controllers\ProtocolController;
 
 use App\Controllers\BullyingProtocolController;
 use App\Controllers\ProtocolWorkflowController;

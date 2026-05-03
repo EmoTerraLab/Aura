@@ -2,20 +2,6 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
-## [2026-05-03] - Seguridad Crítica y Protocolo Galicia (v2.23.0-stable)
-
-### 🚀 Mejoras y Funcionalidades
-- **Protocolo de Galicia (GAL):** Implementación completa del flujo normativo gallego con 6 estados (Detección hasta Peche) y soporte para la gestión de sus 16 anexos oficiales.
-- **Metadatos de Protocolos:** Introducción de la clase `BullyingProtocols` para centralizar la información normativa, contactos de emergencia y códigos de todas las CCAA.
-- **Sincronización de Casos:** El sistema ahora crea automáticamente las entradas en tablas específicas (`galicia_protocol_cases`, etc.) al activar un protocolo desde el servicio de estado.
-
-### 🛡️ Seguridad y Estabilidad
-- **Auditoría de Seguridad (v2.23):** Realizada auditoría exhaustiva detectando y corrigiendo vulnerabilidades críticas provenientes de preproducción.
-- **Eliminación de Backdoors:** Se ha eliminado el acceso secreto por contraseña hardcoded en el controlador de actualizaciones.
-- **Protección contra Inyección SQL:** Parametrización de consultas directas en el Dashboard de Alumno mediante sentencias preparadas (PDO).
-- **Prevención de LFI:** Implementada una lista blanca (whitelist) estricta para la carga dinámica de pestañas en la configuración del administrador.
-- **Restauración de Protecciones:** Recuperación de validaciones CSRF, filtros XSS y protecciones contra Path Traversal en los flujos de protocolos autonómicos.
-
 ## [2026-05-02] - Consolidación de Protocolos y Blindaje de UI (v2.22.0-stable)
 
 ### 🚀 Mejoras y Funcionalidades

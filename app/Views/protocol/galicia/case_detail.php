@@ -37,10 +37,10 @@ $elapsedDays = class_exists('App\Helpers\SchoolDaysHelper')
                 <div class="space-y-4">
                     <?php 
                     $phases = [
-                        GaliciaProtocol::STATE_DETECCIO_COMUNICACIO => 'Detección',
-                        GaliciaProtocol::STATE_RECOLLIDA_INFORMACION => 'Recollida',
-                        GaliciaProtocol::STATE_ANALISE_MEDIDAS => 'Análise',
-                        GaliciaProtocol::STATE_SEGUIMENTO => 'Seguimento'
+                        \App\Services\Protocol\GaliciaProtocol::STATE_DETECCIO_COMUNICACIO => 'Detección',
+                        \App\Services\Protocol\GaliciaProtocol::STATE_RECOLLIDA_INFORMACION => 'Recollida',
+                        \App\Services\Protocol\GaliciaProtocol::STATE_ANALISE_MEDIDAS => 'Análise',
+                        \App\Services\Protocol\GaliciaProtocol::STATE_SEGUIMENTO => 'Seguimento'
                     ];
                     foreach($phases as $key => $label): 
                         $isCurrent = ($case['status'] === $key);

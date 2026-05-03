@@ -9,11 +9,11 @@
         <div><h1 class="font-h2 text-h2 text-teal-700 font-black tracking-tight leading-none">Aura</h1><p class="font-label-caps text-label-caps text-surface-tint opacity-70 mt-1">Control Panel</p></div>
     </div>
     <div class="flex-1 overflow-y-auto no-scrollbar space-y-1">
-        <button onclick="switchTab('users'); toggleSidebar();" id="tab-btn-users" class="w-[calc(100%-16px)] text-left flex items-center gap-3 bg-teal-50 text-teal-700 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
+        <button onclick="switchTab('users')" id="tab-btn-users" class="w-[calc(100%-16px)] text-left flex items-center gap-3 bg-teal-50 text-teal-700 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
             <span class="material-symbols-outlined">group</span>
             <span class="font-medium"><?= \App\Core\Lang::t('admin.users') ?></span>
         </button>
-        <button onclick="switchTab('classrooms'); toggleSidebar();" id="tab-btn-classrooms" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
+        <button onclick="switchTab('classrooms')" id="tab-btn-classrooms" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
             <span class="material-symbols-outlined">meeting_room</span>
             <span class="font-medium"><?= \App\Core\Lang::t('admin.classrooms') ?></span>
         </button>
@@ -84,6 +84,7 @@
 </nav>
 
 <main class="flex-1 flex flex-col h-screen pt-16 lg:pt-0 bg-surface overflow-y-auto no-scrollbar">
+
     <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full space-y-10">
         <?php if ($pendingCount > 0): ?>
         <!-- Update Alert Banner -->
@@ -489,7 +490,6 @@
     }
 
     function toggleSidebar() {
-        if (window.innerWidth >= 1024) return; // No hacer nada en escritorio
         const sidebar = document.getElementById('app-sidebar');
         const overlay = document.getElementById('sidebar-overlay');
         const isHidden = sidebar.classList.contains('-translate-x-full');
@@ -504,3 +504,4 @@
     }
 </script>
 <?php $scripts = ob_get_clean(); ?>
+

@@ -71,6 +71,7 @@ class Router {
                         \App\Controllers\ProtocolDashboardController::class => new \App\Controllers\ProtocolDashboardController(),
                         \App\Controllers\EvidenceController::class => new \App\Controllers\EvidenceController(),
                         \App\Controllers\GaliciaProtocolController::class => new \App\Controllers\GaliciaProtocolController(),
+                        \App\Controllers\ProtocolController::class => new \App\Controllers\ProtocolController(),
                         default => new $controllerClass()
                     };
 
