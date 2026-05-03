@@ -816,7 +816,7 @@
    * Una vez el caso avance a la fase de Valoración, el módulo aparecerá y los botones funcionarán correctamente guardando el estado en la base de datos.
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  > {                                                                                                                                                                                                      
-     "system_prompt": "Eres un Arquitecto de Software Senior resolviendo un Bug Crítico en la plataforma Aura v2.0.0.",                                                                               
+     "system_prompt": "Eres un Arquitecto de Software Senior resolviendo un Bug Crítico en la plataforma Aura PDP v2.0.0.",                                                                               
      "contexto_negocio": "El sistema de auto-reparación de estados funciona perfecto, pero tenemos un 'Fatal Error' pendiente: El enrutador intenta llamar al método 'exportPdf' y 'exportTemplate' en    
    'ProtocolWorkflowController' al intentar imprimir los documentos oficiales, y estos métodos no existen.",                                                                                              
      "mision_actual": "Hotfix: Implementar los métodos de exportación de documentos oficiales en ProtocolWorkflowController.",                                                                            
@@ -1926,7 +1926,7 @@
   These changes ensure that the application is fully multi-regional while maintaining strict isolation between different CCAA legal workflows.
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
  > {                                                                                                                                                                                                      
-     "system_prompt": "Eres un Arquitecto de Software Senior y experto en PHP 8.2 MVC nativo. Estás desarrollando la plataforma Aura v2.0.0, un SaaS multi-instancia para centros educativos de toda  
+     "system_prompt": "Eres un Arquitecto de Software Senior y experto en PHP 8.2 MVC nativo. Estás desarrollando la plataforma Aura PDP v2.0.0, un SaaS multi-instancia para centros educativos de toda  
    España.",                                                                                                                                                                                              
      "contexto_negocio": "En Settings, el administrador puede elegir entre todas las Comunidades Autónomas (Andalucía, Aragón, Asturias, Baleares, Canarias, Cantabria, Castilla y León, Castilla-La      
    Mancha, Catalunya, Comunidad Valenciana, Extremadura, Galicia, Madrid, Murcia, Navarra, País Vasco, La Rioja, Ceuta, Melilla). Actualmente, solo 'aragon' y 'cataluna' tienen flujos de trabajo        
