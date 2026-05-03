@@ -375,6 +375,13 @@
         if (prog < 1) bState.raf = requestAnimationFrame(animate); else runPhase((bState.pIdx + 1) % 4);
     }
 
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     /* Dashboard Logic */
     function nextStep(s) { 
         if (document.getElementById('report-content').value.trim().length < 5) { document.getElementById('error-step-1').classList.remove('hidden'); return; }
@@ -403,10 +410,10 @@
         document.getElementById('chat-status').innerText = report.status;
         const ic = document.getElementById('chat-input-container');
         if (report.status === 'resolved') { ic.classList.add('hidden'); document.getElementById('resolved-note').innerText = "Resolución: " + (report.resolution_summary || "Cerrado."); document.getElementById('resolved-note').classList.remove('hidden'); }
-        let h = `<div class="flex gap-3 flex-row-reverse mb-6"><div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">Tú</div><div class="bg-slate-100 p-4 rounded-2xl rounded-tr-none max-w-[85%] sm:max-w-[80%] text-sm">${report.content}</div></div>`;
+        let h = `<div class="flex gap-3 flex-row-reverse mb-6"><div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">Tú</div><div class="bg-slate-100 p-4 rounded-2xl rounded-tr-none max-w-[85%] sm:max-w-[80%] text-sm">${escapeHtml(report.content)}</div></div>`;
         messages.forEach(m => {
             const me = m.is_current_user;
-            h += `<div class="flex gap-3 ${me ? 'flex-row-reverse' : ''} mb-6"><div class="w-8 h-8 rounded-full ${me ? 'bg-slate-200 text-slate-600' : 'bg-primary-container text-on-primary-container'} flex items-center justify-center text-xs font-bold shrink-0">${me ? 'Tú' : m.sender_name.charAt(0)}</div><div class="${me ? 'bg-slate-100' : 'bg-white border'} p-4 rounded-2xl ${me ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-sm max-w-[85%] sm:max-w-[80%] text-sm"><p>${m.message}</p></div></div>`;
+            h += `<div class="flex gap-3 ${me ? 'flex-row-reverse' : ''} mb-6"><div class="w-8 h-8 rounded-full ${me ? 'bg-slate-200 text-slate-600' : 'bg-primary-container text-on-primary-container'} flex items-center justify-center text-xs font-bold shrink-0">${me ? 'Tú' : escapeHtml(m.sender_name.charAt(0))}</div><div class="${me ? 'bg-slate-100' : 'bg-white border'} p-4 rounded-2xl ${me ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-sm max-w-[85%] sm:max-w-[80%] text-sm"><p>${escapeHtml(m.message)}</p></div></div>`;
         });
         document.getElementById('chat-messages').innerHTML = h;
     }

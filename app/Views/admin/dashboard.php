@@ -348,6 +348,13 @@
         allUsers.forEach(u => { if (u.role === 'profesor') select.innerHTML += `<option value="${u.id}">${u.name}</option>`; });
     }
 
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // --- CRUD Usuarios ---
     async function loadUsers() {
         try {
@@ -357,8 +364,8 @@
             tbody.innerHTML = allUsers.map(u => `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-6 py-4 font-bold text-slate-400">#${u.id}</td>
-                    <td class="px-6 py-4 font-bold text-on-surface">${u.name}</td>
-                    <td class="px-6 py-4 text-slate-500">${u.email}</td>
+                    <td class="px-6 py-4 font-bold text-on-surface">${escapeHtml(u.name)}</td>
+                    <td class="px-6 py-4 text-slate-500">${escapeHtml(u.email)}</td>
                     <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${u.role==='admin'?'bg-red-100 text-red-700':(u.role==='alumno'?'bg-green-100 text-green-700':'bg-blue-100 text-blue-700')}">${u.role}</span></td>
                     <td class="px-6 py-4 text-right space-x-2">
                         <button onclick='editUser(${JSON.stringify(u).replace(/'/g, "&apos;")})' class="text-primary hover:bg-primary/10 p-2 rounded-full transition-colors"><span class="material-symbols-outlined">edit</span></button>
@@ -400,8 +407,8 @@
             tbody.innerHTML = allClassrooms.map(c => `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-6 py-4 font-bold text-slate-400">#${c.id}</td>
-                    <td class="px-6 py-4 font-bold text-on-surface">${c.name}</td>
-                    <td class="px-6 py-4 text-slate-500">${c.tutor_name || '<span class="italic opacity-50"><?= \App\Core\Lang::t('admin.no_tutor') ?></span>'}</td>
+                    <td class="px-6 py-4 font-bold text-on-surface">${escapeHtml(c.name)}</td>
+                    <td class="px-6 py-4 text-slate-500">${c.tutor_name ? escapeHtml(c.tutor_name) : '<span class="italic opacity-50"><?= \App\Core\Lang::t('admin.no_tutor') ?></span>'}</td>
                     <td class="px-6 py-4 text-right space-x-2">
                         <button onclick='editClassroom(${JSON.stringify(c).replace(/'/g, "&apos;")})' class="text-secondary hover:bg-secondary/10 p-2 rounded-full transition-colors"><span class="material-symbols-outlined">edit</span></button>
                         <button onclick="deleteClassroom(${c.id})" class="text-error hover:bg-error/10 p-2 rounded-full transition-colors"><span class="material-symbols-outlined">delete</span></button>

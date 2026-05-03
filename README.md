@@ -2,10 +2,11 @@
 # Aura — School Well-being Management Platform
 
 ![Version](https://img.shields.io/badge/version-2.23.0--stable-blue)
-![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php)
+![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![i18n](https://img.shields.io/badge/i18n-es%20|%20ca%20|%20gl%20|%20eu%20|%20en-blue)
+![Security](https://img.shields.io/badge/security-Bank--Grade-red)
 
 Aura es una solución integral para la gestión de informes y convivencia en centros educativos. Permite a los alumnos reportar incidencias de forma anónima o identificada y al personal del centro (profesores, orientadores y dirección) gestionar dichos casos mediante un sistema de tickets seguro, bilingüe y con autenticación de vanguardia.
 
@@ -15,25 +16,18 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
 
 ## 📋 Índice / Table of Contents
 1. [Características / Features](#-características--features)
-2. [Requisitos / System Requirements](#-requisitos-del-sistema--system-requirements)
-3. [Instalación / Installation](#-instalación--installation)
-4. [Configuración / Configuration](#-configuración--configuration)
-5. [Arquitectura / Architecture](#-arquitectura--architecture)
-6. [Base de Datos / Database](#-base-de-datos--database)
-7. [Seguridad / Security](#-seguridad--security)
-8. [Rutas / Routes](#-rutas--routes)
-9. [Contribuir / Contributing](#-contribuir--contributing)
-10. [Licencia / License](#-licencia--license)
+2. [Protocolos Autonómicos](#️-protocolos-autonómicos--regional-protocols)
+3. [Seguridad Nivel Bancario](#-seguridad-nivel-bancario--bank-grade-security)
+4. [Requisitos / System Requirements](#-requisitos-del-sistema--system-requirements)
+5. [Instalación / Installation](#-instalación--installation)
+6. [Configuración / Configuration](#-configuración--configuration)
+7. [Arquitectura / Architecture](#-arquitectura--architecture)
+8. [Base de Datos / Database](#-base-de-datos--database)
+9. [Licencia / License](#-licencia--license)
 
 ---
 
 ## ✨ Características / Features
-
-### 🔐 Seguridad / Security
-- **WebAuthn**: Autenticación biométrica (Face ID, huella, passkeys) para alumnos.
-- **TOTP 2FA**: Verificación en dos pasos mediante apps (Google Authenticator) para staff y admin.
-- **Protección**: CSRF, XSS, inyección SQL (PDO) y headers HTTP de seguridad.
-- **Rate Limiting**: Control de intentos de inicio de sesión.
 
 ### 🌍 Internacionalización / Internationalization
 - Soporte nativo para 5 idiomas: Español, Català, Galego, Euskara y English.
@@ -41,19 +35,38 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
 
 ### 👥 Roles y Permisos / Roles & Permissions
 - **Admin**: Gestión total de usuarios, aulas, configuración del sistema y correo.
-- **Staff (Dirección/Orientador/Profesor)**: Gestión de informes, respuestas internas y menciones.
-- **Alumno**: Creación de reportes y seguimiento de sus casos.
-
-### 🗺️ Protocolos Autonómicos / Regional Protocols
-- **Soporte Multi-CCAA**: Gestión de protocolos específicos según la comunidad autónoma (Cataluña, C. Valenciana, Murcia, Aragón, etc.).
-- **Flujos Legales**: Adaptación de fases, plazos y documentación (anexos) según la normativa regional vigente.
-- **Auto-reparación**: Sistema inteligente de corrección de fases ante cambios de normativa o errores de configuración.
+- **Staff (Dirección/Orientador/Profesor)**: Gestión de informes, respuestas internas, asignación de equipos y control de flujo normativo.
+- **Alumno**: Creación de reportes y seguimiento de sus casos, encuestas sociométricas.
 
 ### 📋 Gestión de Informes / Report Management
 - Sistema de tickets con estados (`new`, `in_progress`, `resolved`).
-- Mensajería interna y menciones entre el personal.
-- Opción de anonimato para mayor seguridad del alumno.
+- Mensajería interna e inserción de notas con menciones de personal (`@nombre`).
+- Opción de anonimato garantizado en la base de datos para la seguridad del alumno.
+- Herramientas restaurativas y mediación integradas.
 
+---
+
+## 🗺️ Protocolos Autonómicos / Regional Protocols
+
+Aura no es un simple sistema de tickets; implementa flujos normativos legales y estrictos según la comunidad autónoma configurada.
+
+- **Galicia (v2.23)**: Implementación del flujo normativo completo en 6 fases (Detección, Recogida, Análisis, Medidas, Seguimiento y Cierre). Incluye el gestor documental para Anexos (1 al 16) y módulos exclusivos para "Medidas Urxentes" y "Actuación Ciberacoso".
+- **Aragón**: Gestión del Anexo I-a, constitución del equipo de valoración, entrevistas y checklist normativo.
+- **Cataluña / C. Valenciana / Murcia**: Flujos específicos adaptados a sus respectivos decretos de convivencia.
+
+Aura garantiza la **Auto-reparación** de estados, evitando que la normativa se salte fases requeridas legalmente.
+
+---
+
+## 🏦 Seguridad Nivel Bancario / Bank-Grade Security
+
+Aura maneja información altamente sensible (PII de menores, incidentes de acoso). Su arquitectura de seguridad está diseñada siguiendo estándares OWASP y PCI-DSS:
+
+- **Autenticación Multi-Factor**: WebAuthn biométrico (FaceID/Huella) para alumnos y TOTP (Google Authenticator) cifrado con AES-256-GCM para el personal.
+- **Mitigación IDOR Estricta**: Cada endpoint, lectura y modificación verifica criptográficamente la propiedad y autorización mediante inyección de dependencias `findByIdWithDetails()`.
+- **Protección contra Fuerza Bruta**: Implementación de Rate Limiting compuesto (`IP + Email`), mitigando ataques distribuidos de "Credential Stuffing".
+- **Auditoría Inmutable (Non-Repudiation)**: Un `AuditLogger` centralizado guarda un rastro forense inalterable en la tabla `audit_logs` ante cualquier cambio de estado o intento de acceso fallido.
+- **Blindaje de Archivos**: Los archivos `.sqlite` y bases de datos están protegidos contra acceso HTTP directo, y los endpoints de depuración se encuentran fuera del alcance público (DocumentRoot `/public`).
 
 ---
 
@@ -65,7 +78,7 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
 | Servidor web | Apache 2.4 con mod_rewrite | Apache 2.4+ |
 | Base de datos | SQLite 3 | SQLite 3.35+ |
 | Composer | 2.x | Última versión |
-| Extensiones PHP | openssl, pdo_sqlite, mbstring, gmp, json | + sodium |
+| Extensiones PHP | openssl, pdo_sqlite, mbstring, gmp, json, sodium | + opcache |
 
 > ⚠️ **Nota:** WebAuthn requiere **HTTPS** en entornos de producción. En localhost funciona sin certificado SSL.
 
@@ -84,32 +97,27 @@ Aura is a comprehensive solution for managing well-being reports in schools. It 
    composer install
    ```
 3. **Configurar base de datos:**
-   El sistema creará `database/aura.sqlite` automáticamente al iniciar por primera vez. Asegúrate de que la carpeta tenga permisos de escritura.
+   Aura utiliza un motor SQLite que se auto-desplegará en `database/aura.sqlite` al iniciar.
 4. **Permisos:**
+   Asegúrate de otorgar permisos de escritura al servidor web:
    ```bash
    chmod -R 775 storage database
    ```
 5. **Configurar Apache:**
-   Apunta el `DocumentRoot` a la carpeta `public/`.
+   Apunta el `DocumentRoot` **exclusivamente** a la carpeta `public/`.
 
 ### Producción / Production
-1. Sube los archivos al servidor (excluyendo `.git` y `node_modules`).
-2. Configura un VirtualHost apuntando a `public/`.
-3. Asegúrate de que `mod_rewrite` esté activo.
-4. Genera un certificado SSL (Let's Encrypt).
-5. Configura el servidor SMTP desde el panel de administración una vez dentro.
+1. Sube los archivos al servidor (omite `_dev_tools`, `.git` y `node_modules`).
+2. Configura el VirtualHost apuntando obligatoriamente a `public/`. **Nunca expongas la carpeta raíz del proyecto**.
+3. Activa `mod_rewrite` y un certificado SSL (Let's Encrypt).
+4. Configura `APP_KEY` (32 bytes hex) y `APP_ENV=production` en el entorno o archivo central.
+5. Inicia sesión como administrador por defecto y cambia las credenciales y el SMTP inmediatamente.
 
 ---
 
 ## ⚙️ Configuración / Configuration
 
-### Variables de Entorno (.env)
-Aunque Aura utiliza configuración en base de datos para la mayoría de aspectos, se pueden definir:
-| Variable | Descripción | Defecto |
-|---|---|---|
-| `APP_ENV` | Entorno (development/production) | `development` |
-
-### Apache VirtualHost
+### Apache VirtualHost (Ejemplo de Producción)
 ```apache
 <VirtualHost *:443>
     ServerName colegio-aura.com
@@ -118,6 +126,11 @@ Aunque Aura utiliza configuración en base de datos para la mayoría de aspectos
     <Directory /var/www/aura/public>
         AllowOverride All
         Require all granted
+    </Directory>
+
+    # Bloqueo adicional por si el .htaccess falla
+    <Directory /var/www/aura/database>
+        Require all denied
     </Directory>
 
     SSLEngine on
@@ -129,31 +142,31 @@ Aunque Aura utiliza configuración en base de datos para la mayoría de aspectos
 
 ## 🏗️ Arquitectura / Architecture
 
-Aura sigue un patrón **MVC Nativo** sin frameworks pesados, optimizado para rendimiento y facilidad de despliegue.
+Aura sigue un patrón **MVC Nativo Puro** sin frameworks pesados, optimizado para seguridad estricta y rendimiento de extremo a extremo.
 
-```
+```text
 HTTP Request
     │
     ▼
- public/.htaccess  ──►  Redirige todo a index.php
+ public/.htaccess  ──►  Redirige todo a index.php (Punto único de entrada)
     │
     ▼
- public/index.php  ──►  Bootstrap: sesión, headers, Lang::init(), Config::init()
+ public/index.php  ──►  Bootstrap: CSP Headers, Session, Config, Router
     │
     ▼
- App\Core\Router   ──►  Matching de ruta + método HTTP
+ App\Core\Router   ──►  Matching de ruta, Contenedor DI (Dependency Injection)
     │
     ▼
- App\Core\Middleware ─►  Verificación auth + roles
+ App\Core\Middleware ─►  Verificación Auth, Roles, CSRF Rotation
     │
     ▼
- Controller        ──►  Lógica de negocio + llamadas a modelos
+ Controller        ──►  Validación IDOR, Lógica de Negocio (ej. ProtocolWorkflow)
     │
     ▼
- Model             ──►  Acceso a datos (PDO + SQLite)
+ Model             ──►  Acceso a datos protegidos (PDO Parametrizado)
     │
     ▼
- View (.php)       ──►  Renderizado HTML con Lang::t()
+ View (.php)       ──►  Renderizado HTML seguro (htmlspecialchars() automático)
     │
     ▼
  HTTP Response
@@ -163,52 +176,18 @@ HTTP Request
 
 ## 🗄️ Base de Datos / Database
 
-Utiliza **SQLite** para facilitar el despliegue. Estructura principal:
-- `users`: Usuarios y credenciales TOTP/WebAuthn.
-- `classrooms`: Gestión de grupos y tutores.
-- `reports`: Informes de convivencia.
-- `report_messages`: Historial de comunicación en informes.
-- `report_mentions`: Sistema de avisos internos entre staff.
-- `settings`: Configuración persistente del sistema.
-
----
-
-## 🔒 Seguridad / Security
-
-- **Autenticación Multi-factor**: Obligatoria según configuración.
-- **WebAuthn**: Implementación de `lbuchs/webauthn`.
-- **TOTP**: Implementación de `spomky-labs/otphp`.
-- **Sesiones Seguras**: Regeneración de ID en login y expiración configurable.
-- **Escape Automático**: Uso de `htmlspecialchars()` en todas las salidas a vista.
-
----
-
-## 🛣️ Rutas / Routes
-
-| Método | Ruta | Controlador | Middleware | Descripción |
-|---|---|---|---|---|
-| GET | `/login` | `AuthController@showLogin` | - | Formulario de acceso |
-| POST | `/login/staff` | `AuthController@loginStaff` | - | Login personal |
-| POST | `/login/otp/verify` | `AuthController@verifyOTP` | - | Login alumno (OTP) |
-| GET | `/alumno/dashboard` | `StudentController@index` | `auth`, `alumno` | Inicio alumno |
-| POST | `/alumno/report` | `ReportController@store` | `auth`, `alumno` | Nuevo informe |
-| GET | `/staff/dashboard` | `StaffController@index` | `auth`, `staff` | Inicio staff |
-| GET | `/admin` | `AdminController@index` | `auth`, `admin` | Panel administración |
-| GET | `/admin/settings` | `SettingsController@index` | `auth`, `admin` | Configuración global |
-
----
-
-## 🤝 Contribuir / Contributing
-1. Haz un fork del proyecto.
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`).
-3. Haz commit de tus cambios (`git commit -m 'Add AmazingFeature'`).
-4. Haz push a la rama (`git push origin feature/AmazingFeature`).
-5. Abre un Pull Request.
+Estructura principal (SQLite 3.35+):
+- `users`: Usuarios, passwords Bcrypt, tokens WebAuthn y secretos TOTP cifrados.
+- `classrooms`: Gestión de aulas y tutores asignados.
+- `reports`: Informes base de convivencia.
+- `protocol_cases`: Instancia regional de un informe legal.
+- `report_messages` / `protocol_followups`: Notas internas, evidencias y seguimientos forenses.
+- `audit_logs`: Trazabilidad inmutable de operaciones sensibles (Logins, Cambios de Estado).
 
 ---
 
 ## 📄 Licencia / License
-Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+Este proyecto es software propietario/comercial. Su uso requiere autorización expresa de los autores originales. 
 
 ---
-© 2026 EmoTerraLab — Aura Project
+© 2026 EmoTerraLab — Proyecto Aura (GIR)
