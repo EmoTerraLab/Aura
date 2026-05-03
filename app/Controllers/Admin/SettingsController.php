@@ -21,6 +21,12 @@ class SettingsController
         $all = $this->settings->getAll();
         $tab = $_GET['tab'] ?? 'school';
         
+        // P1 FIX: Whitelist de pestañas para prevenir LFI y accesos no deseados
+        $allowedTabs = ['school', 'appearance', 'mail', 'security', 'protocol', 'ccaa'];
+        if (!in_array($tab, $allowedTabs)) {
+            $tab = 'school';
+        }
+        
         // Transform the key-value array for the view
         $settingsAssoc = [];
         foreach ($all as $key => $data) {

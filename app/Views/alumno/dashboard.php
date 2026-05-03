@@ -70,13 +70,24 @@
         <?php
         $db = \App\Core\Database::getInstance();
         $userId = \App\Core\Auth::id();
-        $profile = $db->query("SELECT classroom_id FROM student_profiles WHERE user_id = $userId")->fetch();
+        
+        // P0 FIX: Usar sentencias preparadas para evitar inyección SQL
+        $stmtProfile = $db->prepare("SELECT classroom_id FROM student_profiles WHERE user_id = ?");
+        $stmtProfile->execute([$userId]);
+        $profile = $stmtProfile->fetch();
+        
         $isCataluna = \App\Core\Config::get('ccaa_code') === 'CAT';
         
         if ($profile && $isCataluna) {
-            $survey = $db->query("SELECT * FROM sociometric_surveys WHERE classroom_id = {$profile['classroom_id']} AND status = 'active' LIMIT 1")->fetch();
+            $stmtSurvey = $db->prepare("SELECT * FROM sociometric_surveys WHERE classroom_id = ? AND status = 'active' LIMIT 1");
+            $stmtSurvey->execute([$profile['classroom_id']]);
+            $survey = $stmtSurvey->fetch();
+            
             if ($survey) {
-                $hasResponded = $db->query("SELECT COUNT(*) FROM sociometric_responses WHERE survey_id = {$survey['id']} AND student_id = $userId")->fetchColumn();
+                $stmtResponse = $db->prepare("SELECT COUNT(*) FROM sociometric_responses WHERE survey_id = ? AND student_id = ?");
+                $stmtResponse->execute([$survey['id'], $userId]);
+                $hasResponded = $stmtResponse->fetchColumn();
+                
                 if (!$hasResponded) {
                     echo '
                     <div class="bg-primary-container text-on-primary-container p-6 rounded-xl shadow-sm flex items-center justify-between gap-4 mb-6 border border-primary/20">

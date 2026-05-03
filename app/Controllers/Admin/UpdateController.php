@@ -181,11 +181,11 @@ class UpdateController
     }
 
     /**
-     * Alterna el modo mantenimiento con un secreto (sin login)
+     * Alterna el modo mantenimiento. Requiere rol de administrador.
      */
-    public function secretToggleMaintenance(string $secret = 'Ceuta2000'): void
+    public function toggleMaintenance(): void
     {
-        if ($secret !== 'Ceuta2000') {
+        if (!\App\Core\Auth::hasRole('admin')) {
             http_response_code(403);
             echo "Acceso denegado.";
             exit;
@@ -193,14 +193,10 @@ class UpdateController
 
         if (MaintenanceMode::isActive()) {
             MaintenanceMode::disable();
-            echo "<h1>Aura</h1>";
-            echo "<p>Modo mantenimiento <strong>DESACTIVADO</strong> correctamente.</p>";
-            echo "<a href='/login'>Ir al inicio</a>";
+            header('Location: /admin/update?maintenance=disabled');
         } else {
-            MaintenanceMode::enable('Mantenimiento activado mediante acceso secreto.', 'Indefinido');
-            echo "<h1>Aura</h1>";
-            echo "<p>Modo mantenimiento <strong>ACTIVADO</strong> correctamente.</p>";
-            echo "<a href='/'>Ver estado</a>";
+            MaintenanceMode::enable('Mantenimiento activado por el administrador.', 'Indefinido');
+            header('Location: /admin/update?maintenance=enabled');
         }
         exit;
     }
