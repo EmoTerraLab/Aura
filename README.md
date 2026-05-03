@@ -1,7 +1,7 @@
 # Aura — Plataforma de Gestión de Convivencia Escolar
 # Aura — School Well-being Management Platform
 
-![Version](https://img.shields.io/badge/version-2.22.0--stable-blue)
+![Version](https://img.shields.io/badge/version-2.23.0--stable-blue)
 ![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
