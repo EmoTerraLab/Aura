@@ -1,7 +1,7 @@
 <?php $bodyClass = "bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col lg:flex-row overflow-hidden"; ?>
 
 <!-- SideNavBar -->
-<nav class="bg-slate-50 dark:bg-slate-950 shadow-[4px_0_24px_rgba(6,105,114,0.04)] hidden lg:flex flex-col py-6 h-screen w-64 fixed left-0 top-0 z-40">
+<aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-64 bg-slate-50 dark:bg-slate-950 border-r z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col shadow-2xl lg:shadow-none py-6 h-screen">
     <div class="px-6 mb-8 flex items-center gap-3">
         <div class="w-10 h-10 flex items-center justify-center">
             <img src="<?= BASE_URL ?>icono-sinfondo.png" alt="Aura Logo" class="w-full h-full object-contain">
@@ -9,11 +9,11 @@
         <div><h1 class="font-h2 text-h2 text-teal-700 font-black tracking-tight leading-none">Aura</h1><p class="font-label-caps text-label-caps text-surface-tint opacity-70 mt-1">Control Panel</p></div>
     </div>
     <div class="flex-1 overflow-y-auto no-scrollbar space-y-1">
-        <button onclick="switchTab('users')" id="tab-btn-users" class="w-[calc(100%-16px)] text-left flex items-center gap-3 bg-teal-50 text-teal-700 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
+        <button onclick="switchTab('users'); toggleSidebar();" id="tab-btn-users" class="w-[calc(100%-16px)] text-left flex items-center gap-3 bg-teal-50 text-teal-700 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
             <span class="material-symbols-outlined">group</span>
             <span class="font-medium"><?= \App\Core\Lang::t('admin.users') ?></span>
         </button>
-        <button onclick="switchTab('classrooms')" id="tab-btn-classrooms" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
+        <button onclick="switchTab('classrooms'); toggleSidebar();" id="tab-btn-classrooms" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
             <span class="material-symbols-outlined">meeting_room</span>
             <span class="font-medium"><?= \App\Core\Lang::t('admin.classrooms') ?></span>
         </button>
@@ -64,11 +64,17 @@
             </button>
         </form>
     </div>
-</nav>
+</aside>
+
+<!-- Sidebar Overlay (Mobile) -->
+<div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-[55] lg:hidden"></div>
 
 <!-- Mobile TopNavBar -->
 <nav class="lg:hidden fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant">
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="p-2 -ml-2 text-slate-600">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
         <img src="<?= BASE_URL ?>icono-sinfondo.png" alt="Aura Logo" class="h-8 w-8 object-contain">
         <h1 class="text-xl font-bold text-teal-700">Aura Admin</h1>
     </div>
@@ -77,7 +83,7 @@
     </div>
 </nav>
 
-<main class="flex-1 lg:ml-64 flex flex-col h-screen pt-16 lg:pt-0 bg-surface overflow-y-auto no-scrollbar">
+<main class="flex-1 flex flex-col h-screen pt-16 lg:pt-0 bg-surface overflow-y-auto no-scrollbar">
     <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full space-y-10">
         <?php if ($pendingCount > 0): ?>
         <!-- Update Alert Banner -->
@@ -480,6 +486,21 @@
         document.getElementById('modal-overlay').classList.replace('flex', 'hidden');
         document.getElementById('modal-user').classList.add('hidden');
         document.getElementById('modal-classroom').classList.add('hidden');
+    }
+
+    function toggleSidebar() {
+        if (window.innerWidth >= 1024) return; // No hacer nada en escritorio
+        const sidebar = document.getElementById('app-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const isHidden = sidebar.classList.contains('-translate-x-full');
+
+        if (isHidden) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
     }
 </script>
 <?php $scripts = ob_get_clean(); ?>
