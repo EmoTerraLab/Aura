@@ -6,6 +6,7 @@ use App\Models\OTPCode;
 use App\Core\View;
 use App\Core\Auth;
 use App\Core\Csrf;
+use App\Core\AuditLogger;
 
 class AuthController {
     private $userModel;
@@ -38,16 +39,16 @@ class AuthController {
     public function loginStaff() {
         Csrf::validateRequest();
 
+        $data = json_decode(file_get_contents('php://input'), true);
+        $email = $data['email'] ?? '';
+
         // SEC-013 FIX: Rate limiting en login de staff
-        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1')) {
+        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email)) {
+            AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
             echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
             return;
         }
-
-        $data = json_decode(file_get_contents('php://input'), true);
-        
-        $email = $data['email'] ?? '';
         $password = $data['password'] ?? '';
 
         $user = $this->userModel->findByEmail($email);
@@ -63,6 +64,7 @@ class AuthController {
             }
 
             Auth::login($user);
+            AuditLogger::log('STAFF_LOGIN_SUCCESS', 'user', $user['id']);
             echo json_encode([
                 'ok' => true,
                 'redirect' => $user['role'] === 'admin' ? '/admin' : '/staff/inbox'
@@ -70,6 +72,7 @@ class AuthController {
             return;
         }
 
+        AuditLogger::log('STAFF_LOGIN_FAILED', 'user', null, ['email' => $email]);
         echo json_encode(['ok' => false, 'error' => 'Las credenciales proporcionadas no coinciden con nuestros registros.']);
     }
 
@@ -79,7 +82,8 @@ class AuthController {
         $email = $data['email'] ?? '';
         $forceOtp = !empty($data['force_otp']);
         
-        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1')) {
+        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '')) {
+            AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
             echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
             return;
@@ -162,7 +166,8 @@ class AuthController {
         $email = $data['email'] ?? '';
         $code = $data['code'] ?? '';
         
-        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1')) {
+        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '')) {
+            AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
             echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
             return;
@@ -187,14 +192,14 @@ class AuthController {
         echo json_encode(['ok' => false, 'error' => 'Código inválido o expirado.']);
     }
 
-    private function isRateLimited($ip) {
+    private function isRateLimited($ip, $identifier = '') {
         $db = \App\Core\Database::getInstance();
         
         // Limpiar entradas expiradas (más de 15 minutos)
         $db->prepare("DELETE FROM rate_limits WHERE last_attempt < datetime('now', '-15 minutes')")->execute();
         
         $stmt = $db->prepare("SELECT attempts FROM rate_limits WHERE ip = :ip");
-        $stmt->execute(['ip' => $ip]);
+        $stmt->execute(['ip' => $ip . '_' . $identifier]);
         $record = $stmt->fetch();
         
         $maxAttempts = 5;
@@ -204,10 +209,10 @@ class AuthController {
                 return true;
             }
             $stmt = $db->prepare("UPDATE rate_limits SET attempts = attempts + 1, last_attempt = CURRENT_TIMESTAMP WHERE ip = :ip");
-            $stmt->execute(['ip' => $ip]);
+            $stmt->execute(['ip' => $ip . '_' . $identifier]);
         } else {
             $stmt = $db->prepare("INSERT OR IGNORE INTO rate_limits (ip, attempts, last_attempt) VALUES (:ip, 1, CURRENT_TIMESTAMP)");
-            $stmt->execute(['ip' => $ip]);
+            $stmt->execute(['ip' => $ip . '_' . $identifier]);
         }
         
         return false;

@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NULL,
+    action VARCHAR(255) NOT NULL,
+    entity_type VARCHAR(255) NULL,
+    entity_id INTEGER NULL,
+    ip_address VARCHAR(45) NULL,
+    details TEXT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
+);

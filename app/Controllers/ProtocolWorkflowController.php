@@ -45,6 +45,15 @@ class ProtocolWorkflowController
      * Verifica que el centro tiene configurado el protocolo de Catalunya.
      * Usar al inicio de métodos exclusivos de CAT.
      */
+
+    private function verifyAccess(int $caseId): bool
+    {
+        $case = $this->caseModel->find($caseId);
+        if (!$case) return false;
+        $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
+        return $report !== false && $report !== null;
+    }
+
     private function requireCat(): void
     {
         if (Config::get('ccaa_code') !== 'CAT') {
@@ -84,6 +93,12 @@ class ProtocolWorkflowController
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
+        $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
         
         $success = $this->followupModel->create([
@@ -104,6 +119,12 @@ class ProtocolWorkflowController
     public function uploadEvidence($id): void
     {
         header('Content-Type: application/json');
+        $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
         $id = (int)$id;
         
         if (!isset($_FILES['evidence'])) {
@@ -219,6 +240,12 @@ class ProtocolWorkflowController
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
+        $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
         $payload = $data['map'] ?? [];
         $payload['protocol_case_id'] = $id;
@@ -236,6 +263,12 @@ class ProtocolWorkflowController
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
+        $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
         $case = $this->caseModel->find($id);
         $success = $this->caseModel->updateCommunications($id, $data['comms'] ?? []);
@@ -251,6 +284,12 @@ class ProtocolWorkflowController
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
+        $id = (int)$id;
         $data = json_decode(file_get_contents('php://input'), true);
         $case = $this->caseModel->find($id);
         $success = $this->caseModel->updateClosureChecks($id, $data['checks'] ?? []);
@@ -265,6 +304,12 @@ class ProtocolWorkflowController
     {
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
+        $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
         $data = json_decode(file_get_contents('php://input'), true);
         $ack = isset($data['acknowledged']) ? (int)$data['acknowledged'] : null;
         
@@ -295,6 +340,12 @@ class ProtocolWorkflowController
     {
         $this->requireCat();
         header('Content-Type: application/json');
+        $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
         $data = json_decode(file_get_contents('php://input'), true);
         
         $practiceData = [
@@ -319,6 +370,12 @@ class ProtocolWorkflowController
     {
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
+        $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
         $data = json_decode(file_get_contents('php://input'), true);
         $success = $this->restorativeModel->updateStatus((int)$id, $data['status']);
         echo json_encode(['success' => $success]);

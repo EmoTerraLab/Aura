@@ -117,17 +117,17 @@
                                 </span>
                                 <span class="text-[10px] text-slate-400 font-bold"><?= date('H:i', strtotime($r['created_at'])) ?></span>
                             </div>
-                            <h3 class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors mb-1"><?= $r['student_name'] ?></h3>
-                            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3"><?= $r['content'] ?></p>
+                            <h3 class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors mb-1"><?= htmlspecialchars($r['student_name'] ?? '') ?></h3>
+                            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3"><?= htmlspecialchars($r['content'] ?? '') ?></p>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-4">
                                     <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
                                         <span class="material-symbols-outlined text-xs">chat_bubble</span>
-                                        <span><?= $r['message_count'] ?? 0 ?></span>
+                                        <span><?= (int)($r['message_count'] ?? 0) ?></span>
                                     </div>
                                     <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
                                         <span class="material-symbols-outlined text-xs">meeting_room</span>
-                                        <span><?= $r['classroom_name'] ?></span>
+                                        <span><?= htmlspecialchars($r['classroom_name'] ?? '') ?></span>
                                     </div>
                                 </div>
                                 <?php 
@@ -280,6 +280,12 @@
         } catch (e) {}
     }
 
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     async function loadMentions() {
         try {
             const res = await fetchJson('/staff/mentions');
@@ -288,7 +294,7 @@
                 document.getElementById('mentions-list').innerHTML = res.mentions.map(m => `
                     <div class="p-4 hover:bg-surface cursor-pointer border-b" onclick="readMention(${m.id}, ${m.report_id})">
                         <p class="text-[10px] text-outline">CASO-${m.report_id}</p>
-                        <p class="text-sm font-bold text-primary">${m.sender_name}</p>
+                        <p class="text-sm font-bold text-primary">${escapeHtml(m.sender_name)}</p>
                     </div>`).join('');
             } else {
                 document.getElementById('mentions-list').innerHTML = '<p class="p-8 text-center text-slate-400 text-xs italic">No hay menciones nuevas</p>';
@@ -323,7 +329,7 @@
 
         const res = await fetchJson(`/staff/reports/${id}`);
         if (!res.error) await renderDetail(res.report, res.messages);
-        else container.innerHTML = `<div class="p-10 text-center"><p class="text-error font-bold mb-4">${res.error}</p><button onclick="closeDetailMobile()" class="bg-primary text-white px-6 py-2 rounded-full">Volver</button></div>`;
+        else container.innerHTML = `<div class="p-10 text-center"><p class="text-error font-bold mb-4">${escapeHtml(res.error)}</p><button onclick="closeDetailMobile()" class="bg-primary text-white px-6 py-2 rounded-full">Volver</button></div>`;
     }
 
     function closeDetailMobile() {
@@ -357,11 +363,11 @@
             const isMe = m.is_current_user;
             const isInt = parseInt(m.is_internal) === 1;
             return `<div class="flex gap-3 ${isMe?'flex-row-reverse':''} mb-4">
-                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">${m.sender_name.charAt(0)}</div>
+                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">${escapeHtml(m.sender_name.charAt(0))}</div>
                 <div class="${isInt?'bg-amber-50 border-amber-100 border':(isMe?'bg-primary text-white':'bg-white border')} p-3 rounded-2xl ${isMe?'rounded-tr-none':'rounded-tl-none'} shadow-sm max-w-[85%]">
                     ${isInt?'<p class="text-[9px] font-black text-amber-800 mb-1 uppercase tracking-tighter">🔒 Nota Interna</p>':''}
-                    <p class="text-[13px] whitespace-pre-wrap">${m.message}</p>
-                    <span class="text-[9px] opacity-60 block mt-1 ${isMe?'text-right':''}">${isMe?'Tú':m.sender_name} • ${m.created_at}</span>
+                    <p class="text-[13px] whitespace-pre-wrap">${escapeHtml(m.message)}</p>
+                    <span class="text-[9px] opacity-60 block mt-1 ${isMe?'text-right':''}">${isMe?'Tú':escapeHtml(m.sender_name)} • ${m.created_at}</span>
                 </div>
             </div>`;
         }).join('');
@@ -370,7 +376,7 @@
             <div class="h-16 md:h-20 px-4 md:px-8 flex items-center justify-between bg-white border-b z-20 shrink-0">
                 <div class="flex items-center gap-3 min-w-0">
                     <button onclick="closeDetailMobile()" class="md:hidden text-slate-500"><span class="material-symbols-outlined">arrow_back</span></button>
-                    <div class="min-w-0"><h3 class="font-bold text-sm truncate">Caso #${report.id}</h3><p class="text-[10px] text-outline uppercase font-bold truncate">${report.classroom_name}</p></div>
+                    <div class="min-w-0"><h3 class="font-bold text-sm truncate">Caso #${report.id}</h3><p class="text-[10px] text-outline uppercase font-bold truncate">${escapeHtml(report.classroom_name)}</p></div>
                 </div>
                 <div class="flex gap-2">
                     <select onchange="handleStatusChange(${report.id}, this.value)" id="status-select" class="bg-slate-100 border-0 rounded-full py-1.5 px-3 md:px-4 text-[9px] md:text-[10px] font-black uppercase outline-none focus:ring-2 focus:ring-primary/20">
@@ -391,7 +397,7 @@
             <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50 no-scrollbar">
                 <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h4 class="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest"><?= \App\Core\Lang::t('staff.student_story') ?></h4>
-                    <p class="text-sm text-slate-800 whitespace-pre-wrap">${report.content}</p>
+                    <p class="text-sm text-slate-800 whitespace-pre-wrap">${escapeHtml(report.content)}</p>
                 </div>
                 
                 <!-- PROTOCOL ACTIONS CARD -->

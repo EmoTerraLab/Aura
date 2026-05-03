@@ -10,6 +10,12 @@ use App\Services\ProtocolService;
 
 class ProtocolController
 {
+
+    private function verifyAccess(int $reportId): bool
+    {
+        $report = $this->reportModel->findByIdWithDetails($reportId, Auth::id(), Auth::role());
+        return $report !== false && $report !== null;
+    }
     private ProtocolCase $caseModel;
     private Report $reportModel;
     private ProtocolStateService $stateService;
@@ -147,6 +153,13 @@ class ProtocolController
     {
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
+        $id = (int)$id;
+        $case = (new \App\Models\ProtocolCase())->find($id);
+        if (!$case || !$this->verifyAccess($case['report_id'])) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado.']);
+            return;
+        }
         if (!\App\Core\Auth::hasRole(['orientador', 'direccion', 'admin']) && !\App\Core\Auth::isCocobe()) {
             echo json_encode(['success' => false, 'error' => 'Permiso denegado.']);
             return;
@@ -164,6 +177,13 @@ class ProtocolController
     public function classify($id): void
     {
         header('Content-Type: application/json');
+        $id = (int)$id;
+        $case = (new \App\Models\ProtocolCase())->find($id);
+        if (!$case || !$this->verifyAccess($case['report_id'])) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado.']);
+            return;
+        }
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $success = $this->stateService->classify((int)$id, $data['severity'] ?? '', $data['classification'] ?? '');

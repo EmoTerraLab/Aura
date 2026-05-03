@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\Report;
 use App\Models\ReportMessage;
 use App\Core\Auth;
+use App\Core\AuditLogger;
 
 class ReportManagementController {
     private $reportModel;
@@ -61,7 +62,15 @@ class ReportManagementController {
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
 
-    $data = json_decode(file_get_contents('php://input'), true);
+        $id = (int)$id;
+        $report = $this->reportModel->findByIdWithDetails($id, Auth::id(), Auth::role());
+        if (!$report) {
+            http_response_code(403);
+            echo json_encode(['error' => 'No tienes permiso para modificar este reporte.']);
+            return;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
         $status = $data['status'] ?? null;
         $summary = $data['resolution_summary'] ?? null;
 
@@ -71,6 +80,7 @@ class ReportManagementController {
         }
 
         $this->reportModel->updateStatus($id, $status, $summary);
+        AuditLogger::log('REPORT_STATUS_UPDATED', 'report', $id, ['status' => $status]);
 
         echo json_encode(['success' => true, 'message' => 'Estado actualizado correctamente.']);
     }
@@ -78,6 +88,14 @@ class ReportManagementController {
     public function addMessage($id) {
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
+
+        $id = (int)$id;
+        $report = $this->reportModel->findByIdWithDetails($id, Auth::id(), Auth::role());
+        if (!$report) {
+            http_response_code(403);
+            echo json_encode(['error' => 'No tienes permiso para comentar en este reporte.']);
+            return;
+        }
 
         $data = json_decode(file_get_contents('php://input'), true);
         $message = trim($data['message'] ?? '');
