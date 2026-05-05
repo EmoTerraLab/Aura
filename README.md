@@ -17,11 +17,15 @@ Aura es una plataforma de gestión y reportes altamente segura, construida espec
 
 ## 🚀 Características Principales
 
-### 🛡️ Seguridad Sin Compromisos
-*   **Blindaje de Nivel Bancario:** Prevención estricta de IDOR (Insecure Direct Object Reference) mediante verificación criptográfica de propiedad (`findByIdWithDetails`).
-*   **Autenticación Multifactor (MFA):** WebAuthn biométrico (FaceID/TouchID) para alumnos, y TOTP cifrado con AES-256-GCM para el personal del centro.
-*   **Mitigación de DDoS y Fuerza Bruta:** Limitación de peticiones compuesta (IP + Identificador) para prevenir ataques de "Credential Stuffing".
-*   **Registros de Auditoría Inmutables:** Registro forense a prueba de manipulaciones de todas las interacciones críticas del sistema (`audit_logs`).
+### 🛡️ Seguridad y Auditoría (Esquema Nacional de Seguridad)
+Aura está diseñada siguiendo las directrices del **Esquema Nacional de Seguridad (ENS)** aplicable a las Comunidades Autónomas en España, garantizando la confidencialidad, integridad y trazabilidad de los datos de menores:
+
+*   **Autenticación Multifactor (MFA):** WebAuthn biométrico (FaceID/TouchID) para alumnos, garantizando un acceso sin contraseñas (Passwordless); y TOTP cifrado con AES-256-GCM para el personal administrativo y docente.
+*   **Gestión de Sesiones y Cookies:** Cookies de sesión fortificadas con banderas `Secure` (forzado bajo HTTPS), `HttpOnly` (prevención de robo vía XSS) y directiva `SameSite=Lax` para mitigar ataques de navegación cruzada. Rotación estricta de ID de sesión post-login.
+*   **Protección contra falsificación (CSRF):** Sistema de validación de tokens per-session acoplado a un motor de cabeceras seguras AJAX para todas las mutaciones de estado, evitando falsificación de peticiones en flujos de múltiples pasos.
+*   **Blindaje de Nivel Bancario (Control de Acceso):** Prevención de vulnerabilidades IDOR (Insecure Direct Object Reference) en la lectura/escritura de expedientes mediante verificación criptográfica y delegación de propiedad estructurada en la base de datos.
+*   **Mitigación de ataques de Fuerza Bruta:** Limitación de peticiones (Rate-Limiting) estricta e híbrida basada en "IP + Identificador" para mitigar ataques continuos como el *Credential Stuffing*.
+*   **Registros de Auditoría Inmutables:** Sistema de bitácora (Audit Trail) forense de todas las interacciones del sistema, cumpliendo con los estándares de retención de pruebas del marco normativo autonómico para inspecciones educativas.
 
 ### 🗺️ Protocolos Legales Autonómicos (Máquina de Estados)
 Aura adapta dinámicamente sus flujos de trabajo legales en base a las directivas regionales (Comunidades Autónomas):
