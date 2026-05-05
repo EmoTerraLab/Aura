@@ -30,14 +30,21 @@ ssh $SSH_USER@$SSH_HOST << EOF
   echo "🗄️  Ejecutando migraciones de base de datos..."
   php migrate.php run
   
-  echo "🔐 Asegurando permisos de escritura..."
-  chown -R www-data:www-data $REMOTE_PATH/database $REMOTE_PATH/storage
+  echo "🔐 Asegurando permisos de escritura y lectura global..."
+  # Es crítico que todo el directorio sea propiedad de www-data para que PHP (Nginx/Apache) 
+  # pueda leer la carpeta vendor generada por composer y los archivos subidos.
+  chown -R www-data:www-data $REMOTE_PATH
+  find $REMOTE_PATH -type d -exec chmod 755 {} \;
+  find $REMOTE_PATH -type f -exec chmod 644 {} \;
+  
+  # Dar permisos especiales de escritura a database y storage
   chmod -R 775 $REMOTE_PATH/database $REMOTE_PATH/storage
   
   # Si el archivo sqlite existe, asegurar permisos específicos
   if [ -f "$REMOTE_PATH/database/aura.sqlite" ]; then
-    chown www-data:www-data $REMOTE_PATH/database/aura.sqlite
     chmod 664 $REMOTE_PATH/database/aura.sqlite
+    chmod 664 $REMOTE_PATH/database/aura.sqlite-wal 2>/dev/null || true
+    chmod 664 $REMOTE_PATH/database/aura.sqlite-shm 2>/dev/null || true
   fi
 
   echo "✅ Servidor actualizado y base de datos sincronizada."
