@@ -9,14 +9,24 @@ ob_start();
 define('APP_ENV', $_ENV['APP_ENV'] ?? getenv('APP_ENV') ?: 'development');
 define('BASE_URL', '/'); // Cambiar si el proyecto está en un subdirectorio (ej: /aura/)
 
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' 
+    || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')
+    || str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'application/json');
+
 if (APP_ENV === 'development' || APP_ENV === 'local' || APP_ENV === 'dev') {
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+    // Si es AJAX, NUNCA mostrar errores en pantalla para no corromper el JSON con HTML (<br><b>...)
+    ini_set('display_errors', $isAjax ? 0 : 1);
+    ini_set('display_startup_errors', $isAjax ? 0 : 1);
+    // Ignorar deprecaciones de dependencias externas (vendor) que rompen PHP 8.2+
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+    if ($isAjax) {
+        ini_set('log_errors', 1);
+        ini_set('error_log', __DIR__ . '/../storage/logs/php_errors.log');
+    }
 } else {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
-    error_reporting(E_ALL);
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
     ini_set('log_errors', 1);
     ini_set('error_log', __DIR__ . '/../storage/logs/php_errors.log');
 }
