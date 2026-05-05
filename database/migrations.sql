@@ -167,3 +167,30 @@ CREATE TABLE IF NOT EXISTS webauthn_credentials (
     last_used_at DATETIME,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Tabla `sociometric_surveys`
+CREATE TABLE IF NOT EXISTS sociometric_surveys (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title VARCHAR(255) NOT NULL,
+    classroom_id INTEGER NOT NULL,
+    created_by INTEGER NOT NULL,
+    status VARCHAR(20) DEFAULT 'active',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Tabla `sociometric_responses`
+CREATE TABLE IF NOT EXISTS sociometric_responses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    survey_id INTEGER NOT NULL,
+    student_id INTEGER NOT NULL,
+    nominated_student_id INTEGER,
+    question_type VARCHAR(50) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (survey_id) REFERENCES sociometric_surveys(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (nominated_student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_sociometric_responses_survey ON sociometric_responses(survey_id);
+CREATE INDEX IF NOT EXISTS idx_sociometric_responses_nominated ON sociometric_responses(nominated_student_id);

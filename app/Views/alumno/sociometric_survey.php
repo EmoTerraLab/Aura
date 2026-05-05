@@ -8,15 +8,15 @@ use App\Core\Lang;
             <div class="w-16 h-16 bg-primary/10 text-primary rounded-3xl flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-3xl">hub</span>
             </div>
-            <h1 class="text-2xl font-black text-slate-800"><?= $survey['title'] ?></h1>
-            <p class="text-sm text-slate-500 font-medium">Les teves respostes són totalment confidencials i només les veurà el teu tutor/a.</p>
+            <h1 class="text-2xl font-black text-slate-800"><?= htmlspecialchars($survey['title']) ?></h1>
+            <p class="text-sm text-slate-500 font-medium">Tus respuestas son totalmente confidenciales y solo las verá tu tutor/a.</p>
         </header>
 
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 md:p-12 space-y-10">
             
-            <!-- Pregunta 1: Afinitat Positiva -->
+            <!-- Pregunta 1: Afinidad Positiva -->
             <section class="space-y-4">
-                <h2 class="text-lg font-black text-slate-800 leading-tight">1. Amb quins 3 companys/es t'agradaria fer un treball en grup?</h2>
+                <h2 class="text-lg font-black text-slate-800 leading-tight">1. ¿Con qué 3 compañeros/as te gustaría hacer un trabajo en grupo?</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="positive-nominations">
                     <?php foreach ($classmates as $c): ?>
                         <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-primary/5 border-2 border-transparent transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary/5">
@@ -32,9 +32,9 @@ use App\Core\Lang;
 
             <hr class="border-slate-50">
 
-            <!-- Pregunta 2: Afinitat Negativa -->
+            <!-- Pregunta 2: Afinidad Negativa -->
             <section class="space-y-4">
-                <h2 class="text-lg font-black text-slate-800 leading-tight">2. Amb quins 3 companys/es NO t'agradaria asseure't al costat?</h2>
+                <h2 class="text-lg font-black text-slate-800 leading-tight">2. ¿Con qué 3 compañeros/as NO te gustaría sentarte al lado?</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="negative-nominations">
                     <?php foreach ($classmates as $c): ?>
                         <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-red-50 border-2 border-transparent transition-all group has-[:checked]:border-red-500 has-[:checked]:bg-red-50">
@@ -50,10 +50,10 @@ use App\Core\Lang;
 
             <hr class="border-slate-50">
 
-            <!-- Pregunta 3: Detecció de Víctimes -->
+            <!-- Pregunta 3: Detección de Víctimas -->
             <section class="space-y-4">
-                <h2 class="text-lg font-black text-slate-800 leading-tight">3. Creus que algun company/a ho està passant malament perquè es fiquen amb ell/a?</h2>
-                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Pots marcar-ne diversos si cal</p>
+                <h2 class="text-lg font-black text-slate-800 leading-tight">3. ¿Crees que algún compañero/a lo está pasando mal porque se meten con él/ella?</h2>
+                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Puedes marcar a varios si es necesario</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="victim-nominations">
                     <?php foreach ($classmates as $c): ?>
                         <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-amber-50 border-2 border-transparent transition-all group has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
@@ -69,7 +69,7 @@ use App\Core\Lang;
 
             <div class="pt-6">
                 <button onclick="submitSurvey(<?= $survey['id'] ?>)" id="btn-submit" class="w-full py-5 bg-primary text-white rounded-full font-black shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                    Enviar respostes
+                    Enviar respuestas
                 </button>
             </div>
 
@@ -85,30 +85,30 @@ async function submitSurvey(surveyId) {
     const victims = Array.from(document.querySelectorAll('input[name="victims[]"]:checked')).map(i => i.value);
 
     if (positive.length > 3 || negative.length > 3) {
-        alert('Si us plau, selecciona un màxim de 3 companys per a les preguntes 1 i 2.');
+        alert('Por favor, selecciona un máximo de 3 compañeros para las preguntas 1 y 2.');
         return;
     }
 
     btn.disabled = true;
-    btn.innerText = 'Enviant...';
+    btn.innerText = 'Enviando...';
 
     try {
-        const res = await fetch('/api/sociometric/respond', {
+        const res = await fetchJson('/api/sociometric/respond', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ survey_id: surveyId, positive, negative, victims })
+            body: { survey_id: surveyId, positive, negative, victims }
         });
-        const data = await res.json();
-        if (data.success) {
+        
+        if (res.success) {
             window.location.href = '/alumno/dashboard?survey_success=1';
         } else {
-            alert('Error: ' + data.error);
+            alert('Error: ' + (res.error || 'No se pudo guardar la respuesta'));
             btn.disabled = false;
-            btn.innerText = 'Enviar respostes';
+            btn.innerText = 'Enviar respuestas';
         }
     } catch (e) {
-        alert('Error de connexió.');
+        alert('Error de conexión con el servidor.');
         btn.disabled = false;
+        btn.innerText = 'Enviar respuestas';
     }
 }
 </script>
