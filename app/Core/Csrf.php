@@ -49,8 +49,9 @@ class Csrf {
             exit;
         }
 
-        // SEC-010 FIX: Rotar token después de validación exitosa para prevenir replay
-        self::regenerate();
+        // FIX: Eliminada rotación agresiva por petición que rompía el login AJAX (OTP)
+        // La rotación ahora se delega a los cambios de estado de sesión (login/logout)
+        // self::regenerate();
     }
 
     /**
