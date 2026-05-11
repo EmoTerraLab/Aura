@@ -42,6 +42,13 @@ class ProtocolController
         try {
             header('Content-Type: application/json');
             $report_id = (int)$report_id;
+            
+            if (!$this->verifyAccess($report_id)) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Acceso denegado.']);
+                exit;
+            }
+
             $ccaa = Config::get('ccaa_code', 'generic');
             
             $protocol = ProtocolFactory::make($ccaa);

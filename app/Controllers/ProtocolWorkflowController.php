@@ -201,6 +201,11 @@ class ProtocolWorkflowController
         }
 
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
+        if (!$report) {
+            http_response_code(403);
+            echo "Acceso denegado al caso.";
+            return;
+        }
         $schoolName = Config::get('school_name', 'Aura');
 
         View::render($templatePath, [
@@ -220,6 +225,11 @@ class ProtocolWorkflowController
         }
         
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
+        if (!$report) {
+            http_response_code(403);
+            echo "Acceso denegado al caso.";
+            return;
+        }
         $map = $this->mapModel->findByCase($case['id']);
         $followups = $this->followupModel->findByCase($case['id']);
         $case['closure_checks'] = json_decode($case['closure_checks'] ?? '{}', true);
@@ -374,7 +384,9 @@ class ProtocolWorkflowController
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
-        if (!$this->verifyAccess($id)) {
+        
+        $practice = $this->restorativeModel->find($id);
+        if (!$practice || !$this->verifyAccess($practice['protocol_case_id'])) {
             http_response_code(403);
             echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
