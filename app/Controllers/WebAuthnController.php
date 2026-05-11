@@ -75,14 +75,18 @@ class WebAuthnController
             $existing = $this->credentialModel->findByUserId($user['id']);
             $excludeCredentials = array_map(fn($c) => base64_decode($c['credential_id']), $existing);
 
+            // El WA-08: userHandle debe ser binario para la librería, lo guardamos como hex en DB
+            $userHandleBin = hex2bin($userHandle);
+
             $createArgs = $this->webauthn->getCreateArgs(
-                $userHandle, 
+                $userHandleBin, 
                 $user['email'], 
                 $user['name'], 
                 60,    // timeout
                 false, // requireResidentKey
                 'preferred', // userVerification
-                $excludeCredentials
+                null, // crossPlatformAttachment
+                $excludeCredentials // excludeCredentialIds es el 8º argumento
             );
 
             // WA-01: Guardar challenge con expiración (60 segundos)
@@ -91,26 +95,38 @@ class WebAuthnController
             
             error_log("WebAuthn registerOptions: Challenge generado para user " . $user['id']);
 
+            // Extraer el objeto publicKey que es el que el navegador espera directamente
+            $options = $createArgs->publicKey;
+
+            // WA-09: Asegurar que RP esté presente (Vital para navegadores modernos)
+            if (!isset($options->rp)) {
+                $options->rp = new \stdClass();
+                $options->rp->name = Config::get('school_name', 'Aura');
+                $options->rp->id = $_SERVER['HTTP_HOST'] ?? 'localhost';
+                if (strpos($options->rp->id, ':') !== false) {
+                    $options->rp->id = explode(':', $options->rp->id)[0];
+                }
+            }
+
             // Convertir campos binarios a base64url para JSON
-            $createArgs->challenge = $this->bufferToBase64url($createArgs->challenge);
-            if (!isset($createArgs->user)) { $createArgs->user = new \stdClass(); }
-            $createArgs->user->id = $this->bufferToBase64url($userHandle);
+            $options->challenge = $this->bufferToBase64url($options->challenge);
+            $options->user->id = $this->bufferToBase64url($options->user->id);
             
-            if (isset($createArgs->excludeCredentials) && is_array($createArgs->excludeCredentials)) {
-                foreach ($createArgs->excludeCredentials as &$cred) {
+            if (isset($options->excludeCredentials) && is_array($options->excludeCredentials)) {
+                foreach ($options->excludeCredentials as &$cred) {
                     $cred->id = $this->bufferToBase64url($cred->id);
                 }
             }
 
             // Asegurar que pubKeyCredParams esté presente (requerido por el navegador)
-            if (!isset($createArgs->pubKeyCredParams)) {
-                $createArgs->pubKeyCredParams = [
+            if (!isset($options->pubKeyCredParams) || empty($options->pubKeyCredParams)) {
+                $options->pubKeyCredParams = [
                     ['type' => 'public-key', 'alg' => -7],  // ES256
                     ['type' => 'public-key', 'alg' => -257] // RS256
                 ];
             }
             header('Content-Type: application/json');
-            echo json_encode($createArgs);
+            echo json_encode($options);
         } catch (\Throwable $e) {
             error_log("WebAuthn registerOptions Error: " . $e->getMessage());
             $this->sendError('Error al generar opciones: ' . $e->getMessage());
@@ -195,21 +211,24 @@ class WebAuthnController
 
             $allowedCredentials = array_map(fn($c) => base64_decode($c['credential_id']), $creds);
 
-            $getArgs = $this->webauthn->getGetArgs($allowedCredentials, 60, true, true, true, true, 'preferred');
+            $getArgs = $this->webauthn->getGetArgs($allowedCredentials, 60, true, true, true, true, true, 'preferred');
 
             // WA-01: Challenge con expiración
             Session::set('webauthn_challenge', $this->webauthn->getChallenge());
             Session::set('webauthn_challenge_expires', time() + 60);
-            
-            $getArgs->challenge = $this->bufferToBase64url($getArgs->challenge);
-            if (isset($getArgs->allowCredentials) && is_array($getArgs->allowCredentials)) {
-                foreach ($getArgs->allowCredentials as &$cred) {
+
+            // Extraer el objeto publicKey que es el que el navegador espera directamente
+            $options = $getArgs->publicKey;
+
+            $options->challenge = $this->bufferToBase64url($options->challenge);
+            if (isset($options->allowCredentials) && is_array($options->allowCredentials)) {
+                foreach ($options->allowCredentials as &$cred) {
                     $cred->id = $this->bufferToBase64url($cred->id);
                 }
             }
 
             header('Content-Type: application/json');
-            echo json_encode($getArgs);
+            echo json_encode($options);
         } catch (\Throwable $e) {
             error_log("WebAuthn authOptions Error: " . $e->getMessage());
             $this->sendError($e->getMessage());
@@ -341,6 +360,9 @@ class WebAuthnController
 
     private function bufferToBase64url($buffer)
     {
+        if ($buffer instanceof \lbuchs\WebAuthn\Binary\ByteBuffer) {
+            $buffer = $buffer->getBinaryString();
+        }
         return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($buffer));
     }
 
