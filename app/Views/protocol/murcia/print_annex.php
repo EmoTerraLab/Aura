@@ -169,7 +169,7 @@
     </div>
 
     <div class="footer">
-        Documento generado por Aura PDP — <?= htmlspecialchars($school_name) ?> — <?= date('d/m/Y H:i') ?>
+        Documento generado por Aura — <?= htmlspecialchars($school_name) ?> — <?= date('d/m/Y H:i') ?>
     </div>
 </body>
 </html>

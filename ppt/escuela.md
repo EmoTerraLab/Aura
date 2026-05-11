@@ -1,4 +1,4 @@
-# Aura PDP: Plataforma de Bienestar y Convivencia Escolar
+# Aura: Plataforma de Bienestar y Convivencia Escolar
 ## Propuesta de Valor para la Implementación del MVP en Centros Educativos
 
 ---

@@ -206,6 +206,10 @@ class AuthController {
         echo json_encode(['ok' => false, 'error' => 'Código inválido o expirado.']);
     }
 
+    /**
+     * SEC-013: Implementación de Rate Limiting para prevenir ataques de fuerza bruta.
+     * Utiliza una combinación de IP e identificador (email) para mayor precisión.
+     */
     private function isRateLimited($ip, $identifier = '') {
         try {
             $db = \App\Core\Database::getInstance();
