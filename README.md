@@ -36,7 +36,6 @@ Aura adapta dinámicamente sus flujos de trabajo legales en base a las directiva
 ### 🌐 Internacionalización y Accesibilidad
 *   **5 Idiomas Nativos:** Totalmente localizado en Español, Català, Galego, Euskara e Inglés.
 *   **Sociogramas Interactivos:** Integración nativa de `Cytoscape.js` para mapear las relaciones del aula y detectar vulnerabilidades visualmente.
-*   **Flujo de Reporte Guiado (Wizard):** Nuevo sistema de reporte asistido por pasos para alumnos, mejorando la calidad de la información recogida y reduciendo la fricción emocional durante el proceso.
 
 ---
 
