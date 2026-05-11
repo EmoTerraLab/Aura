@@ -1,10 +1,10 @@
 // =============================================================================
 // Aura — Service Worker (sw.js)
 // Estrategia de caché segura compatible con MFA, CSRF y CSP estricto
-// Versión: 2.26.0
+// Versión: 2.27.0
 // =============================================================================
 
-const CACHE_VERSION = 'aura-v2.26.0';
+const CACHE_VERSION = 'aura-v2.27.0';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 

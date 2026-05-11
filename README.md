@@ -36,6 +36,7 @@ Aura adapta dinámicamente sus flujos de trabajo legales en base a las directiva
 ### 🌐 Internacionalización y Accesibilidad
 *   **5 Idiomas Nativos:** Totalmente localizado en Español, Català, Galego, Euskara (Basque) e Inglés.
 *   **Sociogramas Interactivos:** Integración nativa de `Cytoscape.js` para mapear las relaciones del aula y detectar vulnerabilidades visualmente.
+*   **Progressive Web App (PWA):** Soporte para instalación en dispositivos móviles y escritorio, con caché inteligente de assets estáticos y página de cortesía offline personalizada para mejorar la experiencia en redes inestables.
 
 ---
 
