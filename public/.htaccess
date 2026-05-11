@@ -11,6 +11,29 @@ RewriteCond %{REQUEST_FILENAME} !-d
 # Todo lo demás va al index.php
 RewriteRule ^(.*)$ index.php [QSA,L]
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# PWA: MIME Types y Cache para Service Worker y Manifest
+# ═══════════════════════════════════════════════════════════════════════════════
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType application/json .json
+</IfModule>
+
+# Service Worker: NUNCA cachear (el navegador debe comprobar actualizaciones siempre)
+<Files "sw.js">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Service-Worker-Allowed "/"
+    </IfModule>
+</Files>
+
+# Manifest: Cachear brevemente (1h) para no penalizar Lighthouse
+<Files "manifest.json">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "public, max-age=3600"
+    </IfModule>
+</Files>
+
 # Bloquear acceso a archivos sensibles
 RedirectMatch 403 ^/database/backups/
 RedirectMatch 403 ^/storage/

@@ -105,8 +105,8 @@ try {
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
     header('Pragma: no-cache');
 
-    // Content-Security-Policy: Permitiendo recursos necesarios (Tailwind, Bootstrap, Google Fonts)
-    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:;");
+    // Content-Security-Policy: Permitiendo recursos necesarios (Tailwind, Bootstrap, Google Fonts, PWA)
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; manifest-src 'self'; worker-src 'self';");
 
     // Inicializar y ejecutar Router
     $router = new \App\Core\Router();

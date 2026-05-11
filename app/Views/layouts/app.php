@@ -235,5 +235,45 @@
     <?php if (isset($scripts)): ?>
         <?= $scripts ?>
     <?php endif; ?>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         PWA: Registro del Service Worker (diferido para no bloquear render)
+         ═══════════════════════════════════════════════════════════════════ -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then((registration) => {
+                        console.log('[Aura PWA] Service Worker registrado. Scope:', registration.scope);
+
+                        // Detectar actualizaciones del Service Worker
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Hay una nueva versión disponible
+                                    console.log('[Aura PWA] Nueva versión disponible');
+                                    // Activar nuevo SW inmediatamente
+                                    newWorker.postMessage({ action: 'SKIP_WAITING' });
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.warn('[Aura PWA] Error al registrar Service Worker:', error);
+                    });
+
+                // Recargar la página cuando el nuevo SW tome el control
+                let refreshing = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (!refreshing) {
+                        refreshing = true;
+                        window.location.reload();
+                    }
+                });
+            });
+        }
+    </script>
 </body>
 </html>
+
