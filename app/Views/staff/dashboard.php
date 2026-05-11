@@ -435,8 +435,8 @@
             if (resPanel && originalModule) {
                 const activeProtocol = caseRes.ccaa;
                 
-                // Solo Catalunya tiene prácticas restaurativas actualmente
-                let showRestorative = (activeProtocol === 'CAT');
+                // Habilitar prácticas restaurativas para Catalunya y Aragón
+                let showRestorative = (activeProtocol === 'CAT' || activeProtocol === 'ARA');
 
                 if (showRestorative) {
                     resPanel.appendChild(originalModule);

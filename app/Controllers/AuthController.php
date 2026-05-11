@@ -79,6 +79,13 @@ class AuthController {
     public function generateOTP() {
         Csrf::validateRequest();
         $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (!is_array($data)) {
+            http_response_code(400);
+            echo json_encode(['ok' => false, 'error' => 'Datos inválidos.']);
+            return;
+        }
+
         $email = $data['email'] ?? '';
         $forceOtp = !empty($data['force_otp']);
         
@@ -163,6 +170,13 @@ class AuthController {
     public function verifyOTP() {
         Csrf::validateRequest();
         $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (!is_array($data)) {
+            http_response_code(400);
+            echo json_encode(['ok' => false, 'error' => 'Datos inválidos.']);
+            return;
+        }
+
         $email = $data['email'] ?? '';
         $code = $data['code'] ?? '';
         
@@ -193,26 +207,31 @@ class AuthController {
     }
 
     private function isRateLimited($ip, $identifier = '') {
-        $db = \App\Core\Database::getInstance();
-        
-        // Limpiar entradas expiradas (más de 15 minutos)
-        $db->prepare("DELETE FROM rate_limits WHERE last_attempt < datetime('now', '-15 minutes')")->execute();
-        
-        $stmt = $db->prepare("SELECT attempts FROM rate_limits WHERE ip = :ip");
-        $stmt->execute(['ip' => $ip . '_' . $identifier]);
-        $record = $stmt->fetch();
-        
-        $maxAttempts = 5;
-        
-        if ($record) {
-            if ($record['attempts'] >= $maxAttempts) {
-                return true;
+        try {
+            $db = \App\Core\Database::getInstance();
+            
+            // Limpiar entradas expiradas (más de 15 minutos)
+            $db->prepare("DELETE FROM rate_limits WHERE last_attempt < datetime('now', '-15 minutes')")->execute();
+            
+            $stmt = $db->prepare("SELECT attempts FROM rate_limits WHERE ip = :ip");
+            $stmt->execute(['ip' => $ip . '_' . $identifier]);
+            $record = $stmt->fetch();
+            
+            $maxAttempts = 5;
+            
+            if ($record) {
+                if ($record['attempts'] >= $maxAttempts) {
+                    return true;
+                }
+                $stmt = $db->prepare("UPDATE rate_limits SET attempts = attempts + 1, last_attempt = CURRENT_TIMESTAMP WHERE ip = :ip");
+                $stmt->execute(['ip' => $ip . '_' . $identifier]);
+            } else {
+                $stmt = $db->prepare("INSERT OR IGNORE INTO rate_limits (ip, attempts, last_attempt) VALUES (:ip, 1, CURRENT_TIMESTAMP)");
+                $stmt->execute(['ip' => $ip . '_' . $identifier]);
             }
-            $stmt = $db->prepare("UPDATE rate_limits SET attempts = attempts + 1, last_attempt = CURRENT_TIMESTAMP WHERE ip = :ip");
-            $stmt->execute(['ip' => $ip . '_' . $identifier]);
-        } else {
-            $stmt = $db->prepare("INSERT OR IGNORE INTO rate_limits (ip, attempts, last_attempt) VALUES (:ip, 1, CURRENT_TIMESTAMP)");
-            $stmt->execute(['ip' => $ip . '_' . $identifier]);
+        } catch (\Throwable $e) {
+            // En caso de error en el rate limit (ej. DB bloqueada), permitimos el paso por seguridad de acceso
+            error_log("Error en isRateLimited: " . $e->getMessage());
         }
         
         return false;

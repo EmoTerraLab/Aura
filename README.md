@@ -30,11 +30,11 @@ Aura está diseñada siguiendo las directrices del **Esquema Nacional de Segurid
 ### 🗺️ Protocolos Legales Autonómicos (Máquina de Estados)
 Aura adapta dinámicamente sus flujos de trabajo legales en base a las directivas regionales (Comunidades Autónomas):
 *   **Galicia (v2.23):** Máquina de estados legal de 6 fases, 16 anexos en PDF autogenerados y módulos integrados de "Medidas Urxentes" y "Ciberacoso".
-*   **Aragón:** Obliga al seguimiento del Anexo I-a, constitución de equipos de valoración y checklists normativos especializados.
+*   **Aragón:** Obliga al seguimiento del Anexo I-a, constitución de equipos de valoración y checklists normativos especializados. Ahora incluye soporte para el módulo de prácticas restaurativas.
 *   **Murcia y C. Valenciana:** Flujos de trabajo personalizados y salvaguardias de cumplimiento estrictas que evitan transiciones de fase desordenadas.
 
 ### 🌐 Internacionalización y Accesibilidad
-*   **5 Idiomas Nativos:** Totalmente localizado en Español, Català, Galego, Euskara e Inglés.
+*   **5 Idiomas Nativos:** Totalmente localizado en Español, Català, Galego, Euskara (Basque) e Inglés.
 *   **Sociogramas Interactivos:** Integración nativa de `Cytoscape.js` para mapear las relaciones del aula y detectar vulnerabilidades visualmente.
 
 ---

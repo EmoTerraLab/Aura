@@ -87,34 +87,61 @@ if (\App\Core\MaintenanceMode::isActive()) {
     }
 }
 
-// Inicializar sistema de configuración (DB)
-\App\Core\Config::init(new \App\Models\Setting());
+try {
+    // Inicializar sistema de configuración (DB)
+    \App\Core\Config::init(new \App\Models\Setting());
 
-// [MEJORA] Inicializar sistema de idiomas (i18n)
-\App\Core\Lang::init();
+    // [MEJORA] Inicializar sistema de idiomas (i18n)
+    \App\Core\Lang::init();
 
-// [MEJORA] Headers de seguridad HTTP - protección contra ataques comunes
-header('X-Frame-Options: SAMEORIGIN');
-header('X-Content-Type-Options: nosniff');
-header('X-XSS-Protection: 1; mode=block');
-header('Referrer-Policy: strict-origin-when-cross-origin');
-header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+    // [MEJORA] Headers de seguridad HTTP - protección contra ataques comunes
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-Content-Type-Options: nosniff');
+    header('X-XSS-Protection: 1; mode=block');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
 
-// [CRÍTICO] Evitar cacheo de HTML y Tokens CSRF por proxies (Cloudflare, Nginx, Browser)
-header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-header('Pragma: no-cache');
+    // [CRÍTICO] Evitar cacheo de HTML y Tokens CSRF por proxies (Cloudflare, Nginx, Browser)
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
 
-// Content-Security-Policy: Permitiendo recursos necesarios (Tailwind, Bootstrap, Google Fonts)
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:;");
+    // Content-Security-Policy: Permitiendo recursos necesarios (Tailwind, Bootstrap, Google Fonts)
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:;");
 
-// Inicializar y ejecutar Router
-$router = new \App\Core\Router();
+    // Inicializar y ejecutar Router
+    $router = new \App\Core\Router();
 
-// Cargar rutas
-require_once __DIR__ . '/../app/routes.php';
+    // Cargar rutas
+    require_once __DIR__ . '/../app/routes.php';
 
-// Resolver la petición actual
-$router->resolve($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+    // Resolver la petición actual
+    $router->resolve($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
-// Cumplimiento: Ejecución de Telemetría (Poor Man's Cron) — después del dispatch para no añadir latencia
-\App\Core\Telemetry::checkAndRunCron();
+    // Cumplimiento: Ejecución de Telemetría (Poor Man's Cron) — después del dispatch para no añadir latencia
+    \App\Core\Telemetry::checkAndRunCron();
+
+} catch (\Throwable $e) {
+    error_log("FATAL ERROR: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+    
+    // Si es AJAX, devolver JSON
+    if ($isAjax) {
+        if (!headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: application/json');
+        }
+        echo json_encode([
+            'error' => 'Error interno del servidor',
+            'message' => (APP_ENV === 'development') ? $e->getMessage() : 'Ha ocurrido un error inesperado. Inténtalo de nuevo más tarde.'
+        ]);
+    } else {
+        // Si no es AJAX, mostrar página de error genérica
+        http_response_code(500);
+        echo "<h1>500 Internal Server Error</h1>";
+        if (APP_ENV === 'development') {
+            echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
+            echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+        } else {
+            echo "<p>Ha ocurrido un error interno. Por favor, contacta con soporte si el problema persiste.</p>";
+        }
+    }
+}

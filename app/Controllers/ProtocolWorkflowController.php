@@ -54,16 +54,19 @@ class ProtocolWorkflowController
         return $report !== false && $report !== null;
     }
 
-    private function requireCat(): void
+    private function requireRestorativeEnabled(): void
     {
-        if (Config::get('ccaa_code') !== 'CAT') {
+        $ccaa = Config::get('ccaa_code');
+        $allowed = ['CAT', 'ARA'];
+        
+        if (!in_array($ccaa, $allowed)) {
             if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
                 http_response_code(403);
                 header('Content-Type: application/json');
-                echo json_encode(['error' => 'El protocolo de Catalunya no está habilitado en este centro']);
+                echo json_encode(['error' => 'El módulo restaurativo no está habilitado para su región.']);
             } else {
                 http_response_code(403);
-                echo 'El protocolo de Catalunya no está habilitado en este centro';
+                echo 'El módulo restaurativo no está habilitado para su región.';
             }
             exit;
         }
@@ -77,7 +80,7 @@ class ProtocolWorkflowController
 
     public function getRevaSummary(int $id): void
     {
-        $this->requireCat();
+        $this->requireRestorativeEnabled();
         header('Content-Type: application/json');
         $case = $this->caseModel->find($id);
         if (!$case) {
@@ -324,7 +327,7 @@ class ProtocolWorkflowController
 
     public function getRestorativeData(int $id): void
     {
-        $this->requireCat();
+        $this->requireRestorativeEnabled();
         header('Content-Type: application/json');
         $case = $this->caseModel->find($id);
         $practices = $this->restorativeModel->findByCase($id);
@@ -338,7 +341,7 @@ class ProtocolWorkflowController
 
     public function addRestorativePractice(int $id): void
     {
-        $this->requireCat();
+        $this->requireRestorativeEnabled();
         header('Content-Type: application/json');
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {

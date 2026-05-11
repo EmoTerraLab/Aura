@@ -18,7 +18,8 @@ class StudentController {
     }
 
     public function index() {
-        $userId = Auth::id();
+        $user = Auth::user();
+        $userId = $user['id'];
         
         // Obtener el perfil de estudiante
         $profile = $this->profileModel->findByUser($userId);
@@ -36,6 +37,7 @@ class StudentController {
 
         View::render('alumno/dashboard', [
             'title' => 'Aura - Dashboard Alumno',
+            'user' => $user,
             'reports' => $reports,
             'webauthnDevices' => $webauthnDevices
         ]);
@@ -105,6 +107,13 @@ class StudentController {
         }
 
         $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (!is_array($data)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos inválidos.']);
+            return;
+        }
+
         $message = trim($data['message'] ?? '');
 
         if (empty($message)) {

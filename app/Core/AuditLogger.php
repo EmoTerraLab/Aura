@@ -13,23 +13,27 @@ class AuditLogger
      */
     public static function log(string $action, ?string $entityType = null, ?int $entityId = null, array $details = []): void
     {
-        $db = Database::getInstance();
-        $userId = Auth::id() ?: null;
-        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        $detailsJson = !empty($details) ? json_encode($details, JSON_UNESCAPED_UNICODE) : null;
+        try {
+            $db = Database::getInstance();
+            $userId = Auth::id();
+            $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+            $detailsJson = json_encode($details);
 
-        $stmt = $db->prepare(
-            "INSERT INTO audit_logs (user_id, action, entity_type, entity_id, ip_address, details) 
-             VALUES (:user_id, :action, :entity_type, :entity_id, :ip_address, :details)"
-        );
-
-        $stmt->execute([
-            'user_id' => $userId,
-            'action' => $action,
-            'entity_type' => $entityType,
-            'entity_id' => $entityId,
-            'ip_address' => $ipAddress,
-            'details' => $detailsJson
-        ]);
+            $stmt = $db->prepare("
+                INSERT INTO audit_logs (user_id, action, entity_type, entity_id, ip_address, details) 
+                VALUES (:user_id, :action, :entity_type, :entity_id, :ip_address, :details)
+            ");
+            $stmt->execute([
+                'user_id' => $userId,
+                'action' => $action,
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+                'ip_address' => $ipAddress,
+                'details' => $detailsJson
+            ]);
+        } catch (\Throwable $e) {
+            // No dejamos que un fallo en el log rompa la ejecución principal
+            error_log("Error guardando audit_log: " . $e->getMessage());
+        }
     }
 }

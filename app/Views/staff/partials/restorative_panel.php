@@ -96,20 +96,20 @@
         const warning = document.getElementById('ack-warning');
         const practices = document.getElementById('practices-container');
 
-        // Reset
-        btnYes.className = btnYes.className.replace(/border-primary|bg-primary\/10|text-primary|border-slate-100/g, '').trim() + ' border-slate-100 text-slate-400';
-        btnNo.className = btnNo.className.replace(/border-error|bg-error\/5|text-error|border-slate-100/g, '').trim() + ' border-slate-100 text-slate-400';
+        // Limpiar estados previos
+        btnYes.classList.remove('border-primary', 'bg-primary/10', 'text-primary');
+        btnYes.classList.add('border-slate-100', 'text-slate-400');
+        btnNo.classList.remove('border-error', 'bg-error/5', 'text-error');
+        btnNo.classList.add('border-slate-100', 'text-slate-400');
         
         if (ack === 1) {
-            btnYes.classList.replace('border-slate-100', 'border-primary');
-            btnYes.classList.replace('text-slate-400', 'text-primary');
-            btnYes.classList.add('bg-primary/10');
+            btnYes.classList.remove('border-slate-100', 'text-slate-400');
+            btnYes.classList.add('border-primary', 'text-primary', 'bg-primary/10');
             warning.classList.add('hidden');
             practices.classList.remove('hidden');
         } else if (ack === 0) {
-            btnNo.classList.replace('border-slate-100', 'border-error');
-            btnNo.classList.replace('text-slate-400', 'text-error');
-            btnNo.classList.add('bg-error/5');
+            btnNo.classList.remove('border-slate-100', 'text-slate-400');
+            btnNo.classList.add('border-error', 'text-error', 'bg-error/5');
             warning.classList.remove('hidden');
             practices.classList.add('hidden');
         } else {

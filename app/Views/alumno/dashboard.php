@@ -351,6 +351,7 @@
         es: { pending: "Pendiente", in_progress: "En progreso", resolved: "Resuelto", new: "Nuevo" },
         ca: { pending: "Pendent", in_progress: "En progrés", resolved: "Resolt", new: "Nou" },
         gl: { pending: "Pendente", in_progress: "En progreso", resolved: "Resolto", new: "Novo" },
+        eu: { pending: "Zain", in_progress: "Berrikuspenean", resolved: "Ebatzia", new: "Berria" },
         en: { pending: "Pending", in_progress: "In progress", resolved: "Resolved", new: "New" }
     };
 
@@ -416,7 +417,8 @@
     };
 
     function translateStatus(status) {
-        return statusTranslations[currentLang]?.[status] || status;
+        const labels = statusTranslations[currentLang] || statusTranslations['es'];
+        return labels[status] || status;
     }
 
     function escapeHtml(text) {
