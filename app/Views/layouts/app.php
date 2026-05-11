@@ -9,7 +9,28 @@
     <title><?= $title ?? \App\Core\Config::get('school_name', 'Aura') ?></title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.22.0">
+    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.26.0">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         PWA: Web App Manifest + iOS Meta Tags
+         Convierte Aura en app instalable (Chrome/Android + iPhone/iOS)
+         ═══════════════════════════════════════════════════════════════════ -->
+    <link rel="manifest" href="<?= BASE_URL ?>manifest.json" crossorigin="use-credentials">
+    <meta name="theme-color" content="#004f56">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Aura">
+
+    <!-- iOS: Experiencia nativa a pantalla completa en iPhone/iPad -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Aura">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>assets/images/icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="<?= BASE_URL ?>assets/images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="<?= BASE_URL ?>assets/images/icons/icon-512x512.png">
+
+    <!-- Microsoft: Tile para Windows -->
+    <meta name="msapplication-TileColor" content="#004f56">
+    <meta name="msapplication-TileImage" content="<?= BASE_URL ?>assets/images/icons/icon-192x192.png">
 
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
