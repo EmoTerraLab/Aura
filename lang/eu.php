@@ -187,4 +187,8 @@ return array (
   'dashboard.urgency_low' => 'Lehentasun Baxua',
   'dashboard.urgency_medium' => 'Jarraipena',
   'dashboard.urgency_high' => 'Lehentasun Altua',
+  'status.new' => 'Berria',
+  'status.pending' => 'Zain',
+  'status.in_progress' => 'Berrikuspenean',
+  'status.resolved' => 'Ebatzia',
 );

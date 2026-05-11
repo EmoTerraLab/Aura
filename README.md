@@ -20,7 +20,7 @@ Aura es una plataforma de gestión y reportes altamente segura, construida espec
 ### 🛡️ Seguridad y Auditoría (Esquema Nacional de Seguridad)
 Aura está diseñada siguiendo las directrices del **Esquema Nacional de Seguridad (ENS)** aplicable a las Comunidades Autónomas en España, garantizando la confidencialidad, integridad y trazabilidad de los datos de menores:
 
-*   **Autenticación Multifactor (MFA):** WebAuthn biométrico (FaceID/TouchID) para alumnos, garantizando un acceso sin contraseñas (Passwordless); y TOTP cifrado con AES-256-GCM para el personal administrativo y docente.
+*   **Autenticación Multifactor (MFA):** WebAuthn biométrico (FaceID/TouchID) para alumnos, garantizando un acceso sin contraseñas (Passwordless); y TOTP cifrado con AES-256-GCM para el personal administrativo y docente. Incluye capa de compatibilidad avanzada para Safari y dispositivos iOS.
 *   **Gestión de Sesiones y Cookies:** Cookies de sesión fortificadas con banderas `Secure` (forzado bajo HTTPS), `HttpOnly` (prevención de robo vía XSS) y directiva `SameSite=Lax` para mitigar ataques de navegación cruzada. Rotación estricta de ID de sesión post-login.
 *   **Protección contra falsificación (CSRF):** Sistema de validación de tokens per-session acoplado a un motor de cabeceras seguras AJAX para todas las mutaciones de estado, evitando falsificación de peticiones en flujos de múltiples pasos.
 *   **Blindaje de Nivel Bancario (Control de Acceso):** Prevención de vulnerabilidades IDOR (Insecure Direct Object Reference) en la lectura/escritura de expedientes mediante verificación criptográfica y delegación de propiedad estructurada en la base de datos.
@@ -34,9 +34,9 @@ Aura adapta dinámicamente sus flujos de trabajo legales en base a las directiva
 *   **Murcia y C. Valenciana:** Flujos de trabajo personalizados y salvaguardias de cumplimiento estrictas que evitan transiciones de fase desordenadas.
 
 ### 🌐 Internacionalización y Accesibilidad
-*   **5 Idiomas Nativos:** Totalmente localizado en Español, Català, Galego, Euskara (Basque) e Inglés.
+*   **5 Idiomas Nativos:** Totalmente localizado en Español, Català, Galego, Euskara (Basque) e Inglés. Se han refinado las etiquetas de estado para mejorar la comprensión semántica (p.ej. "En Revisión").
 *   **Sociogramas Interactivos:** Integración nativa de `Cytoscape.js` para mapear las relaciones del aula y detectar vulnerabilidades visualmente.
-*   **Progressive Web App (PWA):** Soporte para instalación en dispositivos móviles y escritorio, con caché inteligente de assets estáticos y página de cortesía offline personalizada para mejorar la experiencia en redes inestables.
+*   **Progressive Web App (PWA):** Soporte para instalación en dispositivos móviles y escritorio, con caché inteligente de assets estáticos y página de cortesía offline personalizada para mejorar la experiencia en redes inestables. Incluye soporte para iconos maskable según estándares modernos.
 
 ---
 

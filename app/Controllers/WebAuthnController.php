@@ -220,6 +220,15 @@ class WebAuthnController
             // Extraer el objeto publicKey que es el que el navegador espera directamente
             $options = $getArgs->publicKey;
 
+            // WA-09: Asegurar que rpId esté presente (Crucial para Safari/iOS)
+            if (!isset($options->rpId)) {
+                $rpId = $_SERVER['HTTP_HOST'] ?? 'localhost';
+                if (strpos($rpId, ':') !== false) {
+                    $rpId = explode(':', $rpId)[0];
+                }
+                $options->rpId = $rpId;
+            }
+
             $options->challenge = $this->bufferToBase64url($options->challenge);
             if (isset($options->allowCredentials) && is_array($options->allowCredentials)) {
                 foreach ($options->allowCredentials as &$cred) {

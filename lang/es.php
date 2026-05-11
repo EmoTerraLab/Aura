@@ -288,7 +288,8 @@ return array (
   'report.step8_contact' => 'Permitir contacto del centro',
   'report.step8_followup' => 'Quiero recibir seguimiento',
   'report.step8_urgent' => 'Necesito ayuda urgente',
+  'status.new' => 'Nuevo',
   'status.pending' => 'Pendiente',
-  'status.in_progress' => 'En progreso',
+  'status.in_progress' => 'En Revisión',
   'status.resolved' => 'Resuelto',
 );

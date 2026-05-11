@@ -252,7 +252,7 @@
                                 <div class="p-4 rounded-lg bg-surface hover:bg-surface-container transition-colors group border border-surface-variant/50 cursor-pointer" onclick="loadStudentReport(<?= $report['id'] ?>)">
                                     <div class="flex justify-between items-start mb-2">
                                         <span class="font-label-caps text-[10px] text-outline uppercase"><?= date('d M', strtotime($report['created_at'])) ?></span>
-                                        <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full <?= $report['status']==='new'?'bg-primary-fixed text-on-primary-fixed-variant':($report['status']==='in_progress'?'bg-[#fff3cd] text-[#856404]':'bg-[#d4edda] text-[#155724]') ?>"><?= $report['status'] ?></span>
+                                        <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full <?= $report['status']==='new'?'bg-primary-fixed text-on-primary-fixed-variant':($report['status']==='in_progress'?'bg-[#fff3cd] text-[#856404]':'bg-[#d4edda] text-[#155724]') ?>"><?= \App\Core\Lang::t('status.' . $report['status']) ?></span>
                                     </div>
                                     <p class="font-body-md text-[14px] text-on-surface line-clamp-2"><?= htmlspecialchars($report['content']) ?></p>
                                 </div>
@@ -348,11 +348,11 @@
     
     // --- Traducciones de Estado (Requerimiento UX) ---
     const statusTranslations = {
-        es: { pending: "Pendiente", in_progress: "En progreso", resolved: "Resuelto", new: "Nuevo" },
-        ca: { pending: "Pendent", in_progress: "En progrés", resolved: "Resolt", new: "Nou" },
-        gl: { pending: "Pendente", in_progress: "En progreso", resolved: "Resolto", new: "Novo" },
+        es: { pending: "Pendiente", in_progress: "En Revisión", resolved: "Resuelto", new: "Nuevo" },
+        ca: { pending: "Pendent", in_progress: "En Revisió", resolved: "Resolt", new: "Nou" },
+        gl: { pending: "Pendente", in_progress: "En Revisión", resolved: "Resolto", new: "Novo" },
         eu: { pending: "Zain", in_progress: "Berrikuspenean", resolved: "Ebatzia", new: "Berria" },
-        en: { pending: "Pending", in_progress: "In progress", resolved: "Resolved", new: "New" }
+        en: { pending: "Pending", in_progress: "In Review", resolved: "Resolved", new: "New" }
     };
 
     const i18n = (key) => {
@@ -739,17 +739,40 @@
     async function loadStudentReport(id) {
         try {
             currentReportId = id;
-            ['wizard-header', 'wizard-content', 'wizard-nav', 'wizard-success'].forEach(id => document.getElementById(id).classList.add('hidden'));
-            document.getElementById('chat-view').classList.replace('hidden', 'flex');
+            // Forzar visibilidad absoluta de los contenedores padre (FIX iOS/Safari)
+            const mainView = document.getElementById('home-view');
+            const reportingCard = document.getElementById('reporting-card');
+            const chatView = document.getElementById('chat-view');
+
+            if (mainView) mainView.classList.add('hidden');
+            if (reportingCard) reportingCard.classList.remove('hidden');
+            
+            ['wizard-header', 'wizard-content', 'wizard-nav', 'wizard-success'].forEach(cid => {
+                const el = document.getElementById(cid);
+                if (el) el.classList.add('hidden');
+            });
+            
+            if (chatView) {
+                chatView.classList.remove('hidden');
+                chatView.classList.add('flex');
+            }
+
             const cm = document.getElementById('chat-messages'); 
             cm.innerHTML = `<div class="flex flex-col items-center justify-center h-64 gap-4"><span class="material-symbols-outlined animate-spin text-4xl text-primary">refresh</span><p class="font-bold text-primary animate-pulse">Abriendo espacio seguro...</p></div>`;
+            
             const res = await fetchJson(`/alumno/reports/${id}`);
             if (res.error) throw new Error(res.error);
+            
             renderStudentChat(res.report, res.messages);
+            
+            // Scroll suave pero garantizado
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => { if (window.scrollY > 100) window.scrollTo(0, 0); }, 100); 
+
         } catch (error) {
             console.error("[TicketOpenError]", error);
-            document.getElementById('chat-messages').innerHTML = `<div class="flex flex-col items-center justify-center h-64 p-8 text-center bg-error/5 rounded-3xl border-2 border-dashed border-error/20"><div class="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center mb-4"><span class="material-symbols-outlined text-3xl">error_outline</span></div><p class="font-bold text-error mb-1">${i18n('ticket_load_error')}</p><p class="text-[10px] text-on-surface-variant">${error.message}</p><button onclick="window.location.reload()" class="mt-4 bg-surface px-6 py-2 rounded-full border-2 font-bold text-xs">Volver</button></div>`;
+            const cm = document.getElementById('chat-messages');
+            if (cm) cm.innerHTML = `<div class="flex flex-col items-center justify-center h-64 p-8 text-center bg-error/5 rounded-3xl border-2 border-dashed border-error/20"><div class="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center mb-4"><span class="material-symbols-outlined text-3xl">error_outline</span></div><p class="font-bold text-error mb-1">${i18n('ticket_load_error')}</p><p class="text-[10px] text-on-surface-variant">${error.message}</p><button onclick="window.location.reload()" class="mt-4 bg-surface px-6 py-2 rounded-full border-2 font-bold text-xs">Volver</button></div>`;
         }
     }
 
@@ -817,7 +840,7 @@
         const binary_string = window.atob(base64.length % 4 ? base64 + '===='.substring(base64.length % 4) : base64);
         const bytes = new Uint8Array(binary_string.length);
         for (let i = 0; i < binary_string.length; i++) bytes[i] = binary_string.charCodeAt(i);
-        return bytes.buffer;
+        return bytes; // Devolver Uint8Array para mejor compatibilidad
     }
     function bufferToBase64url(buffer) {
         const bytes = new Uint8Array(buffer); let binary = '';
@@ -830,9 +853,11 @@
         try {
             const optRes = await fetchJson('/alumno/2fa/webauthn/register/options');
             if (optRes.error) throw new Error(optRes.error);
-            const options = optRes; options.challenge = base64urlToBuffer(options.challenge);
+            const options = optRes; 
+            options.challenge = base64urlToBuffer(options.challenge);
             options.user.id = base64urlToBuffer(options.user.id);
             if (options.excludeCredentials) options.excludeCredentials.forEach(c => c.id = base64urlToBuffer(c.id));
+            
             const credential = await navigator.credentials.create({ publicKey: options });
             const verifyRes = await fetchJson('/alumno/2fa/webauthn/register/verify', {
                 method: 'POST', body: {
@@ -842,7 +867,10 @@
                 }
             });
             if (verifyRes.success) window.location.reload(); else throw new Error(verifyRes.error);
-        } catch (e) { alert('Error: ' + e.message); }
+        } catch (e) { 
+            console.error('WebAuthn Error:', e);
+            alert('Error de registro biométrico: ' + e.message); 
+        }
     }
     async function deleteWebAuthn(id) {
         if (!confirm('¿Eliminar?')) return;

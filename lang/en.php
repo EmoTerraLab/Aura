@@ -249,7 +249,8 @@ return array (
   'report.step8_contact' => 'Allow school contact',
   'report.step8_followup' => 'I want to receive follow-up',
   'report.step8_urgent' => 'I need urgent help',
+  'status.new' => 'New',
   'status.pending' => 'Pending',
-  'status.in_progress' => 'In progress',
+  'status.in_progress' => 'In Review',
   'status.resolved' => 'Resolved',
 );

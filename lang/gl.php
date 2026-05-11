@@ -237,7 +237,8 @@ return array (
   'report.step8_contact' => 'Permitir contacto do centro',
   'report.step8_followup' => 'Quero recibir seguimento',
   'report.step8_urgent' => 'Preciso axuda urxente',
+  'status.new' => 'Novo',
   'status.pending' => 'Pendente',
-  'status.in_progress' => 'En progreso',
+  'status.in_progress' => 'En Revisión',
   'status.resolved' => 'Resolto',
 );

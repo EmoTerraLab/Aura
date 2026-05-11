@@ -49,7 +49,7 @@
         for (let i = 0; i < len; i++) {
             bytes[i] = binary_string.charCodeAt(i);
         }
-        return bytes.buffer;
+        return bytes; // Devolver Uint8Array directamente para mejor compatibilidad
     }
 
     function bufferToBase64url(buffer) {
@@ -107,7 +107,17 @@
         } catch (e) {
             console.error('WebAuthn Auth Error:', e);
             statusEl.innerHTML = '';
-            errorEl.innerText = (e.name === 'NotAllowedError') ? 'Operación cancelada.' : e.message;
+            
+            let message = e.message;
+            if (e.name === 'NotAllowedError') {
+                message = 'Operación cancelada.';
+            } else if (e.name === 'InvalidStateError') {
+                message = 'Este dispositivo no está reconocido o la sesión ha expirado. Si has registrado otro dispositivo, usa el código por correo.';
+            } else if (e.name === 'NotSupportedError') {
+                message = 'Tu dispositivo o navegador no soporta esta función de seguridad.';
+            }
+            
+            errorEl.innerText = message;
             errorEl.classList.remove('hidden');
             retryBtn.classList.remove('hidden');
         }
