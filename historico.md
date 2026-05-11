@@ -2,6 +2,20 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-11] - Soporte PWA y Auditoría Forense (v2.27.0-stable)
+
+### 🚀 Mejoras y Funcionalidades
+- **Progressive Web App (PWA):** Aura ahora es instalable como aplicación en dispositivos móviles y escritorio. Incluye Service Worker para carga ultra-rápida y soporte offline con página de cortesía personalizada.
+- **Auditoría Forense:** Implementación de la clase `AuditLogger` y tabla `audit_logs` para el registro inmutable de acciones críticas (logins, cambios de estado, fallos de seguridad).
+- **Internacionalización:** Añadido soporte completo para **Euskara (Basque)** en los estados de reportes y notificaciones.
+- **Protocolo Aragón:** Expansión del módulo de prácticas restaurativas para soportar la normativa de la CCAA de Aragón (ARA).
+
+### 🛡️ Seguridad y Estabilidad
+- **Hardening de Protocolos:** Reforzada la verificación de acceso en `ProtocolController` y `ProtocolWorkflowController` para prevenir fugas de información IDOR en la consulta de anexos.
+- **Manejo de Errores Críticos:** Implementados bloques `try-catch` en el sistema de logging de auditoría y rate limiting para evitar errores 500 ante bloqueos temporales de base de datos.
+- **Limpieza de Producción:** Eliminación de scripts de parcheo y utilidades de desarrollo del directorio raíz para asegurar la integridad del entorno productivo.
+- **Resiliencia Offline:** Página offline desacoplada de fuentes externas (Google Fonts) para garantizar el renderizado sin conectividad.
+
 ## [2026-05-03] - Seguridad Crítica y Protocolo Galicia (v2.23.0-stable)
 
 ### 🚀 Mejoras y Funcionalidades
