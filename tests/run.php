@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/ProtocolTestCase.php';
 
 $testFiles = glob(__DIR__ . '/**/*Test.php');
 if (empty($testFiles)) {

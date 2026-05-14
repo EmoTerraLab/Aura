@@ -52,6 +52,9 @@ abstract class ProtocolTestCase
             report_id INTEGER NOT NULL UNIQUE,
             ccaa_code VARCHAR(50) NOT NULL,
             current_phase VARCHAR(50) DEFAULT 'deteccion',
+            severity_preliminary VARCHAR(50),
+            classification VARCHAR(100),
+            deadline_at DATETIME,
             status VARCHAR(20) DEFAULT 'active',
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

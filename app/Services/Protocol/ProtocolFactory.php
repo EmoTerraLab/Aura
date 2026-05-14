@@ -6,6 +6,7 @@ namespace App\Services\Protocol;
  */
 class ProtocolFactory {
     private static array $cache = [];
+    private static array $metadataCache = [];
 
     public static function make(string $ccaaCode): ProtocolInterface {
         if (isset(self::$cache[$ccaaCode])) {
@@ -37,5 +38,29 @@ class ProtocolFactory {
 
         self::$cache[$ccaaCode] = $protocol;
         return $protocol;
+    }
+
+    /**
+     * Obtiene los estados de un protocolo con caché estática por petición.
+     */
+    public static function getAllStates(string $ccaaCode): array
+    {
+        $key = "states_{$ccaaCode}";
+        if (!isset(self::$metadataCache[$key])) {
+            self::$metadataCache[$key] = self::make($ccaaCode)->getAllStates();
+        }
+        return self::$metadataCache[$key];
+    }
+
+    /**
+     * Obtiene los pasos del timeline con caché estática por petición.
+     */
+    public static function getTimelineSteps(string $ccaaCode): array
+    {
+        $key = "timeline_{$ccaaCode}";
+        if (!isset(self::$metadataCache[$key])) {
+            self::$metadataCache[$key] = self::make($ccaaCode)->getTimelineSteps();
+        }
+        return self::$metadataCache[$key];
     }
 }
