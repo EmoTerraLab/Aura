@@ -23,13 +23,27 @@ class WebAuthnController
             
             $appName = Config::get('school_name', 'Aura');
             
-            // SEC-014: Prevenir spoofing de Host obteniendo rpId del app_url
-            $appUrl = Config::get('app_url', 'http://localhost');
-            $rpId = parse_url($appUrl, PHP_URL_HOST) ?: 'localhost';
+            // SEC-014: Prevenir spoofing de Host obteniendo rpId del app_url o host actual
+            $appUrl = Config::get('app_url');
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
             
-            // WA-04: Limpiar puerto del RP ID si existe
-            if (strpos($rpId, ':') !== false) {
-                $rpId = explode(':', $rpId)[0];
+            // WA-04: Extraer host sin puerto
+            $currentHost = explode(':', $host)[0];
+
+            if ($appUrl && !str_contains($appUrl, 'localhost')) {
+                $rpId = parse_url($appUrl, PHP_URL_HOST);
+            } else {
+                $rpId = $currentHost;
+            }
+
+            // Asegurar que nunca sea vacío si estamos en web
+            if (!$rpId || $rpId === 'localhost') {
+                $rpId = $currentHost ?: 'localhost';
+            }
+
+            // Log RP ID for production debugging
+            if ($rpId !== 'localhost') {
+                error_log("WebAuthn using RP ID: " . $rpId);
             }
 
             $this->webauthn = new WebAuthn($appName, $rpId);
@@ -79,12 +93,17 @@ class WebAuthnController
             if (!isset($publicKey->rp)) {
                 $publicKey->rp = new \stdClass();
                 $publicKey->rp->name = Config::get('school_name', 'Aura');
-                $appUrl = Config::get('app_url', 'http://localhost');
-                $rpId = parse_url($appUrl, PHP_URL_HOST) ?: 'localhost';
-                if (strpos($rpId, ':') !== false) {
-                    $rpId = explode(':', $rpId)[0];
+                
+                $appUrl = Config::get('app_url');
+                $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+                $currentHost = explode(':', $host)[0];
+
+                if ($appUrl && !str_contains($appUrl, 'localhost')) {
+                    $rpId = parse_url($appUrl, PHP_URL_HOST);
+                } else {
+                    $rpId = $currentHost;
                 }
-                $publicKey->rp->id = $rpId;
+                $publicKey->rp->id = ($rpId && $rpId !== 'localhost') ? $rpId : ($currentHost ?: 'localhost');
             }
 
             // Aplicar compatibilidad Chrome/Safari

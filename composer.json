@@ -1,6 +1,6 @@
 {
     "name": "aura/aura",
-    "version": "2.32.1",
+    "version": "2.32.2",
     "require": {
         "phpmailer/phpmailer": "^7.0",
         "spomky-labs/otphp": "^11.4",

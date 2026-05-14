@@ -156,12 +156,19 @@ class AuthController {
                         <p>Este código caducará en 10 minutos por tu seguridad.</p>
                         <p>Si no has solicitado este código, puedes ignorar este mensaje.</p>
                     ";
-                    $this->mailer->send($email, $subject, $body);
-                } catch (\Exception $e) {
-                    error_log("Error enviando OTP a {$email}: " . $e->getMessage());
-                    // En desarrollo permitimos continuar, en prod fallamos si no se puede enviar
+                    
+                    if (!$this->mailer->send($email, $subject, $body)) {
+                        throw new \Exception("El mailer retornó falso sin excepción.");
+                    }
+                } catch (\Throwable $e) {
+                    error_log("CRITICAL: Error enviando OTP a {$email}. Motivo: " . $e->getMessage());
+                    
+                    // En producción, si el correo falla, no podemos dejar entrar al usuario
                     if (!in_array(APP_ENV, ['dev', 'local', 'development'])) {
-                        header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'No se pudo enviar el correo. Por favor, contacta con soporte.']);
+                        header('Content-Type: application/json'); echo json_encode([
+                            'ok' => false, 
+                            'error' => 'No se pudo enviar el correo de verificación. Por favor, contacta con soporte o inténtalo más tarde.'
+                        ]);
                         return;
                     }
                 }

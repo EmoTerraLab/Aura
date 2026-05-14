@@ -2,6 +2,14 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-15] - Hardening de Autenticación y Web PWA (v2.32.2-stable)
+
+### 🛡️ Seguridad y Estabilidad
+- **OTP Hardening:** Reforzada la validación de envío de correos OTP. El sistema ahora bloquea el acceso en producción si el proveedor de correo falla, evitando posibles bypass por errores de red.
+- **WebAuthn RP ID FIX:** Refactorizada la lógica de identificación de dominio (*Relying Party ID*) para Biometría. Ahora detecta automáticamente el host actual y prioriza el ajuste de `app_url`, eliminando fallos de "Dominio no permitido" en entornos multi-dominio.
+- **Service Worker Fix:** Añadida regla de exclusión para protocolos no-http en el PWA, previniendo errores de consola causados por extensiones de terceros (ej. Chrome Extensions).
+- **Nueva Configuración:** Añadida la migración para el ajuste global `app_url` en la base de datos, facilitando la configuración de la identidad del sitio.
+
 ## [2026-05-15] - Hibridación MFA y Refinado de Sesión (v2.32.1-stable)
 
 ### 🚀 Mejoras y Funcionalidades

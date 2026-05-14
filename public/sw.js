@@ -1,10 +1,11 @@
 // =============================================================================
 // Aura — Service Worker (sw.js)
 // Estrategia de caché segura compatible con MFA, CSRF y CSP estricto
-// Versión: 2.32.1
+// Versión: 2.32.2
 // =============================================================================
 
-const CACHE_VERSION = 'aura-v2.32.1';
+const CACHE_VERSION = 'aura-v2.32.2';
+
 
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
@@ -106,6 +107,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  // ───────────────────────────────────────────────────────────────────────
+  // REGLA 0: Solo interceptar esquemas http o https.
+  // Evita errores con extensiones de navegador (chrome-extension://)
+  // ───────────────────────────────────────────────────────────────────────
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
 
   // ───────────────────────────────────────────────────────────────────────
   // REGLA 1: Solo interceptar GET. POST/PUT/PATCH/DELETE van directo a red.
