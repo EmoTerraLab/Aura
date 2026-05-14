@@ -23,6 +23,14 @@ class Auth {
         return Session::get('user_id') !== null;
     }
 
+    public static function requireLogin() {
+        if (!self::check()) {
+            http_response_code(302);
+            header('Location: /login');
+            exit;
+        }
+    }
+
     public static function user() {
         if (!self::check()) {
             return null;

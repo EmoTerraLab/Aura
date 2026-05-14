@@ -6,8 +6,8 @@ REMOTE_PATH="/var/www/app.aura.emoterralab.com"
 echo "🚀 Iniciando despliegue completo en $SSH_HOST..."
 
 # 1. Sincronizar archivos usando rsync (excluyendo lo innecesario)
-echo "📤 Sincronizando archivos vía rsync..."
-rsync -avz --progress --delete \
+echo "📤 Sincronizando archivos vía rsync (usando checksums)..."
+rsync -avzc --progress --delete \
   --exclude='.git' \
   --exclude='.DS_Store' \
   --exclude='.aider*' \

@@ -2,6 +2,14 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-15] - Parche de Estabilidad y Correcciones de Producción (v2.31.1-stable)
+
+### 🛡️ Seguridad y Estabilidad
+- **Auth Core FIX:** Implementado el método `Auth::requireLogin()` para centralizar la verificación de sesión en controladores y prevenir errores de llamada a métodos no definidos.
+- **Protocol Controller FIX:** Corregido el error de carga de clase `Auth` mediante la importación correcta del namespace `App\Core\Auth`.
+- **WebAuthn Stability:** Refactorizado el controlador de WebAuthn para mejorar la compatibilidad con Safari iOS y diversos sensores biométricos, optimizando el manejo de desafíos y expiración de sesión.
+- **Deploy Hardening:** Mejorado el script de despliegue (`deploy.sh`) para utilizar verificación por checksums (`rsync -c`), garantizando la integridad absoluta de los archivos en el VPS.
+
 ## [2026-05-15] - Estandarización de API y Centralización de Seguridad (v2.31.0-stable)
 
 ### 🚀 Mejoras y Funcionalidades

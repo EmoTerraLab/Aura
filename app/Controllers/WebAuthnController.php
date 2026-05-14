@@ -12,7 +12,6 @@ use lbuchs\WebAuthn\WebAuthn;
 class WebAuthnController
 {
     private $webauthn;
-    private $db;
     private $credentialModel;
     private $userModel;
 
@@ -21,7 +20,6 @@ class WebAuthnController
         try {
             $this->credentialModel = new WebAuthnCredential();
             $this->userModel = new User();
-            $this->db = \App\Core\Database::getInstance();
             
             $appName = Config::get('school_name', 'Aura');
             
@@ -29,18 +27,21 @@ class WebAuthnController
             $appUrl = Config::get('app_url', 'http://localhost');
             $rpId = parse_url($appUrl, PHP_URL_HOST) ?: 'localhost';
             
-            // WA-04: Limpiar puerto del RP ID si existe (aunque parse_url ya lo hace, por seguridad)
+            // WA-04: Limpiar puerto del RP ID si existe
             if (strpos($rpId, ':') !== false) {
                 $rpId = explode(':', $rpId)[0];
             }
 
             $this->webauthn = new WebAuthn($appName, $rpId);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WebAuthn init error: " . $e->getMessage());
         }
     }
 
-    public function getRegistrationOptions(): void
+    /**
+     * GET /alumno/2fa/webauthn/register/options
+     */
+    public function registerOptions(): void
     {
         Auth::requireLogin();
         header('Content-Type: application/json');
@@ -53,54 +54,67 @@ class WebAuthnController
             $userHandleBin = str_pad((string)$userId, 16, "\0", STR_PAD_LEFT);
             
             // WA-03: Excluir credenciales ya registradas
-            $creds = $this->credentialModel->findByUser($userId);
+            $creds = $this->credentialModel->findByUserId($userId);
             $excludeCredentials = array_map(fn($c) => base64_decode($c['credential_id']), $creds);
 
             $options = $this->webauthn->getCreateArgs(
                 $userHandleBin, 
                 $user['email'], 
                 $user['name'], 
-                60000,    // timeout (SEC-010: 60000ms para sensores lentos)
-                false, // requireResidentKey
+                60000,       // timeout
+                false,       // requireResidentKey
                 'preferred', // userVerification
-                null, // crossPlatformAttachment (null permite platform y cross-platform)
-                $excludeCredentials // excludeCredentialIds
+                null,        // crossPlatformAttachment
+                $excludeCredentials
             );
 
-            // WA-01: Guardar challenge con expiración (60 segundos)
+            // WA-01: Guardar challenge con expiración
             Session::set('webauthn_challenge', $this->webauthn->getChallenge());
             Session::set('webauthn_challenge_time', time());
 
-            // FIX: Asegurar que el objeto rp esté presente y correcto en el cliente
-            if (!isset($options->rp)) {
-                $options->rp = new \stdClass();
-                $options->rp->name = Config::get('school_name', 'Aura');
-                
+            // Acceder al objeto publicKey retornado por lbuchs/webauthn
+            $publicKey = $options->publicKey;
+
+            // FIX: Asegurar que el objeto rp esté presente y correcto
+            if (!isset($publicKey->rp)) {
+                $publicKey->rp = new \stdClass();
+                $publicKey->rp->name = Config::get('school_name', 'Aura');
                 $appUrl = Config::get('app_url', 'http://localhost');
                 $rpId = parse_url($appUrl, PHP_URL_HOST) ?: 'localhost';
                 if (strpos($rpId, ':') !== false) {
                     $rpId = explode(':', $rpId)[0];
                 }
-                $options->rp->id = $rpId;
+                $publicKey->rp->id = $rpId;
+            }
+
+            // Aplicar compatibilidad Chrome/Safari
+            $publicKey->timeout = 60000;
+            if (isset($publicKey->authenticatorSelection)) {
+                $publicKey->authenticatorSelection->userVerification = 'preferred';
+                unset($publicKey->authenticatorSelection->authenticatorAttachment);
             }
 
             // Convertir campos binarios a base64url para JSON
-            $options->user->id = $this->base64url_encode($options->user->id);
-            $options->challenge = $this->base64url_encode($options->challenge);
+            $publicKey->user->id = $this->base64url_encode($publicKey->user->id);
+            $publicKey->challenge = $this->base64url_encode($publicKey->challenge);
             
-            if (!empty($options->excludeCredentials)) {
-                foreach ($options->excludeCredentials as &$c) {
+            if (!empty($publicKey->excludeCredentials)) {
+                foreach ($publicKey->excludeCredentials as &$c) {
                     $c->id = $this->base64url_encode($c->id);
                 }
             }
 
-            header('Content-Type: application/json'); echo json_encode($options);
-        } catch (\Exception $e) {
-            $this->sendError($e->getMessage());
+            echo json_encode($publicKey);
+        } catch (\Throwable $e) {
+            error_log("WebAuthn registerOptions error: " . $e->getMessage());
+            $this->sendError("Error al generar opciones de registro.");
         }
     }
 
-    public function register(): void
+    /**
+     * POST /alumno/2fa/webauthn/register/verify
+     */
+    public function registerVerify(): void
     {
         Auth::requireLogin();
         header('Content-Type: application/json');
@@ -110,7 +124,6 @@ class WebAuthnController
             $challenge = Session::get('webauthn_challenge');
             $challengeTime = Session::get('webauthn_challenge_time');
 
-            // WA-01: Validar expiración del challenge
             if (!$challenge || (time() - $challengeTime > 120)) {
                 throw new \Exception('El registro ha expirado. Por favor, inténtalo de nuevo.');
             }
@@ -118,10 +131,9 @@ class WebAuthnController
             $clientDataJSON = $this->base64url_decode($input['clientDataJSON']);
             $attestationObject = $this->base64url_decode($input['attestationObject']);
             
-            // FIX: requireUserVerification=false for better compatibility with devices that don't always provide UV
+            // UV=false para máxima compatibilidad
             $data = $this->webauthn->processCreate($clientDataJSON, $attestationObject, $challenge, false, true, false);
             
-            // WA-07: Validar antes de guardar
             $credentialId = base64_encode($data->credentialId);
             $publicKey = base64_encode($data->credentialPublicKey);
             
@@ -129,57 +141,64 @@ class WebAuthnController
                 'user_id' => Auth::user()['id'],
                 'credential_id' => $credentialId,
                 'public_key' => $publicKey,
-                'sign_count' => $data->counter,
-                'name' => 'Llave de seguridad'
+                'sign_count' => $data->signatureCounter,
+                'device_name' => $input['device_name'] ?? 'Llave de seguridad'
             ]);
 
             Session::delete('webauthn_challenge');
-            header('Content-Type: application/json'); echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+            echo json_encode(['success' => true]);
+        } catch (\Throwable $e) {
+            error_log("WebAuthn registerVerify error: " . $e->getMessage());
             $this->sendError($e->getMessage());
         }
     }
 
-    public function getLoginOptions(): void
+    /**
+     * GET /auth/2fa/webauthn/options
+     */
+    public function authOptions(): void
     {
         header('Content-Type: application/json');
         
         try {
-            // El usuario debe estar pre-identificado o en sesión de 2FA
             $userId = Session::get('pending_webauthn_user_id');
             if (!$userId) {
                 throw new \Exception('Sesión no válida para WebAuthn.');
             }
 
-            $creds = $this->credentialModel->findByUser($userId);
+            $creds = $this->credentialModel->findByUserId($userId);
             if (empty($creds)) {
                 throw new \Exception('No tienes llaves de seguridad registradas.');
             }
 
             $allowedCredentials = array_map(fn($c) => base64_decode($c['credential_id']), $creds);
 
-            // SEC-010: timeout 60000ms
-            $getArgs = $this->webauthn->getGetArgs($allowedCredentials, 60000, true, true, true, true, true, 'preferred');
+            $options = $this->webauthn->getGetArgs($allowedCredentials, 60000, true, true, true, true, true, 'preferred');
+            $publicKey = $options->publicKey;
 
             // WA-01: Challenge con expiración
             Session::set('webauthn_challenge', $this->webauthn->getChallenge());
             Session::set('webauthn_challenge_time', time());
 
             // Encode for client
-            $getArgs->challenge = $this->base64url_encode($getArgs->challenge);
-            if (!empty($getArgs->allowCredentials)) {
-                foreach ($getArgs->allowCredentials as &$c) {
+            $publicKey->challenge = $this->base64url_encode($publicKey->challenge);
+            if (!empty($publicKey->allowCredentials)) {
+                foreach ($publicKey->allowCredentials as &$c) {
                     $c->id = $this->base64url_encode($c->id);
                 }
             }
 
-            header('Content-Type: application/json'); echo json_encode($getArgs);
-        } catch (\Exception $e) {
+            echo json_encode($publicKey);
+        } catch (\Throwable $e) {
+            error_log("WebAuthn authOptions error: " . $e->getMessage());
             $this->sendError($e->getMessage());
         }
     }
 
-    public function authenticate(): void
+    /**
+     * POST /auth/2fa/webauthn/verify
+     */
+    public function authVerify(): void
     {
         header('Content-Type: application/json');
 
@@ -193,14 +212,12 @@ class WebAuthnController
                 throw new \Exception('La sesión ha expirado.');
             }
 
-            $credentialId = $this->base64url_decode($input['id']);
+            $credentialIdRaw = $this->base64url_decode($input['id']);
             $clientDataJSON = $this->base64url_decode($input['clientDataJSON']);
             $authenticatorData = $this->base64url_decode($input['authenticatorData']);
             $signature = $this->base64url_decode($input['signature']);
-            $userHandle = $input['userHandle'] ? $this->base64url_decode($input['userHandle']) : null;
 
-            // Buscar la credencial en la DB
-            $dbCred = $this->credentialModel->find(base64_encode($credentialId));
+            $dbCred = $this->credentialModel->findByCredentialIdAndUserId(base64_encode($credentialIdRaw), $userId);
             if (!$dbCred) {
                 throw new \Exception('Llave de seguridad no reconocida.');
             }
@@ -208,7 +225,6 @@ class WebAuthnController
             $publicKey = base64_decode($dbCred['public_key']);
             $prevCount = (int)$dbCred['sign_count'];
 
-            // WA-08: Verificar firma
             $this->webauthn->processGet(
                 $clientDataJSON, 
                 $authenticatorData, 
@@ -216,27 +232,26 @@ class WebAuthnController
                 $publicKey, 
                 $challenge, 
                 $prevCount, 
-                false, // userVerification
-                false  // requireUserPresent
+                false, 
+                false
             );
 
-            // WA-08: Actualizar contador para prevenir replay attacks
-            $this->credentialModel->updateCounter(base64_encode($credentialId), $prevCount + 1);
+            $this->credentialModel->updateSignCount(base64_encode($credentialIdRaw), $prevCount + 1);
 
-            // Login exitoso: completar 2FA
             $user = $this->userModel->find($userId);
             Auth::login($user);
             
             Session::delete('pending_webauthn_user_id');
             Session::delete('webauthn_challenge');
             
-            header('Content-Type: application/json'); echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+            echo json_encode(['success' => true]);
+        } catch (\Throwable $e) {
+            error_log("WebAuthn authVerify error: " . $e->getMessage());
             $this->sendError($e->getMessage());
         }
     }
 
-    public function verifyView(): void
+    public function showVerify(): void
     {
         if (!Session::get('pending_webauthn_user_id')) {
             header('Location: /login');
@@ -248,7 +263,7 @@ class WebAuthnController
         ]);
     }
 
-    public function fallbackToOtp(): void
+    public function fallback(): void
     {
         $userId = Session::get('pending_webauthn_user_id');
         if (!$userId) {
@@ -256,24 +271,37 @@ class WebAuthnController
             exit;
         }
 
-        $user = $this->userModel->find($userId);
-        
-        // Redirigir al flujo de OTP
-        // Generar el código y enviarlo
-        $otpService = new \App\Controllers\TotpController();
-        // Nota: asumiendo que el usuario tiene un email para recibir el OTP si no tiene app
-        
-        // Por ahora redirigimos al 2FA estándar (TOTP)
         Session::set('pending_2fa_user_id', $userId);
         header('Location: /auth/2fa');
         exit;
+    }
+
+    public function deleteCredential(): void
+    {
+        Auth::requireLogin();
+        header('Content-Type: application/json');
+
+        try {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $id = $input['id'] ?? null;
+            if (!$id) {
+                throw new \Exception('ID no proporcionado.');
+            }
+
+            $userId = Auth::user()['id'];
+            $success = $this->credentialModel->deleteByIdAndUserId((int)$id, $userId);
+
+            echo json_encode(['success' => $success]);
+        } catch (\Throwable $e) {
+            $this->sendError($e->getMessage());
+        }
     }
 
     // --- Helpers ---
 
     private function base64url_encode($buffer)
     {
-        if ($buffer instanceof \lbuchs\WebAuthn\BinarySource) {
+        if (is_object($buffer) && method_exists($buffer, 'getBinaryString')) {
             $buffer = $buffer->getBinaryString();
         }
         return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($buffer));
@@ -293,7 +321,7 @@ class WebAuthnController
         if (!headers_sent()) {
             header('Content-Type: application/json');
         }
-        header('Content-Type: application/json'); echo json_encode(['error' => $message]);
+        echo json_encode(['error' => $message]);
         exit;
     }
 }

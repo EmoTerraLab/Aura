@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Core\Config;
+use App\Core\Auth;
 use App\Models\ProtocolCase;
 use App\Models\Report;
 use App\Services\Protocol\ProtocolFactory;
