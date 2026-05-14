@@ -143,7 +143,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
 
             if (res.ok) {
                 if (res.webauthn && !forceOtp) {
-                    await authWebAuthn();
+                    window.location.href = '/auth/2fa/webauthn';
                     return;
                 }
 
@@ -166,85 +166,6 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<?= \App\Core\Lang::t('auth.continue') ?> <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>';
-        }
-    }
-
-    // WebAuthn Helpers
-    function base64urlToBuffer(base64url) {
-        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-        const pad = base64.length % 4;
-        const padded = pad ? base64 + '===='.substring(pad) : base64;
-        const binary_string = window.atob(padded);
-        const len = binary_string.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binary_string.charCodeAt(i);
-        }
-        return bytes.buffer;
-    }
-
-    function bufferToBase64url(buffer) {
-        const bytes = new Uint8Array(buffer);
-        let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary)
-            .replace(/\+/g, '-')
-            .replace(/\//g, '_')
-            .replace(/=/g, '');
-    }
-
-    async function authWebAuthn() {
-        const errorEl = document.getElementById('alumno-error');
-        const btn = document.getElementById('btn-generate-otp');
-        
-        try {
-            console.log('Solicitando opciones de autenticación WebAuthn...');
-            const optRes = await fetchJson('/auth/2fa/webauthn/options');
-            if (optRes.error) throw new Error(optRes.error);
-            
-            const options = optRes;
-            options.challenge = base64urlToBuffer(options.challenge);
-            
-            if (options.allowCredentials) {
-                for (let i = 0; i < options.allowCredentials.length; i++) {
-                    options.allowCredentials[i].id = base64urlToBuffer(options.allowCredentials[i].id);
-                }
-            }
-
-            console.log('Invocando autenticador...');
-            const assertion = await navigator.credentials.get({ publicKey: options });
-            
-            console.log('Verificando respuesta...');
-            const verifyRes = await fetchJson('/auth/2fa/webauthn/verify', {
-                method: 'POST',
-                body: {
-                    credentialId: bufferToBase64url(assertion.rawId),
-                    clientDataJSON: bufferToBase64url(assertion.response.clientDataJSON),
-                    authenticatorData: bufferToBase64url(assertion.response.authenticatorData),
-                    signature: bufferToBase64url(assertion.response.signature)
-                }
-            });
-
-            if (verifyRes.success) {
-                window.location.href = verifyRes.redirect;
-            } else {
-                throw new Error(verifyRes.error || 'Autenticación fallida');
-            }
-        } catch (e) {
-            console.error('WebAuthn Auth Error:', e);
-            let userMsg = 'Error en verificación biométrica.';
-            if (e.name === 'NotAllowedError') userMsg = 'Operación cancelada.';
-            else userMsg = e.message;
-
-            errorEl.innerText = userMsg + ' Reintentando con código...';
-            errorEl.classList.remove('hidden');
-            
-            // Fallback manual al OTP de correo
-            setTimeout(() => {
-                generateOTP(true); 
-            }, 2000);
         }
     }
 

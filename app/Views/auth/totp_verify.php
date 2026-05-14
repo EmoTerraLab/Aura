@@ -25,6 +25,15 @@
                         <label class="block text-xs font-bold text-slate-500 uppercase">Usa un código de recuperación</label>
                         <input type="text" name="recovery_code" placeholder="XXXX-XXXX" class="w-full bg-white font-mono text-center tracking-widest rounded-lg py-2 px-4 border border-surface-variant focus:ring-2 focus:ring-primary/30 outline-none uppercase">
                         <p class="text-[10px] text-slate-400 leading-tight">Introduce uno de los 8 códigos de emergencia que guardaste al activar la verificación en dos pasos.</p>
+                        
+                        <?php if($hasWebAuthn ?? false): ?>
+                            <div class="pt-4 mt-2 border-t border-slate-200">
+                                <a href="/auth/2fa/webauthn/switch" class="flex items-center justify-center gap-2 text-primary hover:text-primary/80 font-bold py-2">
+                                    <span class="material-symbols-outlined text-lg">fingerprint</span>
+                                    Usar biometría (Face ID / Huella)
+                                </a>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </details>
             </div>

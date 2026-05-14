@@ -139,13 +139,20 @@ class TotpController
     // GET /auth/2fa/totp
     public function showVerify(): void
     {
-        if (!Session::get('pending_2fa_user_id')) {
+        $pendingUserId = Session::get('pending_2fa_user_id');
+        if (!$pendingUserId) {
             header('Location: /login');
             exit;
         }
+
+        // Comprobar si tiene WebAuthn para ofrecerlo como alternativa
+        $stmt = $this->db->prepare('SELECT COUNT(*) as count FROM webauthn_credentials WHERE user_id = ?');
+        $stmt->execute([$pendingUserId]);
+        $hasWebAuthn = $stmt->fetch()['count'] > 0;
         
         View::render('auth/totp_verify', [
-            'title' => 'Verificación 2FA'
+            'title' => 'Verificación 2FA',
+            'hasWebAuthn' => $hasWebAuthn
         ], 'app');
     }
 

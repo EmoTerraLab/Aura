@@ -2,6 +2,17 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-15] - Hibridación MFA y Refinado de Sesión (v2.32.1-stable)
+
+### 🚀 Mejoras y Funcionalidades
+- **Hibridación MFA (Biometría + TOTP):** El sistema ahora permite alternar dinámicamente entre el acceso por App Authenticator (TOTP) y Biometría (WebAuthn) para el personal de staff. Se han añadido selectores en las pantallas de verificación para facilitar el cambio de método.
+- **Acceso Inteligente:** Redirección automática al método de autenticación preferente (Biometría) si el usuario tiene dispositivos vinculados, manteniendo el TOTP como fallback seguro.
+- **Simplificación de Login:** Eliminada lógica redundante en el ruteo de autenticación, centralizando toda la experiencia de segundo factor en componentes dedicados.
+
+### 🛡️ Seguridad y Estabilidad
+- **Flujo de Fallback FIX:** Corregida la lógica de redirección cuando falla la verificación biométrica, asegurando que los alumnos vuelvan a OTP por email y el staff a TOTP de forma coherente.
+- **Consistencia de API:** Normalizado el formato de envío de datos en las peticiones WebAuthn para mayor compatibilidad con diversos middlewares de seguridad.
+
 ## [2026-05-15] - Rediseño de Experiencia Biométrica (v2.32.0-stable)
 
 ### 🚀 Mejoras y Funcionalidades

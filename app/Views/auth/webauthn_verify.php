@@ -44,8 +44,8 @@
 
             <!-- Botón Fallback OTP -->
             <button onclick="useOtpFallback()" class="w-full bg-transparent text-primary font-bold py-4 rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-3">
-                <span class="material-symbols-outlined">mail</span>
-                Recibir código por email
+                <span class="material-symbols-outlined"><?= $isStudent ? 'mail' : 'lock' ?></span>
+                <?= $isStudent ? 'Recibir código por email' : 'Usar código de verificación (TOTP)' ?>
             </button>
         </div>
     </div>
@@ -121,23 +121,6 @@
         }
     };
 
-    async function fetchJson(url, options = {}) {
-        const token = document.querySelector('meta[name="csrf-token"]')?.content;
-        const res = await fetch(url, {
-            ...options,
-            headers: {
-                ...options.headers,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token
-            }
-        });
-        if (!res.ok && res.status !== 400 && res.status !== 403) {
-            throw new Error(`Error del servidor: ${res.status}`);
-        }
-        return res.json();
-    }
-
     function base64url_to_uint8array(base64url) {
         const padding = '='.repeat((4 - base64url.length % 4) % 4);
         const base64 = (base64url + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -178,13 +161,13 @@
 
             const authRes = await fetchJson('/auth/2fa/webauthn/verify', {
                 method: 'POST',
-                body: JSON.stringify({
+                body: {
                     id: credential.id,
                     clientDataJSON: uint8array_to_base64url(credential.response.clientDataJSON),
                     authenticatorData: uint8array_to_base64url(credential.response.authenticatorData),
                     signature: uint8array_to_base64url(credential.response.signature),
                     userHandle: credential.response.userHandle ? uint8array_to_base64url(credential.response.userHandle) : null
-                })
+                }
             });
 
             if (authRes.success) {

@@ -243,8 +243,12 @@ class WebAuthnController
             
             Session::remove('pending_webauthn_user_id');
             Session::remove('webauthn_challenge');
+
+            $redirect = '/dashboard';
+            if ($user['role'] === 'admin') $redirect = '/admin';
+            elseif ($user['role'] !== 'alumno') $redirect = '/staff/inbox';
             
-            echo json_encode(['success' => true]);
+            echo json_encode(['success' => true, 'redirect' => $redirect]);
         } catch (\Throwable $e) {
             error_log("WebAuthn authVerify error: " . $e->getMessage());
             $this->sendError($e->getMessage());
@@ -253,14 +257,32 @@ class WebAuthnController
 
     public function showVerify(): void
     {
-        if (!Session::get('pending_webauthn_user_id')) {
+        $userId = Session::get('pending_webauthn_user_id');
+        if (!$userId) {
             header('Location: /login');
             exit;
         }
+
+        $user = $this->userModel->find($userId);
         
         \App\Core\View::render('auth/webauthn_verify', [
-            'title' => 'Verificación Biométrica'
+            'title' => 'Verificación Biométrica',
+            'isStudent' => ($user['role'] ?? 'alumno') === 'alumno'
         ]);
+    }
+
+    public function switchToWebAuthn(): void
+    {
+        $userId = Session::get('pending_2fa_user_id');
+        if (!$userId) {
+            header('Location: /login');
+            exit;
+        }
+
+        Session::set('pending_webauthn_user_id', $userId);
+        Session::remove('pending_2fa_user_id');
+        header('Location: /auth/2fa/webauthn');
+        exit;
     }
 
     public function fallback(): void
@@ -271,8 +293,14 @@ class WebAuthnController
             exit;
         }
 
-        Session::set('pending_2fa_user_id', $userId);
-        header('Location: /auth/2fa');
+        $user = $this->userModel->find($userId);
+        if ($user && $user['role'] === 'alumno') {
+            Session::set('force_otp_for_user', $user['email']);
+            header('Location: /login');
+        } else {
+            Session::set('pending_2fa_user_id', $userId);
+            header('Location: /auth/2fa/totp');
+        }
         exit;
     }
 

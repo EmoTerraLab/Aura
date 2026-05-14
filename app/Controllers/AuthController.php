@@ -54,6 +54,21 @@ class AuthController {
         $user = $this->userModel->findByEmail($email);
 
         if ($user && $user['role'] !== 'alumno' && password_verify($password, $user['password'])) {
+            // Comprobar si tiene WebAuthn configurado
+            $db = \App\Core\Database::getInstance();
+            $stmt = $db->prepare('SELECT COUNT(*) as count FROM webauthn_credentials WHERE user_id = ?');
+            $stmt->execute([$user['id']]);
+            $hasWebAuthn = $stmt->fetch()['count'] > 0;
+
+            if ($hasWebAuthn) {
+                \App\Core\Session::set('pending_webauthn_user_id', $user['id']);
+                header('Content-Type: application/json'); echo json_encode([
+                    'ok' => true,
+                    'redirect' => '/auth/2fa/webauthn'
+                ]);
+                return;
+            }
+
             if (!empty($user['totp_enabled'])) {
                 \App\Core\Session::set('pending_2fa_user_id', $user['id']);
                 header('Content-Type: application/json'); echo json_encode([
