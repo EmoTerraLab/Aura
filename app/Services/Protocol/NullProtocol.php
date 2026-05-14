@@ -69,4 +69,8 @@ class NullProtocol implements ProtocolInterface {
     public function canTransition(string $fromState, string $toState, array $case): bool|string {
         return "Protocol en fase d'implementació";
     }
+
+    public function syncState(int $reportId, string $state): void {
+        // No regional table synchronization required for this protocol
+    }
 }

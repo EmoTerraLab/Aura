@@ -45,4 +45,8 @@ class GenericProtocol implements ProtocolInterface {
         // Redirigir a la vista estática de consulta general
         return '/protocolo-acoso';
     }
+
+    public function syncState(int $reportId, string $state): void {
+        // No regional table synchronization required for this protocol
+    }
 }
