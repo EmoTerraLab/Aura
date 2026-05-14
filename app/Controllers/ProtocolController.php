@@ -78,27 +78,29 @@ class ProtocolController
                 }
             }
 
+            $deadlineAlert = null;
+            if ($protocol->isFullyImplemented() && method_exists($protocol, 'getDeadlineAlert')) {
+                $schoolDaysElapsed = $this->protocolService->calculateSchoolDays($case['created_at'] ?? date('Y-m-d'));
+                $deadlineAlert = $protocol->getDeadlineAlert($currentPhase, $schoolDaysElapsed);
+            }
+
             $protocol_meta = [
                 'ccaa_code' => $protocol->getCode(),
                 'ccaa_name' => $protocol->getName(),
                 'is_fully_implemented' => $protocol->isFullyImplemented(),
                 'manage_url' => $protocol->getManageUrl($report_id),
                 'timeline_steps' => $timeline,
+                'timeline_html' => \App\Core\View::renderPartial('components/timeline', [
+                    'steps' => $timeline,
+                    'currentPhase' => $currentPhase,
+                    'deadlineAlert' => $deadlineAlert
+                ]),
                 'active_step_index' => $activeStepIndex !== false ? $activeStepIndex : -1,
                 'current_actions' => $protocol->isFullyImplemented() ? $protocol->getActionsForState($currentPhase, $case ?: []) : [],
                 'exclusive_tools' => $protocol->isFullyImplemented() ? $protocol->getExclusiveTools() : [],
-                'documents' => $protocol->isFullyImplemented() ? $protocol->getDocuments() : []
+                'documents' => $protocol->isFullyImplemented() ? $protocol->getDocuments() : [],
+                'deadline_alert' => $deadlineAlert
             ];
-
-            if ($case) {
-                $schoolDaysElapsed = $this->protocolService->calculateSchoolDays($case['created_at']);
-                $case['school_days_count'] = $schoolDaysElapsed;
-                
-                // Solo si el protocolo está implementado buscamos alertas
-                if ($protocol->isFullyImplemented() && method_exists($protocol, 'getDeadlineAlert')) {
-                    $protocol_meta['deadline_alert'] = $protocol->getDeadlineAlert($case['current_phase'], $schoolDaysElapsed);
-                }
-            }
 
             $response = [
                 'success' => true, 

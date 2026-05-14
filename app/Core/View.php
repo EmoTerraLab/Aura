@@ -42,4 +42,15 @@ class View {
             echo $content;
         }
     }
+
+    public static function renderPartial($view, $data = []) {
+        extract($data);
+        $viewPath = __DIR__ . '/../Views/' . $view . '.php';
+        if (!file_exists($viewPath)) {
+            return "<!-- View not found: $view -->";
+        }
+        ob_start();
+        require $viewPath;
+        return ob_get_clean();
+    }
 }

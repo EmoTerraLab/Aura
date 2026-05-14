@@ -120,13 +120,23 @@ class ReportManagementController {
                 $db = \App\Core\Database::getInstance();
                 $mentionModel = new \App\Models\ReportMention();
                 
-                foreach ($matches[1] as $username) {
-                    // Buscar usuario por nombre de forma simple para la mención
-                    $stmt = $db->prepare("SELECT id FROM users WHERE name LIKE :name AND role != 'alumno' LIMIT 1");
-                    $stmt->execute(['name' => '%' . $username . '%']);
-                    $mentionedUser = $stmt->fetch();
+                if (!empty($matches[1])) {
+                    $db = \App\Core\Database::getInstance();
+                    $mentionModel = new \App\Models\ReportMention();
                     
-                    if ($mentionedUser) {
+                    $conditions = [];
+                    $params = [];
+                    foreach ($matches[1] as $username) {
+                        $conditions[] = "name LIKE ?";
+                        $params[] = '%' . $username . '%';
+                    }
+                    
+                    $sql = "SELECT id FROM users WHERE (" . implode(' OR ', $conditions) . ") AND role != 'alumno'";
+                    $stmt = $db->prepare($sql);
+                    $stmt->execute($params);
+                    $mentionedUsers = $stmt->fetchAll();
+                    
+                    foreach ($mentionedUsers as $mentionedUser) {
                         $mentionModel->create([
                             'report_id' => $id,
                             'message_id' => $messageId,

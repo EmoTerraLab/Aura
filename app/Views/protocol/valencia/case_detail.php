@@ -38,29 +38,16 @@ $activeStepIndex = array_search($case['current_phase'], array_column($timeline, 
             <div class="lg:col-span-2 space-y-8">
                 
                 <!-- Timeline Visual -->
-                <section class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100">
-                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-8"><?= Lang::t('protocol.timeline_title') ?></h2>
-                    <div class="relative flex flex-col md:flex-row justify-between gap-4">
-                        <!-- Línea conectora -->
-                        <div class="absolute left-6 md:left-0 md:top-6 w-0.5 md:w-full h-full md:h-0.5 bg-slate-100 z-0"></div>
-                        
-                        <?php foreach ($timeline as $index => $step): 
-                            $isCompleted = $index < $activeStepIndex;
-                            $isActive = $index === $activeStepIndex;
-                            $colorClass = $isActive ? 'bg-primary text-white scale-110 shadow-lg shadow-primary/30' : ($isCompleted ? 'bg-emerald-500 text-white' : 'bg-white border-2 border-slate-100 text-slate-300');
-                        ?>
-                            <div class="relative z-10 flex md:flex-col items-center gap-4 md:gap-3 group">
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 <?= $colorClass ?>">
-                                    <span class="material-symbols-outlined text-xl"><?= $isCompleted ? 'check' : $step['icon'] ?></span>
-                                </div>
-                                <div class="text-left md:text-center max-w-[120px]">
-                                    <p class="text-[10px] font-black uppercase leading-tight <?= $isActive ? 'text-primary' : ($isCompleted ? 'text-emerald-600' : 'text-slate-400') ?>">
-                                        <?= $step['label'] ?>
-                                    </p>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                <section class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="px-8 pt-8">
+                        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400"><?= Lang::t('protocol.timeline_title') ?></h2>
                     </div>
+                    <?php 
+                    echo \App\Core\View::renderPartial('components/timeline', [
+                        'steps' => $timeline,
+                        'currentPhase' => $case['current_phase']
+                    ]);
+                    ?>
                 </section>
 
                 <!-- Accions Disponibles -->

@@ -32,27 +32,6 @@ $elapsedDays = class_exists('App\Helpers\SchoolDaysHelper')
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Timeline lateral -->
         <div class="lg:col-span-1 space-y-4">
-            <div class="bg-white rounded-3xl p-6 border border-slate-100 space-y-6">
-                <h3 class="text-xs font-black uppercase text-slate-400 tracking-widest">Timeline</h3>
-                <div class="space-y-4">
-                    <?php 
-                    $phases = [
-                        \App\Services\Protocol\GaliciaProtocol::STATE_DETECCIO_COMUNICACIO => 'Detección',
-                        \App\Services\Protocol\GaliciaProtocol::STATE_RECOLLIDA_INFORMACION => 'Recollida',
-                        \App\Services\Protocol\GaliciaProtocol::STATE_ANALISE_MEDIDAS => 'Análise',
-                        \App\Services\Protocol\GaliciaProtocol::STATE_SEGUIMENTO => 'Seguimento'
-                    ];
-                    foreach($phases as $key => $label): 
-                        $isCurrent = ($case['status'] === $key);
-                    ?>
-                    <div class="flex items-center gap-3">
-                        <div class="w-2 h-2 rounded-full <?= $isCurrent ? 'bg-blue-500 animate-pulse ring-4 ring-blue-500/20' : 'bg-slate-200' ?>"></div>
-                        <span class="text-xs font-bold <?= $isCurrent ? 'text-slate-800' : 'text-slate-400' ?>"><?= $label ?></span>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            
             <div class="bg-slate-900 rounded-3xl p-6 text-white space-y-4">
                 <h3 class="text-[10px] font-black uppercase text-white/40 tracking-widest">Documentos Generados</h3>
                 <div class="space-y-2">
@@ -88,6 +67,14 @@ $elapsedDays = class_exists('App\Helpers\SchoolDaysHelper')
 
         <!-- Panel de acciones central -->
         <div class="lg:col-span-3 space-y-6">
+            <?php 
+            $protocol = new GaliciaProtocol();
+            echo \App\Core\View::renderPartial('components/timeline', [
+                'steps' => $protocol->getTimelineSteps(),
+                'currentPhase' => $case['status']
+            ]);
+            ?>
+
             <div class="bg-white rounded-[2.5rem] border-2 border-blue-500/20 p-10 space-y-8 animate-[fadeIn_0.5s]">
                 <div class="space-y-2">
                     <h2 class="text-2xl font-black text-slate-800 tracking-tight">Accións dispoñibles</h2>

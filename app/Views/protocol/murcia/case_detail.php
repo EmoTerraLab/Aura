@@ -20,32 +20,9 @@ use App\Models\ProtocolCase;
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <!-- Timeline lateral -->
+        <!-- Sidebar -->
         <div class="lg:col-span-1 space-y-4">
-            <div class="bg-white rounded-3xl p-6 border border-slate-100 space-y-6">
-                <h3 class="text-xs font-black uppercase text-slate-400 tracking-widest">Estado del Flujo</h3>
-                <div class="space-y-4">
-                    <?php 
-                    $phases = [
-                        ProtocolCase::PHASE_MUR_INICIAL => 'Inicio y Medidas',
-                        ProtocolCase::PHASE_MUR_INTERVENCION => 'Entrevistas',
-                        ProtocolCase::PHASE_MUR_INFORME => 'Informe (Anexo IV)',
-                        ProtocolCase::PHASE_MUR_VALORACION => 'Valoración',
-                        ProtocolCase::PHASE_MUR_CIERRE => 'Cierre'
-                    ];
-                    $reached = false;
-                    foreach($phases as $key => $label): 
-                        $isCurrent = ($case['status'] === $key);
-                    ?>
-                    <div class="flex items-center gap-3">
-                        <div class="w-2 h-2 rounded-full <?= $isCurrent ? 'bg-amber-500 ring-4 ring-amber-500/20' : 'bg-slate-200' ?>"></div>
-                        <span class="text-xs font-bold <?= $isCurrent ? 'text-slate-800' : 'text-slate-400' ?>"><?= $label ?></span>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            
-            <div class="bg-slate-900 rounded-3xl p-6 text-white space-y-4">
+            <div class="bg-slate-900 rounded-3xl p-6 text-white space-y-4 shadow-xl">
                 <h3 class="text-[10px] font-black uppercase text-white/40 tracking-widest">Documentos Generados</h3>
                 <div class="space-y-2">
                     <?php if(empty($annexes)): ?>
@@ -67,6 +44,13 @@ use App\Models\ProtocolCase;
 
         <!-- Panel de acciones central -->
         <div class="lg:col-span-3 space-y-6">
+            <?php 
+            $protocol = new \App\Services\Protocol\MurciaProtocol();
+            echo \App\Core\View::renderPartial('components/timeline', [
+                'steps' => $protocol->getTimelineSteps(),
+                'currentPhase' => $case['status']
+            ]);
+            ?>
             
             <?php if ($case['status'] === ProtocolCase::PHASE_MUR_INICIAL): ?>
             <div class="bg-white rounded-[2.5rem] border-2 border-amber-500/20 p-10 space-y-8 animate-[fadeIn_0.5s]">

@@ -388,11 +388,7 @@
             </div>
 
             <!-- LEGAL PROTOCOL TIMELINE -->
-            ${isAdvancedProtocol ? `
-            <div id="protocol-timeline" class="bg-white border-b px-4 md:px-8 py-4 flex items-center justify-between overflow-x-auto no-scrollbar gap-4">
-                ${renderTimelineHtml(protocolCase, protocolMeta)}
-            </div>
-            ` : ''}
+            ${isAdvancedProtocol ? protocolMeta.timeline_html : ''}
 
             <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50 no-scrollbar">
                 <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -447,54 +443,6 @@
                     document.body.appendChild(originalModule); // Lo devolvemos al body oculto
                 }
             }
-        }
-    }
-
-    function renderTimelineHtml(c, meta) {
-        if (!c || !meta || !meta.timeline_steps) return '<p class="text-[10px] text-slate-400 italic">Protocolo legal no activado para este caso.</p>';
-
-        const steps = meta.timeline_steps;
-        const activeIndex = meta.active_step_index;
-
-        const timelineHtml = steps.map((s, idx) => {
-            const isActual = idx === activeIndex;
-            const isPast = idx < activeIndex;
-            
-            let colorClass = isActual ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : (isPast ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400');
-            let textColor = isActual ? 'text-primary' : (isPast ? 'text-emerald-600' : 'text-slate-400');
-
-            return `
-                <div class="flex items-center gap-2 shrink-0 transition-all">
-                    <div class="w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-bold ${colorClass}">
-                        <span class="material-symbols-outlined text-sm">${isPast ? 'check' : s.icon}</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-[9px] font-black uppercase tracking-tighter ${textColor}">${s.label}</span>
-                        ${s.deadline_days ? `<span class="text-[8px] font-bold text-slate-300">Día ${s.deadline_days}</span>` : ''}
-                    </div>
-                    ${idx < steps.length - 1 ? '<span class="material-symbols-outlined text-slate-200 text-sm mx-1">chevron_right</span>' : ''}
-                </div>
-            `;
-        }).join('');
-
-        if (meta.deadline_alert) {
-            return timelineHtml + `
-                <div class="ml-auto px-4 py-2 rounded-xl text-[9px] font-black uppercase border ${getAlertColorClass(meta.deadline_alert.level)} flex items-center gap-2 shrink-0 shadow-sm">
-                    <span class="material-symbols-outlined text-xs">schedule</span> ${meta.deadline_alert.message}
-                </div>
-            `;
-        }
-
-        return timelineHtml;
-    }
-
-    function getAlertColorClass(level) {
-        switch(level) {
-            case 'ok': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
-            case 'warning': return 'text-amber-600 bg-amber-50 border-amber-100';
-            case 'danger': return 'text-red-600 bg-red-50 border-red-100';
-            case 'overdue': return 'bg-red-900 text-white animate-pulse border-red-900';
-            default: return 'text-slate-500 bg-slate-50 border-slate-100';
         }
     }
 

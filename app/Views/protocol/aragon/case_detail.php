@@ -12,6 +12,14 @@ $startDate = $case['created_at'];
         </div>
     </header>
 
+    <?php 
+    $protocol = new \App\Services\Protocol\AragonProtocol();
+    echo \App\Core\View::renderPartial('components/timeline', [
+        'steps' => $protocol->getTimelineSteps(),
+        'currentPhase' => $case['status']
+    ]);
+    ?>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
             <?php if ($case['status'] === AragonProtocolCase::STATE_COMUNICACION_RECIBIDA): ?>
