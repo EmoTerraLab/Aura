@@ -27,11 +27,12 @@ class MurciaProtocol implements ProtocolInterface {
 
     public function getValidTransitions(string $currentState): array {
         return match($currentState) {
-            ProtocolCase::PHASE_MUR_INICIAL     => [ProtocolCase::PHASE_MUR_INTERVENCION],
+            ProtocolCase::PHASE_MUR_INICIAL      => [ProtocolCase::PHASE_MUR_INTERVENCION],
             ProtocolCase::PHASE_MUR_INTERVENCION => [ProtocolCase::PHASE_MUR_INFORME],
             ProtocolCase::PHASE_MUR_INFORME      => [ProtocolCase::PHASE_MUR_VALORACION],
             ProtocolCase::PHASE_MUR_VALORACION   => [ProtocolCase::PHASE_MUR_CIERRE],
-            ProtocolCase::PHASE_MUR_CIERRE       => [ProtocolCase::PHASE_MUR_INTERVENCION], // Para reapertura
+            ProtocolCase::PHASE_MUR_CIERRE       => [ProtocolCase::PHASE_MUR_INTERVENCION, ProtocolCase::PHASE_CIERRE], // Para reapertura o cierre final
+            ProtocolCase::PHASE_CIERRE           => [ProtocolCase::PHASE_MUR_INTERVENCION], // Permitir reapertura desde cierre
             default => []
         };
     }
@@ -43,6 +44,7 @@ class MurciaProtocol implements ProtocolInterface {
             ProtocolCase::PHASE_MUR_INFORME      => 'Emisión del Informe',
             ProtocolCase::PHASE_MUR_VALORACION   => 'Valoración y Decisión',
             ProtocolCase::PHASE_MUR_CIERRE       => 'Cierre y Actuaciones Posteriores',
+            ProtocolCase::PHASE_CIERRE           => 'Protocolo Cerrado',
             default => $state
         };
     }
@@ -53,7 +55,8 @@ class MurciaProtocol implements ProtocolInterface {
             ProtocolCase::PHASE_MUR_INTERVENCION,
             ProtocolCase::PHASE_MUR_INFORME,
             ProtocolCase::PHASE_MUR_VALORACION,
-            ProtocolCase::PHASE_MUR_CIERRE
+            ProtocolCase::PHASE_MUR_CIERRE,
+            ProtocolCase::PHASE_CIERRE
         ];
     }
 
