@@ -145,7 +145,7 @@ class WebAuthnController
                 'device_name' => $input['device_name'] ?? 'Llave de seguridad'
             ]);
 
-            Session::delete('webauthn_challenge');
+            Session::remove('webauthn_challenge');
             echo json_encode(['success' => true]);
         } catch (\Throwable $e) {
             error_log("WebAuthn registerVerify error: " . $e->getMessage());
@@ -241,8 +241,8 @@ class WebAuthnController
             $user = $this->userModel->find($userId);
             Auth::login($user);
             
-            Session::delete('pending_webauthn_user_id');
-            Session::delete('webauthn_challenge');
+            Session::remove('pending_webauthn_user_id');
+            Session::remove('webauthn_challenge');
             
             echo json_encode(['success' => true]);
         } catch (\Throwable $e) {

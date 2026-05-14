@@ -35,6 +35,11 @@ class Router {
     }
 
     public function resolve($method, $path) {
+        // [MEJORA] Soporte para HEAD requests (tratarlas como GET)
+        if ($method === 'HEAD') {
+            $method = 'GET';
+        }
+
         foreach ($this->routes as $route) {
             if ($route['method'] === $method && preg_match($route['regex'], $path, $matches)) {
                 // [MEJORA] Ejecutar middlewares antes del controlador

@@ -86,7 +86,7 @@ class Auth {
     /**
      * Comprueba si una IP/identificador ha superado el límite de intentos (Rate Limiting)
      */
-    public static function isRateLimited(string $ip, string $identifier = '', int $maxAttempts = 5): bool {
+    public static function isRateLimited(string $ip, string $identifier = '', int $maxAttempts = 10): bool {
         try {
             $db = \App\Core\Database::getInstance();
             
@@ -113,5 +113,19 @@ class Auth {
         }
         
         return false;
+    }
+
+    /**
+     * Reinicia el contador de intentos para una IP/identificador (ej. tras login exitoso)
+     */
+    public static function resetRateLimit(string $ip, string $identifier = ''): void {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $key = $ip . '_' . $identifier;
+            $stmt = $db->prepare("DELETE FROM rate_limits WHERE ip = :ip");
+            $stmt->execute(['ip' => $key]);
+        } catch (\Throwable $e) {
+            error_log("Error en Auth::resetRateLimit: " . $e->getMessage());
+        }
     }
 }

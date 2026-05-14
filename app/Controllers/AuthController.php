@@ -42,8 +42,8 @@ class AuthController {
         $data = json_decode(file_get_contents('php://input'), true);
         $email = $data['email'] ?? '';
 
-        // SEC-013 FIX: Rate limiting en login de staff
-        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email)) {
+        // SEC-013 FIX: Rate limiting en login de staff (incrementado a 10 intentos)
+        if (Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email, 10)) {
             AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
             header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
@@ -64,6 +64,7 @@ class AuthController {
             }
 
             Auth::login($user);
+            Auth::resetRateLimit($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email);
             AuditLogger::log('STAFF_LOGIN_SUCCESS', 'user', $user['id']);
             header('Content-Type: application/json'); echo json_encode([
                 'ok' => true,
@@ -89,7 +90,7 @@ class AuthController {
         $email = $data['email'] ?? '';
         $forceOtp = !empty($data['force_otp']);
         
-        if (Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '')) {
+        if (Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '', 10)) {
             AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
             header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
@@ -180,7 +181,7 @@ class AuthController {
         $email = $data['email'] ?? '';
         $code = $data['code'] ?? '';
         
-        if (Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '')) {
+        if (Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '', 10)) {
             AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
             header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
@@ -195,6 +196,7 @@ class AuthController {
             if ($validOtp) {
                 $this->otpModel->markAsUsed($validOtp['id']);
                 Auth::login($user);
+                Auth::resetRateLimit($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email);
                 header('Content-Type: application/json'); echo json_encode([
                     'ok' => true,
                     'redirect' => '/alumno/dashboard'

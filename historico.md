@@ -2,6 +2,13 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-15] - Mejora de Rate Limiting y Soporte HEAD (v2.31.2-stable)
+
+### 🛡️ Seguridad y Estabilidad
+- **Refuerzo de Rate Limiting:** Incrementado el límite de intentos fallidos a 10 por IP/Identificador para mejorar la experiencia de usuario sin comprometer la seguridad.
+- **Auto-reset de Bloqueos:** Implementada la limpieza automática del contador de intentos fallidos (`Auth::resetRateLimit`) tras un inicio de sesión exitoso o recuperación de contraseña completada.
+- **Soporte HEAD Requests:** Actualizado el `Router` para manejar correctamente peticiones de tipo `HEAD`, evitando errores 404 en herramientas de monitoreo y balanceadores de carga.
+
 ## [2026-05-15] - Parche de Estabilidad y Correcciones de Producción (v2.31.1-stable)
 
 ### 🛡️ Seguridad y Estabilidad

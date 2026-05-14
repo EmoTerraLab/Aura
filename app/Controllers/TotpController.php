@@ -163,7 +163,7 @@ class TotpController
         $code = $_POST['totp_code'] ?? '';
         $recoveryCode = $_POST['recovery_code'] ?? '';
 
-        if (\App\Core\Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', 'totp_' . $pendingUserId, 5)) {
+        if (\App\Core\Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', 'totp_' . $pendingUserId, 10)) {
             \App\Core\AuditLogger::log('RATE_LIMITED', 'ip', null, ['action' => 'totp_verify', 'user_id' => $pendingUserId]);
             header('Location: /auth/2fa/totp?error=rate_limit');
             exit;
@@ -208,6 +208,7 @@ class TotpController
         if ($isValid) {
             Session::remove('pending_2fa_user_id');
             Auth::login($user);
+            Auth::resetRateLimit($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', 'totp_' . $pendingUserId);
             
             // Redirect based on role
             if ($user['role'] === 'admin') {
