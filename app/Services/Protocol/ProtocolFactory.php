@@ -5,8 +5,14 @@ namespace App\Services\Protocol;
  * ProtocolFactory - Devuelve el módulo correcto según ccaa_code.
  */
 class ProtocolFactory {
+    private static array $cache = [];
+
     public static function make(string $ccaaCode): ProtocolInterface {
-        return match($ccaaCode) {
+        if (isset(self::$cache[$ccaaCode])) {
+            return self::$cache[$ccaaCode];
+        }
+
+        $protocol = match($ccaaCode) {
             'AND' => new AndaluciaProtocol(),
             'ARA' => new AragonProtocol(),
             'AST' => new AsturiasProtocol(),
@@ -28,5 +34,8 @@ class ProtocolFactory {
             'MEL' => new MelillaProtocol(),
             default => new MadridProtocol(), // Fallback seguro
         };
+
+        self::$cache[$ccaaCode] = $protocol;
+        return $protocol;
     }
 }

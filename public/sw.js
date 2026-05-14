@@ -49,11 +49,12 @@ const NEVER_CACHE_PATTERNS = [
 // ─────────────────────────────────────────────────────────────────────────────
 const STATIC_ASSET_PATTERNS = [
   /\.(?:png|jpg|jpeg|gif|svg|ico|webp)$/i,  // Imágenes
+  /\.(?:css|js)$/i,                         // CSS y JS estáticos
   /\.(?:woff|woff2|ttf|otf|eot)$/i,         // Fuentes
-  /fonts\.googleapis\.com/,                   // Google Fonts CSS
-  /fonts\.gstatic\.com/,                      // Google Fonts archivos
-  /cdn\.tailwindcss\.com/,                    // Tailwind CDN
-  /cdn\.jsdelivr\.net/,                       // Bootstrap/CDN
+  /fonts\.googleapis\.com/,                 // Google Fonts CSS
+  /fonts\.gstatic\.com/,                    // Google Fonts archivos
+  /cdn\.tailwindcss\.com/,                  // Tailwind CDN
+  /cdn\.jsdelivr\.net/,                     // Bootstrap/CDN
 ];
 
 
