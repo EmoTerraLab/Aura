@@ -120,30 +120,27 @@ class ReportManagementController {
                 $db = \App\Core\Database::getInstance();
                 $mentionModel = new \App\Models\ReportMention();
                 
-                if (!empty($matches[1])) {
-                    $db = \App\Core\Database::getInstance();
-                    $mentionModel = new \App\Models\ReportMention();
-                    
-                    $conditions = [];
-                    $params = [];
-                    foreach ($matches[1] as $username) {
-                        $conditions[] = "name LIKE ?";
-                        $params[] = '%' . $username . '%';
-                    }
-                    
-                    $sql = "SELECT id FROM users WHERE (" . implode(' OR ', $conditions) . ") AND role != 'alumno'";
-                    $stmt = $db->prepare($sql);
-                    $stmt->execute($params);
-                    $mentionedUsers = $stmt->fetchAll();
-                    
-                    foreach ($mentionedUsers as $mentionedUser) {
-                        $mentionModel->create([
-                            'report_id' => $id,
-                            'message_id' => $messageId,
-                            'user_id' => $mentionedUser['id']
-                        ]);
-                    }
+                $conditions = [];
+                $params = [];
+                foreach ($matches[1] as $username) {
+                    $conditions[] = "name LIKE ?";
+                    $params[] = '%' . $username . '%';
                 }
+                
+                $sql = "SELECT id FROM users WHERE (" . implode(' OR ', $conditions) . ") AND role != 'alumno'";
+                $stmt = $db->prepare($sql);
+                $stmt->execute($params);
+                $mentionedUsers = $stmt->fetchAll();
+
+                $mentionsToCreate = [];
+                foreach ($mentionedUsers as $mentionedUser) {
+                    $mentionsToCreate[] = [
+                        'report_id' => $id,
+                        'message_id' => $messageId,
+                        'user_id' => $mentionedUser['id']
+                    ];
+                }
+                $mentionModel->createMany($mentionsToCreate);
             }
         }
 
