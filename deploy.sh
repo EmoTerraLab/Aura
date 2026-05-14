@@ -7,14 +7,23 @@ echo "🚀 Iniciando despliegue completo en $SSH_HOST..."
 
 # 1. Sincronizar archivos usando rsync (excluyendo lo innecesario)
 echo "📤 Sincronizando archivos vía rsync..."
-rsync -avz --progress \
+rsync -avz --progress --delete \
   --exclude='.git' \
+  --exclude='.DS_Store' \
+  --exclude='.aider*' \
+  --exclude='.env' \
   --exclude='deploy.sh' \
   --exclude='database/*.sqlite*' \
   --exclude='database/*.sqlite-shm' \
   --exclude='database/*.sqlite-wal' \
+  --exclude='database/backups/*' \
   --exclude='storage/logs/*' \
+  --exclude='storage/evidence/*' \
+  --exclude='storage/maintenance/*' \
   --exclude='vendor' \
+  --exclude='test*.php' \
+  --exclude='test_*.php' \
+  --exclude='*_test.php' \
   ./ root@$SSH_HOST:$REMOTE_PATH/
 
 # 2. Ejecutar comandos remotos: Composer, Migraciones y Permisos
