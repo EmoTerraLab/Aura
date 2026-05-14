@@ -74,6 +74,7 @@ class ProtocolWorkflowController
 
     public function assignTeam($id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'error' => 'Funcionalidad de equipo no disponible en esta versión.']);
     }
@@ -121,6 +122,7 @@ class ProtocolWorkflowController
 
     public function uploadEvidence($id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
@@ -341,6 +343,7 @@ class ProtocolWorkflowController
 
     public function addRestorativePractice(int $id): void
     {
+        \App\Core\Csrf::validateRequest();
         $this->requireRestorativeEnabled();
         header('Content-Type: application/json');
         $id = (int)$id;

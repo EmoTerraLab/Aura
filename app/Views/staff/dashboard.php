@@ -791,8 +791,12 @@
         formData.append('evidence', input.files[0]);
 
         try {
+            const token = document.querySelector('meta[name="csrf-token"]').content;
             const res = await fetch(`/api/protocol/case/${caseId}/evidence`, {
                 method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
                 body: formData
             });
             const data = await res.json();
