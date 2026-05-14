@@ -128,7 +128,7 @@ class AragonProtocolController
             
             $case = $this->caseModel->find($id);
             $stateService = new \App\Services\ProtocolStateService();
-            $stateService->transitionTo($case['report_id'], $newStatus);
+            $stateService->transitionByReportId((int)$case['report_id'], $newStatus);
             
             $db->commit();
             echo json_encode(['success' => true]);
@@ -221,7 +221,7 @@ class AragonProtocolController
             
             $case = $this->caseModel->find($id);
             $stateService = new \App\Services\ProtocolStateService();
-            $stateService->transitionTo($case['report_id'], AragonProtocolCase::STATE_VALORADO);
+            $stateService->transitionByReportId((int)$case['report_id'], AragonProtocolCase::STATE_VALORADO);
             
             $db->commit();
             echo json_encode(['success' => true]);
@@ -238,7 +238,7 @@ class AragonProtocolController
         try {
             $case = $this->caseModel->find($id);
             $stateService = new \App\Services\ProtocolStateService();
-            $success = $stateService->transitionTo($case['report_id'], AragonProtocolCase::STATE_EN_SEGUIMIENTO);
+            $success = $stateService->transitionByReportId((int)$case['report_id'], AragonProtocolCase::STATE_EN_SEGUIMIENTO);
             echo json_encode(['success' => $success]);
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
