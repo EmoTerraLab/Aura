@@ -116,7 +116,7 @@ class TotpController
         if (!$user || empty($password) || !password_verify($password, $user['password'] ?? '')) {
             if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
                 header('Content-Type: application/json');
-                echo json_encode(['error' => 'Contraseña incorrecta. Se requiere la contraseña actual para desactivar 2FA.']);
+                header('Content-Type: application/json'); echo json_encode(['error' => 'Contraseña incorrecta. Se requiere la contraseña actual para desactivar 2FA.']);
             } else {
                 header('Location: /staff/inbox?error=wrong_password');
             }
@@ -162,6 +162,12 @@ class TotpController
 
         $code = $_POST['totp_code'] ?? '';
         $recoveryCode = $_POST['recovery_code'] ?? '';
+
+        if (\App\Core\Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', 'totp_' . $pendingUserId, 5)) {
+            \App\Core\AuditLogger::log('RATE_LIMITED', 'ip', null, ['action' => 'totp_verify', 'user_id' => $pendingUserId]);
+            header('Location: /auth/2fa/totp?error=rate_limit');
+            exit;
+        }
 
         $stmt = $this->db->prepare('SELECT * FROM users WHERE id = ? LIMIT 1');
         $stmt->execute([$pendingUserId]);

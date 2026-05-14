@@ -31,8 +31,31 @@ class MurciaProtocolController
         $this->annexModel = new MurciaAnnex();
     }
 
+    private function verifyAccess(int $caseId): bool
+    {
+        $case = $this->caseModel->find($caseId);
+        if (!$case) return false;
+        
+        $reportModel = new \App\Models\Report();
+        $report = $reportModel->findByIdWithDetails($case['report_id'], \App\Core\Auth::id(), \App\Core\Auth::role());
+        
+        // Prevent alumnos from accessing cases entirely
+        if (\App\Core\Auth::role() === 'alumno') return false;
+        
+        return $report !== false && $report !== null;
+    }
+
     public function showCase(int $id): void
     {
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         // El ID que viene puede ser el del caso de Murcia o el report_id
         $case = $this->caseModel->find($id);
         if (!$case) {
@@ -65,6 +88,15 @@ class MurciaProtocolController
     public function storeDesignation(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
         try {
             $coordinatorId = (int)$_POST['coordinator_id'];
@@ -77,15 +109,24 @@ class MurciaProtocolController
                 'date' => date('Y-m-d')
             ], Auth::id());
             
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function storeUrgencyMeasures(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
         try {
             $measures = $_POST['measures'] ?? '';
@@ -93,15 +134,24 @@ class MurciaProtocolController
                 'measures' => $measures,
                 'date' => date('Y-m-d H:i:s')
             ], Auth::id());
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function storeAnexoI(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $this->annexModel->createAnnex($id, 'anexo_i', [
@@ -109,15 +159,24 @@ class MurciaProtocolController
                 'sent_to_ordenacion' => true,
                 'date' => date('Y-m-d H:i:s')
             ], Auth::id());
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function addInterview(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $type = $_POST['type'] ?? 'victima';
@@ -126,15 +185,24 @@ class MurciaProtocolController
                 'notes' => $notes,
                 'date' => $_POST['date'] ?? date('Y-m-d')
             ], Auth::id());
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function storeAnexoIV(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $content = $_POST['content'] ?? '';
@@ -148,15 +216,24 @@ class MurciaProtocolController
             $stateService = new \App\Services\ProtocolStateService();
             $stateService->transitionByReportId((int)$murciaCase['report_id'], ProtocolCase::PHASE_MUR_VALORACION);
             
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function storeValuation(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $conclusion = $_POST['conclusion'] ?? 'no_evidencias';
@@ -186,15 +263,24 @@ class MurciaProtocolController
             $stateService = new \App\Services\ProtocolStateService();
             $stateService->transitionByReportId($murciaCase['report_id'], ProtocolCase::PHASE_MUR_CIERRE);
             
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function storeLegalCommunication(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $ageGroup = $_POST['age_group'] ?? '';
@@ -212,13 +298,22 @@ class MurciaProtocolController
                 'notes' => $_POST['notes'] ?? ''
             ], Auth::id());
             
-            echo json_encode(['success' => true, 'entity' => $entity]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true, 'entity' => $entity]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
     public function exportAnnex(int $id, string $type): void
     {
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         $case = $this->caseModel->find($id);
         if (!$case) {
             http_response_code(404);

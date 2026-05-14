@@ -24,7 +24,7 @@ class ReportController {
 
         if (!is_array($data)) {
             http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'Datos inválidos.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Datos inválidos.']);
             return;
         }
 
@@ -34,7 +34,7 @@ class ReportController {
         $isAnonymous = isset($data['is_anonymous']) ? (bool)$data['is_anonymous'] : true;
 
         if (strlen($content) < 5) {
-            echo json_encode(['success' => false, 'error' => 'Por favor, cuéntanos un poco más sobre lo ocurrido.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Por favor, cuéntanos un poco más sobre lo ocurrido.']);
             return;
         }
 
@@ -42,7 +42,7 @@ class ReportController {
         $profile = $this->profileModel->findByUser($userId);
 
         if (!$profile || !$profile['classroom_id']) {
-            echo json_encode(['success' => false, 'error' => 'No tienes un aula asignada. Por favor, contacta con tu profesor.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'No tienes un aula asignada. Por favor, contacta con tu profesor.']);
             return;
         }
 
@@ -61,6 +61,6 @@ class ReportController {
             'urgency' => $urgency
         ]);
 
-        echo json_encode(['success' => true, 'report_id' => $reportId]);
+        header('Content-Type: application/json'); echo json_encode(['success' => true, 'report_id' => $reportId]);
     }
 }

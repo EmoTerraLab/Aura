@@ -49,7 +49,7 @@ class StudentController {
 
         if (!$profile) {
             http_response_code(403);
-            echo json_encode(['error' => 'Perfil de estudiante no encontrado.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Perfil de estudiante no encontrado.']);
             return;
         }
 
@@ -57,7 +57,7 @@ class StudentController {
 
         if (!$report || (int)$report['student_id'] !== (int)$profile['id']) {
             http_response_code(404);
-            echo json_encode(['error' => 'Reporte no encontrado o no tienes acceso.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Reporte no encontrado o no tienes acceso.']);
             return;
         }
 
@@ -78,7 +78,7 @@ class StudentController {
         }
 
         // Return the report details and the public messages
-        echo json_encode([
+        header('Content-Type: application/json'); echo json_encode([
             'report' => $report,
             'messages' => $messages,
             'current_user_id' => $userId
@@ -96,13 +96,13 @@ class StudentController {
         // Validate ownership and status
         if (!$report || (int)$report['student_id'] !== (int)$profile['id']) {
             http_response_code(404);
-            echo json_encode(['error' => 'Reporte no encontrado.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Reporte no encontrado.']);
             return;
         }
 
         if ($report['status'] === 'resolved') {
             http_response_code(403);
-            echo json_encode(['error' => 'El caso está resuelto, no se pueden enviar más mensajes.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'El caso está resuelto, no se pueden enviar más mensajes.']);
             return;
         }
 
@@ -110,14 +110,14 @@ class StudentController {
         
         if (!is_array($data)) {
             http_response_code(400);
-            echo json_encode(['error' => 'Datos inválidos.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Datos inválidos.']);
             return;
         }
 
         $message = trim($data['message'] ?? '');
 
         if (empty($message)) {
-            echo json_encode(['error' => 'El mensaje no puede estar vacío.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'El mensaje no puede estar vacío.']);
             return;
         }
 
@@ -133,7 +133,7 @@ class StudentController {
         $stmt->execute(['id' => $messageId]);
         $msg = $stmt->fetch();
 
-        echo json_encode([
+        header('Content-Type: application/json'); echo json_encode([
             'id' => $msg['id'],
             'sender_name' => $msg['sender_name'],
             'message' => $msg['message'],

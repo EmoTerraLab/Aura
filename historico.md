@@ -2,6 +2,17 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-15] - Estandarización de API y Centralización de Seguridad (v2.31.0-stable)
+
+### 🚀 Mejoras y Funcionalidades
+- **Estandarización de Respuestas JSON:** Refactorización global de todos los controladores para asegurar que las respuestas de la API incluyan explícitamente las cabeceras `Content-Type: application/json`.
+- **Centralización de Seguridad:** Migración de la lógica de Rate Limiting desde los controladores individuales a la clase estática `Auth::isRateLimited`, mejorando la coherencia y facilitando la auditoría de seguridad.
+- **Limpieza de Core:** Eliminación de inconsistencias en el manejo de errores AJAX y mejora en la trazabilidad de intentos fallidos en los registros de auditoría.
+
+### 🛡️ Seguridad y Estabilidad
+- **Rate Limiting Robusto:** El nuevo sistema centralizado gestiona automáticamente la limpieza de registros antiguos (15 minutos) y permite una configuración más granular de los límites por IP e identificador.
+- **Service Worker v2.31.0:** Forzada la actualización de la caché para que los clientes utilicen la nueva estructura de respuestas del servidor.
+
 ## [2026-05-15] - Blindaje IDOR y Estabilidad WebAuthn (v2.30.2-stable)
 
 ### 🛡️ Seguridad y Estabilidad

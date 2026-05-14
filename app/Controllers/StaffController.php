@@ -32,7 +32,7 @@ class StaffController {
     public function mentions() {
         header('Content-Type: application/json');
         $mentions = $this->mentionModel->findUnreadByUserWithDetails(Auth::id());
-        echo json_encode(["success" => true, "mentions" => $mentions]);
+        header('Content-Type: application/json'); echo json_encode(["success" => true, "mentions" => $mentions]);
     }
 
     public function markMentionsRead() {
@@ -44,14 +44,14 @@ class StaffController {
         if ($mentionId) {
             $this->mentionModel->markAsRead($mentionId);
         }
-        echo json_encode(["success" => true]);
+        header('Content-Type: application/json'); echo json_encode(["success" => true]);
     }
 
     public function getColleagues() {
         header('Content-Type: application/json');
         $db = \App\Core\Database::getInstance();
         $stmt = $db->query("SELECT id, name, role FROM users WHERE role != 'alumno' ORDER BY name ASC");
-        echo json_encode(['success' => true, 'colleagues' => $stmt->fetchAll()]);
+        header('Content-Type: application/json'); echo json_encode(['success' => true, 'colleagues' => $stmt->fetchAll()]);
     }
 
     public function createReport() {

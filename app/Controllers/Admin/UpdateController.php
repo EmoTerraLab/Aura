@@ -59,7 +59,7 @@ class UpdateController
         try {
             $pending = $this->migrator->getPending();
             if (empty($pending)) {
-                echo json_encode(['success' => true, 'message' => 'No hay migraciones pendientes', 'migrations' => []]);
+                header('Content-Type: application/json'); echo json_encode(['success' => true, 'message' => 'No hay migraciones pendientes', 'migrations' => []]);
                 return;
             }
 
@@ -100,7 +100,7 @@ class UpdateController
                     'Pendiente de revisión manual'
                 );
 
-                echo json_encode([
+                header('Content-Type: application/json'); echo json_encode([
                     'success'     => false,
                     'error'       => $error['error'],
                     'version'     => $error['version'],
@@ -119,7 +119,7 @@ class UpdateController
                 $this->migrator->restoreBackup($backupPath);
                 MaintenanceMode::enable('Error de integridad tras actualización. Datos restaurados.');
 
-                echo json_encode([
+                header('Content-Type: application/json'); echo json_encode([
                     'success'   => false,
                     'error'     => 'Fallo en verificación de integridad',
                     'integrity' => $integrity
@@ -137,7 +137,7 @@ class UpdateController
                 'finished_at'    => date('Y-m-d H:i:s')
             ]);
 
-            echo json_encode([
+            header('Content-Type: application/json'); echo json_encode([
                 'success'    => true,
                 'migrations' => $results,
                 'integrity'  => $integrity,
@@ -152,7 +152,7 @@ class UpdateController
                 'finished_at'   => date('Y-m-d H:i:s')
             ]);
 
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
@@ -210,10 +210,10 @@ class UpdateController
         header('Content-Type: application/json');
         try {
             $path = $this->migrator->createBackup();
-            echo json_encode(['success' => true, 'message' => 'Backup creado: ' . basename($path)]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true, 'message' => 'Backup creado: ' . basename($path)]);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['error' => $e->getMessage()]);
         }
     }
 
@@ -231,14 +231,14 @@ class UpdateController
         $confirmation = $data['confirmation'] ?? '';
         if ($confirmation !== 'RESTAURAR') {
             http_response_code(400);
-            echo json_encode(['error' => 'Debes escribir RESTAURAR para confirmar']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Debes escribir RESTAURAR para confirmar']);
             return;
         }
 
         $filename = basename($data['filename'] ?? '');
         if (!$filename || !preg_match('/^aura_backup_[\d_-]+\.sqlite$/', $filename)) {
             http_response_code(400);
-            echo json_encode(['error' => 'Nombre de archivo no válido']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Nombre de archivo no válido']);
             return;
         }
 
@@ -254,14 +254,14 @@ class UpdateController
             $this->migrator->restoreBackup($backupPath);
 
             // 4. NO desactivar mantenimiento automáticamente
-            echo json_encode([
+            header('Content-Type: application/json'); echo json_encode([
                 'success' => true,
                 'message' => 'Backup restaurado. Se ha creado un backup del estado anterior en: ' . basename($preRestoreBackup) . '. Verifica el sistema y desactiva el mantenimiento manualmente.',
                 'pre_restore_backup' => basename($preRestoreBackup)
             ]);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['error' => $e->getMessage()]);
         }
     }
 
@@ -273,7 +273,7 @@ class UpdateController
         header('Content-Type: application/json');
         $checks = $this->migrator->verifyIntegrity();
         $allOk  = !in_array(false, array_column($checks, 'ok'));
-        echo json_encode(['success' => true, 'all_ok' => $allOk, 'checks' => $checks]);
+        header('Content-Type: application/json'); echo json_encode(['success' => true, 'all_ok' => $allOk, 'checks' => $checks]);
     }
 
     private function getCurrentVersion(): string

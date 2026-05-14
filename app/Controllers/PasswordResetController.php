@@ -37,6 +37,12 @@ class PasswordResetController
             exit;
         }
 
+        if (\App\Core\Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', 'reset_' . $email, 3)) {
+            \App\Core\AuditLogger::log('RATE_LIMITED', 'ip', null, ['action' => 'password_reset', 'email' => $email]);
+            header('Location: /password/forgot?error=rate_limit');
+            exit;
+        }
+
         $user = $this->userModel->findByEmail($email);
 
         if ($user) {

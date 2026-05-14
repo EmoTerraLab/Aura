@@ -21,7 +21,7 @@ foreach ($steps as $idx => $step) {
 }
 ?>
 
-<div id="protocol-timeline" class="bg-white border-b px-4 md:px-8 py-4 flex items-center justify-between overflow-x-auto no-scrollbar gap-4">
+<div id="protocol-timeline" class="bg-white border-b px-4 md:px-8 py-4 flex flex-nowrap items-center justify-start overflow-x-auto no-scrollbar gap-4 w-full">
     <?php foreach ($steps as $idx => $step): 
         $isActual = ($idx === $activeIndex);
         $isPast = ($idx < $activeIndex && $activeIndex !== -1);

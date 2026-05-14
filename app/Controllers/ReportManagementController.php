@@ -21,7 +21,7 @@ class ReportManagementController {
 
         if (!$report) {
             http_response_code(404);
-            echo json_encode(['error' => 'Reporte no encontrado o no tienes acceso.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Reporte no encontrado o no tienes acceso.']);
             return;
         }
 
@@ -52,7 +52,7 @@ class ReportManagementController {
         }
 
         header('Content-Type: application/json');
-        echo json_encode([
+        header('Content-Type: application/json'); echo json_encode([
             'report' => $report,
             'messages' => $messages,
             'current_user_id' => $currentUserId
@@ -66,7 +66,7 @@ class ReportManagementController {
         $report = $this->reportModel->findByIdWithDetails($id, Auth::id(), Auth::role());
         if (!$report) {
             http_response_code(403);
-            echo json_encode(['error' => 'No tienes permiso para modificar este reporte.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para modificar este reporte.']);
             return;
         }
 
@@ -75,14 +75,14 @@ class ReportManagementController {
         $summary = $data['resolution_summary'] ?? null;
 
         if (!in_array($status, ['new', 'in_progress', 'resolved'])) {
-            echo json_encode(['error' => 'Estado inválido.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Estado inválido.']);
             return;
         }
 
         $this->reportModel->updateStatus($id, $status, $summary);
         AuditLogger::log('REPORT_STATUS_UPDATED', 'report', $id, ['status' => $status]);
 
-        echo json_encode(['success' => true, 'message' => 'Estado actualizado correctamente.']);
+        header('Content-Type: application/json'); echo json_encode(['success' => true, 'message' => 'Estado actualizado correctamente.']);
     }
 
     public function addMessage($id) {
@@ -93,7 +93,7 @@ class ReportManagementController {
         $report = $this->reportModel->findByIdWithDetails($id, Auth::id(), Auth::role());
         if (!$report) {
             http_response_code(403);
-            echo json_encode(['error' => 'No tienes permiso para comentar en este reporte.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para comentar en este reporte.']);
             return;
         }
 
@@ -102,7 +102,7 @@ class ReportManagementController {
         $isInternal = isset($data['is_internal']) ? (bool)$data['is_internal'] : false;
 
         if (empty($message)) {
-            echo json_encode(['error' => 'El mensaje no puede estar vacío.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'El mensaje no puede estar vacío.']);
             return;
         }
 
@@ -146,7 +146,7 @@ class ReportManagementController {
 
         $msg = $this->messageModel->find($messageId);
 
-        echo json_encode([
+        header('Content-Type: application/json'); echo json_encode([
             'id' => $msg['id'],
             'sender_name' => Auth::user()['name'],
             'message' => $msg['message'],

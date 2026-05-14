@@ -46,7 +46,7 @@ class AuthController {
         if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email)) {
             AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
-            echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
+            header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
             return;
         }
         $password = $data['password'] ?? '';
@@ -56,7 +56,7 @@ class AuthController {
         if ($user && $user['role'] !== 'alumno' && password_verify($password, $user['password'])) {
             if (!empty($user['totp_enabled'])) {
                 \App\Core\Session::set('pending_2fa_user_id', $user['id']);
-                echo json_encode([
+                header('Content-Type: application/json'); echo json_encode([
                     'ok' => true,
                     'redirect' => '/auth/2fa/totp'
                 ]);
@@ -65,7 +65,7 @@ class AuthController {
 
             Auth::login($user);
             AuditLogger::log('STAFF_LOGIN_SUCCESS', 'user', $user['id']);
-            echo json_encode([
+            header('Content-Type: application/json'); echo json_encode([
                 'ok' => true,
                 'redirect' => $user['role'] === 'admin' ? '/admin' : '/staff/inbox'
             ]);
@@ -73,7 +73,7 @@ class AuthController {
         }
 
         AuditLogger::log('STAFF_LOGIN_FAILED', 'user', null, ['email' => $email]);
-        echo json_encode(['ok' => false, 'error' => 'Las credenciales proporcionadas no coinciden con nuestros registros.']);
+        header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Las credenciales proporcionadas no coinciden con nuestros registros.']);
     }
 
     public function generateOTP() {
@@ -82,17 +82,17 @@ class AuthController {
         
         if (!is_array($data)) {
             http_response_code(400);
-            echo json_encode(['ok' => false, 'error' => 'Datos inválidos.']);
+            header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Datos inválidos.']);
             return;
         }
 
         $email = $data['email'] ?? '';
         $forceOtp = !empty($data['force_otp']);
         
-        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '')) {
+        if (Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '')) {
             AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
-            echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
+            header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
             return;
         }
 
@@ -103,7 +103,7 @@ class AuthController {
             if ($email === 'alumno@aura.test' && in_array(APP_ENV, ['dev', 'local', 'development'])) {
                 $code = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
                 $this->otpModel->create($user['id'], $code);
-                echo json_encode(['ok' => true, 'dev_code' => $code]);
+                header('Content-Type: application/json'); echo json_encode(['ok' => true, 'dev_code' => $code]);
                 return;
             }
 
@@ -115,7 +115,7 @@ class AuthController {
 
             if ($hasWebAuthn && !$forceOtp && \App\Core\Config::get('2fa_students_method', 'otp_email') === 'webauthn') {
                 \App\Core\Session::set('pending_webauthn_user_id', $user['id']);
-                echo json_encode([
+                header('Content-Type: application/json'); echo json_encode([
                     'ok' => true,
                     'webauthn' => true,
                     'redirect' => '/auth/2fa/webauthn'
@@ -145,7 +145,7 @@ class AuthController {
                     error_log("Error enviando OTP a {$email}: " . $e->getMessage());
                     // En desarrollo permitimos continuar, en prod fallamos si no se puede enviar
                     if (!in_array(APP_ENV, ['dev', 'local', 'development'])) {
-                        echo json_encode(['ok' => false, 'error' => 'No se pudo enviar el correo. Por favor, contacta con soporte.']);
+                        header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'No se pudo enviar el correo. Por favor, contacta con soporte.']);
                         return;
                     }
                 }
@@ -160,11 +160,11 @@ class AuthController {
             if (in_array(APP_ENV, ['dev', 'local', 'development'])) {
                 $response['dev_code'] = $code;
             }
-            echo json_encode($response);
+            header('Content-Type: application/json'); echo json_encode($response);
             return;
         }
 
-        echo json_encode(['ok' => false, 'error' => 'No se encontró un alumno con ese correo.']);
+        header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'No se encontró un alumno con ese correo.']);
     }
 
     public function verifyOTP() {
@@ -173,17 +173,17 @@ class AuthController {
         
         if (!is_array($data)) {
             http_response_code(400);
-            echo json_encode(['ok' => false, 'error' => 'Datos inválidos.']);
+            header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Datos inválidos.']);
             return;
         }
 
         $email = $data['email'] ?? '';
         $code = $data['code'] ?? '';
         
-        if ($this->isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '')) {
+        if (Auth::isRateLimited($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1', $email ?? '')) {
             AuditLogger::log('RATE_LIMITED', 'ip', null, ['email' => $email ?? '']);
             http_response_code(429);
-            echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
+            header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Demasiados intentos. Por favor, espera 15 minutos.']);
             return;
         }
 
@@ -195,7 +195,7 @@ class AuthController {
             if ($validOtp) {
                 $this->otpModel->markAsUsed($validOtp['id']);
                 Auth::login($user);
-                echo json_encode([
+                header('Content-Type: application/json'); echo json_encode([
                     'ok' => true,
                     'redirect' => '/alumno/dashboard'
                 ]);
@@ -203,42 +203,7 @@ class AuthController {
             }
         }
 
-        echo json_encode(['ok' => false, 'error' => 'Código inválido o expirado.']);
-    }
-
-    /**
-     * SEC-013: Implementación de Rate Limiting para prevenir ataques de fuerza bruta.
-     * Utiliza una combinación de IP e identificador (email) para mayor precisión.
-     */
-    private function isRateLimited($ip, $identifier = '') {
-        try {
-            $db = \App\Core\Database::getInstance();
-            
-            // Limpiar entradas expiradas (más de 15 minutos)
-            $db->prepare("DELETE FROM rate_limits WHERE last_attempt < datetime('now', '-15 minutes')")->execute();
-            
-            $stmt = $db->prepare("SELECT attempts FROM rate_limits WHERE ip = :ip");
-            $stmt->execute(['ip' => $ip . '_' . $identifier]);
-            $record = $stmt->fetch();
-            
-            $maxAttempts = 5;
-            
-            if ($record) {
-                if ($record['attempts'] >= $maxAttempts) {
-                    return true;
-                }
-                $stmt = $db->prepare("UPDATE rate_limits SET attempts = attempts + 1, last_attempt = CURRENT_TIMESTAMP WHERE ip = :ip");
-                $stmt->execute(['ip' => $ip . '_' . $identifier]);
-            } else {
-                $stmt = $db->prepare("INSERT OR IGNORE INTO rate_limits (ip, attempts, last_attempt) VALUES (:ip, 1, CURRENT_TIMESTAMP)");
-                $stmt->execute(['ip' => $ip . '_' . $identifier]);
-            }
-        } catch (\Throwable $e) {
-            // En caso de error en el rate limit (ej. DB bloqueada), permitimos el paso por seguridad de acceso
-            error_log("Error en isRateLimited: " . $e->getMessage());
-        }
-        
-        return false;
+        header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => 'Código inválido o expirado.']);
     }
 
     public function logout() {
@@ -259,3 +224,4 @@ class AuthController {
         exit;
     }
 }
+

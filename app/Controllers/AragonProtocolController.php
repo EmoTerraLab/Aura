@@ -24,7 +24,7 @@ class AragonProtocolController
             if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
                 http_response_code(403);
                 header('Content-Type: application/json');
-                echo json_encode(['error' => 'El protocolo de Aragón no está habilitado en este centro']);
+                header('Content-Type: application/json'); echo json_encode(['error' => 'El protocolo de Aragón no está habilitado en este centro']);
             } else {
                 http_response_code(403);
                 echo 'El protocolo de Aragón no está habilitado en este centro';
@@ -34,6 +34,20 @@ class AragonProtocolController
         $this->reportModel = new Report();
         $this->caseModel = new AragonProtocolCase();
         $this->annexModel = new AragonAnnex();
+    }
+
+    private function verifyAccess(int $caseId): bool
+    {
+        $case = $this->caseModel->find($caseId);
+        if (!$case) return false;
+        
+        $reportModel = new \App\Models\Report();
+        $report = $reportModel->findByIdWithDetails($case['report_id'], \App\Core\Auth::id(), \App\Core\Auth::role());
+        
+        // Prevent alumnos from accessing cases entirely
+        if (\App\Core\Auth::role() === 'alumno') return false;
+        
+        return $report !== false && $report !== null;
     }
 
     public function createAnexo1a(): void
@@ -85,6 +99,13 @@ class AragonProtocolController
 
     public function showCaseByReport(int $reportId): void
     {
+        $reportModel = new \App\Models\Report();
+        $report = $reportModel->findByIdWithDetails($reportId, \App\Core\Auth::id(), \App\Core\Auth::role());
+        if (!$report || \App\Core\Auth::role() === 'alumno') {
+            http_response_code(403);
+            echo "No tienes permiso.";
+            return;
+        }
         $case = $this->caseModel->findByReport($reportId);
         if (!$case) {
             // Si no existe el caso, lo creamos (Anexo I-a ya existe si llegamos aquí normalmente)
@@ -98,6 +119,15 @@ class AragonProtocolController
 
     public function showCase(int $id): void
     {
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         $case = $this->caseModel->find($id);
         if (!$case) {
             http_response_code(404);
@@ -114,8 +144,17 @@ class AragonProtocolController
     public function processDecision(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
-        if (Auth::role() !== 'admin') { echo json_encode(['success' => false, 'error' => 'Solo Dirección puede decidir.']); return; }
+        if (Auth::role() !== 'admin') { header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Solo Dirección puede decidir.']); return; }
         $db = Database::getInstance();
         try {
             $db->beginTransaction();
@@ -131,16 +170,25 @@ class AragonProtocolController
             $stateService->transitionByReportId((int)$case['report_id'], $newStatus);
             
             $db->commit();
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             $db->rollBack();
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function constituteTeam(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
         $db = Database::getInstance();
         try {
@@ -152,16 +200,25 @@ class AragonProtocolController
             $stateService->transitionByReportId($case['report_id'], AragonProtocolCase::STATE_EN_VALORACION);
             
             $db->commit();
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             $db->rollBack();
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function addInterview(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
         $db = Database::getInstance();
         try {
@@ -180,13 +237,22 @@ class AragonProtocolController
             } else {
                 $this->annexModel->createAnnex($id, 'V', $interviews, Auth::id());
             }
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) { echo json_encode(['success' => false, 'error' => $e->getMessage()]); }
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
+        } catch (\Exception $e) { header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]); }
     }
 
     public function saveIndicators(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
         try {
             $indicators = $_POST['indicators'] ?? [];
@@ -200,15 +266,24 @@ class AragonProtocolController
             } else {
                 $this->annexModel->createAnnex($id, 'VI', $indicators, Auth::id());
             }
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) { echo json_encode(['success' => false, 'error' => $e->getMessage()]); }
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
+        } catch (\Exception $e) { header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]); }
     }
 
     public function processResolution(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
-        if (Auth::role() !== 'admin') { echo json_encode(['success' => false, 'error' => 'Permiso denegado.']); return; }
+        if (Auth::role() !== 'admin') { header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Permiso denegado.']); return; }
         $db = Database::getInstance();
         try {
             $db->beginTransaction();
@@ -224,30 +299,48 @@ class AragonProtocolController
             $stateService->transitionByReportId((int)$case['report_id'], AragonProtocolCase::STATE_VALORADO);
             
             $db->commit();
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             $db->rollBack();
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function startFollowUp(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
         try {
             $case = $this->caseModel->find($id);
             $stateService = new \App\Services\ProtocolStateService();
             $success = $stateService->transitionByReportId((int)$case['report_id'], AragonProtocolCase::STATE_EN_SEGUIMIENTO);
-            echo json_encode(['success' => $success]);
+            header('Content-Type: application/json'); echo json_encode(['success' => $success]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function addFollowUp(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
         $db = Database::getInstance();
         try {
@@ -266,15 +359,24 @@ class AragonProtocolController
                 $upd = $db->prepare("UPDATE aragon_protocol_annexes SET content = ? WHERE id = ?");
                 $upd->execute([json_encode($history, JSON_UNESCAPED_UNICODE), $annex['id']]);
             } else { $this->annexModel->createAnnex($id, 'IX', $history, Auth::id()); }
-            echo json_encode(['success' => true]);
-        } catch (\Exception $e) { echo json_encode(['success' => false, 'error' => $e->getMessage()]); }
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
+        } catch (\Exception $e) { header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]); }
     }
 
     public function closeCase(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         header('Content-Type: application/json');
-        if (Auth::role() !== 'admin') { echo json_encode(['success' => false, 'error' => 'Solo Dirección.']); return; }
+        if (Auth::role() !== 'admin') { header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Solo Dirección.']); return; }
         $db = Database::getInstance();
         try {
             $db->beginTransaction();
@@ -286,15 +388,24 @@ class AragonProtocolController
             $stateService->transitionByReportId($case['report_id'], AragonProtocolCase::STATE_CERRADO);
             
             $db->commit();
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             $db->rollBack();
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
     public function exportAnnex(int $id, string $type): void
     {
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            return;
+        }
         $case = $this->caseModel->find($id);
         if (!$case) {
             http_response_code(404);

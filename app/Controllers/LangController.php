@@ -32,7 +32,7 @@ class LangController
 
         if (!$lang || !Lang::isSupported($lang)) {
             http_response_code(400);
-            echo json_encode(['error' => 'Idioma no soportado']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Idioma no soportado']);
             return;
         }
 
@@ -47,7 +47,7 @@ class LangController
         // Responder según el tipo de petición
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
             header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'lang' => $lang]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true, 'lang' => $lang]);
         } else {
             $redirect = $_SERVER['HTTP_REFERER'] ?? '/';
             // SEC-002 FIX: Prevenir open redirect

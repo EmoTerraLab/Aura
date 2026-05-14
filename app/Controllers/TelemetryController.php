@@ -36,10 +36,10 @@ class TelemetryController {
                 'timestamp' => time()
             ];
 
-            echo json_encode($stats, JSON_PRETTY_PRINT);
+            header('Content-Type: application/json'); echo json_encode($stats, JSON_PRETTY_PRINT);
         } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode([
+            header('Content-Type: application/json'); echo json_encode([
                 'ok' => false,
                 'error' => 'No se pudieron recopilar las métricas.',
                 'message' => $e->getMessage()

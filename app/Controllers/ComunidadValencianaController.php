@@ -46,6 +46,12 @@ class ComunidadValencianaController
         
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
         
+        if (!$report || Auth::role() === 'alumno') {
+            http_response_code(403);
+            echo "No tienes permiso para acceder a este expediente.";
+            exit;
+        }
+        
         $db = Database::getInstance();
         $staff = $db->query("SELECT id, name, role FROM users WHERE role != 'alumno' ORDER BY name ASC")->fetchAll();
         

@@ -63,7 +63,7 @@ class ProtocolWorkflowController
             if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
                 http_response_code(403);
                 header('Content-Type: application/json');
-                echo json_encode(['error' => 'El módulo restaurativo no está habilitado para su región.']);
+                header('Content-Type: application/json'); echo json_encode(['error' => 'El módulo restaurativo no está habilitado para su región.']);
             } else {
                 http_response_code(403);
                 echo 'El módulo restaurativo no está habilitado para su región.';
@@ -76,7 +76,7 @@ class ProtocolWorkflowController
     {
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'error' => 'Funcionalidad de equipo no disponible en esta versión.']);
+        header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Funcionalidad de equipo no disponible en esta versión.']);
     }
 
     public function getRevaSummary(int $id): void
@@ -85,16 +85,16 @@ class ProtocolWorkflowController
         header('Content-Type: application/json');
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $case = $this->caseModel->find($id);
         if (!$case) {
-            echo json_encode(['success' => false, 'error' => 'Case not found']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Case not found']);
             return;
         }
         $report = $this->reportModel->findByIdWithDetails($case['report_id'], Auth::id(), Auth::role());
-        echo json_encode(['success' => true, 'summary' => $this->revaService->generateSummary($case, $report)]);
+        header('Content-Type: application/json'); echo json_encode(['success' => true, 'summary' => $this->revaService->generateSummary($case, $report)]);
     }
 
     public function addFollowup($id): void
@@ -104,7 +104,7 @@ class ProtocolWorkflowController
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $id = (int)$id;
@@ -122,7 +122,7 @@ class ProtocolWorkflowController
             $case = $this->caseModel->find($id);
             $this->logAction($case['report_id'], "Nou seguiment registrat: " . strtoupper($data['target_type']));
         }
-        echo json_encode(['success' => $success]);
+        header('Content-Type: application/json'); echo json_encode(['success' => $success]);
     }
 
     public function uploadEvidence($id): void
@@ -132,13 +132,13 @@ class ProtocolWorkflowController
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $id = (int)$id;
         
         if (!isset($_FILES['evidence'])) {
-            echo json_encode(['success' => false, 'error' => 'No se recibió archivo.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'No se recibió archivo.']);
             return;
         }
 
@@ -153,7 +153,7 @@ class ProtocolWorkflowController
                 UPLOAD_ERR_NO_FILE => 'No se subió ningún archivo.',
                 default => 'Error desconocido en la subida.'
             };
-            echo json_encode(['success' => false, 'error' => $errorMsg]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $errorMsg]);
             return;
         }
 
@@ -161,13 +161,13 @@ class ProtocolWorkflowController
         
         $allowed = ['jpg', 'jpeg', 'png', 'pdf', 'docx'];
         if (!in_array($ext, $allowed)) {
-            echo json_encode(['success' => false, 'error' => 'Extensión no permitida.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Extensión no permitida.']);
             return;
         }
 
         // Límite de tamaño: 10 MB - Validar ANTES de procesar
         if ($file['size'] > 10 * 1024 * 1024) {
-            echo json_encode(['success' => false, 'error' => 'El archivo excede el límite de 10 MB.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'El archivo excede el límite de 10 MB.']);
             return;
         }
 
@@ -182,7 +182,7 @@ class ProtocolWorkflowController
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $realMime = $finfo->file($file['tmp_name']);
         if (!in_array($realMime, $allowedMimes, true)) {
-            echo json_encode(['success' => false, 'error' => 'El contenido del archivo no coincide con su extensión o no está permitido.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'El contenido del archivo no coincide con su extensión o no está permitido.']);
             return;
         }
 
@@ -194,9 +194,9 @@ class ProtocolWorkflowController
             $stmt = $db->prepare("INSERT INTO protocol_evidence (protocol_case_id, filename, original_name, mime_type, uploaded_by) VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([$id, $newName, $file['name'], $file['type'], Auth::id()]);
             $this->logAction($id, "Nova evidència pujada en custòdia: " . $file['name']);
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } else {
-            echo json_encode(['success' => false, 'error' => 'Error moviendo el archivo.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Error moviendo el archivo.']);
         }
     }
 
@@ -272,12 +272,12 @@ class ProtocolWorkflowController
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $map = $this->mapModel->findByCase($id);
         if ($map) $map['mesures_urgencia'] = json_decode($map['mesures_urgencia'] ?? '[]', true);
-        echo json_encode(['success' => true, 'map' => $map]);
+        header('Content-Type: application/json'); echo json_encode(['success' => true, 'map' => $map]);
     }
 
     public function saveSecurityMapFull($id): void
@@ -287,7 +287,7 @@ class ProtocolWorkflowController
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $id = (int)$id;
@@ -300,7 +300,7 @@ class ProtocolWorkflowController
             $case = $this->caseModel->find($id);
             $this->logAction($case['report_id'], "Mapa de Seguretat actualitzat.");
         }
-        echo json_encode(['success' => $success]);
+        header('Content-Type: application/json'); echo json_encode(['success' => $success]);
     }
 
     public function updateComms($id): void
@@ -310,7 +310,7 @@ class ProtocolWorkflowController
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $id = (int)$id;
@@ -321,7 +321,7 @@ class ProtocolWorkflowController
         if ($success) {
             $this->logAction($case['report_id'], "Actualització de comunicacions oficials.");
         }
-        echo json_encode(['success' => $success]);
+        header('Content-Type: application/json'); echo json_encode(['success' => $success]);
     }
 
     public function updateClosure($id): void
@@ -331,7 +331,7 @@ class ProtocolWorkflowController
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $id = (int)$id;
@@ -342,7 +342,7 @@ class ProtocolWorkflowController
         if ($success) {
             $this->logAction($case['report_id'], "Checklist de tancament actualitzat.");
         }
-        echo json_encode(['success' => $success]);
+        header('Content-Type: application/json'); echo json_encode(['success' => $success]);
     }
 
     public function saveAcknowledgment(int $id): void
@@ -352,7 +352,7 @@ class ProtocolWorkflowController
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $data = json_decode(file_get_contents('php://input'), true);
@@ -364,7 +364,7 @@ class ProtocolWorkflowController
             $msg = ($ack === 1) ? "L'alumne RECONEIX els fets." : "L'alumne NO reconeix els fets.";
             $this->logAction($case['report_id'], $msg);
         }
-        echo json_encode(['success' => $success]);
+        header('Content-Type: application/json'); echo json_encode(['success' => $success]);
     }
 
     public function getRestorativeData(int $id): void
@@ -373,13 +373,13 @@ class ProtocolWorkflowController
         header('Content-Type: application/json');
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $case = $this->caseModel->find($id);
         $practices = $this->restorativeModel->findByCase($id);
         
-        echo json_encode([
+        header('Content-Type: application/json'); echo json_encode([
             'success' => true, 
             'acknowledged' => $case['aggressor_acknowledges_facts'] ?? null,
             'practices' => $practices
@@ -394,7 +394,7 @@ class ProtocolWorkflowController
         $id = (int)$id;
         if (!$this->verifyAccess($id)) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $data = json_decode(file_get_contents('php://input'), true);
@@ -414,7 +414,7 @@ class ProtocolWorkflowController
             $case = $this->caseModel->find($id);
             $this->logAction($case['report_id'], "Nova pràctica restaurativa programada: " . strtoupper($data['practice_type']));
         }
-        echo json_encode(['success' => (bool)$newId]);
+        header('Content-Type: application/json'); echo json_encode(['success' => (bool)$newId]);
     }
 
     public function updatePracticeStatus(int $id): void
@@ -427,12 +427,12 @@ class ProtocolWorkflowController
         $practice = $this->restorativeModel->find($id);
         if (!$practice || !$this->verifyAccess($practice['protocol_case_id'])) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;
         }
         $data = json_decode(file_get_contents('php://input'), true);
         $success = $this->restorativeModel->updateStatus((int)$id, $data['status']);
-        echo json_encode(['success' => $success]);
+        header('Content-Type: application/json'); echo json_encode(['success' => $success]);
     }
 
     private function logAction(int $reportId, string $message): void

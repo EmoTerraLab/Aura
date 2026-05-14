@@ -68,7 +68,7 @@ class SociometricController
 
         if (!$surveyId || !isset($data['positive'])) {
             http_response_code(400);
-            echo json_encode(['error' => 'Datos inválidos']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Datos inválidos']);
             return;
         }
 
@@ -76,16 +76,16 @@ class SociometricController
         $stmt = $this->db->prepare("SELECT id FROM sociometric_responses WHERE survey_id = ? AND student_id = ? LIMIT 1");
         $stmt->execute([$surveyId, $userId]);
         if ($stmt->fetch()) {
-            echo json_encode(['success' => false, 'error' => 'Ya has participado en esta dinámica.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Ya has participado en esta dinámica.']);
             return;
         }
 
         $success = $this->sociometricService->processResponses($surveyId, $userId, $data);
         if ($success) {
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } else {
             http_response_code(500);
-            echo json_encode(['error' => 'Error al guardar los datos']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Error al guardar los datos']);
         }
     }
     /**

@@ -37,7 +37,7 @@ class AdminController {
 
     public function getUsers() {
         header('Content-Type: application/json');
-        echo json_encode(['data' => $this->userModel->allWithProfiles()]);
+        header('Content-Type: application/json'); echo json_encode(['data' => $this->userModel->allWithProfiles()]);
     }
 
     public function storeUser() {
@@ -46,7 +46,7 @@ class AdminController {
         
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data['name']) || empty($data['email']) || empty($data['role'])) {
-            echo json_encode(['error' => 'Faltan datos obligatorios.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Faltan datos obligatorios.']);
             return;
         }
 
@@ -78,9 +78,9 @@ class AdminController {
                 error_log("Error enviando email de bienvenida a {$data['email']}: " . $e->getMessage());
             }
 
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['error' => 'El email ya existe o hubo un error.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'El email ya existe o hubo un error.']);
         }
     }
 
@@ -207,7 +207,7 @@ class AdminController {
         
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data['name']) || empty($data['email']) || empty($data['role'])) {
-            echo json_encode(['error' => 'Faltan datos obligatorios.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Faltan datos obligatorios.']);
             return;
         }
 
@@ -230,9 +230,9 @@ class AdminController {
                 ]);
             }
 
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['error' => 'El email ya existe o hubo un error.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'El email ya existe o hubo un error.']);
         }
     }
 
@@ -241,15 +241,15 @@ class AdminController {
         header('Content-Type: application/json');
 
         if ((int)$id === (int)Auth::id()) {
-            echo json_encode(['error' => 'No puedes eliminarte a ti mismo.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'No puedes eliminarte a ti mismo.']);
             return;
         }
 
         try {
             $this->userModel->delete($id);
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['error' => 'Error al eliminar usuario. Puede que tenga dependencias (ej. aulas asignadas).']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Error al eliminar usuario. Puede que tenga dependencias (ej. aulas asignadas).']);
         }
     }
 
@@ -257,7 +257,7 @@ class AdminController {
 
     public function getClassrooms() {
         header('Content-Type: application/json');
-        echo json_encode(['data' => $this->classroomModel->allWithTutors()]);
+        header('Content-Type: application/json'); echo json_encode(['data' => $this->classroomModel->allWithTutors()]);
     }
 
     public function storeClassroom() {
@@ -266,15 +266,15 @@ class AdminController {
         
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data['name'])) {
-            echo json_encode(['error' => 'El nombre del aula es obligatorio.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'El nombre del aula es obligatorio.']);
             return;
         }
 
         try {
             $this->classroomModel->create($data);
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['error' => 'Hubo un error al crear el aula.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Hubo un error al crear el aula.']);
         }
     }
 
@@ -284,15 +284,15 @@ class AdminController {
         
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data['name'])) {
-            echo json_encode(['error' => 'El nombre del aula es obligatorio.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'El nombre del aula es obligatorio.']);
             return;
         }
 
         try {
             $this->classroomModel->update($id, $data);
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['error' => 'Hubo un error al actualizar el aula.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Hubo un error al actualizar el aula.']);
         }
     }
 
@@ -302,9 +302,9 @@ class AdminController {
 
         try {
             $this->classroomModel->delete($id);
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['error' => 'Error al eliminar aula. Puede que tenga dependencias.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Error al eliminar aula. Puede que tenga dependencias.']);
         }
     }
 
@@ -312,7 +312,7 @@ class AdminController {
 
     public function getSettings() {
         header('Content-Type: application/json');
-        echo json_encode([
+        header('Content-Type: application/json'); echo json_encode([
             'default_lang' => $this->settingModel->get('default_lang') ?? 'es'
         ]);
     }
@@ -326,9 +326,9 @@ class AdminController {
 
         if (\App\Core\Lang::isSupported($lang)) {
             $this->settingModel->set('default_lang', $lang);
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } else {
-            echo json_encode(['error' => 'Idioma no soportado.']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Idioma no soportado.']);
         }
     }
 }

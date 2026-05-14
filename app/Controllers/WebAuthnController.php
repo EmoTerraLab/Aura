@@ -94,7 +94,7 @@ class WebAuthnController
                 }
             }
 
-            echo json_encode($options);
+            header('Content-Type: application/json'); echo json_encode($options);
         } catch (\Exception $e) {
             $this->sendError($e->getMessage());
         }
@@ -134,7 +134,7 @@ class WebAuthnController
             ]);
 
             Session::delete('webauthn_challenge');
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             $this->sendError($e->getMessage());
         }
@@ -173,7 +173,7 @@ class WebAuthnController
                 }
             }
 
-            echo json_encode($getArgs);
+            header('Content-Type: application/json'); echo json_encode($getArgs);
         } catch (\Exception $e) {
             $this->sendError($e->getMessage());
         }
@@ -230,7 +230,7 @@ class WebAuthnController
             Session::delete('pending_webauthn_user_id');
             Session::delete('webauthn_challenge');
             
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
             $this->sendError($e->getMessage());
         }
@@ -293,7 +293,7 @@ class WebAuthnController
         if (!headers_sent()) {
             header('Content-Type: application/json');
         }
-        echo json_encode(['error' => $message]);
+        header('Content-Type: application/json'); echo json_encode(['error' => $message]);
         exit;
     }
 }

@@ -46,7 +46,7 @@ class ProtocolController
             // SEC-012: IDOR Protection
             if (!$this->verifyAccess($report_id)) {
                 http_response_code(403);
-                echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+                header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
                 exit;
             }
 
@@ -145,7 +145,7 @@ class ProtocolController
             }
             error_log("Error en getCaseData: " . $e->getMessage());
             if (!headers_sent()) http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
             exit;
         }
     }
@@ -158,20 +158,20 @@ class ProtocolController
         $case = (new \App\Models\ProtocolCase())->find($id);
         if (!$case || !$this->verifyAccess($case['report_id'])) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado.']);
             return;
         }
         if (!\App\Core\Auth::hasRole(['orientador', 'direccion', 'admin']) && !\App\Core\Auth::isCocobe()) {
-            echo json_encode(['success' => false, 'error' => 'Permiso denegado.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Permiso denegado.']);
             return;
         }
 
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $success = $this->stateService->transitionTo((int)$id, $data['phase'] ?? '');
-            echo json_encode(['success' => $success]);
+            header('Content-Type: application/json'); echo json_encode(['success' => $success]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 
@@ -183,15 +183,15 @@ class ProtocolController
         $case = (new \App\Models\ProtocolCase())->find($id);
         if (!$case || !$this->verifyAccess($case['report_id'])) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Acceso denegado.']);
             return;
         }
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $success = $this->stateService->classify((int)$id, $data['severity'] ?? '', $data['classification'] ?? '');
-            echo json_encode(['success' => $success]);
+            header('Content-Type: application/json'); echo json_encode(['success' => $success]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 }

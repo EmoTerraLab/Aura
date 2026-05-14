@@ -56,11 +56,11 @@ class BullyingProtocolController
         $protocol = $this->protocolDataService->getCurrentProtocol();
         
         if (!$protocol) {
-            echo json_encode(['error' => 'not_configured']);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'not_configured']);
             return;
         }
         
-        echo json_encode($protocol);
+        header('Content-Type: application/json'); echo json_encode($protocol);
     }
 
     /**
@@ -72,17 +72,17 @@ class BullyingProtocolController
         $code = $_GET['code'] ?? '';
         
         if (empty($code)) {
-            echo json_encode(['success' => false, 'error' => 'No code provided']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'No code provided']);
             return;
         }
 
         $protocol = \App\Data\BullyingProtocols::getByCode($code);
         
         if (!$protocol) {
-            echo json_encode(['success' => false, 'error' => 'Protocol not found']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'error' => 'Protocol not found']);
             return;
         }
 
-        echo json_encode(['success' => true, 'protocol' => $protocol]);
+        header('Content-Type: application/json'); echo json_encode(['success' => true, 'protocol' => $protocol]);
     }
 }

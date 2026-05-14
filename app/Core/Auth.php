@@ -74,4 +74,36 @@ class Auth {
         }
         return $userRole === $roles;
     }
+
+    /**
+     * Comprueba si una IP/identificador ha superado el límite de intentos (Rate Limiting)
+     */
+    public static function isRateLimited(string $ip, string $identifier = '', int $maxAttempts = 5): bool {
+        try {
+            $db = \App\Core\Database::getInstance();
+            
+            // Limpiar entradas expiradas (más de 15 minutos)
+            $db->prepare("DELETE FROM rate_limits WHERE last_attempt < datetime('now', '-15 minutes')")->execute();
+            
+            $key = $ip . '_' . $identifier;
+            $stmt = $db->prepare("SELECT attempts FROM rate_limits WHERE ip = :ip");
+            $stmt->execute(['ip' => $key]);
+            $record = $stmt->fetch();
+            
+            if ($record) {
+                if ($record['attempts'] >= $maxAttempts) {
+                    return true;
+                }
+                $stmt = $db->prepare("UPDATE rate_limits SET attempts = attempts + 1, last_attempt = CURRENT_TIMESTAMP WHERE ip = :ip");
+                $stmt->execute(['ip' => $key]);
+            } else {
+                $stmt = $db->prepare("INSERT OR IGNORE INTO rate_limits (ip, attempts, last_attempt) VALUES (:ip, 1, CURRENT_TIMESTAMP)");
+                $stmt->execute(['ip' => $key]);
+            }
+        } catch (\Throwable $e) {
+            error_log("Error en Auth::isRateLimited: " . $e->getMessage());
+        }
+        
+        return false;
+    }
 }

@@ -27,7 +27,7 @@ class GaliciaProtocolController
             if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
                 http_response_code(403);
                 header('Content-Type: application/json');
-                echo json_encode(['error' => 'O protocolo de Galicia non está habilitado neste centro']);
+                header('Content-Type: application/json'); echo json_encode(['error' => 'O protocolo de Galicia non está habilitado neste centro']);
             } else {
                 http_response_code(403);
                 echo 'O protocolo de Galicia non está habilitado neste centro';
@@ -39,12 +39,35 @@ class GaliciaProtocolController
         $this->annexModel = new GaliciaAnnex();
     }
 
+    private function verifyAccess(int $caseId): bool
+    {
+        $case = $this->caseModel->find($caseId);
+        if (!$case) return false;
+        
+        $reportModel = new \App\Models\Report();
+        $report = $reportModel->findByIdWithDetails($case['report_id'], \App\Core\Auth::id(), \App\Core\Auth::role());
+        
+        // Prevent alumnos from accessing cases entirely
+        if (\App\Core\Auth::role() === 'alumno') return false;
+        
+        return $report !== false && $report !== null;
+    }
+
     // ─────────────────────────────────────────────────
     // Visualización del caso
     // ─────────────────────────────────────────────────
 
     public function showCase(int $id): void
     {
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         $case = $this->caseModel->find($id);
         if (!$case) {
             $case = $this->caseModel->findByReportId($id);
@@ -98,11 +121,20 @@ class GaliciaProtocolController
     public function storeAnnex(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $annexType = $_POST['annex_type'] ?? '';
             if (empty($annexType) || !preg_match('/^anexo_\d{1,2}$/', $annexType)) {
-                echo json_encode(['success' => false, 'message' => 'Tipo de anexo non válido.']);
+                header('Content-Type: application/json'); echo json_encode(['success' => false, 'message' => 'Tipo de anexo non válido.']);
                 return;
             }
 
@@ -111,9 +143,9 @@ class GaliciaProtocolController
             unset($content['csrf_token'], $content['annex_type']);
 
             $this->annexModel->createAnnex($id, $annexType, $content, Auth::id());
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -124,6 +156,15 @@ class GaliciaProtocolController
     public function storeMedidasUrxentes(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $measures = $_POST['measures'] ?? [];
@@ -137,9 +178,9 @@ class GaliciaProtocolController
                 'date'                 => date('Y-m-d H:i:s')
             ], Auth::id());
 
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -150,6 +191,15 @@ class GaliciaProtocolController
     public function storeCiberacoso(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $platforms     = $_POST['platforms'] ?? [];
@@ -167,9 +217,9 @@ class GaliciaProtocolController
                 'date'            => date('Y-m-d H:i:s')
             ], Auth::id());
 
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -180,23 +230,32 @@ class GaliciaProtocolController
     public function transitionState(int $id): void
     {
         Csrf::validateRequest();
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         header('Content-Type: application/json');
 
         if (!Auth::hasRole(['orientador', 'direccion', 'admin'])) {
-            echo json_encode(['success' => false, 'message' => 'Permiso denegado.']);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'message' => 'Permiso denegado.']);
             return;
         }
 
         try {
             $newPhase = $_POST['new_phase'] ?? '';
             if (empty($newPhase)) {
-                echo json_encode(['success' => false, 'message' => 'Fase destino non especificada.']);
+                header('Content-Type: application/json'); echo json_encode(['success' => false, 'message' => 'Fase destino non especificada.']);
                 return;
             }
 
             $galiciaCase = $this->caseModel->find($id);
             if (!$galiciaCase) {
-                echo json_encode(['success' => false, 'message' => 'Caso non atopado.']);
+                header('Content-Type: application/json'); echo json_encode(['success' => false, 'message' => 'Caso non atopado.']);
                 return;
             }
 
@@ -204,9 +263,9 @@ class GaliciaProtocolController
             $stateService = new ProtocolStateService();
             $stateService->transitionByReportId($galiciaCase['report_id'], $newPhase);
 
-            echo json_encode(['success' => true]);
+            header('Content-Type: application/json'); echo json_encode(['success' => true]);
         } catch (\Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            header('Content-Type: application/json'); echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -216,6 +275,15 @@ class GaliciaProtocolController
 
     public function exportAnnex(int $id, string $type): void
     {
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Content-Type: application/json'); echo json_encode(['error' => 'No tienes permiso para acceder a este expediente.']);
+            } else {
+                echo "No tienes permiso para acceder a este expediente.";
+            }
+            exit;
+        }
         $case = $this->caseModel->find($id);
         if (!$case) {
             http_response_code(404);
@@ -251,7 +319,7 @@ class GaliciaProtocolController
         if (!file_exists($fullPath)) {
             // Fallback: render genérico JSON
             header('Content-Type: application/json');
-            echo json_encode(['case' => $case, 'annex' => $annex, 'content' => $content], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+            header('Content-Type: application/json'); echo json_encode(['case' => $case, 'annex' => $annex, 'content' => $content], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
             return;
         }
 
