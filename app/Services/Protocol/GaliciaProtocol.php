@@ -75,5 +75,19 @@ class GaliciaProtocol implements ProtocolInterface {
 
     public function getDocuments(): array { return []; }
     public function getExclusiveTools(): array { return []; }
-    public function canTransition(string $fromState, string $toState, array $case): bool|string { return true; }
+    public function canTransition(string $fromState, string $toState, array $case): bool|string {
+        $allowed = $this->getValidTransitions($fromState);
+        if (!in_array($toState, $allowed)) {
+            return "Transición non permitida en Galicia: non se pode pasar de '$fromState' a '$toState'.";
+        }
+        return true;
+    }
+
+    public function syncState(int $reportId, string $state): void {
+        $db = \App\Core\Database::getInstance();
+        $db->prepare("INSERT OR IGNORE INTO galicia_protocol_cases (report_id, status) VALUES (?, ?)")
+           ->execute([$reportId, $state]);
+        $db->prepare("UPDATE galicia_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
+           ->execute([$state, $reportId]);
+    }
 }

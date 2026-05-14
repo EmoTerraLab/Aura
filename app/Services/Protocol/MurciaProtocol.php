@@ -127,9 +127,17 @@ class MurciaProtocol implements ProtocolInterface {
 
     public function canTransition(string $fromState, string $toState, array $case): bool|string {
         $allowed = $this->getValidTransitions($fromState);
-        if (!in_array($toState, $allowed) && $toState !== 'tancament') {
+        if (!in_array($toState, $allowed)) {
             return "Transició no permesa: de '$fromState' a '$toState' en el protocol de Murcia.";
         }
         return true;
+    }
+
+    public function syncState(int $reportId, string $state): void {
+        $db = \App\Core\Database::getInstance();
+        $db->prepare("INSERT OR IGNORE INTO murcia_protocol_cases (report_id, status) VALUES (?, ?)")
+           ->execute([$reportId, $state]);
+        $db->prepare("UPDATE murcia_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
+           ->execute([$state, $reportId]);
     }
 }

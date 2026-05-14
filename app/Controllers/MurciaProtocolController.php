@@ -184,7 +184,7 @@ class MurciaProtocolController
             // Usar el servicio de estado para asegurar sincronización con la tabla general
             $murciaCase = $this->caseModel->find($id);
             $stateService = new \App\Services\ProtocolStateService();
-            $stateService->transitionTo($murciaCase['report_id'], ProtocolCase::PHASE_MUR_CIERRE);
+            $stateService->transitionByReportId($murciaCase['report_id'], ProtocolCase::PHASE_MUR_CIERRE);
             
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {

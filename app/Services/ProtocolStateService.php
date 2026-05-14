@@ -18,12 +18,24 @@ class ProtocolStateService
     }
 
     /**
+     * Gestiona la transició de fase mitjançant el mòdul de CCAA usando el reportId.
+     * Esta es la forma recomendada para evitar colisiones de IDs entre tablas.
+     */
+    public function transitionByReportId(int $reportId, string $newPhase): bool
+    {
+        $case = $this->caseModel->findByReport($reportId);
+        if (!$case) {
+            throw new \Exception("Expediente de protocolo no encontrado para la alerta #$reportId.");
+        }
+        return $this->performTransition($case, $newPhase);
+    }
+
+    /**
      * Gestiona la transició de fase mitjançant el mòdul de CCAA.
-     * Soporta tanto caseId (id de protocol_cases) como reportId para mayor robustez.
+     * @deprecated Usar transitionByReportId siempre que sea posible.
      */
     public function transitionTo(int $id, string $newPhase): bool
     {
-        // Intentar encontrar por ID de caso primero, luego por report_id
         $case = $this->caseModel->find($id);
         if (!$case) {
             $case = $this->caseModel->findByReport($id);
@@ -33,6 +45,11 @@ class ProtocolStateService
             throw new \Exception("Expediente de protocolo no encontrado (ID: $id).");
         }
 
+        return $this->performTransition($case, $newPhase);
+    }
+
+    private function performTransition(array $case, string $newPhase): bool
+    {
         $caseId = $case['id'];
         $reportId = $case['report_id'];
         $oldPhase = $case['current_phase'];
@@ -48,18 +65,8 @@ class ProtocolStateService
         $success = $this->caseModel->updatePhase($caseId, $newPhase);
 
         if ($success) {
-            // Sincronización con tablas específicas de CCAA
-            $db = \App\Core\Database::getInstance();
-            if ($ccaa === 'MUR') {
-                $db->prepare("UPDATE murcia_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
-                   ->execute([$newPhase, $reportId]);
-            } elseif ($ccaa === 'ARA') {
-                $db->prepare("UPDATE aragon_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
-                   ->execute([$newPhase, $reportId]);
-            } elseif ($ccaa === 'GAL') {
-                $db->prepare("UPDATE galicia_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
-                   ->execute([$newPhase, $reportId]);
-            }
+            // Sincronización con tablas específicas de CCAA delegada a la estrategia
+            $protocol->syncState($reportId, $newPhase);
 
             $this->logInternalAudit($reportId, "Canvi de fase legal: de " . strtoupper($oldPhase) . " a " . strtoupper($newPhase));
         }
@@ -96,18 +103,8 @@ class ProtocolStateService
         if ($case) {
             $this->logInternalAudit($reportId, "Protocol de $ccaa activat. Fase inicial: $initialPhase.");
 
-            // Crear entradas en tablas específicas de CCAA si es necesario
-            $db = \App\Core\Database::getInstance();
-            if ($ccaa === 'MUR') {
-                $db->prepare("INSERT OR IGNORE INTO murcia_protocol_cases (report_id, status) VALUES (?, ?)")
-                   ->execute([$reportId, $initialPhase]);
-            } elseif ($ccaa === 'ARA') {
-                $db->prepare("INSERT OR IGNORE INTO aragon_protocol_cases (report_id, status) VALUES (?, ?)")
-                   ->execute([$reportId, $initialPhase]);
-            } elseif ($ccaa === 'GAL') {
-                $db->prepare("INSERT OR IGNORE INTO galicia_protocol_cases (report_id, status) VALUES (?, ?)")
-                   ->execute([$reportId, $initialPhase]);
-            }
+            // Sincronización con tablas específicas de CCAA delegada a la estrategia
+            $protocol->syncState($reportId, $initialPhase);
         }
         return $case;
     }

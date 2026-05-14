@@ -149,7 +149,7 @@ class AragonProtocolController
             
             $case = $this->caseModel->find($id);
             $stateService = new \App\Services\ProtocolStateService();
-            $stateService->transitionTo($case['report_id'], AragonProtocolCase::STATE_EN_VALORACION);
+            $stateService->transitionByReportId($case['report_id'], AragonProtocolCase::STATE_EN_VALORACION);
             
             $db->commit();
             echo json_encode(['success' => true]);
@@ -283,7 +283,7 @@ class AragonProtocolController
             
             $case = $this->caseModel->find($id);
             $stateService = new \App\Services\ProtocolStateService();
-            $stateService->transitionTo($case['report_id'], AragonProtocolCase::STATE_CERRADO);
+            $stateService->transitionByReportId($case['report_id'], AragonProtocolCase::STATE_CERRADO);
             
             $db->commit();
             echo json_encode(['success' => true]);

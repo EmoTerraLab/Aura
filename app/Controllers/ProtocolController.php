@@ -52,20 +52,13 @@ class ProtocolController
                 $case = $this->stateService->createInitialCase($report_id, $ccaa, $protocol->getInitialState());
             }
 
-            // Auto-reparar fase si no corresponde a la CCAA actual (ej. cambio de región o error inicial)
+            // Comprobación de integridad de fase (Loguear pero NO auto-reparar de forma destructiva)
             if ($case && $protocol->isFullyImplemented()) {
                 $allStates = $protocol->getAllStates();
                 if (!in_array($case['current_phase'], $allStates)) {
-                    $newPhase = $protocol->getInitialState();
-                    try {
-                        $this->caseModel->updatePhase($case['id'], $newPhase);
-                        $this->caseModel->updateCcaa($case['id'], $ccaa);
-                        $case['current_phase'] = $newPhase;
-                        $case['ccaa_code'] = $ccaa;
-                    } catch (\Throwable $repairError) {
-                        // Si falla la auto-reparación (ej. por bloqueo Barnahus), mantenemos la fase actual
-                        error_log("Error auto-reparando caso protocol: " . $repairError->getMessage());
-                    }
+                    error_log("ADVERTENCIA: Fase detectada '{$case['current_phase']}' no existe en el protocolo {$ccaa}. Se mantiene por seguridad, pero puede causar problemas de UI.");
+                    // $newPhase = $protocol->getInitialState();
+                    // $this->caseModel->updatePhase($case['id'], $newPhase);
                 }
             }
 

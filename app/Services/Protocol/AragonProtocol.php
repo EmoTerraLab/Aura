@@ -154,4 +154,12 @@ class AragonProtocol implements ProtocolInterface {
         }
         return true;
     }
+
+    public function syncState(int $reportId, string $state): void {
+        $db = \App\Core\Database::getInstance();
+        $db->prepare("INSERT OR IGNORE INTO aragon_protocol_cases (report_id, status) VALUES (?, ?)")
+           ->execute([$reportId, $state]);
+        $db->prepare("UPDATE aragon_protocol_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE report_id = ?")
+           ->execute([$state, $reportId]);
+    }
 }

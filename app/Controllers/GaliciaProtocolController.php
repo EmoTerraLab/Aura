@@ -205,7 +205,7 @@ class GaliciaProtocolController
 
             // Sincronizar con tabla genérica protocol_cases via servicio centralizado
             $stateService = new ProtocolStateService();
-            $stateService->transitionTo($galiciaCase['report_id'], $newPhase);
+            $stateService->transitionByReportId($galiciaCase['report_id'], $newPhase);
 
             echo json_encode(['success' => true]);
         } catch (\Exception $e) {

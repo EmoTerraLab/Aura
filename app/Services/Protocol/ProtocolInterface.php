@@ -31,4 +31,7 @@ interface ProtocolInterface {
 
     // Validaciones antes de transición
     public function canTransition(string $fromState, string $toState, array $case): bool|string;
+
+    // Sincronización con tablas específicas
+    public function syncState(int $reportId, string $state): void;
 }

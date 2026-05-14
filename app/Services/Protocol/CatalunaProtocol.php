@@ -129,4 +129,8 @@ class CatalunaProtocol implements ProtocolInterface {
         }
         return true;
     }
+
+    public function syncState(int $reportId, string $state): void {
+        // No regional table synchronization required for this protocol
+    }
 }
