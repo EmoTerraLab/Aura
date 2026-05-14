@@ -83,6 +83,11 @@ class ProtocolWorkflowController
     {
         $this->requireRestorativeEnabled();
         header('Content-Type: application/json');
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
         $case = $this->caseModel->find($id);
         if (!$case) {
             echo json_encode(['success' => false, 'error' => 'Case not found']);
@@ -197,6 +202,11 @@ class ProtocolWorkflowController
 
     public function exportTemplate($id, $templateName): void
     {
+        if (!$this->verifyAccess((int)$id)) {
+            http_response_code(403);
+            echo "Acceso denegado al caso.";
+            return;
+        }
         $case = $this->caseModel->find((int)$id);
         if (!$case) {
             http_response_code(404);
@@ -234,6 +244,11 @@ class ProtocolWorkflowController
     
     public function exportPdf($id): void
     {
+        if (!$this->verifyAccess((int)$id)) {
+            http_response_code(403);
+            echo "Acceso denegado al caso.";
+            return;
+        }
         $case = $this->caseModel->find((int)$id);
         if (!$case) {
             http_response_code(404);
@@ -255,6 +270,11 @@ class ProtocolWorkflowController
     {
         header('Content-Type: application/json');
         $id = (int)$id;
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
         $map = $this->mapModel->findByCase($id);
         if ($map) $map['mesures_urgencia'] = json_decode($map['mesures_urgencia'] ?? '[]', true);
         echo json_encode(['success' => true, 'map' => $map]);
@@ -351,6 +371,11 @@ class ProtocolWorkflowController
     {
         $this->requireRestorativeEnabled();
         header('Content-Type: application/json');
+        if (!$this->verifyAccess($id)) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+            return;
+        }
         $case = $this->caseModel->find($id);
         $practices = $this->restorativeModel->findByCase($id);
         
@@ -397,7 +422,10 @@ class ProtocolWorkflowController
         \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
-        if (!$this->verifyAccess($id)) {
+        
+        // SEC-013: El ID es de la práctica, no del caso
+        $practice = $this->restorativeModel->find($id);
+        if (!$practice || !$this->verifyAccess($practice['protocol_case_id'])) {
             http_response_code(403);
             echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
             return;

@@ -1,120 +1,132 @@
-<?php $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col relative overflow-hidden"; ?>
-<!-- Ambient Background Element -->
-<div class="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-secondary-container/30 via-surface to-background"></div>
+<?php
+// Vista de verificación de WebAuthn (Biometría)
+?>
 
-<main class="flex-1 flex flex-col items-center justify-center p-6 relative z-10 w-full max-w-md mx-auto">
-    <div class="flex flex-col items-center justify-center mb-10 gap-4">
-        <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center shadow-lg shadow-primary-container/10">
-            <span class="material-symbols-outlined text-on-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+<div class="flex flex-col items-center justify-center min-h-[60vh] px-4">
+    <div class="mb-8 text-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 text-primary mb-4">
+            <span class="material-symbols-outlined text-4xl">fingerprint</span>
         </div>
-        <h1 class="font-h1 text-h1 text-primary-container tracking-tight">Verificación Biométrica</h1>
-        <p class="font-body-md text-body-md text-on-surface-variant text-center">Usa Face ID, huella dactilar o el llavero de tu dispositivo para continuar.</p>
+        <h1 class="font-display-md text-display-md font-bold text-on-surface mb-2">Verificación de Seguridad</h1>
+        <p class="text-body-lg text-on-surface-variant">Usa tu llave de seguridad o biometría para continuar.</p>
     </div>
 
     <div class="w-full bg-surface-container-lowest rounded-xl p-8 shadow-[0_24px_64px_-12px_rgba(6,105,114,0.06)] text-center">
         <div id="webauthn-status" class="mb-6">
-            <div class="flex items-center justify-center gap-3 text-primary">
-                <span class="material-symbols-outlined animate-spin">refresh</span>
-                <span class="font-bold">Iniciando verificación...</span>
+            <div class="flex items-center justify-center gap-3 text-on-surface-variant">
+                <span class="material-symbols-outlined">touch_app</span>
+                <span>Toca el botón para iniciar</span>
             </div>
         </div>
 
         <p id="webauthn-error" class="text-error text-sm font-bold bg-error/10 p-4 rounded-lg mb-6 hidden"></p>
 
         <div class="flex flex-col gap-4">
+            <button id="start-btn" onclick="authenticateWithWebAuthn()" class="w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+                Iniciar Verificación
+            </button>
             <button id="retry-btn" onclick="authenticateWithWebAuthn()" class="w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform hidden">
                 Intentar de nuevo
             </button>
-            
-            <hr class="border-surface-variant/50 my-2">
-            
-            <div id="fallback-section" class="space-y-4">
-                <p class="text-xs text-on-surface-variant">¿Problemas con la biometría?</p>
-                <button onclick="useOtpFallback()" class="w-full bg-surface-container text-on-surface font-medium py-3 rounded-full hover:bg-surface-variant transition-colors">
-                    Usar código por correo
-                </button>
-            </div>
+            <button onclick="useOtpFallback()" class="w-full bg-surface-container-high text-on-surface font-body-md text-body-md font-medium py-3 rounded-full hover:bg-surface-container-highest transition-colors">
+                Usar otro método (Código por email)
+            </button>
         </div>
     </div>
-</main>
+</div>
 
 <script>
-    function base64urlToBuffer(base64url) {
-        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-        const pad = base64.length % 4;
-        const padded = pad ? base64 + '===='.substring(pad) : base64;
-        const binary_string = window.atob(padded);
-        const len = binary_string.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binary_string.charCodeAt(i);
-        }
-        return bytes; // Devolver Uint8Array directamente para mejor compatibilidad
+    async function fetchJson(url, options = {}) {
+        const res = await fetch(url, {
+            ...options,
+            headers: {
+                ...options.headers,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        return res.json();
     }
 
-    function bufferToBase64url(buffer) {
-        const bytes = new Uint8Array(buffer);
-        let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-            binary += String.fromCharCode(bytes[i]);
+    function base64url_to_uint8array(base64url) {
+        const padding = '='.repeat((4 - base64url.length % 4) % 4);
+        const base64 = (base64url + padding).replace(/\-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
         }
-        return window.btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        return outputArray;
+    }
+
+    function uint8array_to_base64url(array) {
+        const base64 = btoa(String.fromCharCode(...new Uint8Array(array)));
+        return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
     }
 
     async function authenticateWithWebAuthn() {
         const statusEl = document.getElementById('webauthn-status');
         const errorEl = document.getElementById('webauthn-error');
         const retryBtn = document.getElementById('retry-btn');
+        const startBtn = document.getElementById('start-btn');
 
         statusEl.innerHTML = '<div class="flex items-center justify-center gap-3 text-primary"><span class="material-symbols-outlined animate-spin">refresh</span><span class="font-bold">Solicitando llave...</span></div>';
         errorEl.classList.add('hidden');
         retryBtn.classList.add('hidden');
+        if (startBtn) startBtn.classList.add('hidden');
 
         try {
             const optRes = await fetchJson('/auth/2fa/webauthn/options');
-            if (optRes.error) throw new Error(optRes.error);
             
-            const options = optRes;
-            options.challenge = base64urlToBuffer(options.challenge);
-            if (options.allowCredentials) {
-                for (let i = 0; i < options.allowCredentials.length; i++) {
-                    options.allowCredentials[i].id = base64urlToBuffer(options.allowCredentials[i].id);
-                }
+            if (optRes.error) {
+                throw new Error(optRes.error);
             }
 
-            statusEl.innerHTML = '<div class="flex items-center justify-center gap-3 text-teal-600"><span class="material-symbols-outlined">touch_app</span><span class="font-bold">Usa tu lector o FaceID</span></div>';
-
-            const assertion = await navigator.credentials.get({ publicKey: options });
-            
-            statusEl.innerHTML = '<div class="flex items-center justify-center gap-3 text-primary"><span class="material-symbols-outlined animate-spin">refresh</span><span class="font-bold">Verificando firma...</span></div>';
-
-            const verifyRes = await fetchJson('/auth/2fa/webauthn/verify', {
-                method: 'POST',
-                body: {
-                    credentialId: bufferToBase64url(assertion.rawId),
-                    clientDataJSON: bufferToBase64url(assertion.response.clientDataJSON),
-                    authenticatorData: bufferToBase64url(assertion.response.authenticatorData),
-                    signature: bufferToBase64url(assertion.response.signature)
+            const options = {
+                publicKey: {
+                    ...optRes,
+                    challenge: base64url_to_uint8array(optRes.challenge),
+                    allowCredentials: optRes.allowCredentials.map(c => ({
+                        ...c,
+                        id: base64url_to_uint8array(c.id)
+                    }))
                 }
+            };
+
+            statusEl.innerHTML = '<div class="flex items-center justify-center gap-3 text-primary"><span class="material-symbols-outlined animate-bounce">fingerprint</span><span class="font-bold">Confirma en tu dispositivo...</span></div>';
+
+            const credential = await navigator.credentials.get(options);
+
+            statusEl.innerHTML = '<div class="flex items-center justify-center gap-3 text-primary"><span class="material-symbols-outlined animate-spin">sync</span><span class="font-bold">Verificando...</span></div>';
+
+            const authRes = await fetchJson('/auth/2fa/webauthn/verify', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: credential.id,
+                    clientDataJSON: uint8array_to_base64url(credential.response.clientDataJSON),
+                    authenticatorData: uint8array_to_base64url(credential.response.authenticatorData),
+                    signature: uint8array_to_base64url(credential.response.signature),
+                    userHandle: credential.response.userHandle ? uint8array_to_base64url(credential.response.userHandle) : null
+                })
             });
 
-            if (verifyRes.success) {
-                statusEl.innerHTML = '<div class="flex items-center justify-center gap-3 text-green-600"><span class="material-symbols-outlined">check_circle</span><span class="font-bold">Acceso concedido</span></div>';
-                window.location.href = verifyRes.redirect;
+            if (authRes.success) {
+                statusEl.innerHTML = '<div class="flex items-center justify-center gap-3 text-success"><span class="material-symbols-outlined">check_circle</span><span class="font-bold">¡Verificado! Redirigiendo...</span></div>';
+                window.location.href = '/dashboard';
             } else {
-                throw new Error(verifyRes.error || 'Autenticación fallida');
+                throw new Error(authRes.error || 'Error de verificación');
             }
+
         } catch (e) {
-            console.error('WebAuthn Auth Error:', e);
-            statusEl.innerHTML = '';
+            console.error(e);
+            let message = 'Error al verificar la identidad.';
             
-            let message = e.message;
             if (e.name === 'NotAllowedError') {
-                message = 'Operación cancelada.';
-            } else if (e.name === 'InvalidStateError') {
-                message = 'Este dispositivo no está reconocido o la sesión ha expirado. Si has registrado otro dispositivo, usa el código por correo.';
+                message = 'Se canceló la verificación o el tiempo expiró.';
             } else if (e.name === 'NotSupportedError') {
                 message = 'Tu dispositivo o navegador no soporta esta función de seguridad.';
+            } else {
+                message = e.message;
             }
             
             errorEl.innerText = message;
@@ -124,23 +136,21 @@
     }
 
     async function useOtpFallback() {
-        // Redirigir al flujo de login normal pero forzando OTP
-        // Necesitamos recuperar el email guardado en sesión si es posible, o pedirlo de nuevo.
-        // Como ya tenemos pending_webauthn_user_id, el servidor sabe quién es.
-        // Pero el AuthController::generateOTP requiere el email.
-        
-        // Mejor opción: una ruta que haga el fallback
         window.location.href = '/auth/2fa/webauthn/fallback';
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        const statusEl = document.getElementById('webauthn-status');
+        const retryBtn = document.getElementById('retry-btn');
+
         if (typeof navigator.credentials === 'undefined') {
             const errorEl = document.getElementById('webauthn-error');
             errorEl.innerText = 'Tu navegador no soporta biometría. Redirigiendo a código por correo...';
             errorEl.classList.remove('hidden');
             setTimeout(useOtpFallback, 2000);
         } else {
-            authenticateWithWebAuthn();
+            // Safari iOS requiere interacción explícita (clic en botón)
+            statusEl.innerHTML = '<div class="text-center"><p class="mb-4 text-on-surface-variant text-sm">Haz clic en el botón para identificarte.</p></div>';
         }
     });
 </script>

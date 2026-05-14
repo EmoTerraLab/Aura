@@ -42,6 +42,14 @@ class ProtocolController
         try {
             header('Content-Type: application/json');
             $report_id = (int)$report_id;
+            
+            // SEC-012: IDOR Protection
+            if (!$this->verifyAccess($report_id)) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Acceso denegado al caso.']);
+                exit;
+            }
+
             $ccaa = Config::get('ccaa_code', 'generic');
             
             $protocol = ProtocolFactory::make($ccaa);

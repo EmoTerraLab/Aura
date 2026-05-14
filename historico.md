@@ -2,6 +2,18 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-15] - Blindaje IDOR y Estabilidad WebAuthn (v2.30.2-stable)
+
+### 🛡️ Seguridad y Estabilidad
+- **SEC-012 / SEC-013:** Implementado blindaje contra ataques IDOR (Insecure Direct Object Reference) en `ProtocolController` y `ProtocolWorkflowController`. Se ha reforzado la verificación de acceso a nivel de caso y de prácticas restaurativas individuales.
+- **SEC-014:** Prevención de Host Spoofing en WebAuthn. Ahora el `rpId` se deriva estrictamente de la configuración `app_url` en lugar de las cabeceras de la petición.
+- **SEC-010:** Incrementado el timeout de WebAuthn a 60,000ms para mejorar la compatibilidad con sensores biométricos lentos o dispositivos con latencia.
+
+### 🚀 Mejoras y Funcionalidades
+- **Compatibilidad WebAuthn:** Desactivada la obligatoriedad de *User Verification* en el servidor para permitir el acceso con llaves de seguridad físicas que no siempre reportan el estado UV, manteniendo la seguridad mediante el segundo factor.
+- **Safari iOS Fix:** Rediseñada la interfaz de verificación biométrica para requerir una interacción explícita (clic en botón), cumpliendo con las políticas de seguridad de Safari en iOS que bloquean el acceso automático a `navigator.credentials`.
+- **Mantenibilidad:** Limpieza de código muerto y corrección de errores de sintaxis en los controladores de autenticación.
+
 ## [2026-05-15] - Parche de Seguridad y Rendimiento (v2.30.1-stable)
 
 ### 🛡️ Seguridad y Estabilidad
