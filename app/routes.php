@@ -157,6 +157,11 @@ $router->get('/alumno/2fa/webauthn/register/options', [WebAuthnController::class
 $router->post('/alumno/2fa/webauthn/register/verify', [WebAuthnController::class, 'registerVerify'], ['auth', 'role:alumno']);
 $router->post('/alumno/2fa/webauthn/credential/delete', [WebAuthnController::class, 'deleteCredential'], ['auth', 'role:alumno']);
 
+// API Genérica WebAuthn (Staff y Alumno)
+$router->get('/api/webauthn/register/options', [WebAuthnController::class, 'registerOptions'], ['auth']);
+$router->post('/api/webauthn/register/verify', [WebAuthnController::class, 'registerVerify'], ['auth']);
+$router->post('/api/webauthn/credential/delete', [WebAuthnController::class, 'deleteCredential'], ['auth']);
+
 
 
 // -- Reportes de Staff --

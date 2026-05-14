@@ -95,8 +95,15 @@ class StaffController {
     }
 
     public function showPasswordForm() {
+        $userId = Auth::id();
+        $db = \App\Core\Database::getInstance();
+        $stmt = $db->prepare("SELECT id, device_name, created_at, last_used_at FROM webauthn_credentials WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt->execute([$userId]);
+        $webauthnDevices = $stmt->fetchAll();
+
         View::render('staff/password_change', [
-            'title' => 'Aura - ' . Lang::t('auth.change_password')
+            'title' => 'Aura - ' . Lang::t('auth.change_password'),
+            'webauthnDevices' => $webauthnDevices
         ]);
     }
 

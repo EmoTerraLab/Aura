@@ -1,4 +1,4 @@
-# Documentación Técnica Profunda: Proyecto Aura (v2.31.2)
+# Documentación Técnica Profunda: Proyecto Aura (v2.32.0)
 
 
 

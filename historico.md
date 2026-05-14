@@ -2,6 +2,18 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-15] - Rediseño de Experiencia Biométrica (v2.32.0-stable)
+
+### 🚀 Mejoras y Funcionalidades
+- **WebAuthn para Personal (Staff):** El personal docente y administrativo ahora puede vincular llaves de seguridad y biometría (FaceID/TouchID) desde su perfil para un acceso sin contraseñas.
+- **Rediseño UI "Aura 2026":** Renovación total de las interfaces de verificación biométrica y gestión de dispositivos. Nueva estética minimalista con gradientes dinámicos, mejores estados de carga y feedback visual.
+- **Detección de Plataforma:** El sistema ahora detecta automáticamente si el usuario accede desde iOS (Apple), Chrome o escritorio, personalizando los mensajes y el icono de acceso (FaceID vs Fingerprint).
+- **API Unificada de WebAuthn:** Centralización de los endpoints de registro y gestión bajo `/api/webauthn/*`, simplificando la lógica para todos los roles de usuario.
+
+### 🛡️ Seguridad y Estabilidad
+- **CSRF en WebAuthn:** Reforzada la seguridad de las llamadas asíncronas de biometría mediante la validación obligatoria de tokens CSRF en todas las operaciones de registro y eliminación.
+- **Robustez de Sesión:** Optimizada la redirección post-verificación para asegurar que el usuario aterrice en su dashboard correspondiente tras el segundo factor.
+
 ## [2026-05-15] - Mejora de Rate Limiting y Soporte HEAD (v2.31.2-stable)
 
 ### 🛡️ Seguridad y Estabilidad

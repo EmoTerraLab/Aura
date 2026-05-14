@@ -1,6 +1,6 @@
 # Aura
 
-![Versión](https://img.shields.io/badge/Versión-2.31.2-blue.svg)
+![Versión](https://img.shields.io/badge/Versión-2.32.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-%3E%3D8.2-777BB4.svg?logo=php)
 ![Base de Datos](https://img.shields.io/badge/Database-SQLite_3-003B57.svg?logo=sqlite)
 ![Licencia](https://img.shields.io/badge/Licencia-Propietaria-red.svg)

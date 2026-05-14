@@ -267,29 +267,51 @@
                 </div>
 
                 <!-- WebAuthn 2FA Block -->
-                <?php if(\App\Core\Config::get('2fa_students_method') === 'webauthn'): ?>
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding">
-                    <h3 class="font-h2 text-[16px] text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">fingerprint</span> Acceso Seguro</h3>
+                <?php if(\App\Core\Config::get('2fa_students_method', 'webauthn') === 'webauthn'): ?>
+                <div id="webauthn-section" class="hidden bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding border border-surface-variant/50">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-h2 text-[16px] text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-lg">fingerprint</span> 
+                            Acceso Biométrico
+                        </h3>
+                        <span id="platform-tag" class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-surface-variant text-on-surface-variant">Detectando...</span>
+                    </div>
                     
-                    <?php if (empty($webauthnDevices)): ?>
-                        <p class="text-xs text-on-surface-variant mb-4">Registra tu dispositivo para un acceso biométrico más rápido.</p>
-                    <?php else: ?>
-                        <ul class="space-y-2 mb-4">
-                            <?php foreach($webauthnDevices as $dev): ?>
-                                <li class="flex justify-between items-center bg-surface p-2 rounded-lg text-xs">
-                                    <div class="min-w-0 flex-1">
-                                        <p class="font-bold text-on-surface truncate"><?= htmlspecialchars($dev['device_name']) ?></p>
-                                        <p class="text-slate-400 text-[10px]"><?= date('d/m/Y', strtotime($dev['created_at'])) ?></p>
-                                    </div>
-                                    <button onclick="deleteWebAuthn(<?= $dev['id'] ?>)" class="text-error hover:bg-error/10 p-1.5 rounded-full transition-colors shrink-0" title="Eliminar"><span class="material-symbols-outlined text-sm">delete</span></button>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
+                    <div id="webauthn-list-container">
+                        <?php if (empty($webauthnDevices)): ?>
+                            <p class="text-xs text-on-surface-variant mb-6 leading-relaxed">Protege tu cuenta usando tu huella o reconocimiento facial. Es más rápido y seguro que un código por email.</p>
+                        <?php else: ?>
+                            <ul class="space-y-3 mb-6">
+                                <?php foreach($webauthnDevices as $dev): ?>
+                                    <li class="flex justify-between items-center bg-surface-container-low p-3 rounded-2xl text-xs border border-surface-variant/30 group">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary shadow-sm">
+                                                <span class="material-symbols-outlined text-sm"><?= str_contains(strtolower($dev['device_name']), 'iphone') || str_contains(strtolower($dev['device_name']), 'móvil') ? 'smartphone' : 'key' ?></span>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="font-bold text-on-surface truncate"><?= htmlspecialchars($dev['device_name']) ?></p>
+                                                <p class="text-slate-400 text-[10px]">Registrado el <?= date('d/m/Y', strtotime($dev['created_at'])) ?></p>
+                                            </div>
+                                        </div>
+                                        <button onclick="deleteWebAuthn(<?= $dev['id'] ?>, '<?= htmlspecialchars($dev['device_name']) ?>')" class="text-outline hover:text-error hover:bg-error/10 p-2 rounded-full transition-all shrink-0">
+                                            <span class="material-symbols-outlined text-sm">delete</span>
+                                        </button>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    </div>
 
-                    <button onclick="registerWebAuthn()" class="w-full bg-primary-container text-on-primary-container rounded-full px-4 py-2 font-body-md text-[13px] font-medium shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-sm">add</span> Añadir dispositivo
+                    <div id="webauthn-status-box" class="hidden mb-4 p-3 rounded-xl text-center animate-pulse">
+                        <!-- Status messages injected by JS -->
+                    </div>
+
+                    <button id="btn-register-biometric" onclick="registerWebAuthn()" class="w-full bg-gradient-to-r from-primary to-teal-600 text-white rounded-full px-6 py-3.5 font-bold text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined" id="reg-icon">add_circle</span>
+                        <span id="reg-text">Configurar Biometría</span>
                     </button>
+                    
+                    <p id="webauthn-error-msg" class="hidden mt-4 text-[11px] text-error font-medium text-center bg-error/5 p-2 rounded-lg"></p>
                 </div>
                 <?php endif; ?>
             </div>
@@ -835,47 +857,137 @@
     }
 
     // --- WebAuthn logic ---
+    const WebAuthnUI = {
+        isIOS: () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
+        isMac: () => /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.userAgent),
+        isSafari: () => /^((?!chrome|android).)*safari/i.test(navigator.userAgent),
+        isChrome: () => /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor),
+        
+        updatePlatformUI: function() {
+            const section = document.getElementById('webauthn-section');
+            if (!section) return;
+
+            if (typeof window.PublicKeyCredential !== 'function') {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+
+            const tag = document.getElementById('platform-tag');
+            const btnText = document.getElementById('reg-text');
+            const btnIcon = document.getElementById('reg-icon');
+            
+            if (this.isIOS() || this.isMac()) {
+                tag.innerText = 'Apple Device';
+                tag.className = 'text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-700';
+                btnText.innerText = 'Registrar Face ID / Touch ID';
+                btnIcon.innerText = 'face';
+            } else if (this.isChrome()) {
+                tag.innerText = 'Chrome';
+                tag.className = 'text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-700';
+                btnText.innerText = 'Registrar Huella o Llave';
+                btnIcon.innerText = 'fingerprint';
+            } else {
+                tag.innerText = 'Biometría';
+                btnText.innerText = 'Añadir Llave de Seguridad';
+                btnIcon.innerText = 'key';
+            }
+        },
+
+        setStatus: function(msg, type = 'info') {
+            const box = document.getElementById('webauthn-status-box');
+            if (!msg) { box.classList.add('hidden'); return; }
+            box.classList.remove('hidden', 'bg-blue-50', 'text-blue-700', 'bg-green-50', 'text-green-700');
+            box.innerText = msg;
+            if (type === 'info') box.classList.add('bg-blue-50', 'text-blue-700');
+            if (type === 'success') box.classList.add('bg-green-50', 'text-green-700');
+        },
+
+        setError: function(msg) {
+            const err = document.getElementById('webauthn-error-msg');
+            if (!msg) { err.classList.add('hidden'); return; }
+            err.innerText = msg;
+            err.classList.remove('hidden');
+            setTimeout(() => err.classList.add('hidden'), 5000);
+        }
+    };
+
     function base64urlToBuffer(base64url) {
         const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
         const binary_string = window.atob(base64.length % 4 ? base64 + '===='.substring(base64.length % 4) : base64);
         const bytes = new Uint8Array(binary_string.length);
         for (let i = 0; i < binary_string.length; i++) bytes[i] = binary_string.charCodeAt(i);
-        return bytes; // Devolver Uint8Array para mejor compatibilidad
+        return bytes;
     }
     function bufferToBase64url(buffer) {
         const bytes = new Uint8Array(buffer); let binary = '';
         for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
         return window.btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
     }
+
     async function registerWebAuthn() {
-        if (!window.isSecureContext && window.location.hostname !== 'localhost') { alert('HTTPS requerido'); return; }
-        const deviceName = prompt('Nombre dispositivo', 'Mi dispositivo'); if (!deviceName) return;
+        if (!window.isSecureContext && window.location.hostname !== 'localhost') { 
+            WebAuthnUI.setError('Se requiere una conexión segura (HTTPS).'); 
+            return; 
+        }
+
+        const deviceDefault = WebAuthnUI.isIOS() ? 'iPhone' : (WebAuthnUI.isMac() ? 'MacBook' : 'Mi Llave');
+        const deviceName = prompt('Dale un nombre a este dispositivo:', deviceDefault); 
+        if (!deviceName) return;
+
+        const btn = document.getElementById('btn-register-biometric');
+        btn.disabled = true;
+        WebAuthnUI.setError(null);
+        WebAuthnUI.setStatus('Activando sensor biométrico...');
+
         try {
-            const optRes = await fetchJson('/alumno/2fa/webauthn/register/options');
+            const optRes = await fetchJson('/api/webauthn/register/options');
             if (optRes.error) throw new Error(optRes.error);
+            
             const options = optRes; 
             options.challenge = base64urlToBuffer(options.challenge);
             options.user.id = base64urlToBuffer(options.user.id);
             if (options.excludeCredentials) options.excludeCredentials.forEach(c => c.id = base64urlToBuffer(c.id));
             
             const credential = await navigator.credentials.create({ publicKey: options });
-            const verifyRes = await fetchJson('/alumno/2fa/webauthn/register/verify', {
+            
+            WebAuthnUI.setStatus('Vinculando dispositivo...');
+            
+            const verifyRes = await fetchJson('/api/webauthn/register/verify', {
                 method: 'POST', body: {
                     clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
                     attestationObject: bufferToBase64url(credential.response.attestationObject),
                     device_name: deviceName
                 }
             });
-            if (verifyRes.success) window.location.reload(); else throw new Error(verifyRes.error);
+
+            if (verifyRes.success) {
+                WebAuthnUI.setStatus('¡Dispositivo registrado correctamente!', 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            } else { 
+                throw new Error(verifyRes.error); 
+            }
         } catch (e) { 
             console.error('WebAuthn Error:', e);
-            alert('Error de registro biométrico: ' + e.message); 
+            btn.disabled = false;
+            WebAuthnUI.setStatus(null);
+            
+            let msg = 'No se pudo completar el registro.';
+            if (e.name === 'NotAllowedError') msg = 'Registro cancelado. Inténtalo de nuevo cuando estés listo.';
+            else if (e.name === 'NotSupportedError') msg = 'Tu dispositivo no soporta biometría.';
+            else if (e.name === 'SecurityError') msg = 'Error de seguridad (HTTPS requerido).';
+            else if (e.message) msg = e.message;
+            
+            WebAuthnUI.setError(msg);
         }
     }
-    async function deleteWebAuthn(id) {
-        if (!confirm('¿Eliminar?')) return;
-        const res = await fetchJson('/alumno/2fa/webauthn/credential/delete', { method: 'POST', body: { id } });
-        if (res.success) window.location.reload();
+    async function deleteWebAuthn(id, name) {
+        if (!confirm(`¿Estás seguro de que quieres eliminar "${name}"? Dejarás de poder usarlo para entrar.`)) return;
+        try {
+            const res = await fetchJson('/api/webauthn/credential/delete', { method: 'POST', body: { id } });
+            if (res.success) window.location.reload();
+            else alert(res.error || 'Error al eliminar');
+        } catch (e) { alert('Error de conexión'); }
     }
 
     function resetForm() { window.location.reload(); }
@@ -885,6 +997,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         appWizard = new WizardFlow();
         ViewManager.showHome();
+        WebAuthnUI.updatePlatformUI();
         document.querySelectorAll('.status-label-js').forEach(el => el.innerText = translateStatus(el.dataset.status));
     });
 </script>
