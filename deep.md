@@ -1,4 +1,4 @@
-# Documentación Técnica Profunda: Proyecto Aura (v2.27.0)
+# Documentación Técnica Profunda: Proyecto Aura (v2.30.1)
 
 Aura es una plataforma SaaS multi-instancia de gestión escolar especializada en la prevención, detección y seguimiento de protocolos de acoso escolar y análisis de convivencia (sociometría). Está diseñada bajo una arquitectura modular que permite adaptar el flujo legal a las 19 comunidades y ciudades autónomas de España.
 

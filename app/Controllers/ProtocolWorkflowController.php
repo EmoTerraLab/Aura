@@ -138,6 +138,20 @@ class ProtocolWorkflowController
         }
 
         $file = $_FILES['evidence'];
+
+        // PERF-001: Validar errores de carga antes de cualquier procesamiento
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $errorMsg = match($file['error']) {
+                UPLOAD_ERR_INI_SIZE => 'El archivo excede el límite del servidor (upload_max_filesize).',
+                UPLOAD_ERR_FORM_SIZE => 'El archivo excede el límite del formulario.',
+                UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente.',
+                UPLOAD_ERR_NO_FILE => 'No se subió ningún archivo.',
+                default => 'Error desconocido en la subida.'
+            };
+            echo json_encode(['success' => false, 'error' => $errorMsg]);
+            return;
+        }
+
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         
         $allowed = ['jpg', 'jpeg', 'png', 'pdf', 'docx'];
@@ -146,18 +160,24 @@ class ProtocolWorkflowController
             return;
         }
 
-        // Límite de tamaño: 10 MB - Validar ANTES de leer todo el archivo en memoria (finfo)
+        // Límite de tamaño: 10 MB - Validar ANTES de procesar
         if ($file['size'] > 10 * 1024 * 1024) {
             echo json_encode(['success' => false, 'error' => 'El archivo excede el límite de 10 MB.']);
             return;
         }
 
-        // SEC-009 FIX: Validar MIME real del contenido del archivo
-        $allowedMimes = ['image/jpeg', 'image/png', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        // SEC-009 FIX: Validar MIME real del contenido del archivo (Stream-based)
+        $allowedMimes = [
+            'image/jpeg', 
+            'image/png', 
+            'application/pdf', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/msword'
+        ];
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $realMime = $finfo->file($file['tmp_name']);
         if (!in_array($realMime, $allowedMimes, true)) {
-            echo json_encode(['success' => false, 'error' => 'El tipo de archivo no coincide con la extensión.']);
+            echo json_encode(['success' => false, 'error' => 'El contenido del archivo no coincide con su extensión o no está permitido.']);
             return;
         }
 

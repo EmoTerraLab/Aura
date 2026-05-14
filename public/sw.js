@@ -1,10 +1,10 @@
 // =============================================================================
 // Aura — Service Worker (sw.js)
 // Estrategia de caché segura compatible con MFA, CSRF y CSP estricto
-// Versión: 2.27.0
+// Versión: 2.30.1
 // =============================================================================
 
-const CACHE_VERSION = 'aura-v2.27.0';
+const CACHE_VERSION = 'aura-v2.30.1';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -33,6 +33,7 @@ const NEVER_CACHE_PATTERNS = [
   /\/password\//,               // Recuperación de contraseña
   /\/admin\/api\//,             // APIs administrativas
   /\/admin\/update/,            // Sistema de actualización
+  /\/admin\/update\/check/,      // Verificación de actualizaciones
   /\/admin\/settings/,          // Configuración sensible
   /\/profile\//,                // Perfil y 2FA del usuario
   /\/staff\/reports\/.*\/messages/, // Mensajes (datos en tiempo real)
@@ -50,7 +51,7 @@ const NEVER_CACHE_PATTERNS = [
 const STATIC_ASSET_PATTERNS = [
   /\.(?:png|jpg|jpeg|gif|svg|ico|webp)$/i,  // Imágenes
   /\.(?:css|js)$/i,                         // CSS y JS estáticos
-  /\.(?:woff|woff2|ttf|otf|eot)$/i,         // Fuentes
+  /\.(?:woff|woff2|ttf|otf|eot)$/i,         // Fuentes (incl. Material Symbols)
   /fonts\.googleapis\.com/,                 // Google Fonts CSS
   /fonts\.gstatic\.com/,                    // Google Fonts archivos
   /cdn\.tailwindcss\.com/,                  // Tailwind CDN

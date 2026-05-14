@@ -2,6 +2,17 @@
 
 Este documento registra las modificaciones, mejoras y correcciones realizadas en el proyecto Aura.
 
+## [2026-05-15] - Parche de Seguridad y Rendimiento (v2.30.1-stable)
+
+### 🛡️ Seguridad y Estabilidad
+- **SEC-009 FIX:** Reforzada la validación de archivos subidos en `ProtocolWorkflowController`. Ahora se verifica el tipo MIME real mediante el contenido del archivo (finfo) y se ha ampliado la lista blanca para incluir documentos `.doc` antiguos (`application/msword`).
+- **PERF-001:** Optimizada la carga de evidencias validando errores de subida y límites de tamaño ANTES de procesar el archivo en memoria, mejorando la respuesta del servidor ante archivos corruptos o excesivamente grandes.
+
+### 🚀 Mejoras y Funcionalidades
+- **Optimización de Caché (PWA):** Actualizada la versión del Service Worker (`sw.js`) a la v2.30.1 para forzar la actualización de activos en los dispositivos de los usuarios.
+- **Exclusión de Caché Crítica:** Añadida la ruta de verificación de actualizaciones (`/admin/update/check`) a la lista de exclusión del Service Worker para garantizar que el sistema de actualización siempre obtenga datos frescos del servidor.
+- **Rendimiento HTTP:** Añadida la cabecera `Vary: Accept-Encoding` en la configuración `.htaccess` para asegurar que los proxies y CDNs gestionen correctamente el contenido comprimido (Gzip/Brotli).
+
 ## [2026-05-11] - Soporte PWA y Auditoría Forense (v2.27.0-stable)
 
 ### 🚀 Mejoras y Funcionalidades
