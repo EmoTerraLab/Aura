@@ -56,9 +56,7 @@ class ProtocolController
             if ($case && $protocol->isFullyImplemented()) {
                 $allStates = $protocol->getAllStates();
                 if (!in_array($case['current_phase'], $allStates)) {
-                    error_log("ADVERTENCIA: Fase detectada '{$case['current_phase']}' no existe en el protocolo {$ccaa}. Se mantiene por seguridad, pero puede causar problemas de UI.");
-                    // $newPhase = $protocol->getInitialState();
-                    // $this->caseModel->updatePhase($case['id'], $newPhase);
+                    error_log("CRITICAL: Fase detectada '{$case['current_phase']}' no existe en el protocolo {$ccaa} para reporte #{$report_id}. Se mantiene por seguridad, pero requiere revisión manual.");
                 }
             }
 
@@ -169,6 +167,7 @@ class ProtocolController
 
     public function classify($id): void
     {
+        \App\Core\Csrf::validateRequest();
         header('Content-Type: application/json');
         $id = (int)$id;
         $case = (new \App\Models\ProtocolCase())->find($id);
