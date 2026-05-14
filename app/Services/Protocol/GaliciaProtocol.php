@@ -51,7 +51,8 @@ class GaliciaProtocol implements ProtocolInterface {
             ['key' => self::STATE_DETECCIO_COMUNICACIO,  'label' => 'Detección', 'icon' => 'search', 'deadline_days' => 0],
             ['key' => self::STATE_RECOLLIDA_INFORMACION, 'label' => 'Recollida', 'icon' => 'find_in_page', 'deadline_days' => 2],
             ['key' => self::STATE_ANALISE_MEDIDAS,      'label' => 'Análise', 'icon' => 'fact_check', 'deadline_days' => 10],
-            ['key' => self::STATE_SEGUIMENTO,           'label' => 'Seguimento', 'icon' => 'visibility', 'deadline_days' => null]
+            ['key' => self::STATE_SEGUIMENTO,           'label' => 'Seguimento', 'icon' => 'visibility', 'deadline_days' => null],
+            ['key' => self::STATE_PECHE,                'label' => 'Cerrado', 'icon' => 'check-circle', 'deadline_days' => null]
         ];
     }
 

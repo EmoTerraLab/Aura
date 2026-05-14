@@ -200,9 +200,6 @@ class GaliciaProtocolController
                 return;
             }
 
-            // Actualizar tabla propia de Galicia
-            $this->caseModel->updateStatus($id, $newPhase);
-
             // Sincronizar con tabla genérica protocol_cases via servicio centralizado
             $stateService = new ProtocolStateService();
             $stateService->transitionByReportId($galiciaCase['report_id'], $newPhase);
