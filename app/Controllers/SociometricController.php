@@ -88,6 +88,36 @@ class SociometricController
             header('Content-Type: application/json'); echo json_encode(['error' => 'Error al guardar los datos']);
         }
     }
+    public function demo(): void
+    {
+        $survey = [
+            'id' => 0,
+            'title' => 'Análisis de Cohesión Grupal - 3º ESO A',
+            'classroom_name' => '3º ESO A',
+            'created_at' => date('Y-m-d H:i:s'),
+            'status' => 'closed'
+        ];
+
+        $metrics = [
+            ['id' => 101, 'name' => 'Laura Sánchez', 'pos_count' => 12, 'neg_count' => 0, 'victim_count' => 0],
+            ['id' => 102, 'name' => 'Pedro Gómez', 'pos_count' => 1, 'neg_count' => 5, 'victim_count' => 4],
+            ['id' => 103, 'name' => 'Miguel Díaz', 'pos_count' => 8, 'neg_count' => 1, 'victim_count' => 0],
+            ['id' => 104, 'name' => 'Lucía López', 'pos_count' => 10, 'neg_count' => 0, 'victim_count' => 0],
+            ['id' => 105, 'name' => 'Carlos Martínez', 'pos_count' => 0, 'neg_count' => 2, 'victim_count' => 1],
+            ['id' => 106, 'name' => 'Carmen Ruiz', 'pos_count' => 6, 'neg_count' => 0, 'victim_count' => 0],
+            ['id' => 107, 'name' => 'Juan Alumno', 'pos_count' => 4, 'neg_count' => 1, 'victim_count' => 0],
+            ['id' => 108, 'name' => 'Marina Alumna', 'pos_count' => 5, 'neg_count' => 0, 'victim_count' => 0],
+            ['id' => 109, 'name' => 'Javier Torres', 'pos_count' => 3, 'neg_count' => 4, 'victim_count' => 2],
+            ['id' => 110, 'name' => 'Elena Gil', 'pos_count' => 7, 'neg_count' => 0, 'victim_count' => 0],
+        ];
+
+        View::render('staff/sociometric_results', [
+            'title' => Lang::t('sociogram.analysis_header'),
+            'survey' => $survey,
+            'metrics' => $metrics
+        ], 'app');
+    }
+
     /**
      * GET /staff/sociogramas/{id}
      * Dashboard de resultats optimitzat (Sense N+1).

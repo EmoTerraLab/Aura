@@ -8,6 +8,7 @@ use App\Core\Session;
 use App\Models\User;
 use App\Models\WebAuthnCredential;
 use lbuchs\WebAuthn\WebAuthn;
+use lbuchs\WebAuthn\WebAuthnException;
 
 class WebAuthnController
 {
@@ -160,7 +161,7 @@ class WebAuthnController
                 'user_id' => Auth::user()['id'],
                 'credential_id' => $credentialId,
                 'public_key' => $publicKey,
-                'sign_count' => $data->signatureCounter,
+                'sign_count' => (int)($data->signatureCounter ?? 0),
                 'device_name' => $input['device_name'] ?? 'Llave de seguridad'
             ]);
 
@@ -242,20 +243,41 @@ class WebAuthnController
             }
 
             $publicKey = base64_decode($dbCred['public_key']);
-            $prevCount = (int)$dbCred['sign_count'];
+            $prevCount = isset($dbCred['sign_count']) ? (int)$dbCred['sign_count'] : 0;
 
-            $this->webauthn->processGet(
-                $clientDataJSON, 
-                $authenticatorData, 
-                $signature, 
-                $publicKey, 
-                $challenge, 
-                $prevCount, 
-                false, 
-                false
-            );
+            try {
+                $this->webauthn->processGet(
+                    $clientDataJSON, 
+                    $authenticatorData, 
+                    $signature, 
+                    $publicKey, 
+                    $challenge, 
+                    $prevCount, 
+                    false, 
+                    false
+                );
+            } catch (WebAuthnException $e) {
+                // WA-05: Manejar desincronización de contador (común en Apple/iPhone)
+                if ($e->getCode() === WebAuthnException::SIGNATURE_COUNTER) {
+                    error_log("WebAuthn: Signature counter desync for user $userId. Stored: $prevCount. Retrying without counter check.");
+                    $this->webauthn->processGet(
+                        $clientDataJSON, 
+                        $authenticatorData, 
+                        $signature, 
+                        $publicKey, 
+                        $challenge, 
+                        null, // Bypass counter check
+                        false, 
+                        false
+                    );
+                } else {
+                    throw $e;
+                }
+            }
 
-            $this->credentialModel->updateSignCount(base64_encode($credentialIdRaw), $prevCount + 1);
+            // WA-06: Obtener contador real del autenticador en lugar de incremento manual
+            $newCount = $this->webauthn->getSignatureCounter();
+            $this->credentialModel->updateSignCount(base64_encode($credentialIdRaw), (int)$newCount);
 
             $user = $this->userModel->find($userId);
             Auth::login($user);

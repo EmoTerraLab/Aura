@@ -51,6 +51,7 @@ $router->get('/protocolos/dashboard', [\App\Controllers\ProtocolDashboardControl
 // -- Sociogramas (CESC) --
 $router->get('/alumno/sociograma', [\App\Controllers\SociometricController::class, 'survey'], ['auth', 'role:alumno']);
 $router->post('/api/sociometric/respond', [\App\Controllers\SociometricController::class, 'submitResponse'], ['auth', 'role:alumno']);
+$router->get('/staff/sociogramas/demo', [\App\Controllers\SociometricController::class, 'demo'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 $router->get('/staff/sociogramas/{id}', [\App\Controllers\SociometricController::class, 'results'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 
 $router->get('/api/protocol/case/{report_id}', [ProtocolController::class, 'getCaseData'], ['auth', 'roles:profesor,orientador,direccion,admin']);

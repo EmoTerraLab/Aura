@@ -3,9 +3,7 @@
 <!-- Mobile TopNavBar -->
 <nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant font-manrope">
     <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
-            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">eco</span>
-        </div>
+        <img src="/icono-sinfondo.png" class="w-8 h-8" alt="Aura">
         <h1 class="text-lg font-bold text-teal-700">Aura</h1>
     </div>
     <button onclick="toggleSidebar()" class="p-2 text-slate-500">
@@ -19,9 +17,7 @@
 <!-- Sidebar -->
 <nav id="app-sidebar" class="bg-slate-50 dark:bg-slate-950 font-manrope font-medium h-screen w-64 fixed left-0 top-0 no-border shadow-right shadow-[4px_0_24px_rgba(6,105,114,0.04)] z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col py-6">
     <div class="px-6 mb-8 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
-        </div>
+        <img src="/icono-sinfondo.png" class="w-10 h-10" alt="Aura">
         <div>
             <h1 class="text-xl font-black text-teal-700">Aura</h1>
             <p class="text-xs text-slate-500">School Sanctuary</p>
@@ -33,7 +29,7 @@
             <span class="font-semibold text-sm"><?= \App\Core\Lang::t('nav.new_report') ?></span>
         </button>
     </div>
-    <div class="flex-1 flex flex-col gap-1 overflow-y-auto no-scrollbar">
+    <div class="flex-1 flex flex-col gap-1 overflow-y-auto">
         <a class="bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 rounded-full mx-2 px-4 py-3 flex items-center gap-3 active:scale-95 duration-150" href="#" onclick="event.preventDefault(); ViewManager.showHome(); toggleSidebar()">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
             <span><?= \App\Core\Lang::t('nav.dashboard') ?></span>
@@ -48,6 +44,12 @@
             <span class="material-symbols-outlined">spa</span>
             <span><?= \App\Core\Lang::t('nav.breathe') ?></span>
         </button>
+        <?php if(\App\Core\Config::get('2fa_students_method', 'webauthn') === 'webauthn'): ?>
+        <button onclick="registerWebAuthn(); toggleSidebar()" class="text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full flex items-center gap-3 transition-colors text-left">
+            <span class="material-symbols-outlined">fingerprint</span>
+            <span>Acceso Biométrico</span>
+        </button>
+        <?php endif; ?>
     </div>
     <div class="mt-auto flex flex-col gap-1">
         <div class="px-6 mb-4">
@@ -64,7 +66,7 @@
 </nav>
 
 <!-- Main Content Canvas -->
-<main class="flex-1 w-full lg:pl-64 flex flex-col pt-16 lg:pt-0">
+<main class="flex-1 w-full lg:pl-64 flex flex-col pt-16 lg:pt-0 overflow-y-auto min-h-0">
     <div class="px-4 py-8 md:px-margin-page md:py-12 max-w-6xl mx-auto w-full flex-1 flex flex-col gap-stack-gap">
         
         <?php
@@ -152,7 +154,7 @@
                 </div>
 
                 <!-- Wizard Container (Hidden by default) -->
-                <div id="reporting-card" class="hidden bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding flex flex-col relative overflow-hidden min-h-[500px] animate-fadeIn">
+                <div id="reporting-card" class="hidden bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding flex flex-col relative min-h-[500px] animate-fadeIn">
                     <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-primary-fixed/20 to-transparent pointer-events-none"></div>
                     
                     <div class="relative z-10 flex flex-col h-full">
@@ -260,60 +262,24 @@
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="bg-secondary-container rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding flex flex-col items-center text-center">
-                    <div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center mb-4 shadow-sm shadow-primary/10"><span class="material-symbols-outlined text-3xl text-secondary" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span></div>
-                    <h4 class="font-body-lg text-[18px] font-semibold text-on-secondary-container mb-2"><?= \App\Core\Lang::t('dashboard.need_talk') ?></h4>
-                    <button class="bg-surface-container-lowest text-secondary rounded-full px-6 py-2 font-body-md text-body-md font-medium shadow-sm hover:shadow-md transition-shadow"><?= \App\Core\Lang::t('dashboard.help_chat') ?></button>
-                </div>
-
-                <!-- WebAuthn 2FA Block -->
-                <?php if(\App\Core\Config::get('2fa_students_method', 'webauthn') === 'webauthn'): ?>
-                <div id="webauthn-section" class="hidden bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding border border-surface-variant/50">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-h2 text-[16px] text-on-surface flex items-center gap-2">
-                            <span class="material-symbols-outlined text-primary text-lg">fingerprint</span> 
-                            Acceso Biométrico
-                        </h3>
-                        <span id="platform-tag" class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-surface-variant text-on-surface-variant">Detectando...</span>
+                <div class="bg-gradient-to-br from-teal-600 to-blue-700 rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.15)] p-4 md:p-card-padding flex flex-col items-center text-center text-white">
+                    <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4 backdrop-blur-md shadow-sm">
+                        <span class="material-symbols-outlined text-3xl text-white" style="font-variation-settings: 'FILL' 1;">spa</span>
                     </div>
-                    
-                    <div id="webauthn-list-container">
-                        <?php if (empty($webauthnDevices)): ?>
-                            <p class="text-xs text-on-surface-variant mb-6 leading-relaxed">Protege tu cuenta usando tu huella o reconocimiento facial. Es más rápido y seguro que un código por email.</p>
-                        <?php else: ?>
-                            <ul class="space-y-3 mb-6">
-                                <?php foreach($webauthnDevices as $dev): ?>
-                                    <li class="flex justify-between items-center bg-surface-container-low p-3 rounded-2xl text-xs border border-surface-variant/30 group">
-                                        <div class="flex items-center gap-3 min-w-0">
-                                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary shadow-sm">
-                                                <span class="material-symbols-outlined text-sm"><?= str_contains(strtolower($dev['device_name']), 'iphone') || str_contains(strtolower($dev['device_name']), 'móvil') ? 'smartphone' : 'key' ?></span>
-                                            </div>
-                                            <div class="min-w-0">
-                                                <p class="font-bold text-on-surface truncate"><?= htmlspecialchars($dev['device_name']) ?></p>
-                                                <p class="text-slate-400 text-[10px]">Registrado el <?= date('d/m/Y', strtotime($dev['created_at'])) ?></p>
-                                            </div>
-                                        </div>
-                                        <button onclick="deleteWebAuthn(<?= $dev['id'] ?>, '<?= htmlspecialchars($dev['device_name']) ?>')" class="text-outline hover:text-error hover:bg-error/10 p-2 rounded-full transition-all shrink-0">
-                                            <span class="material-symbols-outlined text-sm">delete</span>
-                                        </button>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
-                    </div>
-
-                    <div id="webauthn-status-box" class="hidden mb-4 p-3 rounded-xl text-center animate-pulse">
-                        <!-- Status messages injected by JS -->
-                    </div>
-
-                    <button id="btn-register-biometric" onclick="registerWebAuthn()" class="w-full bg-gradient-to-r from-primary to-teal-600 text-white rounded-full px-6 py-3.5 font-bold text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined" id="reg-icon">add_circle</span>
-                        <span id="reg-text">Configurar Biometría</span>
+                    <h4 class="font-body-lg text-[18px] font-semibold mb-2"><?= \App\Core\Lang::t('breathing.title') ?></h4>
+                    <p class="text-[13px] opacity-80 mb-6 max-w-[200px] leading-relaxed"><?= \App\Core\Lang::t('breathing.landing_desc') ?></p>
+                    <button onclick="openBreathingApp()" class="bg-white text-teal-700 rounded-full px-6 py-2.5 font-bold text-sm shadow-xl hover:scale-105 transition-all">
+                        <?= \App\Core\Lang::t('breathing.calm') ?>
                     </button>
-                    
-                    <p id="webauthn-error-msg" class="hidden mt-4 text-[11px] text-error font-medium text-center bg-error/5 p-2 rounded-lg"></p>
                 </div>
-                <?php endif; ?>
+
+                <!-- WebAuthn Hidden Support (Still needed for the JS to work) -->
+                <div id="webauthn-section" class="hidden">
+                    <div id="webauthn-list-container"></div>
+                    <div id="webauthn-status-box" class="hidden"></div>
+                    <button id="btn-register-biometric" class="hidden"></button>
+                    <p id="webauthn-error-msg" class="hidden"></p>
+                </div>
             </div>
         </div>
     </div>
@@ -483,12 +449,17 @@
         showHome() {
             this.hideAll();
             document.getElementById('home-view').classList.remove('hidden');
+            const main = document.querySelector('main');
+            if (main) main.scrollTo(0, 0);
             initHomeData();
         },
 
         showReporting() {
             this.hideAll();
             document.getElementById('reporting-card').classList.remove('hidden');
+            const main = document.querySelector('main');
+            if (main) main.scrollTo(0, 0);
+
             if (!appWizard) appWizard = new WizardFlow();
             else {
                 appWizard.currentStep = 1;
@@ -500,6 +471,9 @@
             this.hideAll();
             document.getElementById('reporting-card').classList.remove('hidden');
             document.getElementById('chat-view').classList.remove('hidden');
+            const main = document.querySelector('main');
+            if (main) main.scrollTo(0, 0);
+
             // Hide wizard-specific header/nav when in chat
             ['wizard-header', 'wizard-nav'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');

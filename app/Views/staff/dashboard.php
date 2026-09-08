@@ -62,12 +62,12 @@
             </a>
 
             <div class="mt-8 px-4">
-                <div class="bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/20 rounded-full blur-xl"></div>
+                <a href="/staff/sociogramas/demo" class="block bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden group hover:scale-[1.02] transition-transform">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/20 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
                     <span class="material-symbols-outlined text-secondary mb-2">hub</span>
                     <h3 class="font-body-md text-body-md font-semibold text-on-secondary-container leading-tight"><?= \App\Core\Lang::t('nav.sociograms') ?></h3>
                     <p class="font-label-caps text-label-caps text-secondary mt-1 normal-case"><?= \App\Core\Lang::t('nav.hidden_dynamics') ?></p>
-                </div>
+                </a>
             </div>
         </div>
 

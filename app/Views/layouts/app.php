@@ -9,7 +9,7 @@
     <title><?= $title ?? \App\Core\Config::get('school_name', 'Aura') ?></title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.26.0">
+    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.32.2">
 
     <!-- ═══════════════════════════════════════════════════════════════════
          PWA: Web App Manifest + iOS Meta Tags
@@ -24,9 +24,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Aura">
-    <link rel="apple-touch-icon" href="<?= BASE_URL ?>assets/images/icons/apple-touch-icon.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="<?= BASE_URL ?>assets/images/icons/icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="<?= BASE_URL ?>assets/images/icons/icon-512x512.png">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>assets/images/icons/apple-touch-icon.png?v=2.32.2">
+    <link rel="apple-touch-icon" sizes="192x192" href="<?= BASE_URL ?>assets/images/icons/icon-192x192.png?v=2.32.2">
+    <link rel="apple-touch-icon" sizes="512x512" href="<?= BASE_URL ?>assets/images/icons/icon-512x512.png?v=2.32.2">
 
     <!-- Microsoft: Tile para Windows -->
     <meta name="msapplication-TileColor" content="#004f56">
