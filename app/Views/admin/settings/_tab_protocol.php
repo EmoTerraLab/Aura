@@ -33,79 +33,78 @@ $showToStudents = $settings['ccaa_show_to_students'] ?? '1';
 $protocolData = $selectedCcaa ? BullyingProtocols::getByCode($selectedCcaa) : null;
 ?>
 
-<form action="/admin/settings/protocol" method="POST" class="space-y-8">
+<form action="/admin/settings/protocol" method="POST" class="space-y-6 font-display">
     <input type="hidden" name="csrf_token" value="<?= Csrf::generateToken() ?>">
 
     <div class="space-y-1">
-        <h2 class="text-xl font-black text-primary flex items-center gap-2">
-            <span class="material-symbols-outlined">gavel</span>
+        <h2 class="text-base md:text-lg font-bold text-on-surface flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">gavel</span>
             Protocolo Oficial de Acoso Escolar
         </h2>
-        <p class="text-sm text-slate-500">Selecciona el protocolo autonómico que servirá de guía contextual para el personal y el alumnado.</p>
+        <p class="text-xs text-on-surface-variant">Selecciona el protocolo autonómico que servirá de guía contextual para el personal y el alumnado.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-4">
-            <div class="space-y-2">
-                <label class="font-bold text-sm text-slate-700">Comunidad Autónoma</label>
-                <select name="ccaa_code" onchange="updateDynamicPreview(this.value)" class="w-full bg-white border border-surface-variant rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+            <div class="space-y-1.5">
+                <label class="font-bold text-xs text-on-surface-variant uppercase tracking-wider">Comunidad Autónoma</label>
+                <select name="ccaa_code" onchange="updateDynamicPreview(this.value)" class="w-full h-11 bg-surface-container-low border border-surface-variant/40 rounded-xl px-4 text-xs md:text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                     <?php foreach ($ccaaList as $code => $name): ?>
                         <option value="<?= $code ?>" <?= $selectedCcaa === $code ? 'selected' : '' ?>><?= $name ?></option>
                     <?php endforeach; ?>
                 </select>
-                <p class="text-[11px] text-slate-400 italic">Cada CCAA tiene sus propios tiempos, fases y herramientas oficiales (Séneca, REVA, etc.).</p>
+                <p class="text-[10px] text-on-surface-variant/70 italic">Cada CCAA tiene sus propios tiempos, fases y herramientas oficiales (Séneca, REVA, etc.).</p>
             </div>
 
-            <div class="space-y-4 pt-4 border-t border-slate-100">
+            <div class="space-y-3 pt-3 border-t border-surface-variant/30">
                 <label class="flex items-center gap-3 cursor-pointer group">
                     <input type="hidden" name="ccaa_protocol_active" value="0">
-                    <input type="checkbox" name="ccaa_protocol_active" value="1" <?= $protocolActive === '1' ? 'checked' : '' ?> class="w-5 h-5 accent-primary rounded-lg">
+                    <input type="checkbox" name="ccaa_protocol_active" value="1" <?= $protocolActive === '1' ? 'checked' : '' ?> class="w-4 h-4 accent-primary rounded">
                     <div>
-                        <span class="block font-bold text-sm text-slate-700 group-hover:text-primary transition-colors">Activar Guía Contextual</span>
-                        <span class="block text-xs text-slate-500 italic">Muestra información del protocolo en los reportes de riesgo.</span>
+                        <span class="block font-bold text-xs text-on-surface group-hover:text-primary transition-colors">Activar Guía Contextual</span>
+                        <span class="block text-[11px] text-on-surface-variant">Muestra información del protocolo en los reportes de riesgo.</span>
                     </div>
                 </label>
 
                 <label class="flex items-center gap-3 cursor-pointer group">
                     <input type="hidden" name="ccaa_show_to_students" value="0">
-                    <input type="checkbox" name="ccaa_show_to_students" value="1" <?= $showToStudents === '1' ? 'checked' : '' ?> class="w-5 h-5 accent-primary rounded-lg">
+                    <input type="checkbox" name="ccaa_show_to_students" value="1" <?= $showToStudents === '1' ? 'checked' : '' ?> class="w-4 h-4 accent-primary rounded">
                     <div>
-                        <span class="block font-bold text-sm text-slate-700 group-hover:text-primary transition-colors">Visible para Alumnos</span>
-                        <span class="block text-xs text-slate-500 italic">Permite que los alumnos consulten el protocolo desde su panel.</span>
+                        <span class="block font-bold text-xs text-on-surface group-hover:text-primary transition-colors">Visible para Alumnos</span>
+                        <span class="block text-[11px] text-on-surface-variant">Permite que los alumnos consulten el protocolo desde su panel.</span>
                     </div>
                 </label>
             </div>
         </div>
 
-        <div class="bg-slate-50 rounded-3xl p-6 border border-slate-200/60 relative overflow-hidden">
+        <div class="bg-surface-container-low rounded-2xl p-5 border border-surface-variant/40 relative overflow-hidden">
             <div class="relative z-10" id="preview-container">
-                <h3 class="font-black text-slate-400 uppercase tracking-widest text-[10px] mb-4">Previsualización Dinámica</h3>
+                <h3 class="font-bold text-on-surface-variant uppercase tracking-wider text-[10px] mb-3">Previsualización Dinámica</h3>
                 
                 <div id="preview-content">
                     <?php if ($protocolData): ?>
-                        <div class="space-y-4 animate-[fadeIn_0.3s_ease-out]">
+                        <div class="space-y-3 animate-fadeIn">
                             <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style="background-color: <?= $protocolData['metadata']['color'] ?>">
-                                    <span class="material-symbols-outlined">assured_workload</span>
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-xs" style="background-color: <?= $protocolData['metadata']['color'] ?>">
+                                    <span class="material-symbols-outlined text-xl">assured_workload</span>
                                 </div>
-                                <div>
-                                    <h4 class="font-bold text-slate-800 leading-tight"><?= $protocolData['metadata']['name'] ?></h4>
-                                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-tight"><?= $protocolData['metadata']['authority'] ?></p>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-xs md:text-sm text-on-surface leading-tight truncate"><?= $protocolData['metadata']['name'] ?></h4>
+                                    <p class="text-[10px] text-on-surface-variant uppercase font-semibold tracking-tight truncate"><?= $protocolData['metadata']['authority'] ?></p>
                                 </div>
                             </div>
-                            <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2">
-                                <p class="text-[13px] font-bold text-slate-700"><?= $protocolData['metadata']['document_title'] ?></p>
+                            <div class="p-3.5 bg-surface-container-lowest rounded-xl border border-surface-variant/40 shadow-xs space-y-1.5">
+                                <p class="text-xs font-bold text-on-surface"><?= $protocolData['metadata']['document_title'] ?></p>
                                 <div class="flex gap-2">
-                                    <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-500"><?= count($protocolData['phases']) ?> FASES</span>
-                                    <span class="px-2 py-0.5 bg-teal-50 rounded text-[10px] font-bold text-teal-600"><?= $protocolData['metadata']['main_tool'] ?></span>
+                                    <span class="px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold text-on-surface-variant"><?= count($protocolData['phases']) ?> FASES</span>
+                                    <span class="px-2 py-0.5 bg-prisma-mint/25 rounded text-[10px] font-bold text-teal-900"><?= $protocolData['metadata']['main_tool'] ?></span>
                                 </div>
                             </div>
-                            <p class="text-[11px] text-slate-400 text-center italic mt-4 italic">El color de acento de la interfaz cambiará automáticamente a <span style="color: <?= $protocolData['metadata']['color'] ?>; font-weight: bold;"><?= $protocolData['metadata']['color'] ?></span> para este protocolo.</p>
                         </div>
                     <?php else: ?>
-                        <div class="flex flex-col items-center justify-center py-12 text-center animate-[fadeIn_0.3s_ease-out]">
-                            <span class="material-symbols-outlined text-slate-300 text-5xl mb-2">map</span>
-                            <p class="text-sm text-slate-400 font-medium italic">Selecciona una CCAA para ver los detalles del protocolo.</p>
+                        <div class="flex flex-col items-center justify-center py-8 text-center animate-fadeIn">
+                            <span class="material-symbols-outlined text-outline-variant text-4xl mb-1">map</span>
+                            <p class="text-xs text-on-surface-variant italic">Selecciona una CCAA para ver los detalles del protocolo.</p>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -113,8 +112,8 @@ $protocolData = $selectedCcaa ? BullyingProtocols::getByCode($selectedCcaa) : nu
         </div>
     </div>
 
-    <div class="pt-6 border-t border-slate-100 flex justify-end">
-        <button type="submit" class="bg-primary hover:bg-primary-variant text-white font-bold py-3 px-8 rounded-full transition-all ambient-shadow active:scale-95">
+    <div class="pt-4 border-t border-surface-variant/30 flex justify-end">
+        <button type="submit" class="h-11 bg-primary text-on-primary font-bold text-xs py-2 px-6 rounded-xl transition-all shadow-xs hover:bg-primary/90 cursor-pointer">
             Guardar Configuración de Protocolos
         </button>
     </div>
@@ -125,15 +124,15 @@ async function updateDynamicPreview(code) {
     const content = document.getElementById('preview-content');
     if (!code) {
         content.innerHTML = `
-            <div class="flex flex-col items-center justify-center py-12 text-center animate-[fadeIn_0.3s_ease-out]">
-                <span class="material-symbols-outlined text-slate-300 text-5xl mb-2">map</span>
-                <p class="text-sm text-slate-400 font-medium italic">Selecciona una CCAA para ver los detalles del protocolo.</p>
+            <div class="flex flex-col items-center justify-center py-8 text-center animate-fadeIn">
+                <span class="material-symbols-outlined text-outline-variant text-4xl mb-1">map</span>
+                <p class="text-xs text-on-surface-variant italic">Selecciona una CCAA para ver los detalles del protocolo.</p>
             </div>
         `;
         return;
     }
 
-    content.innerHTML = '<div class="flex flex-col items-center justify-center py-12"><span class="material-symbols-outlined animate-spin text-primary text-4xl">refresh</span></div>';
+    content.innerHTML = '<div class="flex flex-col items-center justify-center py-8"><span class="material-symbols-outlined animate-spin text-primary text-3xl">refresh</span></div>';
 
     try {
         const res = await fetch(`/api/protocol-info?code=${code}`);
@@ -142,36 +141,35 @@ async function updateDynamicPreview(code) {
         if (data.success && data.protocol) {
             const p = data.protocol;
             content.innerHTML = `
-                <div class="space-y-4 animate-[fadeIn_0.3s_ease-out]">
+                <div class="space-y-3 animate-fadeIn">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style="background-color: ${p.metadata.color}">
-                            <span class="material-symbols-outlined">assured_workload</span>
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-xs" style="background-color: ${p.metadata.color}">
+                            <span class="material-symbols-outlined text-xl">assured_workload</span>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-slate-800 leading-tight">${p.metadata.name}</h4>
-                            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-tight">${p.metadata.authority}</p>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-xs md:text-sm text-on-surface leading-tight truncate">${p.metadata.name}</h4>
+                            <p class="text-[10px] text-on-surface-variant uppercase font-semibold tracking-tight truncate">${p.metadata.authority}</p>
                         </div>
                     </div>
-                    <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2">
-                        <p class="text-[13px] font-bold text-slate-700">${p.metadata.document_title}</p>
+                    <div class="p-3.5 bg-surface-container-lowest rounded-xl border border-surface-variant/40 shadow-xs space-y-1.5">
+                        <p class="text-xs font-bold text-on-surface">${p.metadata.document_title}</p>
                         <div class="flex gap-2">
-                            <span class="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-500">${p.phases.length} FASES</span>
-                            <span class="px-2 py-0.5 bg-teal-50 rounded text-[10px] font-bold text-teal-600">${p.metadata.main_tool}</span>
+                            <span class="px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold text-on-surface-variant">${p.phases.length} FASES</span>
+                            <span class="px-2 py-0.5 bg-prisma-mint/25 rounded text-[10px] font-bold text-teal-900">${p.metadata.main_tool}</span>
                         </div>
                     </div>
-                    <p class="text-[11px] text-slate-400 text-center italic mt-4 italic">El color de acento de la interfaz cambiará automáticamente a <span style="color: ${p.metadata.color}; font-weight: bold;">${p.metadata.color}</span> para este protocolo.</p>
                 </div>
             `;
         } else {
             content.innerHTML = `
-                <div class="flex flex-col items-center justify-center py-12 text-center animate-[fadeIn_0.3s_ease-out]">
-                    <span class="material-symbols-outlined text-amber-500 text-5xl mb-2">warning</span>
-                    <p class="text-sm text-slate-400 font-medium">No hay información detallada disponible para esta región todavía.</p>
+                <div class="flex flex-col items-center justify-center py-8 text-center animate-fadeIn">
+                    <span class="material-symbols-outlined text-amber-500 text-4xl mb-1">warning</span>
+                    <p class="text-xs text-on-surface-variant">No hay información detallada disponible para esta región todavía.</p>
                 </div>
             `;
         }
     } catch (e) {
-        content.innerHTML = '<p class="text-error text-xs text-center p-8">Error cargando previsualización.</p>';
+        content.innerHTML = '<p class="text-error text-xs text-center p-6">Error cargando previsualización.</p>';
     }
 }
 </script>

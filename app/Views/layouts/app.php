@@ -6,35 +6,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="<?= \App\Core\Csrf::generateToken() ?>">
     
-    <title><?= $title ?? \App\Core\Config::get('school_name', 'Aura') ?></title>
+    <title><?= $title ?? (\App\Core\Config::get('school_name', 'Prisma') . ' — Convivencia Escolar') ?></title>
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>favicon.ico?v=2.32.2">
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>assets/prisma-symbol.jpeg">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>assets/prisma-symbol.jpeg">
 
     <!-- ═══════════════════════════════════════════════════════════════════
          PWA: Web App Manifest + iOS Meta Tags
-         Convierte Aura en app instalable (Chrome/Android + iPhone/iOS)
          ═══════════════════════════════════════════════════════════════════ -->
     <link rel="manifest" href="<?= BASE_URL ?>manifest.json" crossorigin="use-credentials">
-    <meta name="theme-color" content="#004f56">
+    <meta name="theme-color" content="#1E2433">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Aura">
+    <meta name="application-name" content="Prisma">
 
     <!-- iOS: Experiencia nativa a pantalla completa en iPhone/iPad -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Aura">
-    <link rel="apple-touch-icon" href="<?= BASE_URL ?>assets/images/icons/apple-touch-icon.png?v=2.32.2">
-    <link rel="apple-touch-icon" sizes="192x192" href="<?= BASE_URL ?>assets/images/icons/icon-192x192.png?v=2.32.2">
-    <link rel="apple-touch-icon" sizes="512x512" href="<?= BASE_URL ?>assets/images/icons/icon-512x512.png?v=2.32.2">
+    <meta name="apple-mobile-web-app-title" content="Prisma">
 
-    <!-- Microsoft: Tile para Windows -->
-    <meta name="msapplication-TileColor" content="#004f56">
-    <meta name="msapplication-TileImage" content="<?= BASE_URL ?>assets/images/icons/icon-192x192.png">
-
+    <!-- Google Fonts: Manrope (Display/Headings) + Inter (Body/Forms) -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -44,131 +38,220 @@
             theme: {
                 extend: {
                     colors: {
-                        "on-secondary": "#ffffff",
-                        "surface-dim": "#d8dadb",
-                        "on-tertiary-container": "#ffd0b1",
-                        "on-background": "#181c1d",
-                        "surface-container-low": "#f1f4f4",
-                        "tertiary-fixed-dim": "#ffb785",
-                        "background": "#f7fafa",
-                        "on-primary-fixed": "#001f23",
-                        "on-primary-container": "#99e6f0",
-                        "on-error": "#ffffff",
-                        "error": "#ba1a1a",
-                        "on-secondary-fixed-variant": "#1f4c5f",
-                        "on-surface-variant": "#3f484a",
-                        "primary-fixed-dim": "#86d3dd",
-                        "inverse-on-surface": "#eef1f1",
-                        "on-secondary-fixed": "#001f2b",
-                        "on-tertiary-fixed-variant": "#6c3a10",
-                        "surface-tint": "#056972",
-                        "surface-container-highest": "#e0e3e3",
-                        "primary-fixed": "#a2eff9",
-                        "inverse-primary": "#86d3dd",
-                        "secondary": "<?= \App\Core\Config::get('app_accent_color', '#3a6478') ?>",
-                        "surface-container-high": "#e6e9e9",
-                        "outline-variant": "#bec8ca",
-                        "surface-bright": "#f7fafa",
-                        "secondary-container": "#bbe6fd",
-                        "on-tertiary": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
-                        "on-surface": "#181c1d",
-                        "on-secondary-container": "#3e687c",
-                        "outline": "#6f797a",
-                        "primary-container": "#066972",
-                        "inverse-surface": "#2d3132",
-                        "secondary-fixed-dim": "#a2cde3",
-                        "tertiary-fixed": "#ffdcc6",
-                        "tertiary-container": "#895126",
-                        "surface-variant": "#e0e3e3",
-                        "primary": "<?= \App\Core\Config::get('app_primary_color', '#004f56') ?>",
-                        "on-error-container": "#93000a",
-                        "on-primary": "#ffffff",
-                        "on-primary-fixed-variant": "#004f56",
-                        "surface-container": "#eceeef",
-                        "surface": "#f7fafa",
-                        "tertiary": "#6d3a10",
-                        "error-container": "#ffdad6",
-                        "secondary-fixed": "#c0e8ff",
-                        "on-tertiary-fixed": "#301400"
+                        // Brand Prisma
+                        "prisma-mint": "#79E0CC",
+                        "prisma-lavender": "#C9A7FF",
+                        "prisma-sky": "#A6E4FF",
+                        "prisma-cloud": "#F4F7FD",
+                        "prisma-charcoal": "#1E2433",
+
+                        // Semantic
+                        "success": "#2FBF9F",
+                        "success-bg": "#EAFBF6",
+                        "info": "#62B9F3",
+                        "info-bg": "#EDF8FF",
+                        "warning": "#F2B84B",
+                        "warning-bg": "#FFF8E7",
+                        "danger": "#E86B73",
+                        "danger-bg": "#FFF0F1",
+                        "error": "#E86B73",
+                        "error-container": "#FFF0F1",
+
+                        // Neutrals
+                        "gray-50": "#F8FAFC",
+                        "gray-100": "#F1F5F9",
+                        "gray-200": "#E2E8F0",
+                        "gray-300": "#CBD5E1",
+                        "gray-500": "#64748B",
+                        "gray-700": "#334155",
+                        "gray-900": "#0F172A",
+
+                        // System Aliases
+                        "bg-app": "#F7F9FD",
+                        "bg-surface": "#FFFFFF",
+                        "bg-subtle": "#F4F7FD",
+                        "text-primary": "#1E2433",
+                        "text-secondary": "#64748B",
+                        "text-muted": "#94A3B8",
+                        "border-subtle": "#E2E8F0",
+                        "border-strong": "#CBD5E1",
+
+                        // Legacy / Dynamic Compatibility
+                        "primary": "<?= \App\Core\Config::get('app_primary_color', '#1E2433') ?>",
+                        "secondary": "<?= \App\Core\Config::get('app_accent_color', '#79E0CC') ?>",
+                        "surface": "#FFFFFF",
+                        "background": "#F7F9FD",
+                        "on-surface": "#1E2433",
+                        "on-surface-variant": "#64748B",
+                        "surface-variant": "#F1F5F9",
+                        "surface-container": "#F4F7FD",
+                        "surface-container-low": "#F8FAFC",
+                        "surface-container-lowest": "#FFFFFF",
+                        "primary-container": "#1E2433",
+                        "on-primary": "#FFFFFF",
+                        "on-primary-container": "#79E0CC",
+                        "secondary-container": "#EDF8FF",
+                        "on-secondary-container": "#1E2433",
+                        "surface-tint": "#2FBF9F",
+                        "outline": "#CBD5E1",
+                        "outline-variant": "#E2E8F0"
                     },
                     borderRadius: {
-                        "DEFAULT": "1rem",
-                        "lg": "2rem",
-                        "xl": "3rem",
+                        "sm": "8px",
+                        "md": "12px",
+                        "lg": "16px",
+                        "xl": "20px",
+                        "2xl": "24px",
+                        "prisma": "16px",
                         "full": "9999px"
+                    },
+                    boxShadow: {
+                        "sm": "0 1px 2px rgba(30, 36, 51, 0.06)",
+                        "md": "0 6px 18px rgba(30, 36, 51, 0.08)",
+                        "lg": "0 14px 36px rgba(30, 36, 51, 0.10)",
+                        "ambient": "0 10px 40px -10px rgba(30, 36, 51, 0.08)"
                     },
                     spacing: {
                         "margin-page": "32px",
                         "card-padding": "24px",
                         "gutter": "24px",
                         "unit": "8px",
-                        "stack-gap": "16px"
+                        "stack-gap": "20px"
                     },
                     fontFamily: {
-                        "body-md": ["Manrope"],
-                        "h2": ["Manrope"],
-                        "h1": ["Manrope"],
-                        "body-lg": ["Manrope"],
-                        "label-caps": ["Manrope"]
+                        "display": ["Manrope", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                        "manrope": ["Manrope", "sans-serif"],
+                        "inter": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "h1": ["Manrope", "sans-serif"],
+                        "h2": ["Manrope", "sans-serif"],
+                        "h3": ["Manrope", "sans-serif"],
+                        "label-caps": ["Manrope", "sans-serif"]
                     },
                     fontSize: {
-                        "body-md": ["16px", { lineHeight: "1.6", letterSpacing: "0.01em", fontWeight: "400" }],
-                        "h2": ["24px", { lineHeight: "1.3", letterSpacing: "-0.01em", fontWeight: "600" }],
+                        "display": ["40px", { lineHeight: "1.1", fontWeight: "700" }],
                         "h1": ["32px", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700" }],
-                        "body-lg": ["18px", { lineHeight: "1.6", letterSpacing: "0.01em", fontWeight: "400" }],
-                        "label-caps": ["12px", { lineHeight: "1.0", letterSpacing: "0.08em", fontWeight: "600" }]
+                        "h2": ["24px", { lineHeight: "1.25", letterSpacing: "-0.01em", fontWeight: "700" }],
+                        "h3": ["20px", { lineHeight: "1.3", fontWeight: "650" }],
+                        "body-lg": ["18px", { lineHeight: "1.55", fontWeight: "400" }],
+                        "body-md": ["16px", { lineHeight: "1.55", fontWeight: "400" }],
+                        "body-sm": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "label": ["13px", { lineHeight: "1.3", fontWeight: "600" }],
+                        "caption": ["12px", { lineHeight: "1.4", fontWeight: "500" }],
+                        "label-caps": ["12px", { lineHeight: "1.0", letterSpacing: "0.06em", fontWeight: "600" }]
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Base Reset & Scale Fixes */
+        /* Base Reset & Design System Tokens */
+        :root {
+            --prisma-mint: #79E0CC;
+            --prisma-lavender: #C9A7FF;
+            --prisma-sky: #A6E4FF;
+            --prisma-cloud: #F4F7FD;
+            --prisma-charcoal: #1E2433;
+            --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-500: #64748B;
+            --gray-700: #334155;
+            --gray-900: #0F172A;
+            --success: #2FBF9F;
+            --success-bg: #EAFBF6;
+            --info: #62B9F3;
+            --info-bg: #EDF8FF;
+            --warning: #F2B84B;
+            --warning-bg: #FFF8E7;
+            --danger: #E86B73;
+            --danger-bg: #FFF0F1;
+            --bg-app: #F7F9FD;
+            --bg-surface: #FFFFFF;
+            --bg-subtle: #F4F7FD;
+            --text-primary: #1E2433;
+            --text-secondary: #64748B;
+            --text-muted: #94A3B8;
+            --border-subtle: #E2E8F0;
+            --border-strong: #CBD5E1;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-pill: 9999px;
+            --shadow-sm: 0 1px 2px rgba(30, 36, 51, 0.06);
+            --shadow-md: 0 6px 18px rgba(30, 36, 51, 0.08);
+            --shadow-lg: 0 14px 36px rgba(30, 36, 51, 0.10);
+            --prisma-gradient: linear-gradient(90deg, #79E0CC 0%, #A6E4FF 45%, #C9A7FF 100%);
+            --ease-prisma: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
         * { box-sizing: border-box; }
         html, body { 
             margin: 0; 
             padding: 0; 
             width: 100%;
-            height: 100%;
+            min-height: 100%;
             overflow-x: hidden; 
-            font-size: 16px; /* Essential for mobile scale */
+            font-size: 16px;
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-app);
+            color: var(--text-primary);
             -webkit-text-size-adjust: 100%;
         }
 
-        body { background-color: theme('colors.surface'); color: theme('colors.on-surface'); }
-        
-        /* Form elements zoom fix for iOS */
-        input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="search"], select, textarea {
-            font-size: 16px !important; /* Prevents auto-zoom on focus in iOS */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Manrope", sans-serif;
+            color: var(--text-primary);
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
-        
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus, 
-        input:-webkit-autofill:active{
-            -webkit-box-shadow: 0 0 0 30px #e0e3e3 inset !important;
-            -webkit-text-fill-color: #181c1d !important;
+        /* Form Controls Standard (44px height, 10-12px radius, focus ring) */
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="search"], select, textarea {
+            font-family: "Inter", sans-serif;
+            font-size: 15px !important;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            background-color: var(--white);
+            color: var(--text-primary);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
+
+        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="search"]:focus, select:focus, textarea:focus {
+            outline: 3px solid rgba(166, 228, 255, 0.45) !important;
+            border-color: #62B9F3 !important;
+            box-shadow: none !important;
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(30, 36, 51, 0.12); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(30, 36, 51, 0.25); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .ambient-shadow { box-shadow: 0 10px 40px -10px rgba(6, 105, 114, 0.08); }
-        
+
+        .prisma-gradient-bg {
+            background: var(--prisma-gradient);
+        }
+        .prisma-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        .prisma-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Fluid Typography */
-        h1 { font-size: clamp(1.5rem, 5vw, 2rem) !important; }
-        h2 { font-size: clamp(1.25rem, 4vw, 1.5rem) !important; }
-
-        /* Responsive Table */
         .table-container {
             width: 100%;
             overflow-x: auto;

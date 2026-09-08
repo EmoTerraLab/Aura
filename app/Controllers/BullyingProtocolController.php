@@ -53,6 +53,13 @@ class BullyingProtocolController
     public function getApiProtocol(): void
     {
         header('Content-Type: application/json');
+
+        if (Auth::role() === 'alumno' && !$this->protocolDataService->isVisibleToStudents()) {
+            http_response_code(403);
+            echo json_encode(['error' => 'forbidden']);
+            return;
+        }
+
         $protocol = $this->protocolDataService->getCurrentProtocol();
         
         if (!$protocol) {

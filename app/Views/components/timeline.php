@@ -8,7 +8,6 @@
  */
 
 if (empty($steps)) {
-    echo '<p class="text-[10px] text-slate-400 italic px-8 py-4">Timeline no disponible para este protocolo.</p>';
     return;
 }
 
@@ -21,35 +20,32 @@ foreach ($steps as $idx => $step) {
 }
 ?>
 
-<div id="protocol-timeline" class="bg-white border-b px-4 md:px-8 py-4 flex flex-nowrap items-center justify-start overflow-x-auto no-scrollbar gap-4 w-full">
+<div id="protocol-timeline" class="bg-surface-container-lowest border-b border-surface-variant/40 px-4 md:px-6 py-3 flex flex-nowrap items-center justify-start overflow-x-auto gap-3 w-full font-display">
     <?php foreach ($steps as $idx => $step): 
         $isActual = ($idx === $activeIndex);
         $isPast = ($idx < $activeIndex && $activeIndex !== -1);
         
-        $colorClass = $isActual ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-110' : ($isPast ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400');
-        $textColor = $isActual ? 'text-primary' : ($isPast ? 'text-emerald-600' : 'text-slate-400');
+        $colorClass = $isActual ? 'bg-primary text-on-primary shadow-xs' : ($isPast ? 'bg-prisma-mint/40 text-teal-950 font-bold' : 'bg-surface-container-low text-on-surface-variant/60');
+        $textColor = $isActual ? 'text-primary font-bold' : ($isPast ? 'text-teal-900 font-bold' : 'text-on-surface-variant/70');
         
-        // Material symbols handling: if it's past, show check, else show the icon from the step
         $iconName = $isPast ? 'check' : ($step['icon'] ?? 'circle');
-        
-        // Fix for common icon name mismatches if necessary (e.g., envelope -> mail)
         if ($iconName === 'envelope') $iconName = 'mail';
         if ($iconName === 'clipboard-list') $iconName = 'assignment';
         if ($iconName === 'eye') $iconName = 'visibility';
         if ($iconName === 'check-circle') $iconName = 'check_circle';
     ?>
         <div class="flex items-center gap-2 shrink-0 transition-all">
-            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-bold <?= $colorClass ?>">
-                <span class="material-symbols-outlined text-sm"><?= $iconName ?></span>
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold <?= $colorClass ?>">
+                <span class="material-symbols-outlined text-[16px]"><?= $iconName ?></span>
             </div>
             <div class="flex flex-col">
-                <span class="text-[9px] font-black uppercase tracking-tighter <?= $textColor ?>"><?= htmlspecialchars($step['label']) ?></span>
+                <span class="text-[10px] uppercase tracking-wider <?= $textColor ?>"><?= htmlspecialchars($step['label']) ?></span>
                 <?php if (!empty($step['deadline_days'])): ?>
-                    <span class="text-[8px] font-bold text-slate-300">Día <?= $step['deadline_days'] ?></span>
+                    <span class="text-[9px] font-semibold text-on-surface-variant/60">Día <?= $step['deadline_days'] ?></span>
                 <?php endif; ?>
             </div>
             <?php if ($idx < count($steps) - 1): ?>
-                <span class="material-symbols-outlined text-slate-200 text-sm mx-1">chevron_right</span>
+                <span class="material-symbols-outlined text-surface-variant text-base mx-0.5">chevron_right</span>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>
@@ -57,15 +53,15 @@ foreach ($steps as $idx => $step) {
     <?php if (isset($deadlineAlert) && !empty($deadlineAlert)): 
         $alertLevel = $deadlineAlert['level'] ?? 'default';
         $alertClasses = match($alertLevel) {
-            'ok' => 'text-emerald-600 bg-emerald-50 border-emerald-100',
-            'warning' => 'text-amber-600 bg-amber-50 border-amber-100',
-            'danger' => 'text-red-600 bg-red-50 border-red-100',
-            'overdue' => 'bg-red-900 text-white animate-pulse border-red-900',
-            default => 'text-slate-500 bg-slate-50 border-slate-100'
+            'ok' => 'text-teal-900 bg-prisma-mint/20 border-teal-600/30',
+            'warning' => 'text-amber-900 bg-amber-500/10 border-amber-500/30',
+            'danger' => 'text-error bg-error/10 border-error/20',
+            'overdue' => 'bg-error text-white animate-pulse border-error',
+            default => 'text-on-surface-variant bg-surface-container-low border-surface-variant/40'
         };
     ?>
-        <div class="ml-auto px-4 py-2 rounded-xl text-[9px] font-black uppercase border <?= $alertClasses ?> flex items-center gap-2 shrink-0 shadow-sm">
-            <span class="material-symbols-outlined text-xs">schedule</span> <?= htmlspecialchars($deadlineAlert['message']) ?>
+        <div class="ml-auto px-3 py-1.5 rounded-xl text-[9px] font-bold uppercase border <?= $alertClasses ?> flex items-center gap-1.5 shrink-0 shadow-xs">
+            <span class="material-symbols-outlined text-sm">schedule</span> <?= htmlspecialchars($deadlineAlert['message']) ?>
         </div>
     <?php endif; ?>
 </div>

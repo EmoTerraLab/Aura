@@ -1,60 +1,68 @@
 <?php
-// Vista de verificación de WebAuthn (Biometría) rediseñada para Aura 2026
+// Vista de verificación de WebAuthn (Biometría) rediseñada para Prisma
+$bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col relative overflow-x-hidden overflow-y-auto"; 
 ?>
 
-<div class="flex flex-col items-center justify-center min-h-[80vh] px-4 font-manrope">
-    <div class="w-full max-w-md bg-surface-container-lowest rounded-[2rem] p-8 md:p-10 shadow-[0_32px_80px_-16px_rgba(6,105,114,0.12)] border border-surface-variant/30 text-center animate-fadeIn">
+<!-- Ambient Background Element -->
+<div class="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-prisma-sky/20 via-surface to-background"></div>
+
+<main class="flex-1 flex flex-col items-center justify-center p-4 md:p-6 relative z-10 w-full max-w-md mx-auto">
+    <!-- Logo Area -->
+    <div class="flex flex-col items-center justify-center mb-6 md:mb-8 gap-3">
+        <a href="/login" class="inline-block transition-transform hover:scale-[1.02] active:scale-[0.98]">
+            <img src="<?= BASE_URL ?>assets/prisma-logo.png" alt="Prisma" class="h-10 md:h-12 w-auto object-contain">
+        </a>
+    </div>
+
+    <div class="w-full bg-surface-container-lowest rounded-2xl p-6 md:p-8 shadow-card border border-surface-variant/40 text-center relative overflow-hidden">
         
         <!-- Icono Dinámico -->
-        <div class="relative inline-flex mb-8">
-            <div id="auth-icon-bg" class="w-24 h-24 rounded-3xl bg-primary/10 text-primary flex items-center justify-center transition-all duration-500">
-                <span id="auth-icon" class="material-symbols-outlined text-5xl">fingerprint</span>
+        <div class="relative inline-flex mb-6">
+            <div id="auth-icon-bg" class="w-20 h-20 rounded-2xl bg-primary/5 text-primary flex items-center justify-center transition-all duration-300 border border-surface-variant/40">
+                <span id="auth-icon" class="material-symbols-outlined text-4xl">fingerprint</span>
             </div>
-            <div id="auth-spinner" class="absolute inset-0 border-4 border-primary/20 border-t-primary rounded-3xl animate-spin hidden"></div>
+            <div id="auth-spinner" class="absolute inset-0 border-3 border-primary/20 border-t-primary rounded-2xl animate-spin hidden"></div>
         </div>
 
-        <h1 id="auth-title" class="text-2xl font-black text-on-surface mb-3 tracking-tight">Acceso Biométrico</h1>
-        <p id="auth-desc" class="text-on-surface-variant text-sm leading-relaxed mb-10">Usa tu dispositivo para confirmar que eres tú.</p>
+        <h1 id="auth-title" class="text-xl md:text-2xl font-display font-bold text-on-surface mb-2 tracking-tight">Acceso Biométrico</h1>
+        <p id="auth-desc" class="text-on-surface-variant text-xs md:text-sm leading-relaxed mb-6">Usa tu dispositivo para confirmar tu identidad con Prisma.</p>
 
         <!-- Status / Error Box -->
-        <div id="auth-status-box" class="hidden mb-8 p-4 rounded-2xl text-sm font-medium animate-pulse">
+        <div id="auth-status-box" class="hidden mb-6 p-3.5 rounded-xl text-xs font-semibold">
             <!-- Mensajes dinámicos -->
         </div>
 
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-3">
             <!-- Botón Principal -->
-            <button id="auth-btn" onclick="authenticateWithWebAuthn()" class="group relative w-full bg-gradient-to-br from-primary to-purple-600 text-on-primary font-bold py-5 rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all overflow-hidden">
-                <div class="relative z-10 flex items-center justify-center gap-3">
-                    <span id="btn-icon" class="material-symbols-outlined text-2xl">touch_app</span>
-                    <span id="btn-text">Iniciar Verificación</span>
-                </div>
-                <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <button id="auth-btn" onclick="authenticateWithWebAuthn()" class="w-full h-12 bg-primary text-on-primary font-display font-bold text-sm rounded-xl shadow-sm hover:bg-primary/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <span id="btn-icon" class="material-symbols-outlined text-xl">touch_app</span>
+                <span id="btn-text">Iniciar Verificación</span>
             </button>
 
             <!-- Botón Reintento (Hidden initially) -->
-            <button id="retry-btn" onclick="authenticateWithWebAuthn()" class="hidden w-full bg-surface-container-high text-on-surface font-bold py-5 rounded-2xl hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined">refresh</span>
+            <button id="retry-btn" onclick="authenticateWithWebAuthn()" class="hidden w-full h-12 bg-surface-container-high text-on-surface font-display font-bold text-sm rounded-xl hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <span class="material-symbols-outlined text-xl">refresh</span>
                 Intentar de nuevo
             </button>
 
-            <div class="relative my-4">
-                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-surface-variant/50"></div></div>
-                <div class="relative flex justify-center text-[10px] uppercase tracking-widest font-bold text-outline bg-surface-container-lowest px-4 italic">o también</div>
+            <div class="relative my-2">
+                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-surface-variant/40"></div></div>
+                <div class="relative flex justify-center text-[10px] uppercase tracking-widest font-bold text-on-surface-variant/60 bg-surface-container-lowest px-3">o también</div>
             </div>
 
             <!-- Botón Fallback OTP -->
-            <button onclick="useOtpFallback()" class="w-full bg-transparent text-primary font-bold py-4 rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-3">
-                <span class="material-symbols-outlined"><?= $isStudent ? 'mail' : 'lock' ?></span>
+            <button onclick="useOtpFallback()" class="w-full h-11 bg-surface-container-low text-primary font-display font-bold text-xs rounded-xl hover:bg-surface-container-high transition-all flex items-center justify-center gap-2 border border-surface-variant/30 cursor-pointer">
+                <span class="material-symbols-outlined text-base"><?= $isStudent ? 'mail' : 'lock' ?></span>
                 <?= $isStudent ? 'Recibir código por email' : 'Usar código de verificación (TOTP)' ?>
             </button>
         </div>
     </div>
 
     <!-- Tips de Plataforma -->
-    <p id="platform-tip" class="mt-8 text-xs text-on-surface-variant/60 font-medium animate-fadeIn text-center max-w-xs leading-relaxed">
+    <p id="platform-tip" class="mt-6 text-xs text-on-surface-variant/70 font-medium text-center max-w-xs leading-relaxed">
         <!-- Tips dinámicos según el dispositivo -->
     </p>
-</div>
+</main>
 
 <script>
     const WebAuthnAuth = {
@@ -74,7 +82,7 @@
                 btnText.innerText = 'Acceder con Apple';
                 btnIcon.innerText = 'face';
                 authIcon.innerText = 'face';
-                tip.innerText = 'Coloca tu dedo en el sensor o mira la pantalla para identificarte.';
+                tip.innerText = 'Coloca tu huella en el sensor o mira la pantalla para identificarte.';
             } else if (this.isChrome()) {
                 btnText.innerText = 'Usar huella o llave';
                 btnIcon.innerText = 'fingerprint';
@@ -101,16 +109,16 @@
                 return; 
             }
 
-            box.classList.remove('hidden', 'bg-blue-50', 'text-blue-700', 'bg-green-50', 'text-green-700', 'bg-error/10', 'text-error');
+            box.classList.remove('hidden', 'bg-blue-500/10', 'text-blue-700', 'bg-prisma-mint/20', 'text-teal-900', 'bg-error/10', 'text-error');
             box.innerText = msg;
             
             if (type === 'info') {
-                box.classList.add('bg-blue-50', 'text-blue-700');
+                box.classList.add('bg-blue-500/10', 'text-blue-700');
                 spinner.classList.remove('hidden');
                 btn.classList.add('hidden');
                 retry.classList.add('hidden');
             } else if (type === 'success') {
-                box.classList.add('bg-green-50', 'text-green-700');
+                box.classList.add('bg-prisma-mint/20', 'text-teal-900');
                 spinner.classList.add('hidden');
             } else if (type === 'error') {
                 box.classList.add('bg-error/10', 'text-error');

@@ -1,127 +1,181 @@
 <?php 
-$bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col relative overflow-x-hidden overflow-y-auto"; 
+$bodyClass = "bg-prisma-cloud text-text-primary font-sans min-h-screen flex flex-col relative overflow-x-hidden overflow-y-auto"; 
 ?>
-<!-- Ambient Background Element (Sanctuary Vibe) -->
-<div class="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-secondary-container/30 via-surface to-background"></div>
-<div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary-fixed/20 blur-[120px] z-0 pointer-events-none"></div>
+<!-- Ambient Background Gradient Accents -->
+<div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-[#F4F7FD] via-[#F8FAFC] to-[#EDF8FF]"></div>
+<div class="absolute -top-[15%] -left-[10%] w-[50%] h-[50%] rounded-full bg-prisma-sky/25 blur-[120px] z-0 pointer-events-none"></div>
+<div class="absolute -bottom-[10%] -right-[10%] w-[45%] h-[45%] rounded-full bg-prisma-lavender/20 blur-[130px] z-0 pointer-events-none"></div>
 
 <!-- Main Canvas Content -->
-<main class="flex-1 flex flex-col items-center justify-center p-4 md:p-6 relative z-10 w-full max-w-md mx-auto">
+<main class="flex-1 flex flex-col items-center justify-center p-4 md:p-6 relative z-10 w-full max-w-md mx-auto my-auto">
     <!-- Logo Area -->
-    <div class="flex flex-col items-center justify-center mb-6 md:mb-10 gap-4">
-        <div class="w-24 h-24 flex items-center justify-center drop-shadow-sm">
-            <img src="<?= BASE_URL ?>icono-sinfondo.png" alt="Aura Logo" class="w-full h-full object-contain">
+    <div class="flex flex-col items-center justify-center mb-6 gap-3">
+        <div class="h-14 flex items-center justify-center">
+            <img src="<?= BASE_URL ?>assets/prisma-logo.png" 
+                 onerror="this.onerror=null; this.src='https://prisma.emoterralab.com/assets/prisma-logo.png';" 
+                 alt="Prisma" 
+                 class="h-full w-auto max-h-14 object-contain">
         </div>
-        <h1 class="font-h1 text-h1 text-primary-container tracking-tight">Aura</h1>
-        <p class="font-body-md text-body-md text-on-surface-variant text-center"><?= \App\Core\Lang::t('auth.safe_space') ?></p>
+        <p class="font-sans text-sm text-gray-500 text-center max-w-xs">
+            <?= \App\Core\Lang::t('auth.safe_space') ?>
+        </p>
     </div>
 
     <!-- Login Card -->
-    <div class="w-full bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-[0_24px_64px_-12px_rgba(6,105,114,0.06)] relative overflow-hidden">
+    <div class="w-full bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-md relative overflow-hidden">
         <!-- CSS-only Tab System Setup -->
-        <input checked="" class="peer/student hidden" id="tab_student" name="login_type" type="radio" onchange="resetForms()"/>
+        <input checked class="peer/student hidden" id="tab_student" name="login_type" type="radio" onchange="resetForms()"/>
         <input class="peer/staff hidden" id="tab_staff" name="login_type" type="radio" onchange="resetForms()"/>
         
         <!-- Tab Selectors -->
-        <div class="flex relative bg-surface-container rounded-full p-1.5 mb-8">
-            <label class="flex-1 text-center py-3 rounded-full cursor-pointer transition-all duration-300 font-label-caps text-label-caps text-on-surface-variant peer-checked/student:bg-primary peer-checked/student:text-on-primary peer-checked/student:shadow-sm" for="tab_student">
+        <div class="flex relative bg-gray-100 rounded-full p-1 mb-6 border border-gray-200/70">
+            <label class="flex-1 text-center py-2.5 rounded-full cursor-pointer transition-all duration-200 font-display text-xs font-bold text-gray-500 peer-checked/student:bg-prisma-charcoal peer-checked/student:text-white peer-checked/student:shadow-sm" for="tab_student">
                 <?= \App\Core\Lang::t('auth.student') ?>
             </label>
-            <label class="flex-1 text-center py-3 rounded-full cursor-pointer transition-all duration-300 font-label-caps text-label-caps text-on-surface-variant peer-checked/staff:bg-primary peer-checked/staff:text-on-primary peer-checked/staff:shadow-sm" for="tab_staff">
+            <label class="flex-1 text-center py-2.5 rounded-full cursor-pointer transition-all duration-200 font-display text-xs font-bold text-gray-500 peer-checked/staff:bg-prisma-charcoal peer-checked/staff:text-white peer-checked/staff:shadow-sm" for="tab_staff">
                 <?= \App\Core\Lang::t('auth.staff') ?>
             </label>
         </div>
 
         <!-- Student Form -->
-        <div class="hidden peer-checked/student:flex flex-col gap-6 animate-[fadeIn_0.3s_ease-out]">
+        <div class="hidden peer-checked/student:flex flex-col gap-5 animate-[fadeIn_0.25s_ease-out]">
             <!-- Fase 1: Email -->
-            <div id="otp-step-1" class="flex flex-col gap-6">
-                <div class="flex flex-col gap-2">
-                    <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="alumno-email"><?= \App\Core\Lang::t('auth.institutional_email') ?></label>
+            <div id="otp-step-1" class="flex flex-col gap-5">
+                <div class="flex flex-col gap-1.5">
+                    <label class="font-display text-xs font-bold text-gray-700 ml-1" for="alumno-email">
+                        <?= \App\Core\Lang::t('auth.institutional_email') ?>
+                    </label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline-variant">mail</span>
-                        <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="alumno-email" placeholder="<?= \App\Core\Lang::t('auth.email_placeholder') ?>" type="email"/>
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none">mail</span>
+                        <input class="w-full bg-white text-gray-900 font-sans text-sm rounded-xl py-3 pl-11 pr-4 border border-gray-300 focus:border-info focus:ring-4 focus:ring-prisma-sky/30 transition-all outline-none placeholder:text-gray-400 h-11" 
+                               id="alumno-email" 
+                               placeholder="<?= \App\Core\Lang::t('auth.email_placeholder') ?>" 
+                               type="email"
+                               autocomplete="email"
+                               required/>
                     </div>
-                    <div class="flex items-start gap-2 mt-2 px-4">
-                        <span class="material-symbols-outlined text-surface-tint text-sm mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
-                        <p class="font-body-md text-[14px] text-surface-tint leading-snug"><?= \App\Core\Lang::t('auth.otp_info') ?></p>
+                    <div class="flex items-start gap-2 mt-1 px-1">
+                        <span class="material-symbols-outlined text-info text-sm mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
+                        <p class="font-sans text-xs text-gray-500 leading-relaxed"><?= \App\Core\Lang::t('auth.otp_info') ?></p>
                     </div>
                 </div>
-                <button id="btn-generate-otp" onclick="generateOTP()" class="mt-4 w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-[0_8px_24px_-8px_rgba(0,79,86,0.3)] hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group" type="button">
-                    <?= \App\Core\Lang::t('auth.continue') ?>
-                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                <button id="btn-generate-otp" 
+                        onclick="generateOTP()" 
+                        class="w-full bg-prisma-charcoal text-white font-display text-sm font-bold py-3 px-6 rounded-xl hover:bg-gray-800 transition-all shadow-sm flex items-center justify-center gap-2 group min-h-[44px]" 
+                        type="button">
+                    <span><?= \App\Core\Lang::t('auth.continue') ?></span>
+                    <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </button>
             </div>
 
             <!-- Fase 2: OTP Code -->
-            <div id="otp-step-2" class="hidden flex flex-col gap-6">
+            <div id="otp-step-2" class="hidden flex flex-col gap-5">
                 <div class="flex flex-col gap-2">
-                    <p class="font-body-md text-[14px] text-on-surface-variant px-4 text-center"><?= \App\Core\Lang::t('auth.otp_sent_to') ?> <br><span id="display-email" class="font-bold text-primary"></span></p>
-                    <label class="font-body-md text-body-md text-on-surface-variant ml-4 mt-2" for="alumno-code"><?= \App\Core\Lang::t('auth.otp_label') ?></label>
+                    <p class="font-sans text-xs text-gray-600 px-2 text-center">
+                        <?= \App\Core\Lang::t('auth.otp_sent_to') ?> <br>
+                        <span id="display-email" class="font-bold text-prisma-charcoal"></span>
+                    </p>
+                    <label class="font-display text-xs font-bold text-gray-700 ml-1" for="alumno-code">
+                        <?= \App\Core\Lang::t('auth.otp_label') ?>
+                    </label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline-variant">password</span>
-                        <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg text-center tracking-[0.5em] rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="alumno-code" placeholder="000000" type="text" maxlength="6"/>
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none">password</span>
+                        <input class="w-full bg-white text-gray-900 font-sans text-lg font-bold text-center tracking-[0.4em] rounded-xl py-2.5 pl-11 pr-4 border border-gray-300 focus:border-info focus:ring-4 focus:ring-prisma-sky/30 transition-all outline-none placeholder:text-gray-400 h-11" 
+                               id="alumno-code" 
+                               placeholder="000000" 
+                               type="text" 
+                               maxlength="6"
+                               autocomplete="one-time-code"/>
                     </div>
                 </div>
-                <div class="flex flex-col gap-3 mt-2">
-                    <button id="btn-verify-otp" onclick="verifyOTP()" class="w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-[0_8px_24px_-8px_rgba(0,79,86,0.3)] hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group" type="button">
-                        <?= \App\Core\Lang::t('auth.login_btn') ?>
-                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>
+                <div class="flex flex-col gap-2.5 mt-1">
+                    <button id="btn-verify-otp" 
+                            onclick="verifyOTP()" 
+                            class="w-full bg-prisma-charcoal text-white font-display text-sm font-bold py-3 rounded-xl hover:bg-gray-800 transition-all shadow-sm flex items-center justify-center gap-2 group min-h-[44px]" 
+                            type="button">
+                        <span><?= \App\Core\Lang::t('auth.login_btn') ?></span>
+                        <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">login</span>
                     </button>
-                    <button onclick="resetOTP()" class="w-full bg-surface-container text-on-surface-variant font-body-md text-body-md py-3 rounded-full hover:bg-surface-variant transition-all" type="button">
+                    <button onclick="resetOTP()" 
+                            class="w-full bg-gray-100 text-gray-700 font-display text-xs font-semibold py-2.5 rounded-xl hover:bg-gray-200 transition-all min-h-[40px]" 
+                            type="button">
                         <?= \App\Core\Lang::t('auth.restart') ?>
                     </button>
                 </div>
             </div>
-            <p id="alumno-error" class="text-error text-sm text-center hidden px-4"></p>
+            <p id="alumno-error" class="text-danger bg-danger-bg border border-danger/20 text-xs text-center py-2.5 px-3 rounded-xl hidden"></p>
         </div>
 
         <!-- Staff Form -->
-        <form id="form-staff" onsubmit="loginStaff(event)" class="hidden peer-checked/staff:flex flex-col gap-6 animate-[fadeIn_0.3s_ease-out]">
-            <div class="flex flex-col gap-2">
-                <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="staff-email"><?= \App\Core\Lang::t('auth.staff_email') ?></label>
+        <form id="form-staff" onsubmit="loginStaff(event)" class="hidden peer-checked/staff:flex flex-col gap-5 animate-[fadeIn_0.25s_ease-out]">
+            <div class="flex flex-col gap-1.5">
+                <label class="font-display text-xs font-bold text-gray-700 ml-1" for="staff-email">
+                    <?= \App\Core\Lang::t('auth.staff_email') ?>
+                </label>
                 <div class="relative">
-                    <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline-variant">mail</span>
-                    <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="staff-email" placeholder="<?= \App\Core\Lang::t('auth.staff_email_placeholder') ?>" type="email" required/>
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none">mail</span>
+                    <input class="w-full bg-white text-gray-900 font-sans text-sm rounded-xl py-3 pl-11 pr-4 border border-gray-300 focus:border-info focus:ring-4 focus:ring-prisma-sky/30 transition-all outline-none placeholder:text-gray-400 h-11" 
+                           id="staff-email" 
+                           placeholder="<?= \App\Core\Lang::t('auth.staff_email_placeholder') ?>" 
+                           type="email"
+                           autocomplete="username" 
+                           required/>
                 </div>
             </div>
-            <div class="flex flex-col gap-2">
-                <label class="font-body-md text-body-md text-on-surface-variant ml-4" for="staff-password"><?= \App\Core\Lang::t('auth.password') ?></label>
+            <div class="flex flex-col gap-1.5">
+                <label class="font-display text-xs font-bold text-gray-700 ml-1" for="staff-password">
+                    <?= \App\Core\Lang::t('auth.password') ?>
+                </label>
                 <div class="relative">
-                    <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline-variant">lock</span>
-                    <input class="w-full bg-surface-variant text-on-surface font-body-lg text-body-lg rounded-full py-4 pl-14 pr-6 border-none focus:ring-2 focus:ring-primary-container/30 transition-shadow outline-none placeholder:text-outline-variant" id="staff-password" placeholder="••••••••" type="password" required/>
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none">lock</span>
+                    <input class="w-full bg-white text-gray-900 font-sans text-sm rounded-xl py-3 pl-11 pr-4 border border-gray-300 focus:border-info focus:ring-4 focus:ring-prisma-sky/30 transition-all outline-none placeholder:text-gray-400 h-11" 
+                           id="staff-password" 
+                           placeholder="••••••••" 
+                           type="password"
+                           autocomplete="current-password" 
+                           required/>
                 </div>
             </div>
-            <div class="flex justify-end px-4 mt-[-8px]">
-                <a class="font-body-md text-[14px] text-surface-tint hover:underline decoration-surface-tint/50 underline-offset-4" href="/password/forgot"><?= \App\Core\Lang::t('auth.forgot_password') ?></a>
+            <div class="flex justify-end px-1 -mt-2">
+                <a class="font-sans text-xs text-info hover:text-gray-900 hover:underline transition-colors" href="/password/forgot">
+                    <?= \App\Core\Lang::t('auth.forgot_password') ?>
+                </a>
             </div>
-            <button id="btn-staff-login" class="mt-2 w-full bg-primary text-on-primary font-body-lg text-body-lg font-semibold py-4 rounded-full shadow-[0_8px_24px_-8px_rgba(0,79,86,0.3)] hover:bg-primary/90 transition-all flex items-center justify-center gap-2 group" type="submit">
-                <?= \App\Core\Lang::t('auth.login_title') ?>
-                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>
+            <button id="btn-staff-login" 
+                    class="w-full bg-prisma-charcoal text-white font-display text-sm font-bold py-3 rounded-xl hover:bg-gray-800 transition-all shadow-sm flex items-center justify-center gap-2 group min-h-[44px]" 
+                    type="submit">
+                <span><?= \App\Core\Lang::t('auth.login_title') ?></span>
+                <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">login</span>
             </button>
-            <p id="staff-error" class="text-error text-sm text-center hidden px-4"></p>
+            <p id="staff-error" class="text-danger bg-danger-bg border border-danger/20 text-xs text-center py-2.5 px-3 rounded-xl hidden"></p>
         </form>
     </div>
 </main>
 
 <!-- Footer Component -->
-<footer class="bg-transparent w-full py-8 flat no shadows mt-auto flex flex-col items-center gap-2 relative z-10 px-4">
-    <div class="mb-4">
+<footer class="w-full py-6 mt-auto flex flex-col items-center gap-2 relative z-10 px-4">
+    <div class="mb-2">
         <?= \App\Core\Lang::renderSelector() ?>
     </div>
-    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-2">
-        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.privacy') ?></a>
-        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.support') ?></a>
-        <a class="text-slate-400 dark:text-slate-600 text-xs font-manrope text-center hover:text-teal-600 transition-colors" href="#"><?= \App\Core\Lang::t('footer.terms') ?></a>
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-1 text-xs text-gray-500 font-sans">
+        <a class="hover:text-gray-900 transition-colors" href="#"><?= \App\Core\Lang::t('footer.privacy') ?></a>
+        <span>·</span>
+        <a class="hover:text-gray-900 transition-colors" href="#"><?= \App\Core\Lang::t('footer.support') ?></a>
+        <span>·</span>
+        <a class="hover:text-gray-900 transition-colors" href="#"><?= \App\Core\Lang::t('footer.terms') ?></a>
     </div>
-    <p class="text-slate-400 dark:text-slate-600 text-[10px] font-manrope text-center"><?= \App\Core\Lang::t('footer.powered_by') ?></p>
+    <p class="text-gray-400 text-xs font-sans text-center mt-1">
+        <?= \App\Core\Lang::t('footer.powered_by') ?>
+    </p>
 </footer>
 
 <?php ob_start(); ?>
 <script>
     function resetForms() {
-        document.getElementById('alumno-error').classList.add('hidden');
-        document.getElementById('staff-error').classList.add('hidden');
+        const aErr = document.getElementById('alumno-error');
+        const sErr = document.getElementById('staff-error');
+        if (aErr) aErr.classList.add('hidden');
+        if (sErr) sErr.classList.add('hidden');
     }
 
     async function generateOTP(forceOtp = false) {
@@ -165,7 +219,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             errorEl.classList.remove('hidden');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<?= \App\Core\Lang::t('auth.continue') ?> <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>';
+            btn.innerHTML = '<span><?= \App\Core\Lang::t('auth.continue') ?></span> <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>';
         }
     }
 
@@ -198,7 +252,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             errorEl.classList.remove('hidden');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<?= \App\Core\Lang::t('auth.login_btn') ?> <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>';
+            btn.innerHTML = '<span><?= \App\Core\Lang::t('auth.login_btn') ?></span> <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">login</span>';
         }
     }
 
@@ -239,6 +293,7 @@ $bodyClass = "bg-surface text-on-surface font-body-md min-h-screen flex flex-col
             btn.disabled = false;
         }
     }
+
     document.addEventListener('DOMContentLoaded', () => {
         <?php if (isset($force_otp_email)): ?>
             document.getElementById('alumno-email').value = "<?= htmlspecialchars($force_otp_email) ?>";

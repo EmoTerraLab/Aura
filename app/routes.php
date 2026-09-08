@@ -42,7 +42,7 @@ $router->get('/api/protocol-info', [BullyingProtocolController::class, 'apiGetIn
 // -- Workflow Legal del Protocolo --
 // -- Módulo Restaurativo --
 $router->post("/api/protocol/case/{id}/acknowledgment", [ProtocolWorkflowController::class, "saveAcknowledgment"], ["auth", "roles:orientador,direccion,admin"]);
-$router->get("/api/protocol/case/{id}/restorative", [ProtocolWorkflowController::class, "getRestorativeData"], ["auth"]);
+$router->get("/api/protocol/case/{id}/restorative", [ProtocolWorkflowController::class, "getRestorativeData"], ["auth", "roles:profesor,orientador,direccion,admin"]);
 $router->post("/api/protocol/case/{id}/restorative/add", [ProtocolWorkflowController::class, "addRestorativePractice"], ["auth", "roles:profesor,orientador,direccion,admin"]);
 $router->patch("/api/restorative/{id}/status", [ProtocolWorkflowController::class, "updatePracticeStatus"], ["auth", "roles:profesor,orientador,direccion,admin"]);
 
@@ -66,7 +66,7 @@ $router->post('/api/protocol/case/{id}/closure', [ProtocolWorkflowController::cl
 $router->get('/protocol/case/{id}/export', [ProtocolWorkflowController::class, 'exportPdf'], ['auth', 'roles:orientador,direccion,admin']);
 $router->get('/api/protocol/case/{id}/reva', [ProtocolWorkflowController::class, 'getRevaSummary'], ['auth', 'roles:orientador,direccion,admin']);
 $router->post('/api/protocol/case/{id}/evidence', [ProtocolWorkflowController::class, 'uploadEvidence'], ['auth', 'roles:orientador,direccion,admin']);
-$router->get('/protocol/evidence/{id}/download', [\App\Controllers\EvidenceController::class, 'download'], ['auth']);
+$router->get('/protocol/evidence/{id}/download', [\App\Controllers\EvidenceController::class, 'download'], ['auth', 'roles:profesor,orientador,direccion,admin']);
 $router->get('/protocol/case/{id}/template/{templateName}', [ProtocolWorkflowController::class, 'exportTemplate'], ['auth', 'roles:orientador,direccion,admin']);
 
 // -- Verificación 2FA TOTP --
@@ -104,19 +104,19 @@ $router->post('/logout', [AuthController::class, 'logout']);
 
 
 // -- Protocolo Aragón --
-$router->get("/protocol/aragon/anexo-1a", [AragonProtocolController::class, "createAnexo1a"], ["auth"]);
-$router->post("/protocol/aragon/anexo-1a", [AragonProtocolController::class, "storeAnexo1a"], ["auth"]);
-$router->get("/protocol/aragon/report/{id}", [AragonProtocolController::class, "showCaseByReport"], ["auth"]);
-$router->get("/protocol/aragon/case/{id}", [AragonProtocolController::class, "showCase"], ["auth"]);
-$router->post("/api/protocol/aragon/decision/{id}", [AragonProtocolController::class, "processDecision"], ["auth"]);
-$router->post("/api/protocol/aragon/constitute-team/{id}", [AragonProtocolController::class, "constituteTeam"], ["auth"]);
-$router->post("/api/protocol/aragon/interview/{id}", [AragonProtocolController::class, "addInterview"], ["auth"]);
-$router->post("/api/protocol/aragon/indicators/{id}", [AragonProtocolController::class, "saveIndicators"], ["auth"]);
-$router->post("/api/protocol/aragon/resolution/{id}", [AragonProtocolController::class, "processResolution"], ["auth"]);
-$router->post("/api/protocol/aragon/start-followup/{id}", [AragonProtocolController::class, "startFollowUp"], ["auth"]);
-$router->post("/api/protocol/aragon/followup/{id}", [AragonProtocolController::class, "addFollowUp"], ["auth"]);
-$router->post("/api/protocol/aragon/close/{id}", [AragonProtocolController::class, "closeCase"], ["auth"]);
-$router->get("/protocol/aragon/export/{id}/{type}", [AragonProtocolController::class, "exportAnnex"], ["auth"]);
+$router->get("/protocol/aragon/anexo-1a", [AragonProtocolController::class, "createAnexo1a"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+$router->post("/protocol/aragon/anexo-1a", [AragonProtocolController::class, "storeAnexo1a"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+$router->get("/protocol/aragon/report/{id}", [AragonProtocolController::class, "showCaseByReport"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+$router->get("/protocol/aragon/case/{id}", [AragonProtocolController::class, "showCase"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/aragon/decision/{id}", [AragonProtocolController::class, "processDecision"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/aragon/constitute-team/{id}", [AragonProtocolController::class, "constituteTeam"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/aragon/interview/{id}", [AragonProtocolController::class, "addInterview"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+$router->post("/api/protocol/aragon/indicators/{id}", [AragonProtocolController::class, "saveIndicators"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/aragon/resolution/{id}", [AragonProtocolController::class, "processResolution"], ["auth", "roles:direccion,admin"]);
+$router->post("/api/protocol/aragon/start-followup/{id}", [AragonProtocolController::class, "startFollowUp"], ["auth", "roles:orientador,direccion,admin"]);
+$router->post("/api/protocol/aragon/followup/{id}", [AragonProtocolController::class, "addFollowUp"], ["auth", "roles:profesor,orientador,direccion,admin"]);
+$router->post("/api/protocol/aragon/close/{id}", [AragonProtocolController::class, "closeCase"], ["auth", "roles:direccion,admin"]);
+$router->get("/protocol/aragon/export/{id}/{type}", [AragonProtocolController::class, "exportAnnex"], ["auth", "roles:orientador,direccion,admin"]);
 
 // -- Protocolo Murcia --
 $router->get("/protocol/murcia/case/{id}", [\App\Controllers\MurciaProtocolController::class, "showCase"], ["auth", "roles:orientador,direccion,admin"]);
@@ -237,8 +237,6 @@ $router->post('/admin/settings/security', [SettingsController::class, 'saveSecur
 $router->post('/admin/settings/protocol', [SettingsController::class, 'saveProtocol'], ['auth', 'role:admin']);
 
 // -- Actualizaciones del Sistema --
-$router->get('/Ceuta2000', [\App\Controllers\Admin\UpdateController::class, 'secretToggleMaintenance'], ['auth', 'roles:admin,direccion']);
-$router->get('/admin/update/toggle/{secret}', [\App\Controllers\Admin\UpdateController::class, 'secretToggleMaintenance']);
 $router->get('/admin/update', [\App\Controllers\Admin\UpdateController::class, 'index'], ['auth', 'roles:admin,direccion']);
 $router->post('/admin/update/run', [\App\Controllers\Admin\UpdateController::class, 'run'], ['auth', 'roles:admin,direccion']);
 $router->post('/admin/update/maintenance/enable', [\App\Controllers\Admin\UpdateController::class, 'enableMaintenance'], ['auth', 'roles:admin,direccion']);

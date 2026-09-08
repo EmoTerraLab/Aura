@@ -1,21 +1,21 @@
-<div class="space-y-8">
-    <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-            <span class="material-symbols-outlined">policy</span>
+<div class="space-y-6 font-display">
+    <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined text-2xl">policy</span>
         </div>
         <div>
-            <h2 class="text-xl font-bold">Protocolo de Actuación Autonómico</h2>
-            <p class="text-slate-500 text-sm">Configura la normativa de referencia según tu ubicación geográfica.</p>
+            <h2 class="text-base md:text-lg font-bold text-on-surface">Protocolo de Actuación Autonómico</h2>
+            <p class="text-xs text-on-surface-variant">Configura la normativa de referencia según tu ubicación geográfica.</p>
         </div>
     </div>
 
-    <form action="/admin/settings/ccaa" method="POST" class="space-y-6">
+    <form action="/admin/settings/ccaa" method="POST" class="space-y-5">
         <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>"/>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-                <label class="font-bold text-sm ml-2">Comunidad Autónoma</label>
-                <select name="ccaa_code" onchange="updatePreview(this.value)" class="w-full bg-slate-100 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-primary/20">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+                <label class="font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1">Comunidad Autónoma</label>
+                <select name="ccaa_code" onchange="updatePreview(this.value)" class="w-full h-11 bg-surface-container-low border border-surface-variant/40 rounded-xl px-4 text-xs md:text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
                     <option value="">Seleccionar una CCAA...</option>
                     <option value="AND" <?= ($settings['ccaa_code'] ?? '') === 'AND' ? 'selected' : '' ?>>Andalucía</option>
                     <option value="ARA" <?= ($settings['ccaa_code'] ?? '') === 'ARA' ? 'selected' : '' ?>>Aragón</option>
@@ -37,31 +37,31 @@
                 </select>
             </div>
 
-            <div class="space-y-4">
-                <label class="font-bold text-sm ml-2 block text-slate-400 uppercase tracking-widest">Opciones</label>
-                <div class="flex items-center gap-6">
-                    <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" name="ccaa_protocol_active" value="1" <?= ($settings['ccaa_protocol_active'] ?? '1') === '1' ? 'checked' : '' ?> class="w-5 h-5 rounded-lg border-none bg-slate-200 text-primary focus:ring-primary/20">
-                        <span class="text-sm font-medium">Protocolo Activo</span>
+            <div class="space-y-2">
+                <label class="font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 block">Opciones</label>
+                <div class="flex items-center gap-4 pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="ccaa_protocol_active" value="1" <?= ($settings['ccaa_protocol_active'] ?? '1') === '1' ? 'checked' : '' ?> class="w-4 h-4 accent-primary rounded">
+                        <span class="text-xs font-semibold text-on-surface">Protocolo Activo</span>
                     </label>
-                    <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" name="ccaa_show_to_students" value="1" <?= ($settings['ccaa_show_to_students'] ?? '1') === '1' ? 'checked' : '' ?> class="w-5 h-5 rounded-lg border-none bg-slate-200 text-primary focus:ring-primary/20">
-                        <span class="text-sm font-medium">Visible para Alumnos</span>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="ccaa_show_to_students" value="1" <?= ($settings['ccaa_show_to_students'] ?? '1') === '1' ? 'checked' : '' ?> class="w-4 h-4 accent-primary rounded">
+                        <span class="text-xs font-semibold text-on-surface">Visible para Alumnos</span>
                     </label>
                 </div>
             </div>
         </div>
 
         <!-- Preview Area -->
-        <div id="protocol-preview" class="p-6 bg-slate-50 rounded-3xl border border-slate-100 hidden animate-[fadeIn_0.3s_ease-out]">
-            <h4 class="text-xs font-black uppercase text-slate-400 mb-4 tracking-widest">Previsualización del Protocolo</h4>
-            <div id="preview-content" class="space-y-4 text-sm">
-                <!-- Se llena con JS -->
+        <div id="protocol-preview" class="p-5 bg-surface-container-low rounded-2xl border border-surface-variant/40 hidden animate-fadeIn">
+            <h4 class="text-[10px] font-bold uppercase text-on-surface-variant mb-3 tracking-wider">Previsualización del Protocolo</h4>
+            <div id="preview-content" class="space-y-3 text-xs">
+                <!-- Injected via JS -->
             </div>
         </div>
 
-        <div class="pt-6 border-t border-slate-100 flex justify-end">
-            <button type="submit" class="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition-all">
+        <div class="pt-4 border-t border-surface-variant/30 flex justify-end">
+            <button type="submit" class="h-11 bg-primary text-on-primary px-6 rounded-xl font-bold text-xs shadow-xs hover:bg-primary/90 transition-all cursor-pointer">
                 Guardar Cambios
             </button>
         </div>
@@ -79,30 +79,24 @@
         }
 
         try {
-            const res = await fetch(`/api/protocol`);
-            // Nota: Esto traerá el guardado actualmente, para una previsualización real 
-            // de lo que se va a guardar necesitaríamos un endpoint que acepte el código.
-            // Para simplificar, mostraremos información básica estática o un mensaje.
             previewDiv.classList.remove('hidden');
-            contentDiv.innerHTML = `<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span> Cargando datos oficiales de la comunidad...</div>`;
+            contentDiv.innerHTML = `<div class="flex items-center gap-2 text-primary"><span class="material-symbols-outlined animate-spin text-sm">refresh</span> Cargando datos oficiales de la comunidad...</div>`;
             
-            // Simulación de carga rápida
             setTimeout(() => {
                 contentDiv.innerHTML = `
-                    <p class="font-bold text-slate-800">Protocolo detectado para ${code}</p>
-                    <ul class="list-disc ml-5 text-slate-600 space-y-1">
-                        <li>Incluye las fases de detección y valoración técnica.</li>
+                    <p class="font-bold text-on-surface">Protocolo detectado para ${code}</p>
+                    <ul class="list-disc ml-5 text-on-surface-variant space-y-1">
+                        <li>Incluye las fases de detección y valoración técnica oficiales.</li>
                         <li>Configura los contactos de Inspección Educativa regional.</li>
-                        <li>Adapta el lenguaje a la normativa vigente.</li>
+                        <li>Adapta el lenguaje y formularios a la normativa autonómica.</li>
                     </ul>
                 `;
-            }, 500);
+            }, 300);
         } catch (e) {
             console.error(e);
         }
     }
 
-    // Inicializar si hay algo seleccionado
     document.addEventListener('DOMContentLoaded', () => {
         const initial = document.querySelector('select[name="ccaa_code"]').value;
         if(initial) updatePreview(initial);

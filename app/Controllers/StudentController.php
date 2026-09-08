@@ -91,6 +91,12 @@ class StudentController {
         $userId = Auth::id();
         $profile = $this->profileModel->findByUser($userId);
 
+        if (!$profile) {
+            http_response_code(403);
+            header('Content-Type: application/json'); echo json_encode(['error' => 'Perfil de estudiante no encontrado.']);
+            return;
+        }
+
         $report = $this->reportModel->find($id);
 
         // Validate ownership and status

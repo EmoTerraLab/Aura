@@ -1,64 +1,67 @@
-<?php $bodyClass = "antialiased min-h-screen flex flex-col bg-surface"; ?>
+<?php $bodyClass = "antialiased min-h-screen flex flex-col bg-surface font-body-md text-on-surface"; ?>
 
 <!-- Mobile TopNavBar -->
-<nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant font-manrope">
-    <div class="flex items-center gap-3">
-        <img src="/icono-sinfondo.png" class="w-8 h-8" alt="Aura">
-        <h1 class="text-lg font-bold text-teal-700">Aura</h1>
+<nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-4 h-14 bg-surface/90 backdrop-blur-md border-b border-surface-variant/40 font-display">
+    <div class="flex items-center gap-2.5">
+        <img src="<?= BASE_URL ?>assets/prisma-symbol.jpeg" class="w-7 h-7 rounded-lg object-contain shadow-xs" alt="Prisma">
+        <span class="font-bold text-base text-primary tracking-tight">Prisma</span>
     </div>
-    <button onclick="toggleSidebar()" class="p-2 text-slate-500">
-        <span class="material-symbols-outlined" id="menu-icon">menu</span>
+    <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" aria-label="Abrir menú">
+        <span class="material-symbols-outlined text-2xl" id="menu-icon">menu</span>
     </button>
 </nav>
 
 <!-- Sidebar Overlay -->
-<div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[55] hidden lg:hidden"></div>
+<div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-primary/40 backdrop-blur-xs z-[55] hidden lg:hidden"></div>
 
 <!-- Sidebar -->
-<nav id="app-sidebar" class="bg-slate-50 dark:bg-slate-950 font-manrope font-medium h-screen w-64 fixed left-0 top-0 no-border shadow-right shadow-[4px_0_24px_rgba(6,105,114,0.04)] z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col py-6">
-    <div class="px-6 mb-8 flex items-center gap-3">
-        <img src="/icono-sinfondo.png" class="w-10 h-10" alt="Aura">
+<nav id="app-sidebar" class="bg-surface-container-lowest font-display font-medium h-screen w-64 fixed left-0 top-0 border-r border-surface-variant/40 shadow-xs z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col py-6">
+    <div class="px-6 mb-6 flex items-center gap-3">
+        <img src="<?= BASE_URL ?>assets/prisma-symbol.jpeg" class="w-8 h-8 rounded-lg object-contain shadow-xs" alt="Prisma">
         <div>
-            <h1 class="text-xl font-black text-teal-700">Aura</h1>
-            <p class="text-xs text-slate-500">School Sanctuary</p>
+            <span class="text-base font-bold text-primary tracking-tight block">Prisma</span>
+            <span class="text-[11px] text-on-surface-variant/70 block">Espacio Seguro</span>
         </div>
     </div>
-    <div class="px-4 mb-6">
-        <button onclick="ViewManager.showReporting(); toggleSidebar()" class="w-full bg-primary text-on-primary rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-sm shadow-primary/20 hover:opacity-90 transition-opacity">
-            <span class="material-symbols-outlined">add</span>
-            <span class="font-semibold text-sm"><?= \App\Core\Lang::t('nav.new_report') ?></span>
+
+    <div class="px-4 mb-4">
+        <button onclick="ViewManager.showReporting(); toggleSidebar()" class="w-full h-11 bg-primary text-on-primary rounded-xl px-4 flex items-center justify-center gap-2 shadow-xs hover:bg-primary/90 active:scale-[0.99] transition-all cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">add</span>
+            <span class="font-bold text-xs uppercase tracking-wider"><?= \App\Core\Lang::t('nav.new_report') ?></span>
         </button>
     </div>
-    <div class="flex-1 flex flex-col gap-1 overflow-y-auto">
-        <a class="bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 rounded-full mx-2 px-4 py-3 flex items-center gap-3 active:scale-95 duration-150" href="#" onclick="event.preventDefault(); ViewManager.showHome(); toggleSidebar()">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-            <span><?= \App\Core\Lang::t('nav.dashboard') ?></span>
+
+    <div class="flex-1 flex flex-col gap-1 overflow-y-auto px-2">
+        <a class="bg-prisma-mint/25 text-teal-900 font-bold rounded-xl px-3.5 py-2.5 flex items-center gap-3 active:scale-98 transition-all" href="#" onclick="event.preventDefault(); ViewManager.showHome(); toggleSidebar()">
+            <span class="material-symbols-outlined text-[20px] text-teal-800" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+            <span class="text-xs font-semibold"><?= \App\Core\Lang::t('nav.dashboard') ?></span>
         </a>
         <?php if (\App\Core\Config::get('ccaa_protocol_active', '1') === '1' && \App\Core\Config::get('ccaa_show_to_students', '1') === '1'): ?>
-            <a class="text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full flex items-center gap-3 transition-colors" href="/protocolo-acoso">
-                <span class="material-symbols-outlined">gavel</span>
-                <span><?= \App\Core\Lang::t('protocol.title') ?></span>
+            <a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low px-3.5 py-2.5 rounded-xl flex items-center gap-3 transition-colors" href="/protocolo-acoso">
+                <span class="material-symbols-outlined text-[20px]">gavel</span>
+                <span class="text-xs font-semibold"><?= \App\Core\Lang::t('protocol.title') ?></span>
             </a>
         <?php endif; ?>
-        <button onclick="openBreathingApp(); toggleSidebar()" class="text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full flex items-center gap-3 transition-colors text-left">
-            <span class="material-symbols-outlined">spa</span>
-            <span><?= \App\Core\Lang::t('nav.breathe') ?></span>
+        <button onclick="openBreathingApp(); toggleSidebar()" class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low px-3.5 py-2.5 rounded-xl flex items-center gap-3 transition-colors text-left cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">spa</span>
+            <span class="text-xs font-semibold"><?= \App\Core\Lang::t('nav.breathe') ?></span>
         </button>
         <?php if(\App\Core\Config::get('2fa_students_method', 'webauthn') === 'webauthn'): ?>
-        <button onclick="registerWebAuthn(); toggleSidebar()" class="text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full flex items-center gap-3 transition-colors text-left">
-            <span class="material-symbols-outlined">fingerprint</span>
-            <span>Acceso Biométrico</span>
+        <button onclick="registerWebAuthn(); toggleSidebar()" class="text-on-surface-variant hover:text-primary hover:bg-surface-container-low px-3.5 py-2.5 rounded-xl flex items-center gap-3 transition-colors text-left cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">fingerprint</span>
+            <span class="text-xs font-semibold">Acceso Biométrico</span>
         </button>
         <?php endif; ?>
     </div>
-    <div class="mt-auto flex flex-col gap-1">
-        <div class="px-6 mb-4">
+
+    <div class="mt-auto flex flex-col gap-2 px-2 border-t border-surface-variant/30 pt-4">
+        <div class="px-2">
             <?= \App\Core\Lang::renderSelector() ?>
         </div>
-        <form action="/logout" method="POST" class="mx-2">
+        <form action="/logout" method="POST" class="w-full">
             <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>">
-            <button type="submit" class="w-full text-left text-slate-500 dark:text-slate-400 px-4 py-3 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/10 rounded-full flex items-center gap-3 transition-colors">
-                <span class="material-symbols-outlined">logout</span>
+            <button type="submit" class="w-full text-left text-on-surface-variant hover:text-error hover:bg-error/10 px-3.5 py-2 rounded-xl flex items-center gap-3 transition-colors text-xs font-semibold cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">logout</span>
                 <span><?= \App\Core\Lang::t('nav.logout') ?></span>
             </button>
         </form>
@@ -66,14 +69,13 @@
 </nav>
 
 <!-- Main Content Canvas -->
-<main class="flex-1 w-full lg:pl-64 flex flex-col pt-16 lg:pt-0 overflow-y-auto min-h-0">
-    <div class="px-4 py-8 md:px-margin-page md:py-12 max-w-6xl mx-auto w-full flex-1 flex flex-col gap-stack-gap">
+<main class="flex-1 w-full lg:pl-64 flex flex-col pt-14 lg:pt-0 overflow-y-auto min-h-0">
+    <div class="px-4 py-6 md:px-8 md:py-8 max-w-6xl mx-auto w-full flex-1 flex flex-col gap-6">
         
         <?php
         $db = \App\Core\Database::getInstance();
         $userId = \App\Core\Auth::id();
         
-        // P0 FIX: Usar sentencias preparadas para evitar inyección SQL
         $stmtProfile = $db->prepare("SELECT classroom_id FROM student_profiles WHERE user_id = ?");
         $stmtProfile->execute([$userId]);
         $profile = $stmtProfile->fetch();
@@ -92,88 +94,101 @@
                 
                 if (!$hasResponded) {
                     echo '
-                    <div class="bg-primary-container text-on-primary-container p-6 rounded-xl shadow-sm flex items-center justify-between gap-4 mb-6 border border-primary/20">
-                        <div class="flex items-center gap-4">
-                            <span class="material-symbols-outlined text-3xl">hub</span>
+                    <div class="bg-prisma-lavender/25 text-purple-950 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-4 border border-prisma-lavender/40 animate-fadeIn">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-xl bg-purple-900/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-2xl text-purple-900">hub</span>
+                            </div>
                             <div>
-                                <p class="font-bold text-sm">Qüestionari de Clima d\'Aula pendent</p>
-                                <p class="text-xs opacity-80">La teva participació ens ajuda a millorar la convivència a classe.</p>
+                                <p class="font-display font-bold text-xs md:text-sm">Qüestionari de Clima d\'Aula pendent</p>
+                                <p class="text-[11px] text-purple-900/80">La teva participació ens ajuda a millorar la convivència a classe.</p>
                             </div>
                         </div>
-                        <a href="/alumno/sociograma" class="bg-primary text-on-primary px-6 py-2.5 rounded-full text-xs font-bold shrink-0">Començar</a>
+                        <a href="/alumno/sociograma" class="h-9 px-4 bg-primary text-on-primary rounded-xl text-xs font-display font-bold shrink-0 flex items-center justify-center shadow-xs hover:bg-primary/90 transition-all">Començar</a>
                     </div>';
                 }
             }
         }
         ?>
 
-        <header class="mb-4">
-            <h2 class="font-h1 text-h1 text-primary"><?= \App\Core\Lang::t('dashboard.safe_space_title') ?></h2>
-            <p class="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-2xl"><?= \App\Core\Lang::t('dashboard.safe_space_desc') ?></p>
+        <header class="flex flex-col gap-1">
+            <h1 class="font-display font-bold text-xl md:text-2xl text-on-surface tracking-tight"><?= \App\Core\Lang::t('dashboard.safe_space_title') ?></h1>
+            <p class="font-body-md text-xs md:text-sm text-on-surface-variant max-w-2xl"><?= \App\Core\Lang::t('dashboard.safe_space_desc') ?></p>
         </header>
 
         <!-- Bento Grid Layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
             <!-- Main Content Area -->
             <div id="main-view-container" class="lg:col-span-8 flex flex-col gap-6">
                 
                 <!-- Home View -->
                 <div id="home-view" class="animate-fadeIn space-y-6">
-                    <!-- Quote Card -->
-                    <div class="bg-primary-container bg-gradient-to-br from-primary to-primary-fixed text-on-primary p-8 md:p-10 rounded-3xl shadow-xl shadow-primary/20 relative overflow-hidden group">
-                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
+                    <!-- Inspiration Banner Card -->
+                    <div class="bg-gradient-to-br from-primary via-[#283247] to-primary text-on-primary p-6 md:p-8 rounded-2xl shadow-card relative overflow-hidden group border border-surface-variant/20">
+                        <div class="absolute -right-8 -top-8 w-36 h-36 bg-prisma-mint/15 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700"></div>
                         <div class="relative z-10">
-                            <span class="material-symbols-outlined text-5xl opacity-30 mb-4 block">auto_awesome</span>
-                            <h3 id="quote-text" class="text-2xl md:text-3xl font-light italic leading-tight mb-4">"Cargando inspiración..."</h3>
-                            <p id="quote-author" class="text-sm font-bold tracking-widest uppercase opacity-80">-- Autor</p>
+                            <span class="material-symbols-outlined text-3xl text-prisma-mint opacity-80 mb-3 block">auto_awesome</span>
+                            <h2 id="quote-text" class="text-lg md:text-xl font-display font-medium italic leading-snug mb-3">"Cargando inspiración..."</h2>
+                            <p id="quote-author" class="text-[11px] font-display font-bold tracking-widest uppercase text-prisma-sky opacity-90">-- Autor</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Curiosity Card -->
-                        <div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-surface-variant/30 flex flex-col gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-2xl">lightbulb</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                        <!-- Action Card -->
+                        <div class="bg-surface-container-lowest p-5 md:p-6 rounded-2xl shadow-card border border-surface-variant/40 flex flex-col justify-between group hover:border-primary/30 transition-all">
+                            <div>
+                                <div class="w-10 h-10 rounded-xl bg-prisma-mint/25 text-teal-900 flex items-center justify-center mb-3">
+                                    <span class="material-symbols-outlined text-2xl">chat_bubble</span>
+                                </div>
+                                <h3 class="text-on-surface font-display font-bold text-sm md:text-base mb-1.5">¿Algo te preocupa?</h3>
+                                <p class="text-on-surface-variant text-xs mb-5 leading-relaxed">Estamos aquí para escucharte y ayudarte con total confianza.</p>
                             </div>
-                            <p id="curiosity-text" class="text-on-surface-variant text-[15px] leading-relaxed italic">¿Sabías que... respirar profundamente ayuda a calmar tu mente?</p>
+                            <button id="btn-start-report" onclick="ViewManager.showReporting()" class="w-full h-11 bg-primary text-on-primary rounded-xl font-display font-bold text-xs shadow-xs hover:bg-primary/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                                <span>Necesito hablar</span>
+                            </button>
                         </div>
 
-                        <!-- Action Card -->
-                        <div class="bg-secondary-container p-6 rounded-3xl shadow-sm border border-secondary/10 flex flex-col justify-between group">
+                        <!-- Curiosity Card -->
+                        <div class="bg-surface-container-lowest p-5 md:p-6 rounded-2xl shadow-card border border-surface-variant/40 flex flex-col gap-3 justify-between">
                             <div>
-                                <h4 class="text-on-secondary-container font-bold text-lg mb-2">¿Algo te preocupa?</h4>
-                                <p class="text-on-secondary-container/70 text-sm mb-6 leading-relaxed">Estamos aquí para escucharte y ayudarte. No estás solo/a.</p>
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-800 flex items-center justify-center mb-3">
+                                    <span class="material-symbols-outlined text-2xl">lightbulb</span>
+                                </div>
+                                <span class="text-[11px] font-display font-bold uppercase tracking-wider text-on-surface-variant block mb-1">Consejo de Convivencia</span>
+                                <p id="curiosity-text" class="text-on-surface-variant text-xs leading-relaxed italic">¿Sabías que... respirar profundamente ayuda a calmar tu mente?</p>
                             </div>
-                            <button id="btn-start-report" onclick="ViewManager.showReporting()" class="bg-white text-secondary px-6 py-3 rounded-full font-bold text-sm shadow-md hover:scale-[1.03] transition-all flex items-center justify-center gap-2 group-hover:bg-secondary group-hover:text-white">
-                                <span class="material-symbols-outlined">chat_bubble</span>
-                                Necesito hablar
-                            </button>
+                            <div class="pt-2">
+                                <button onclick="openBreathingApp()" class="w-full h-11 bg-surface-container-low text-primary rounded-xl font-display font-bold text-xs hover:bg-surface-container-high transition-all flex items-center justify-center gap-2 border border-surface-variant/30 cursor-pointer">
+                                    <span class="material-symbols-outlined text-[18px]">spa</span>
+                                    <span>Pausa de calma</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Wizard Container (Hidden by default) -->
-                <div id="reporting-card" class="hidden bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding flex flex-col relative min-h-[500px] animate-fadeIn">
-                    <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-primary-fixed/20 to-transparent pointer-events-none"></div>
+                <div id="reporting-card" class="hidden bg-surface-container-lowest rounded-2xl shadow-card border border-surface-variant/40 p-5 md:p-8 flex flex-col relative min-h-[480px] animate-fadeIn">
                     
                     <div class="relative z-10 flex flex-col h-full">
                         
                         <!-- Header / Stepper -->
-                        <div id="wizard-header" class="mb-8">
-                            <div class="flex items-center justify-between mb-4">
+                        <div id="wizard-header" class="mb-6">
+                            <div class="flex items-center justify-between mb-3">
                                 <div class="flex flex-col">
-                                    <span id="wizard-step-indicator" class="text-[10px] font-bold uppercase tracking-wider text-primary mb-1">Paso 1 de 8</span>
-                                    <h3 id="wizard-step-title" class="font-h2 text-[20px] text-on-surface">¿Qué está pasando?</h3>
+                                    <span id="wizard-step-indicator" class="text-[10px] font-display font-bold uppercase tracking-wider text-primary mb-0.5">Paso 1 de 8</span>
+                                    <h2 id="wizard-step-title" class="font-display font-bold text-base md:text-lg text-on-surface">¿Qué está pasando?</h2>
                                 </div>
-                                <div id="wizard-step-icon" class="w-12 h-12 rounded-2xl bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm">
-                                    <span class="material-symbols-outlined text-2xl">help</span>
+                                <div id="wizard-step-icon" class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-xl">help</span>
                                 </div>
                             </div>
                             
                             <!-- Progress Bar -->
-                            <div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
-                                <div id="wizard-progress-bar" class="h-full bg-primary w-[12.5%] transition-all duration-500 ease-out"></div>
+                            <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                                <div id="wizard-progress-bar" class="h-full bg-primary w-[12.5%] transition-all duration-500 ease-out rounded-full"></div>
                             </div>
                         </div>
 
@@ -183,97 +198,87 @@
                         </div>
 
                         <!-- Navigation -->
-                        <div id="wizard-nav" class="flex items-center justify-between mt-8 pt-6 border-t border-surface-variant/30">
-                            <button id="btn-wizard-prev" onclick="appWizard.prev()" class="invisible flex items-center gap-2 text-on-surface-variant font-medium hover:bg-surface-variant/50 px-6 py-3 rounded-full transition-all">
-                                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        <div id="wizard-nav" class="flex items-center justify-between mt-6 pt-5 border-t border-surface-variant/30">
+                            <button id="btn-wizard-prev" onclick="appWizard.prev()" class="invisible flex items-center gap-1.5 text-on-surface-variant font-display font-semibold text-xs hover:bg-surface-container-low px-4 py-2.5 rounded-xl transition-all cursor-pointer">
+                                <span class="material-symbols-outlined text-base">arrow_back</span>
                                 <?= \App\Core\Lang::t('dashboard.back') ?>
                             </button>
                             
-                            <button id="btn-wizard-next" onclick="appWizard.next()" class="bg-primary text-on-primary font-bold px-10 py-3.5 rounded-full shadow-lg shadow-primary/20 flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none">
+                            <button id="btn-wizard-next" onclick="appWizard.next()" class="h-11 bg-primary text-on-primary font-display font-bold text-xs px-6 rounded-xl shadow-xs flex items-center gap-2 hover:bg-primary/90 active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none cursor-pointer">
                                 <span id="btn-wizard-next-text"><?= \App\Core\Lang::t('dashboard.next_step') ?></span>
-                                <span class="material-symbols-outlined" id="btn-wizard-next-icon">arrow_forward</span>
+                                <span class="material-symbols-outlined text-base" id="btn-wizard-next-icon">arrow_forward</span>
                             </button>
                         </div>
 
                         <!-- Success View (Hidden by default) -->
-                        <div id="wizard-success" class="hidden flex-col items-center justify-center text-center py-12 gap-6 animate-fadeIn">
-                            <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-inner">
-                                <span class="material-symbols-outlined text-5xl">check_circle</span>
+                        <div id="wizard-success" class="hidden flex-col items-center justify-center text-center py-10 gap-4 animate-fadeIn">
+                            <div class="w-16 h-16 rounded-2xl bg-prisma-mint/20 text-teal-800 flex items-center justify-center shadow-xs">
+                                <span class="material-symbols-outlined text-4xl">check_circle</span>
                             </div>
                             <div>
-                                <h3 class="font-h1 text-2xl text-on-surface mb-2"><?= \App\Core\Lang::t('dashboard.success_title') ?></h3>
-                                <p class="text-on-surface-variant max-w-sm mx-auto"><?= \App\Core\Lang::t('dashboard.success_desc') ?></p>
+                                <h3 class="font-display font-bold text-lg md:text-xl text-on-surface mb-1"><?= \App\Core\Lang::t('dashboard.success_title') ?></h3>
+                                <p class="text-xs md:text-sm text-on-surface-variant max-w-sm mx-auto leading-relaxed"><?= \App\Core\Lang::t('dashboard.success_desc') ?></p>
                             </div>
-                            <button onclick="window.location.reload()" class="bg-surface-container text-on-surface-variant font-bold px-8 py-3 rounded-full hover:bg-surface-variant transition-all">
+                            <button onclick="window.location.reload()" class="h-10 bg-primary text-on-primary font-display font-bold text-xs px-6 rounded-xl hover:bg-primary/90 transition-all cursor-pointer">
                                 <?= \App\Core\Lang::t('dashboard.back_to_panel') ?>
                             </button>
                         </div>
 
                         <!-- Chat View (Hidden by default) -->
                         <div id="chat-view" class="hidden flex-col h-full animate-fadeIn">
-                            <div class="flex items-center justify-between border-b border-surface-variant/30 pb-4 mb-4">
-                                <button onclick="window.location.reload()" class="flex items-center text-primary font-bold text-sm hover:underline">
-                                    <span class="material-symbols-outlined text-sm mr-1">arrow_back</span> 
+                            <div class="flex items-center justify-between border-b border-surface-variant/30 pb-3 mb-4">
+                                <button onclick="window.location.reload()" class="flex items-center text-primary font-display font-bold text-xs hover:underline gap-1 cursor-pointer">
+                                    <span class="material-symbols-outlined text-base">arrow_back</span> 
                                     <?= \App\Core\Lang::t('nav.back_to_menu') ?>
                                 </button>
                                 <div class="flex items-center gap-2">
-                                    <span id="chat-status-pill" class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">--</span>
+                                    <span id="chat-status-pill" class="px-2.5 py-1 rounded-full text-[10px] font-display font-bold uppercase tracking-wider shadow-xs">--</span>
                                 </div>
                             </div>
-                            <div id="resolved-note" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-4 mb-4 text-sm italic shadow-sm"></div>
-                            <div id="chat-messages" class="flex-1 overflow-y-auto no-scrollbar space-y-6 p-2 mb-6 scroll-smooth min-h-[300px]">
+                            <div id="resolved-note" class="hidden bg-prisma-mint/20 border border-teal-600/30 text-teal-900 rounded-xl p-3.5 mb-3 text-xs italic shadow-xs"></div>
+                            <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 p-2 mb-4 min-h-[260px] max-h-[420px]">
                                 <!-- Messages injected by JS -->
                             </div>
                             <div id="chat-input-container" class="relative group">
-                                <input id="reply-message" class="w-full bg-surface-container-highest border-0 rounded-2xl py-4 pl-5 pr-14 font-body-md text-[15px] text-on-surface focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline/60 shadow-sm" placeholder="<?= \App\Core\Lang::t('dashboard.chat_placeholder') ?>" type="text"/>
-                                <button onclick="sendStudentMessage()" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-md shadow-primary/20">
-                                    <span class="material-symbols-outlined text-[20px]">send</span>
+                                <input id="reply-message" class="w-full h-12 bg-surface-container-low border border-surface-variant/40 rounded-xl pl-4 pr-12 font-body-md text-xs md:text-sm text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant outline-none" placeholder="<?= \App\Core\Lang::t('dashboard.chat_placeholder') ?>" type="text"/>
+                                <button onclick="sendStudentMessage()" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center hover:bg-primary/90 active:scale-95 transition-all cursor-pointer">
+                                    <span class="material-symbols-outlined text-[16px]">send</span>
                                 </button>
                             </div>
                         </div>
 
                     </div>
                 </div>
-
-                <!-- Botón Principal Respira Conmigo -->
-                <div class="mt-8 flex justify-center">
-                    <button onclick="openBreathingApp()" class="w-full sm:w-auto bg-gradient-to-br from-teal-600 to-blue-700 text-white px-8 py-6 md:px-12 md:py-6 rounded-3xl font-black text-xl md:text-2xl shadow-2xl shadow-teal-900/20 hover:scale-105 transition-all flex items-center justify-center gap-4 group">
-                        <span class="material-symbols-outlined text-4xl md:text-5xl group-hover:rotate-12 transition-transform">spa</span>
-                        <?= \App\Core\Lang::t('breathing.title') ?>
-                    </button>
-                </div>
             </div>
 
-            <!-- Sidebar -->
+            <!-- Sidebar Column -->
             <div class="lg:col-span-4 flex flex-col gap-6">
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.04)] p-4 md:p-card-padding">
-                    <h3 class="font-h2 text-[18px] md:text-[20px] text-on-surface mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary">history</span> <?= \App\Core\Lang::t('dashboard.history_title') ?></h3>
-                    <div class="space-y-4">
-                        <?php if (empty($reports)): ?><div class="p-6 text-center text-outline text-sm italic"><?= \App\Core\Lang::t('dashboard.no_activity') ?></div><?php else: ?>
+                <!-- Activity History Card -->
+                <div class="bg-surface-container-lowest rounded-2xl shadow-card border border-surface-variant/40 p-5">
+                    <h3 class="font-display font-bold text-sm md:text-base text-on-surface mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-lg">history</span>
+                        <?= \App\Core\Lang::t('dashboard.history_title') ?>
+                    </h3>
+                    <div class="space-y-2.5">
+                        <?php if (empty($reports)): ?>
+                            <div class="p-6 text-center text-on-surface-variant text-xs italic border border-dashed border-surface-variant/50 rounded-xl">
+                                <?= \App\Core\Lang::t('dashboard.no_activity') ?>
+                            </div>
+                        <?php else: ?>
                             <?php foreach ($reports as $report): ?>
-                                <div class="p-4 rounded-lg bg-surface hover:bg-surface-container transition-colors group border border-surface-variant/50 cursor-pointer" onclick="loadStudentReport(<?= $report['id'] ?>)">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <span class="font-label-caps text-[10px] text-outline uppercase"><?= date('d M', strtotime($report['created_at'])) ?></span>
-                                        <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full <?= $report['status']==='new'?'bg-primary-fixed text-on-primary-fixed-variant':($report['status']==='in_progress'?'bg-[#fff3cd] text-[#856404]':'bg-[#d4edda] text-[#155724]') ?>"><?= \App\Core\Lang::t('status.' . $report['status']) ?></span>
+                                <div class="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-all group border border-surface-variant/30 cursor-pointer" onclick="loadStudentReport(<?= $report['id'] ?>)">
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <span class="font-display text-[10px] font-bold text-on-surface-variant/70 uppercase"><?= date('d M', strtotime($report['created_at'])) ?></span>
+                                        <span class="text-[9px] font-display font-bold uppercase px-2 py-0.5 rounded-full <?= $report['status']==='new'?'bg-prisma-sky/40 text-sky-950':($report['status']==='in_progress'?'bg-amber-100 text-amber-900':'bg-prisma-mint/30 text-teal-900') ?>"><?= \App\Core\Lang::t('status.' . $report['status']) ?></span>
                                     </div>
-                                    <p class="font-body-md text-[14px] text-on-surface line-clamp-2"><?= htmlspecialchars($report['content']) ?></p>
+                                    <p class="text-xs text-on-surface font-medium line-clamp-2"><?= htmlspecialchars($report['content']) ?></p>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="bg-gradient-to-br from-teal-600 to-blue-700 rounded-xl shadow-[0_8px_40px_rgba(0,79,86,0.15)] p-4 md:p-card-padding flex flex-col items-center text-center text-white">
-                    <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4 backdrop-blur-md shadow-sm">
-                        <span class="material-symbols-outlined text-3xl text-white" style="font-variation-settings: 'FILL' 1;">spa</span>
-                    </div>
-                    <h4 class="font-body-lg text-[18px] font-semibold mb-2"><?= \App\Core\Lang::t('breathing.title') ?></h4>
-                    <p class="text-[13px] opacity-80 mb-6 max-w-[200px] leading-relaxed"><?= \App\Core\Lang::t('breathing.landing_desc') ?></p>
-                    <button onclick="openBreathingApp()" class="bg-white text-teal-700 rounded-full px-6 py-2.5 font-bold text-sm shadow-xl hover:scale-105 transition-all">
-                        <?= \App\Core\Lang::t('breathing.calm') ?>
-                    </button>
-                </div>
 
-                <!-- WebAuthn Hidden Support (Still needed for the JS to work) -->
+                <!-- WebAuthn Hidden Support -->
                 <div id="webauthn-section" class="hidden">
                     <div id="webauthn-list-container"></div>
                     <div id="webauthn-status-box" class="hidden"></div>
@@ -285,56 +290,52 @@
     </div>
 </main>
 
-<!-- ============================== RESPIRA CONMIGO (APP INMERSIVA) ============================== -->
-<div id="breathing-app-container" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center overflow-hidden" style="font-family: 'Outfit', sans-serif; color: #f4ede4; background: #1a2f3a;">
-    <button onclick="closeBreathingApp()" class="absolute top-8 right-8 text-white/50 hover:text-white transition-colors z-[110]"><span class="material-symbols-outlined text-4xl">close</span></button>
+<!-- ============================== RESPIRA CONMIGO ============================== -->
+<div id="breathing-app-container" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center overflow-hidden bg-primary text-[#f4ede4] font-display">
+    <button onclick="closeBreathingApp()" class="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-[110] cursor-pointer">
+        <span class="material-symbols-outlined text-3xl">close</span>
+    </button>
 
-    <!-- Noise layer -->
-    <div class="fixed inset-0 pointer-events-none opacity-30 z-[105]" style="mix-blend-mode: overlay; background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'2\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E');"></div>
-
-    <section id="b-landing" class="absolute inset-0 flex items-center justify-center p-8 transition-all duration-700 z-[106]" style="background: radial-gradient(ellipse at 20% 20%, rgba(168, 197, 181, 0.22) 0%, transparent 55%), radial-gradient(ellipse at 80% 90%, rgba(197, 217, 229, 0.18) 0%, transparent 60%), linear-gradient(165deg, #0f1e26 0%, #1a2f3a 50%, #2d5160 100%);">
-        <div class="text-center max-w-lg">
-            <p class="text-[0.7rem] uppercase tracking-[0.3em] text-[#a8c5b5] mb-6"><?= \App\Core\Lang::t('breathing.landing_subtitle') ?></p>
-            <h1 class="text-4xl md:text-7xl font-light mb-4" style="font-family: 'Fraunces', serif;">Respira<em class="italic text-[#a8c5b5] block not-italic">Conmigo</em></h1>
-            <p class="text-[#c5d9e5] opacity-80 mb-10 text-base md:text-lg"><?= \App\Core\Lang::t('breathing.landing_desc') ?></p>
-            <div class="flex flex-wrap gap-2 justify-center mb-10">
-                <button onclick="selectRhythm('calm', this)" class="r-btn active px-4 py-2 rounded-full border border-white/20 bg-white/5 text-[#c5d9e5] text-sm hover:bg-white/10 transition-all"><?= \App\Core\Lang::t('breathing.calm') ?><small class="block opacity-60 text-[10px]">4 · 6</small></button>
-                <button onclick="selectRhythm('box', this)" class="r-btn px-4 py-2 rounded-full border border-white/20 bg-white/5 text-[#c5d9e5] text-sm hover:bg-white/10 transition-all"><?= \App\Core\Lang::t('breathing.focus') ?><small class="block opacity-60 text-[10px]">4 · 4 · 4 · 4</small></button>
-                <button onclick="selectRhythm('sleep', this)" class="r-btn px-4 py-2 rounded-full border border-white/20 bg-white/5 text-[#c5d9e5] text-sm hover:bg-white/10 transition-all"><?= \App\Core\Lang::t('breathing.rest') ?><small class="block opacity-60 text-[10px]">4 · 7 · 8</small></button>
+    <section id="b-landing" class="absolute inset-0 flex items-center justify-center p-6 transition-all duration-700 z-[106] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#283247] via-primary to-[#131722]">
+        <div class="text-center max-w-md">
+            <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-prisma-mint mb-3"><?= \App\Core\Lang::t('breathing.landing_subtitle') ?></p>
+            <h1 class="text-3xl md:text-5xl font-light mb-3 font-display">Respira <span class="font-bold text-prisma-mint">Conmigo</span></h1>
+            <p class="text-prisma-sky/80 mb-8 text-xs md:text-sm leading-relaxed"><?= \App\Core\Lang::t('breathing.landing_desc') ?></p>
+            <div class="flex flex-wrap gap-2 justify-center mb-8">
+                <button onclick="selectRhythm('calm', this)" class="r-btn active px-4 py-2 rounded-xl border border-white/20 bg-white/5 text-prisma-sky text-xs hover:bg-white/10 transition-all cursor-pointer"><?= \App\Core\Lang::t('breathing.calm') ?><small class="block opacity-60 text-[10px]">4 · 6</small></button>
+                <button onclick="selectRhythm('box', this)" class="r-btn px-4 py-2 rounded-xl border border-white/20 bg-white/5 text-prisma-sky text-xs hover:bg-white/10 transition-all cursor-pointer"><?= \App\Core\Lang::t('breathing.focus') ?><small class="block opacity-60 text-[10px]">4 · 4 · 4 · 4</small></button>
+                <button onclick="selectRhythm('sleep', this)" class="r-btn px-4 py-2 rounded-xl border border-white/20 bg-white/5 text-prisma-sky text-xs hover:bg-white/10 transition-all cursor-pointer"><?= \App\Core\Lang::t('breathing.rest') ?><small class="block opacity-60 text-[10px]">4 · 7 · 8</small></button>
             </div>
-            <button onclick="startSession()" class="bg-[#f4ede4] text-[#0f1e26] px-12 py-4 rounded-full font-bold text-lg shadow-2xl hover:translate-y-[-2px] transition-all"><?= \App\Core\Lang::t('breathing.title') ?></button>
+            <button onclick="startSession()" class="h-12 bg-prisma-mint text-primary px-8 rounded-xl font-bold text-sm shadow-card hover:brightness-105 active:scale-95 transition-all cursor-pointer"><?= \App\Core\Lang::t('breathing.title') ?></button>
         </div>
     </section>
 
     <section id="b-scene" class="hidden absolute inset-0 flex items-center justify-center transition-all duration-1000 z-[107]">
-        <div class="absolute top-10 left-1/2 -translate-x-1/2 text-[0.7rem] tracking-[0.4em] opacity-40 uppercase"><?= \App\Core\Lang::t('breathing.cycle') ?> <strong id="b-cycle" class="text-[#a8c5b5]">1</strong></div>
-        <div class="relative flex items-center justify-center w-[250px] h-[250px] md:w-[500px] md:h-[500px]">
-            <div id="b-halo" class="absolute inset-0 rounded-full blur-3xl opacity-40 transition-all duration-1000"></div>
-            <div id="b-circle" class="relative w-3/5 h-3/5 rounded-full flex flex-col items-center justify-center text-center shadow-2xl transition-all ease-in-out" style="background: radial-gradient(circle at 35% 30%, rgba(244, 237, 228, 0.25) 0%, rgba(168, 197, 181, 0.4) 40%, rgba(45, 81, 96, 0.6) 100%);">
-                <div id="b-label" class="text-2xl md:text-5xl font-light italic" style="font-family: 'Fraunces', serif;"><?= \App\Core\Lang::t('breathing.prepare') ?></div>
-                <div id="b-timer" class="text-xs opacity-50 mt-2 tracking-widest"></div>
+        <div class="absolute top-8 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] opacity-60 uppercase font-bold"><?= \App\Core\Lang::t('breathing.cycle') ?> <strong id="b-cycle" class="text-prisma-mint">1</strong></div>
+        <div class="relative flex items-center justify-center w-[220px] h-[220px] md:w-[380px] md:h-[380px]">
+            <div id="b-halo" class="absolute inset-0 rounded-full blur-2xl opacity-40 transition-all duration-1000"></div>
+            <div id="b-circle" class="relative w-3/5 h-3/5 rounded-full flex flex-col items-center justify-center text-center shadow-2xl transition-all ease-in-out border border-white/20" style="background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.2) 0%, rgba(121, 224, 204, 0.35) 50%, rgba(30, 36, 51, 0.7) 100%);">
+                <div id="b-label" class="text-xl md:text-3xl font-light italic font-display"><?= \App\Core\Lang::t('breathing.prepare') ?></div>
+                <div id="b-timer" class="text-[11px] opacity-60 mt-1.5 tracking-widest font-mono"></div>
             </div>
         </div>
-        <p class="absolute bottom-12 uppercase tracking-[0.4em] text-[0.6rem] opacity-40"><?= \App\Core\Lang::t('breathing.follow_rhythm') ?></p>
+        <p class="absolute bottom-10 uppercase tracking-[0.3em] text-[10px] opacity-50 font-bold"><?= \App\Core\Lang::t('breathing.follow_rhythm') ?></p>
     </section>
 </div>
 
 <style>
-    .r-btn.active { background: #a8c5b5 !important; border-color: #a8c5b5 !important; color: #0f1e26 !important; font-weight: 600; }
-    #b-halo.inhale { background: #c5d9e5; transform: scale(1.5); }
-    #b-halo.exhale { background: #a8c5b5; transform: scale(0.8); }
+    .r-btn.active { background: #79E0CC !important; border-color: #79E0CC !important; color: #1E2433 !important; font-weight: 700; }
+    #b-halo.inhale { background: #A6E4FF; transform: scale(1.4); }
+    #b-halo.exhale { background: #79E0CC; transform: scale(0.85); }
 </style>
 
 <?php ob_start(); ?>
 <script>
     /**
-     * Aura Dashboard - Rediseño 2026
-     * UX Guiada, Accesible y Robusta
+     * Prisma Safe Space Dashboard
      */
-
     const currentLang = document.documentElement.lang || 'es';
     
-    // --- Traducciones de Estado (Requerimiento UX) ---
     const statusTranslations = {
         es: { pending: "Pendiente", in_progress: "En Revisión", resolved: "Resuelto", new: "Nuevo" },
         ca: { pending: "Pendent", in_progress: "En Revisió", resolved: "Resolt", new: "Nou" },
@@ -397,8 +398,8 @@
             'dashboard.next_step': "<?= \App\Core\Lang::t('dashboard.next_step') ?>",
             'dashboard.submit': "<?= \App\Core\Lang::t('dashboard.submit') ?>",
             'dashboard.back': "<?= \App\Core\Lang::t('dashboard.back') ?>",
-            'ticket_load_error': "Error al cargar el ticket. Inténtalo de nuevo.",
-            'empty_chat': "No hay mensajes en este chat.",
+            'ticket_load_error': "Error al cargar el caso. Inténtalo de nuevo.",
+            'empty_chat': "No hay mensajes en esta conversación.",
             'sending': "Enviando...",
         };
         return translations[key] || key;
@@ -423,14 +424,13 @@
         const isOpen = !s.classList.contains('-translate-x-full');
         if (isOpen) {
             s.classList.add('-translate-x-full'); o.classList.add('hidden');
-            i.innerText = 'menu'; document.body.style.overflow = '';
+            if (i) i.innerText = 'menu'; document.body.style.overflow = '';
         } else {
             s.classList.remove('-translate-x-full'); o.classList.remove('hidden');
-            i.innerText = 'close'; document.body.style.overflow = 'hidden';
+            if (i) i.innerText = 'close'; document.body.style.overflow = 'hidden';
         }
     }
 
-    // --- Gestión de Vistas ---
     const ViewManager = {
         views: ['home-view', 'reporting-card', 'chat-view', 'wizard-success'],
         
@@ -439,7 +439,6 @@
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
-            // Specific handling for wizard components
             ['wizard-header', 'wizard-content', 'wizard-nav'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('hidden');
@@ -474,7 +473,6 @@
             const main = document.querySelector('main');
             if (main) main.scrollTo(0, 0);
 
-            // Hide wizard-specific header/nav when in chat
             ['wizard-header', 'wizard-nav'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
@@ -501,15 +499,15 @@
             "¿Sabías que... incluir a alguien que está solo en un juego o conversación puede mejorar muchísimo su estado de ánimo?",
             "¿Sabías que... un comentario positivo puede quedarse en la memoria de una persona durante años?",
             "¿Sabías que... escuchar a un compañero sin juzgar ayuda a reducir la ansiedad y el estrés?",
-            "¿Sabías que... el bullying repetido puede afectar la autoestima y el rendimiento escolar de quien lo sufre?",
-            "¿Sabías que... pedir ayuda a un profesor, tutor o familiar es una de las mejores formas de frenar el acoso escolar?",
-            "¿Sabías que... defender a alguien que está siendo molestado puede animar a otros a hacer lo correcto también?",
-            "¿Sabías que... los grupos donde existe respeto y compañerismo tienen menos conflictos y más confianza?",
-            "¿Sabías que... un ambiente seguro y amable ayuda al cerebro a aprender mejor?",
-            "¿Sabías que... ignorar el acoso puede hacer que continúe, pero hablarlo ayuda a detenerlo?",
-            "¿Sabías que... la empatía es la capacidad de entender cómo se siente otra persona y puede prevenir el bullying?",
-            "¿Sabías que... muchas personas que sufren acoso se sienten mejor cuando alguien simplemente les pregunta cómo están?",
-            "¿Sabías que... todos podemos ayudar a crear una clase más segura usando palabras respetuosas y apoyando a los demás?"
+            "¿Sabías que... el acoso escolar repetido puede afectar la autoestima y el bienestar de quien lo sufre?",
+            "¿Sabías que... pedir ayuda al equipo de orientación o tutoría es una de las mejores formas de solucionar los conflictos?",
+            "¿Sabías que... defender a alguien que está siendo molestado anima a otros a actuar con justicia?",
+            "¿Sabías que... los grupos donde existe respeto mutuo y compañerismo tienen menos conflictos y más confianza?",
+            "¿Sabías que... un ambiente seguro y amable ayuda al cerebro a aprender con mayor tranquilidad?",
+            "¿Sabías que... ignorar las conductas dañinas las normaliza, pero comunicarlas ayuda a detenerlas?",
+            "¿Sabías que... la empatía es la capacidad de conectar con cómo se siente otra persona y previene el daño?",
+            "¿Sabías que... muchas personas se sienten aliviadas cuando alguien simplemente les pregunta con cariño cómo están?",
+            "¿Sabías que... todos podemos ayudar a crear un centro educativo seguro apoyando a los demás?"
         ];
 
         const q = quotes[Math.floor(Math.random() * quotes.length)];
@@ -524,7 +522,6 @@
         if (curiosityText) curiosityText.innerText = c;
     }
 
-    // --- Motor del Wizard (Componente) ---
     class WizardFlow {
         constructor() {
             this.currentStep = 1;
@@ -551,7 +548,7 @@
             const container = document.getElementById('wizard-content');
             container.innerHTML = '';
             const stepDiv = document.createElement('div');
-            stepDiv.className = 'animate-fadeIn space-y-6';
+            stepDiv.className = 'animate-fadeIn space-y-4';
             
             switch(this.currentStep) {
                 case 1: this.renderChoiceStep(stepDiv, 'violence_situation', [
@@ -618,13 +615,13 @@
         renderChoiceStep(container, field, options) {
             options.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = `w-full flex items-center gap-4 p-5 rounded-2xl border-2 transition-all text-left group ${this.data[field] === opt.v ? 'border-primary bg-primary-container/10' : 'border-surface-variant/30 hover:border-primary/50 bg-surface'}`;
+                btn.className = `w-full min-h-[52px] flex items-center gap-3.5 p-3.5 rounded-xl border transition-all text-left cursor-pointer ${this.data[field] === opt.v ? 'border-primary bg-primary/5' : 'border-surface-variant/40 hover:border-primary/40 bg-surface-container-low'}`;
                 btn.onclick = () => { this.data[field] = opt.v; this.next(); };
                 btn.innerHTML = `
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${this.data[field] === opt.v ? 'bg-primary text-on-primary' : 'bg-surface-container-highest text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary'}">
-                        <span class="material-symbols-outlined">${opt.i}</span>
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${this.data[field] === opt.v ? 'bg-primary text-on-primary' : 'bg-surface-container-highest text-on-surface-variant'}">
+                        <span class="material-symbols-outlined text-xl">${opt.i}</span>
                     </div>
-                    <span class="font-bold text-lg ${this.data[field] === opt.v ? 'text-primary' : 'text-on-surface'}">${opt.l}</span>
+                    <span class="font-display font-semibold text-xs md:text-sm ${this.data[field] === opt.v ? 'text-primary' : 'text-on-surface'}">${opt.l}</span>
                 `;
                 container.appendChild(btn);
             });
@@ -632,16 +629,16 @@
 
         renderGridStep(container, field, options) {
             const grid = document.createElement('div');
-            grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+            grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
             options.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = `flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all text-center group ${this.data[field] === opt.v ? 'border-primary bg-primary-container/10' : 'border-surface-variant/30 hover:border-primary/50 bg-surface'}`;
+                btn.className = `flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-all text-center cursor-pointer min-h-[88px] ${this.data[field] === opt.v ? 'border-primary bg-primary/5' : 'border-surface-variant/40 hover:border-primary/40 bg-surface-container-low'}`;
                 btn.onclick = () => { this.data[field] = opt.v; this.next(); };
                 btn.innerHTML = `
-                    <div class="w-14 h-14 rounded-full flex items-center justify-center mb-1 transition-all ${this.data[field] === opt.v ? 'bg-primary text-on-primary scale-110' : 'bg-surface-container-highest text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary'}">
-                        <span class="material-symbols-outlined text-3xl">${opt.i}</span>
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${this.data[field] === opt.v ? 'bg-primary text-on-primary' : 'bg-surface-container-highest text-on-surface-variant'}">
+                        <span class="material-symbols-outlined text-xl">${opt.i}</span>
                     </div>
-                    <span class="font-bold text-sm leading-tight ${this.data[field] === opt.v ? 'text-primary' : 'text-on-surface'}">${opt.l}</span>
+                    <span class="font-display font-semibold text-xs leading-tight ${this.data[field] === opt.v ? 'text-primary' : 'text-on-surface'}">${opt.l}</span>
                 `;
                 grid.appendChild(btn);
             });
@@ -649,11 +646,12 @@
         }
 
         renderMultiStep(container, field, options) {
-            const grid = document.createElement('div'); grid.className = 'flex flex-wrap gap-2';
+            const grid = document.createElement('div'); 
+            grid.className = 'flex flex-wrap gap-2';
             options.forEach(opt => {
                 const active = this.data[field].includes(opt.v);
                 const btn = document.createElement('button');
-                btn.className = `px-6 py-3 rounded-xl border-2 font-bold text-sm transition-all ${active ? 'bg-primary border-primary text-on-primary shadow-md' : 'bg-surface border-surface-variant/30 text-on-surface-variant hover:border-primary/50'}`;
+                btn.className = `min-h-[44px] px-4 py-2.5 rounded-xl border font-display font-semibold text-xs transition-all cursor-pointer ${active ? 'bg-primary border-primary text-on-primary shadow-xs' : 'bg-surface-container-low border-surface-variant/40 text-on-surface hover:border-primary/40'}`;
                 btn.onclick = () => {
                     if (active) this.data[field] = this.data[field].filter(v => v !== opt.v);
                     else this.data[field].push(opt.v);
@@ -667,8 +665,9 @@
 
         renderTextStep(container, field, placeholder) {
             const area = document.createElement('textarea');
-            area.className = 'w-full h-48 bg-surface-container-highest rounded-2xl p-6 font-body-md text-[16px] text-on-surface border-0 focus:ring-2 focus:ring-primary/20 transition-all resize-none shadow-inner';
-            area.placeholder = placeholder; area.value = this.data[field];
+            area.className = 'w-full h-36 bg-surface-container-low rounded-xl p-4 font-body-md text-xs md:text-sm text-on-surface border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none outline-none';
+            area.placeholder = placeholder; 
+            area.value = this.data[field];
             area.oninput = (e) => { this.data[field] = e.target.value; this.validate(); };
             container.appendChild(area);
         }
@@ -683,11 +682,11 @@
             configs.forEach(cfg => {
                 const active = this.data.config[cfg.k];
                 const row = document.createElement('div');
-                row.className = `flex items-start gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer mb-3 ${active ? (cfg.w ? 'border-error bg-error/5' : 'border-primary bg-primary-container/5') : 'border-surface-variant/20 bg-surface'}`;
+                row.className = `flex items-start gap-3.5 p-3.5 rounded-xl border transition-all cursor-pointer mb-2.5 ${active ? (cfg.w ? 'border-error bg-error/5' : 'border-primary bg-primary/5') : 'border-surface-variant/30 bg-surface-container-low'}`;
                 row.onclick = () => { this.data.config[cfg.k] = !this.data.config[cfg.k]; this.render(); };
                 row.innerHTML = `
-                    <div class="mt-1"><div class="w-6 h-6 rounded-md flex items-center justify-center transition-all ${active ? (cfg.w ? 'bg-error text-white' : 'bg-primary text-white') : 'bg-surface-container-highest'}">${active ? '<span class="material-symbols-outlined text-sm font-bold">check</span>' : ''}</div></div>
-                    <div class="flex-1"><p class="font-bold text-sm ${cfg.w && active ? 'text-error' : 'text-on-surface'}">${cfg.l}</p><p class="text-[11px] text-on-surface-variant mt-0.5">${cfg.d}</p></div>
+                    <div class="mt-0.5"><div class="w-5 h-5 rounded-md flex items-center justify-center transition-all ${active ? (cfg.w ? 'bg-error text-white' : 'bg-primary text-white') : 'bg-surface-container-highest'}">${active ? '<span class="material-symbols-outlined text-[14px] font-bold">check</span>' : ''}</div></div>
+                    <div class="flex-1"><p class="font-display font-bold text-xs ${cfg.w && active ? 'text-error' : 'text-on-surface'}">${cfg.l}</p><p class="text-[11px] text-on-surface-variant mt-0.5 leading-snug">${cfg.d}</p></div>
                 `;
                 container.appendChild(row);
             });
@@ -698,7 +697,7 @@
             const titles = [i18n('report.step1_q'), i18n('report.step2_q'), i18n('report.step3_q'), i18n('report.step4_q'), i18n('report.step5_q'), i18n('report.step6_q'), i18n('report.step7_q'), i18n('report.step8_q')];
             document.getElementById('wizard-step-title').innerText = titles[this.currentStep-1];
             const icons = ['help', 'person', 'flash_on', 'schedule', 'mood', 'forum', 'edit_note', 'settings'];
-            document.getElementById('wizard-step-icon').innerHTML = `<span class="material-symbols-outlined text-2xl">${icons[this.currentStep-1]}</span>`;
+            document.getElementById('wizard-step-icon').innerHTML = `<span class="material-symbols-outlined text-xl">${icons[this.currentStep-1]}</span>`;
             document.getElementById('wizard-progress-bar').style.width = `${(this.currentStep / this.totalSteps) * 100}%`;
             document.getElementById('btn-wizard-prev').style.visibility = this.currentStep === 1 ? 'hidden' : 'visible';
             document.getElementById('btn-wizard-next-text').innerText = (this.currentStep === this.totalSteps) ? i18n('dashboard.submit') : i18n('dashboard.next_step');
@@ -717,8 +716,9 @@
         prev() { if (this.currentStep > 1) { this.currentStep--; this.init(); } }
 
         async submit() {
-            const btn = document.getElementById('btn-wizard-next'); btn.disabled = true;
-            btn.innerHTML = `<span class="material-symbols-outlined animate-spin">refresh</span> ${i18n('sending')}`;
+            const btn = document.getElementById('btn-wizard-next'); 
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">refresh</span> ${i18n('sending')}`;
             let content = `[FLUJO GUIADO]\nSituación: ${this.data.violence_situation}\nAutor: ${this.data.attacker}\nMétodos: ${this.data.methods.join(', ')}\nFrecuencia: ${this.data.frequency}\nSiente: ${this.data.feelings.join(', ')}\nHablado: ${this.data.talked_to}\n${this.data.additional_info ? ('\nInfo: ' + this.data.additional_info) : ''}`;
             const payload = { content: content, target: this.data.attacker === 'peer' ? 'compañero' : 'otro', urgency_level: this.data.config.urgent ? 'high' : 'low', is_anonymous: this.data.config.anonymous };
             try {
@@ -731,11 +731,11 @@
         }
     }
 
-    // --- Gestión de Chat y Reportes (FIX Blanco) ---
+    let currentReportId = null;
+
     async function loadStudentReport(id) {
         try {
             currentReportId = id;
-            // Forzar visibilidad absoluta de los contenedores padre (FIX iOS/Safari)
             const mainView = document.getElementById('home-view');
             const reportingCard = document.getElementById('reporting-card');
             const chatView = document.getElementById('chat-view');
@@ -754,47 +754,48 @@
             }
 
             const cm = document.getElementById('chat-messages'); 
-            cm.innerHTML = `<div class="flex flex-col items-center justify-center h-64 gap-4"><span class="material-symbols-outlined animate-spin text-4xl text-primary">refresh</span><p class="font-bold text-primary animate-pulse">Abriendo espacio seguro...</p></div>`;
+            cm.innerHTML = `<div class="flex flex-col items-center justify-center h-48 gap-3"><span class="material-symbols-outlined animate-spin text-3xl text-primary">refresh</span><p class="font-display font-semibold text-xs text-primary">Abriendo espacio seguro...</p></div>`;
             
             const res = await fetchJson(`/alumno/reports/${id}`);
             if (res.error) throw new Error(res.error);
             
             renderStudentChat(res.report, res.messages);
-            
-            // Scroll suave pero garantizado
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => { if (window.scrollY > 100) window.scrollTo(0, 0); }, 100); 
 
         } catch (error) {
             console.error("[TicketOpenError]", error);
             const cm = document.getElementById('chat-messages');
-            if (cm) cm.innerHTML = `<div class="flex flex-col items-center justify-center h-64 p-8 text-center bg-error/5 rounded-3xl border-2 border-dashed border-error/20"><div class="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center mb-4"><span class="material-symbols-outlined text-3xl">error_outline</span></div><p class="font-bold text-error mb-1">${i18n('ticket_load_error')}</p><p class="text-[10px] text-on-surface-variant">${error.message}</p><button onclick="window.location.reload()" class="mt-4 bg-surface px-6 py-2 rounded-full border-2 font-bold text-xs">Volver</button></div>`;
+            if (cm) cm.innerHTML = `<div class="flex flex-col items-center justify-center h-48 p-6 text-center bg-error/5 rounded-2xl border border-dashed border-error/20"><span class="material-symbols-outlined text-2xl text-error mb-2">error_outline</span><p class="font-display font-bold text-xs text-error mb-1">${i18n('ticket_load_error')}</p><button onclick="window.location.reload()" class="mt-3 bg-surface px-4 py-1.5 rounded-lg border text-xs font-semibold">Volver</button></div>`;
         }
     }
 
     function renderStudentChat(report, messages) {
         const pill = document.getElementById('chat-status-pill');
         pill.innerText = translateStatus(report.status);
-        pill.className = "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm " + 
-            (report.status === 'new' ? 'bg-primary text-on-primary' : (report.status === 'in_progress' ? 'bg-amber-400 text-amber-950' : 'bg-emerald-400 text-emerald-950'));
+        pill.className = "px-2.5 py-0.5 rounded-full text-[10px] font-display font-bold uppercase tracking-wider " + 
+            (report.status === 'new' ? 'bg-prisma-sky/40 text-sky-950' : (report.status === 'in_progress' ? 'bg-amber-100 text-amber-900' : 'bg-prisma-mint/30 text-teal-900'));
         const ic = document.getElementById('chat-input-container');
         if (report.status === 'resolved') {
             ic.classList.add('hidden');
             document.getElementById('resolved-note').innerText = "Resolución: " + (report.resolution_summary || "Cerrado.");
             document.getElementById('resolved-note').classList.remove('hidden');
         } else { ic.classList.remove('hidden'); document.getElementById('resolved-note').classList.add('hidden'); }
-        let h = `<div class="flex gap-4 flex-row-reverse mb-8 group"><div class="w-10 h-10 rounded-2xl bg-surface-container-highest flex items-center justify-center text-xs font-black shrink-0">Tú</div><div class="bg-surface-container-low p-5 rounded-3xl rounded-tr-none max-w-[85%] text-[15px] leading-relaxed shadow-sm border border-surface-variant/20 whitespace-pre-wrap">${escapeHtml(report.content)}</div></div>`;
-        if (messages.length === 0) h += `<div class="p-8 text-center text-outline/40 text-xs italic">${i18n('empty_chat')}</div>`;
+        
+        let h = `<div class="flex gap-3 flex-row-reverse mb-4 group"><div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-[11px] font-bold shrink-0">Tú</div><div class="bg-surface-container-low p-3.5 rounded-2xl rounded-tr-none max-w-[85%] text-xs md:text-sm leading-relaxed border border-surface-variant/30 whitespace-pre-wrap">${escapeHtml(report.content)}</div></div>`;
+        
+        if (messages.length === 0) h += `<div class="p-6 text-center text-on-surface-variant text-xs italic">${i18n('empty_chat')}</div>`;
         messages.forEach(m => {
             const me = m.is_current_user;
-            h += `<div class="flex gap-4 ${me ? 'flex-row-reverse' : ''} mb-8 animate-fadeIn"><div class="w-10 h-10 rounded-2xl ${me ? 'bg-surface-container-highest' : 'bg-primary text-on-primary'} flex items-center justify-center text-xs font-black shrink-0">${me ? 'Tú' : escapeHtml(m.sender_name.charAt(0))}</div><div class="${me ? 'bg-surface-container-low rounded-tr-none' : 'bg-white rounded-tl-none'} p-5 rounded-3xl shadow-sm max-w-[85%] text-[15px] border"><p class="whitespace-pre-wrap">${escapeHtml(m.message)}</p></div></div>`;
+            h += `<div class="flex gap-3 ${me ? 'flex-row-reverse' : ''} mb-4 animate-fadeIn"><div class="w-8 h-8 rounded-lg ${me ? 'bg-surface-container-highest' : 'bg-primary text-on-primary'} flex items-center justify-center text-[11px] font-bold shrink-0">${me ? 'Tú' : escapeHtml(m.sender_name.charAt(0))}</div><div class="${me ? 'bg-surface-container-low rounded-tr-none' : 'bg-surface-container-lowest border border-surface-variant/40 rounded-tl-none'} p-3.5 rounded-2xl max-w-[85%] text-xs md:text-sm shadow-xs leading-relaxed"><p class="whitespace-pre-wrap">${escapeHtml(m.message)}</p></div></div>`;
         });
         document.getElementById('chat-messages').innerHTML = h;
         setTimeout(() => { const cm = document.getElementById('chat-messages'); cm.scrollTop = cm.scrollHeight; }, 100);
     }
 
     async function sendStudentMessage() {
-        const i = document.getElementById('reply-message'); const msg = i.value.trim(); if (!msg || !currentReportId) return;
+        const i = document.getElementById('reply-message'); 
+        const msg = i.value.trim(); 
+        if (!msg || !currentReportId) return;
         i.disabled = true;
         try {
             const res = await fetchJson(`/alumno/reports/${currentReportId}/messages`, { method: 'POST', body: { message: msg } });
@@ -802,7 +803,7 @@
         } catch (e) { alert('Error'); } finally { i.disabled = false; i.focus(); }
     }
 
-    // --- Respira Conmigo logic ---
+    // Respira Conmigo
     const BREATH = { calm: [4, 0, 6, 0], box: [4, 4, 4, 4], sleep: [4, 7, 8, 0] };
     const LABELS = ['<?= \App\Core\Lang::t('breathing.inhale') ?>', '<?= \App\Core\Lang::t('breathing.hold') ?>', '<?= \App\Core\Lang::t('breathing.exhale') ?>', '<?= \App\Core\Lang::t('breathing.hold') ?>'];
     let bState = { running: false, cycle: 1, pIdx: 0, start: 0, dur: 0, raf: null, rhythm: 'calm' };
@@ -816,7 +817,7 @@
         while (p[idx] === 0) { idx = (idx + 1) % 4; if (idx === 0) bState.cycle++; }
         bState.pIdx = idx; bState.dur = p[idx] * 1000; bState.start = performance.now();
         document.getElementById('b-label').innerText = LABELS[idx]; document.getElementById('b-cycle').innerText = bState.cycle;
-        document.getElementById('b-halo').className = 'absolute inset-0 rounded-full blur-3xl opacity-40 transition-all ' + (idx === 0 ? 'inhale' : (idx === 2 ? 'exhale' : ''));
+        document.getElementById('b-halo').className = 'absolute inset-0 rounded-full blur-2xl opacity-40 transition-all ' + (idx === 0 ? 'inhale' : (idx === 2 ? 'exhale' : ''));
         animate();
     }
     function animate() {
@@ -830,7 +831,7 @@
         if (prog < 1) bState.raf = requestAnimationFrame(animate); else runPhase((bState.pIdx + 1) % 4);
     }
 
-    // --- WebAuthn logic ---
+    // WebAuthn
     const WebAuthnUI = {
         isIOS: () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
         isMac: () => /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.userAgent),
@@ -840,49 +841,8 @@
         updatePlatformUI: function() {
             const section = document.getElementById('webauthn-section');
             if (!section) return;
-
-            if (typeof window.PublicKeyCredential !== 'function') {
-                section.classList.add('hidden');
-                return;
-            }
+            if (typeof window.PublicKeyCredential !== 'function') { section.classList.add('hidden'); return; }
             section.classList.remove('hidden');
-
-            const tag = document.getElementById('platform-tag');
-            const btnText = document.getElementById('reg-text');
-            const btnIcon = document.getElementById('reg-icon');
-            
-            if (this.isIOS() || this.isMac()) {
-                tag.innerText = 'Apple Device';
-                tag.className = 'text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-700';
-                btnText.innerText = 'Registrar Face ID / Touch ID';
-                btnIcon.innerText = 'face';
-            } else if (this.isChrome()) {
-                tag.innerText = 'Chrome';
-                tag.className = 'text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-700';
-                btnText.innerText = 'Registrar Huella o Llave';
-                btnIcon.innerText = 'fingerprint';
-            } else {
-                tag.innerText = 'Biometría';
-                btnText.innerText = 'Añadir Llave de Seguridad';
-                btnIcon.innerText = 'key';
-            }
-        },
-
-        setStatus: function(msg, type = 'info') {
-            const box = document.getElementById('webauthn-status-box');
-            if (!msg) { box.classList.add('hidden'); return; }
-            box.classList.remove('hidden', 'bg-blue-50', 'text-blue-700', 'bg-green-50', 'text-green-700');
-            box.innerText = msg;
-            if (type === 'info') box.classList.add('bg-blue-50', 'text-blue-700');
-            if (type === 'success') box.classList.add('bg-green-50', 'text-green-700');
-        },
-
-        setError: function(msg) {
-            const err = document.getElementById('webauthn-error-msg');
-            if (!msg) { err.classList.add('hidden'); return; }
-            err.innerText = msg;
-            err.classList.remove('hidden');
-            setTimeout(() => err.classList.add('hidden'), 5000);
         }
     };
 
@@ -901,18 +861,13 @@
 
     async function registerWebAuthn() {
         if (!window.isSecureContext && window.location.hostname !== 'localhost') { 
-            WebAuthnUI.setError('Se requiere una conexión segura (HTTPS).'); 
+            alert('Se requiere conexión segura (HTTPS).'); 
             return; 
         }
 
-        const deviceDefault = WebAuthnUI.isIOS() ? 'iPhone' : (WebAuthnUI.isMac() ? 'MacBook' : 'Mi Llave');
-        const deviceName = prompt('Dale un nombre a este dispositivo:', deviceDefault); 
+        const deviceDefault = WebAuthnUI.isIOS() ? 'iPhone' : (WebAuthnUI.isMac() ? 'MacBook' : 'Mi Dispositivo');
+        const deviceName = prompt('Nombre para este dispositivo:', deviceDefault); 
         if (!deviceName) return;
-
-        const btn = document.getElementById('btn-register-biometric');
-        btn.disabled = true;
-        WebAuthnUI.setError(null);
-        WebAuthnUI.setStatus('Activando sensor biométrico...');
 
         try {
             const optRes = await fetchJson('/api/webauthn/register/options');
@@ -925,8 +880,6 @@
             
             const credential = await navigator.credentials.create({ publicKey: options });
             
-            WebAuthnUI.setStatus('Vinculando dispositivo...');
-            
             const verifyRes = await fetchJson('/api/webauthn/register/verify', {
                 method: 'POST', body: {
                     clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
@@ -936,43 +889,21 @@
             });
 
             if (verifyRes.success) {
-                WebAuthnUI.setStatus('¡Dispositivo registrado correctamente!', 'success');
-                setTimeout(() => window.location.reload(), 1500);
+                alert('¡Dispositivo biométrico registrado con éxito!');
             } else { 
                 throw new Error(verifyRes.error); 
             }
         } catch (e) { 
             console.error('WebAuthn Error:', e);
-            btn.disabled = false;
-            WebAuthnUI.setStatus(null);
-            
-            let msg = 'No se pudo completar el registro.';
-            if (e.name === 'NotAllowedError') msg = 'Registro cancelado. Inténtalo de nuevo cuando estés listo.';
-            else if (e.name === 'NotSupportedError') msg = 'Tu dispositivo no soporta biometría.';
-            else if (e.name === 'SecurityError') msg = 'Error de seguridad (HTTPS requerido).';
-            else if (e.message) msg = e.message;
-            
-            WebAuthnUI.setError(msg);
+            if (e.name !== 'NotAllowedError') alert('Error: ' + e.message);
         }
     }
-    async function deleteWebAuthn(id, name) {
-        if (!confirm(`¿Estás seguro de que quieres eliminar "${name}"? Dejarás de poder usarlo para entrar.`)) return;
-        try {
-            const res = await fetchJson('/api/webauthn/credential/delete', { method: 'POST', body: { id } });
-            if (res.success) window.location.reload();
-            else alert(res.error || 'Error al eliminar');
-        } catch (e) { alert('Error de conexión'); }
-    }
 
-    function resetForm() { window.location.reload(); }
-
-    // --- Init ---
-    let appWizard = null; let currentReportId = null;
+    let appWizard = null;
     document.addEventListener('DOMContentLoaded', () => {
         appWizard = new WizardFlow();
         ViewManager.showHome();
         WebAuthnUI.updatePlatformUI();
-        document.querySelectorAll('.status-label-js').forEach(el => el.innerText = translateStatus(el.dataset.status));
     });
 </script>
 <?php $scripts = ob_get_clean(); ?>

@@ -1,28 +1,28 @@
-<?php $bodyClass = "bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col lg:flex-row overflow-hidden"; ?>
+<?php $bodyClass = "bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col lg:flex-row overflow-hidden"; ?>
 
 <!-- SideNavBar -->
-<aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-64 bg-slate-50 dark:bg-slate-950 border-r z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col shadow-2xl lg:shadow-none py-6 h-screen">
-    <div class="px-6 mb-8 flex items-center gap-3">
-        <div class="w-10 h-10 flex items-center justify-center">
-            <img src="<?= BASE_URL ?>icono-sinfondo.png" alt="Aura Logo" class="w-full h-full object-contain">
+<aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-64 bg-surface-container-lowest border-r border-surface-variant/40 z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col shadow-xs py-6 h-screen font-display">
+    <div class="px-6 mb-6 flex items-center gap-3">
+        <img src="<?= BASE_URL ?>assets/prisma-symbol.jpeg" alt="Prisma" class="w-8 h-8 rounded-lg object-contain shadow-xs">
+        <div>
+            <h1 class="text-base font-bold text-primary tracking-tight leading-none">Prisma</h1>
+            <p class="text-[11px] text-on-surface-variant/70 mt-1">Panel de Control</p>
         </div>
-        <div><h1 class="font-h2 text-h2 text-teal-700 font-black tracking-tight leading-none">Aura</h1><p class="font-label-caps text-label-caps text-surface-tint opacity-70 mt-1">Control Panel</p></div>
     </div>
-    <div class="flex-1 overflow-y-auto no-scrollbar space-y-1">
-        <button onclick="switchTab('users')" id="tab-btn-users" class="w-[calc(100%-16px)] text-left flex items-center gap-3 bg-teal-50 text-teal-700 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
-            <span class="material-symbols-outlined">group</span>
-            <span class="font-medium"><?= \App\Core\Lang::t('admin.users') ?></span>
+    <div class="flex-1 overflow-y-auto space-y-1 px-3">
+        <button onclick="switchTab('users')" id="tab-btn-users" class="w-full text-left flex items-center gap-3 bg-prisma-mint/25 text-teal-900 rounded-xl px-3.5 py-2.5 transition-all cursor-pointer font-bold">
+            <span class="material-symbols-outlined text-[20px] text-teal-800">group</span>
+            <span class="text-xs"><?= \App\Core\Lang::t('admin.users') ?></span>
         </button>
-        <button onclick="switchTab('classrooms')" id="tab-btn-classrooms" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
-            <span class="material-symbols-outlined">meeting_room</span>
-            <span class="font-medium"><?= \App\Core\Lang::t('admin.classrooms') ?></span>
+        <button onclick="switchTab('classrooms')" id="tab-btn-classrooms" class="w-full text-left flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-xl px-3.5 py-2.5 transition-all cursor-pointer font-medium">
+            <span class="material-symbols-outlined text-[20px]">meeting_room</span>
+            <span class="text-xs"><?= \App\Core\Lang::t('admin.classrooms') ?></span>
         </button>
-        <a href="/admin/settings" id="tab-btn-settings" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150">
-            <span class="material-symbols-outlined">settings</span>
-            <span class="font-medium">Configuración</span>
+        <a href="/admin/settings" id="tab-btn-settings" class="w-full text-left flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-xl px-3.5 py-2.5 transition-all cursor-pointer font-medium">
+            <span class="material-symbols-outlined text-[20px]">settings</span>
+            <span class="text-xs">Configuración</span>
         </a>
         <?php
-        // Calcular migraciones pendientes para el badge
         try {
             $totalFiles = count(glob(__DIR__ . '/../../../database/migrations/[0-9]*.php'));
             $db_inst = \App\Core\Database::getInstance();
@@ -36,95 +36,95 @@
             $pendingCount = max(0, $totalFiles - $executed);
         } catch (\Exception $e) { $pendingCount = 0; }
         ?>
-        <a href="/admin/update" class="w-[calc(100%-16px)] text-left flex items-center gap-3 text-slate-500 hover:bg-teal-50/50 rounded-full mx-2 px-4 py-3 transition-colors duration-150 <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/update') ? 'bg-teal-50 text-teal-700' : '' ?>">
-            <span class="material-symbols-outlined">system_update</span>
-            <span class="font-medium">Actualizaciones</span>
+        <a href="/admin/update" class="w-full text-left flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-xl px-3.5 py-2.5 transition-all cursor-pointer font-medium <?= str_starts_with($_SERVER['REQUEST_URI'], '/admin/update') ? 'bg-prisma-mint/25 text-teal-900 font-bold' : '' ?>">
+            <span class="material-symbols-outlined text-[20px]">system_update</span>
+            <span class="text-xs">Actualizaciones</span>
             <?php if ($pendingCount > 0): ?>
-                <span class="ml-auto bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><?= $pendingCount ?></span>
+                <span class="ml-auto bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><?= $pendingCount ?></span>
             <?php endif; ?>
         </a>
-        <div class="mt-8 px-4">
-            <a href="/staff/inbox" class="block bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden transition-transform hover:scale-[1.02]">
-                <span class="material-symbols-outlined text-secondary mb-2">forum</span>
-                <h3 class="font-body-md text-[14px] font-semibold text-on-secondary-container leading-tight">Ir a Bandeja Staff</h3>
+        <div class="mt-6 px-1">
+            <a href="/staff/inbox" class="block bg-prisma-lavender/25 rounded-xl p-3.5 border border-prisma-lavender/40 hover:scale-[1.02] transition-transform">
+                <span class="material-symbols-outlined text-purple-900 text-lg mb-1">forum</span>
+                <h3 class="text-xs font-bold text-purple-950 leading-tight">Ir a Bandeja Staff</h3>
             </a>
         </div>
     </div>
-    <div class="mt-auto pt-4 border-t border-surface-variant/50 mx-4 flex flex-col gap-1">
-        <div class="px-4 py-2"><?= \App\Core\Lang::renderSelector() ?></div>
-        <div class="px-4 py-2 flex items-center justify-between text-xs text-slate-500">
-            <span><?= htmlspecialchars(\App\Core\Auth::user()['name']) ?></span>
-            <span class="font-bold uppercase">ADMIN</span>
+    <div class="mt-auto pt-3 border-t border-surface-variant/40 px-3 flex flex-col gap-2">
+        <div><?= \App\Core\Lang::renderSelector() ?></div>
+        <div class="px-2 py-1 flex items-center justify-between text-[11px] text-on-surface-variant/70">
+            <span class="truncate font-semibold"><?= htmlspecialchars(\App\Core\Auth::user()['name']) ?></span>
+            <span class="font-bold uppercase tracking-wider text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">ADMIN</span>
         </div>
         <form action="/logout" method="POST">
             <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>"/>
-            <button type="submit" class="w-full text-left flex items-center gap-3 text-slate-500 px-4 py-3 hover:bg-red-50 hover:text-red-600 rounded-full transition-colors">
-                <span class="material-symbols-outlined">logout</span>
-                <span class="text-sm font-medium"><?= \App\Core\Lang::t('admin.logout') ?></span>
+            <button type="submit" class="w-full text-left flex items-center gap-2.5 text-on-surface-variant hover:text-error hover:bg-error/10 px-3 py-2 rounded-xl transition-colors cursor-pointer text-xs font-semibold">
+                <span class="material-symbols-outlined text-base">logout</span>
+                <span><?= \App\Core\Lang::t('admin.logout') ?></span>
             </button>
         </form>
     </div>
 </aside>
 
 <!-- Sidebar Overlay (Mobile) -->
-<div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-[55] lg:hidden"></div>
+<div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-xs z-[55] lg:hidden"></div>
 
 <!-- Mobile TopNavBar -->
-<nav class="lg:hidden fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-surface-variant">
-    <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="p-2 -ml-2 text-slate-600">
-            <span class="material-symbols-outlined">menu</span>
+<nav class="lg:hidden fixed top-0 w-full z-50 flex justify-between items-center px-4 h-14 bg-surface/90 backdrop-blur-md border-b border-surface-variant/40 font-display">
+    <div class="flex items-center gap-2.5">
+        <button onclick="toggleSidebar()" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary cursor-pointer">
+            <span class="material-symbols-outlined text-2xl">menu</span>
         </button>
-        <img src="<?= BASE_URL ?>icono-sinfondo.png" alt="Aura Logo" class="h-8 w-8 object-contain">
-        <h1 class="text-xl font-bold text-teal-700">Aura Admin</h1>
+        <img src="<?= BASE_URL ?>assets/prisma-symbol.jpeg" alt="Prisma" class="h-7 w-7 rounded-lg object-contain shadow-xs">
+        <h1 class="text-base font-bold text-primary">Prisma Admin</h1>
     </div>
     <div class="flex items-center gap-2">
         <?= \App\Core\Lang::renderSelector() ?>
     </div>
 </nav>
 
-<main class="flex-1 flex flex-col h-screen pt-16 lg:pt-0 bg-surface overflow-y-auto no-scrollbar">
+<main class="flex-1 flex flex-col h-screen pt-14 lg:pt-0 bg-surface overflow-y-auto">
 
-    <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full space-y-10">
+    <div class="p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6 font-display">
         <?php if ($pendingCount > 0): ?>
         <!-- Update Alert Banner -->
-        <div class="bg-orange-50 border border-orange-200 rounded-2xl p-6 flex items-center gap-6 animate-pulse">
-            <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
-                <span class="material-symbols-outlined text-3xl">update</span>
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 flex items-center gap-4 animate-pulse">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-800 shrink-0">
+                <span class="material-symbols-outlined text-2xl">update</span>
             </div>
             <div class="flex-1">
-                <h3 class="text-orange-900 font-black text-lg">Actualización de sistema pendiente</h3>
-                <p class="text-orange-700 text-sm font-medium">Hay <?= $pendingCount ?> cambios de base de datos esperando ser aplicados.</p>
+                <h3 class="text-amber-950 font-bold text-sm">Actualización de sistema pendiente</h3>
+                <p class="text-amber-900/80 text-xs">Hay <?= $pendingCount ?> migraciones de base de datos esperando ser aplicadas.</p>
             </div>
-            <a href="/admin/update" class="bg-orange-600 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg shadow-orange-600/20 hover:bg-orange-700 transition-colors">
+            <a href="/admin/update" class="bg-primary text-on-primary px-4 py-2 rounded-xl font-bold text-xs shadow-xs hover:bg-primary/90 transition-colors shrink-0">
                 Actualizar ahora
             </a>
         </div>
         <?php endif; ?>
 
         <!-- Stats Header -->
-        <header class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-surface-container-lowest p-6 rounded-2xl border border-surface-variant/50 ambient-shadow">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1"><?= \App\Core\Lang::t('admin.total_users') ?></p>
-                <h2 class="text-4xl font-black text-primary"><?= $totalUsers ?? 0 ?></h2>
+        <header class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-surface-container-lowest p-5 rounded-2xl border border-surface-variant/40 shadow-card">
+                <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1"><?= \App\Core\Lang::t('admin.total_users') ?></p>
+                <h2 class="text-3xl font-bold text-primary"><?= $totalUsers ?? 0 ?></h2>
             </div>
-            <div class="bg-surface-container-lowest p-6 rounded-2xl border border-surface-variant/50 ambient-shadow">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1"><?= \App\Core\Lang::t('admin.total_classrooms') ?></p>
-                <h2 class="text-4xl font-black text-secondary"><?= $totalClassrooms ?? 0 ?></h2>
+            <div class="bg-surface-container-lowest p-5 rounded-2xl border border-surface-variant/40 shadow-card">
+                <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1"><?= \App\Core\Lang::t('admin.total_classrooms') ?></p>
+                <h2 class="text-3xl font-bold text-teal-800"><?= $totalClassrooms ?? 0 ?></h2>
             </div>
-            <div class="bg-surface-container-lowest p-6 rounded-2xl border border-surface-variant/50 ambient-shadow">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1"><?= \App\Core\Lang::t('admin.reports_registered') ?></p>
-                <h2 class="text-4xl font-black text-tertiary-container"><?= $totalReports ?? 0 ?></h2>
+            <div class="bg-surface-container-lowest p-5 rounded-2xl border border-surface-variant/40 shadow-card">
+                <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1"><?= \App\Core\Lang::t('admin.reports_registered') ?></p>
+                <h2 class="text-3xl font-bold text-purple-900"><?= $totalReports ?? 0 ?></h2>
             </div>
         </header>
 
         <!-- Main Content Area -->
-        <section class="bg-surface-container-lowest rounded-3xl border border-surface-variant/50 ambient-shadow overflow-hidden">
-            <div class="p-6 border-b border-surface-variant/50 flex justify-between items-center bg-surface-container-low/30">
-                <h2 id="current-tab-title" class="text-xl font-bold text-on-surface"><?= \App\Core\Lang::t('admin.users') ?></h2>
+        <section class="bg-surface-container-lowest rounded-2xl border border-surface-variant/40 shadow-card overflow-hidden">
+            <div class="p-4 md:p-5 border-b border-surface-variant/40 flex justify-between items-center bg-surface-container-low">
+                <h2 id="current-tab-title" class="text-sm md:text-base font-bold text-on-surface"><?= \App\Core\Lang::t('admin.users') ?></h2>
                 <div id="tab-actions">
-                    <button onclick="openUserModal()" class="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 transition-transform flex items-center gap-2">
-                        <span class="material-symbols-outlined text-lg">add</span> <?= \App\Core\Lang::t('admin.new_user') ?>
+                    <button onclick="openUserModal()" class="h-10 bg-primary text-on-primary px-5 rounded-xl font-bold text-xs shadow-xs hover:bg-primary/90 transition-transform flex items-center gap-1.5 cursor-pointer">
+                        <span class="material-symbols-outlined text-base">add</span> <?= \App\Core\Lang::t('admin.new_user') ?>
                     </button>
                 </div>
             </div>
@@ -132,18 +132,18 @@
             <!-- Tab Content: Users -->
             <div id="pane-users" class="tab-pane p-0">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr class="bg-surface-container-low/50 text-[11px] font-black uppercase tracking-wider text-slate-400">
-                                <th class="px-6 py-4 border-b border-surface-variant/30"><?= \App\Core\Lang::t('admin.user_id') ?></th>
-                                <th class="px-6 py-4 border-b border-surface-variant/30"><?= \App\Core\Lang::t('admin.user_name') ?></th>
-                                <th class="px-6 py-4 border-b border-surface-variant/30"><?= \App\Core\Lang::t('admin.user_email') ?></th>
-                                <th class="px-6 py-4 border-b border-surface-variant/30"><?= \App\Core\Lang::t('admin.user_role') ?></th>
-                                <th class="px-6 py-4 border-b border-surface-variant/30 text-right"><?= \App\Core\Lang::t('admin.actions') ?></th>
+                            <tr class="bg-surface-container-low text-[10px] font-bold uppercase tracking-wider text-on-surface-variant border-b border-surface-variant/40">
+                                <th class="px-5 py-3"><?= \App\Core\Lang::t('admin.user_id') ?></th>
+                                <th class="px-5 py-3"><?= \App\Core\Lang::t('admin.user_name') ?></th>
+                                <th class="px-5 py-3"><?= \App\Core\Lang::t('admin.user_email') ?></th>
+                                <th class="px-5 py-3"><?= \App\Core\Lang::t('admin.user_role') ?></th>
+                                <th class="px-5 py-3 text-right"><?= \App\Core\Lang::t('admin.actions') ?></th>
                             </tr>
                         </thead>
-                        <tbody id="users-tbody" class="text-sm">
-                            <tr><td colspan="5" class="px-6 py-10 text-center text-slate-400 italic"><?= \App\Core\Lang::t('admin.loading') ?></td></tr>
+                        <tbody id="users-tbody" class="font-body-md divide-y divide-surface-variant/20">
+                            <tr><td colspan="5" class="px-5 py-8 text-center text-on-surface-variant italic"><?= \App\Core\Lang::t('admin.loading') ?></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -152,65 +152,65 @@
             <!-- Tab Content: Classrooms -->
             <div id="pane-classrooms" class="tab-pane p-0 hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr class="bg-surface-container-low/50 text-[11px] font-black uppercase tracking-wider text-slate-400">
-                                <th class="px-6 py-4 border-b border-surface-variant/30"><?= \App\Core\Lang::t('admin.classroom_id') ?></th>
-                                <th class="px-6 py-4 border-b border-surface-variant/30"><?= \App\Core\Lang::t('admin.classroom_name') ?></th>
-                                <th class="px-6 py-4 border-b border-surface-variant/30"><?= \App\Core\Lang::t('admin.classroom_tutor') ?></th>
-                                <th class="px-6 py-4 border-b border-surface-variant/30 text-right"><?= \App\Core\Lang::t('admin.actions') ?></th>
+                            <tr class="bg-surface-container-low text-[10px] font-bold uppercase tracking-wider text-on-surface-variant border-b border-surface-variant/40">
+                                <th class="px-5 py-3"><?= \App\Core\Lang::t('admin.classroom_id') ?></th>
+                                <th class="px-5 py-3"><?= \App\Core\Lang::t('admin.classroom_name') ?></th>
+                                <th class="px-5 py-3"><?= \App\Core\Lang::t('admin.classroom_tutor') ?></th>
+                                <th class="px-5 py-3 text-right"><?= \App\Core\Lang::t('admin.actions') ?></th>
                             </tr>
                         </thead>
-                        <tbody id="classrooms-tbody" class="text-sm">
-                            <tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 italic"><?= \App\Core\Lang::t('admin.loading') ?></td></tr>
+                        <tbody id="classrooms-tbody" class="font-body-md divide-y divide-surface-variant/20">
+                            <tr><td colspan="4" class="px-5 py-8 text-center text-on-surface-variant italic"><?= \App\Core\Lang::t('admin.loading') ?></td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <!-- Tab Content: Settings -->
-            <div id="pane-settings" class="tab-pane p-10 hidden">
-                <div class="max-w-md space-y-6">
-                    <div class="space-y-2">
-                        <label class="block font-bold text-sm text-on-surface"><?= \App\Core\Lang::t('admin.default_lang') ?></label>
-                        <select id="default-lang" class="w-full bg-surface-container-highest rounded-xl py-3 px-4 border-0 focus:ring-2 focus:ring-primary/20 outline-none">
+            <div id="pane-settings" class="tab-pane p-6 md:p-8 hidden font-display">
+                <div class="max-w-md space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="block font-bold text-xs text-on-surface uppercase tracking-wider"><?= \App\Core\Lang::t('admin.default_lang') ?></label>
+                        <select id="default-lang" class="w-full h-11 bg-surface-container-low rounded-xl px-4 border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-xs font-semibold">
                             <?php foreach(\App\Core\Lang::supported() as $code): ?>
                                 <option value="<?= $code ?>"><?= \App\Core\Lang::t('lang.'.$code) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <p class="text-xs text-slate-400">Este idioma se usará para usuarios nuevos o no logueados.</p>
+                        <p class="text-[11px] text-on-surface-variant">Este idioma se usará para usuarios nuevos o no logueados.</p>
                     </div>
-                    <button onclick="saveSettings()" class="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-transform"><?= \App\Core\Lang::t('admin.save') ?></button>
+                    <button onclick="saveSettings()" class="h-11 bg-primary text-on-primary px-8 rounded-xl font-bold text-xs shadow-xs hover:bg-primary/90 transition-all cursor-pointer"><?= \App\Core\Lang::t('admin.save') ?></button>
                 </div>
             </div>
         </section>
     </div>
 </main>
 
-<!-- Modals System (Tailwind) -->
-<div id="modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+<!-- Modals System -->
+<div id="modal-overlay" class="fixed inset-0 bg-primary/40 backdrop-blur-xs z-[100] hidden items-center justify-center p-4 font-display">
     <!-- User Modal -->
-    <div id="modal-user" class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-[fadeIn_0.2s_ease-out] hidden">
-        <div class="p-6 border-b border-surface-variant/30 flex justify-between items-center">
-            <h3 id="modalUserTitle" class="text-lg font-black text-primary">Nuevo Usuario</h3>
-            <button onclick="closeModals()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
+    <div id="modal-user" class="bg-surface-container-lowest rounded-2xl w-full max-w-lg overflow-hidden shadow-card border border-surface-variant/40 animate-fadeIn hidden">
+        <div class="p-5 border-b border-surface-variant/40 flex justify-between items-center bg-surface-container-low">
+            <h3 id="modalUserTitle" class="text-sm md:text-base font-bold text-on-surface">Nuevo Usuario</h3>
+            <button onclick="closeModals()" class="text-on-surface-variant hover:text-on-surface cursor-pointer"><span class="material-symbols-outlined text-lg">close</span></button>
         </div>
-        <form onsubmit="saveUser(event)" class="p-6 space-y-4">
+        <form onsubmit="saveUser(event)" class="p-5 md:p-6 space-y-3.5 font-body-md">
             <input type="hidden" id="user-id">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-500 ml-2 uppercase"><?= \App\Core\Lang::t('admin.user_name') ?></label>
-                    <input type="text" id="user-name" class="w-full bg-slate-50 rounded-full py-3 px-5 border-0 focus:ring-2 focus:ring-primary/20 outline-none" required>
+                    <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-display"><?= \App\Core\Lang::t('admin.user_name') ?></label>
+                    <input type="text" id="user-name" class="w-full h-10 bg-surface-container-low rounded-xl px-3.5 border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-xs" required>
                 </div>
                 <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-500 ml-2 uppercase"><?= \App\Core\Lang::t('admin.user_email') ?></label>
-                    <input type="email" id="user-email" class="w-full bg-slate-50 rounded-full py-3 px-5 border-0 focus:ring-2 focus:ring-primary/20 outline-none" required>
+                    <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-display"><?= \App\Core\Lang::t('admin.user_email') ?></label>
+                    <input type="email" id="user-email" class="w-full h-10 bg-surface-container-low rounded-xl px-3.5 border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-xs" required>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-500 ml-2 uppercase"><?= \App\Core\Lang::t('admin.user_role') ?></label>
-                    <select id="user-role" class="w-full bg-slate-50 rounded-full py-3 px-5 border-0 focus:ring-2 focus:ring-primary/20 outline-none">
+                    <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-display"><?= \App\Core\Lang::t('admin.user_role') ?></label>
+                    <select id="user-role" class="w-full h-10 bg-surface-container-low rounded-xl px-3.5 border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-xs font-display">
                         <option value="alumno">Alumno</option>
                         <option value="profesor">Profesor</option>
                         <option value="orientador">Orientador</option>
@@ -219,45 +219,45 @@
                     </select>
                 </div>
                 <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-500 ml-2 uppercase"><?= \App\Core\Lang::t('admin.user_password') ?></label>
-                    <input type="password" id="user-password" class="w-full bg-slate-50 rounded-full py-3 px-5 border-0 focus:ring-2 focus:ring-primary/20 outline-none">
-                    <p class="text-[9px] text-slate-400 mt-1 ml-2"><?= \App\Core\Lang::t('admin.user_password_help') ?></p>
+                    <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-display"><?= \App\Core\Lang::t('admin.user_password') ?></label>
+                    <input type="password" id="user-password" class="w-full h-10 bg-surface-container-low rounded-xl px-3.5 border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-xs">
+                    <p class="text-[10px] text-on-surface-variant/70 mt-0.5"><?= \App\Core\Lang::t('admin.user_password_help') ?></p>
                 </div>
             </div>
             <div class="space-y-1 hidden" id="user-classroom-container">
-                <label class="text-xs font-bold text-slate-500 ml-2 uppercase"><?= \App\Core\Lang::t('admin.user_classroom') ?></label>
-                <select id="user-classroom" class="w-full bg-slate-50 rounded-full py-3 px-5 border-0 focus:ring-2 focus:ring-primary/20 outline-none">
+                <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-display"><?= \App\Core\Lang::t('admin.user_classroom') ?></label>
+                <select id="user-classroom" class="w-full h-10 bg-surface-container-low rounded-xl px-3.5 border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-xs font-display">
                     <option value=""><?= \App\Core\Lang::t('admin.no_classroom') ?></option>
                 </select>
             </div>
-            <div class="pt-4 flex gap-3">
-                <button type="button" onclick="closeModals()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-full hover:bg-slate-200 transition-colors"><?= \App\Core\Lang::t('admin.cancel') ?></button>
-                <button type="submit" class="flex-1 bg-primary text-white font-bold py-3 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"><?= \App\Core\Lang::t('admin.save') ?></button>
+            <div class="pt-2 flex gap-2.5 font-display">
+                <button type="button" onclick="closeModals()" class="flex-1 h-10 bg-surface-container-low text-on-surface-variant font-bold text-xs rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer"><?= \App\Core\Lang::t('admin.cancel') ?></button>
+                <button type="submit" class="flex-1 h-10 bg-primary text-on-primary font-bold text-xs rounded-xl shadow-xs hover:bg-primary/90 transition-transform cursor-pointer"><?= \App\Core\Lang::t('admin.save') ?></button>
             </div>
         </form>
     </div>
 
     <!-- Classroom Modal -->
-    <div id="modal-classroom" class="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-[fadeIn_0.2s_ease-out] hidden">
-        <div class="p-6 border-b border-surface-variant/30 flex justify-between items-center">
-            <h3 id="modalClassroomTitle" class="text-lg font-black text-secondary">Nueva Aula</h3>
-            <button onclick="closeModals()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined">close</span></button>
+    <div id="modal-classroom" class="bg-surface-container-lowest rounded-2xl w-full max-w-md overflow-hidden shadow-card border border-surface-variant/40 animate-fadeIn hidden">
+        <div class="p-5 border-b border-surface-variant/40 flex justify-between items-center bg-surface-container-low">
+            <h3 id="modalClassroomTitle" class="text-sm md:text-base font-bold text-on-surface">Nueva Aula</h3>
+            <button onclick="closeModals()" class="text-on-surface-variant hover:text-on-surface cursor-pointer"><span class="material-symbols-outlined text-lg">close</span></button>
         </div>
-        <form onsubmit="saveClassroom(event)" class="p-6 space-y-4">
+        <form onsubmit="saveClassroom(event)" class="p-5 md:p-6 space-y-3.5 font-body-md">
             <input type="hidden" id="classroom-id">
             <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-500 ml-2 uppercase"><?= \App\Core\Lang::t('admin.classroom_name') ?></label>
-                <input type="text" id="classroom-name" class="w-full bg-slate-50 rounded-full py-3 px-5 border-0 focus:ring-2 focus:ring-secondary/20 outline-none" required>
+                <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-display"><?= \App\Core\Lang::t('admin.classroom_name') ?></label>
+                <input type="text" id="classroom-name" class="w-full h-10 bg-surface-container-low rounded-xl px-3.5 border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-xs" required>
             </div>
             <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-500 ml-2 uppercase"><?= \App\Core\Lang::t('admin.classroom_tutor_optional') ?></label>
-                <select id="classroom-tutor" class="w-full bg-slate-50 rounded-full py-3 px-5 border-0 focus:ring-2 focus:ring-secondary/20 outline-none">
+                <label class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-display"><?= \App\Core\Lang::t('admin.classroom_tutor_optional') ?></label>
+                <select id="classroom-tutor" class="w-full h-10 bg-surface-container-low rounded-xl px-3.5 border border-surface-variant/40 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-xs font-display">
                     <option value=""><?= \App\Core\Lang::t('admin.no_tutor') ?></option>
                 </select>
             </div>
-            <div class="pt-4 flex gap-3">
-                <button type="button" onclick="closeModals()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-full hover:bg-slate-200 transition-colors"><?= \App\Core\Lang::t('admin.cancel') ?></button>
-                <button type="submit" class="flex-1 bg-secondary text-white font-bold py-3 rounded-full shadow-lg shadow-secondary/20 hover:scale-[1.02] transition-transform"><?= \App\Core\Lang::t('admin.save') ?></button>
+            <div class="pt-2 flex gap-2.5 font-display">
+                <button type="button" onclick="closeModals()" class="flex-1 h-10 bg-surface-container-low text-on-surface-variant font-bold text-xs rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer"><?= \App\Core\Lang::t('admin.cancel') ?></button>
+                <button type="submit" class="flex-1 h-10 bg-primary text-on-primary font-bold text-xs rounded-xl shadow-xs hover:bg-primary/90 transition-transform cursor-pointer"><?= \App\Core\Lang::t('admin.save') ?></button>
             </div>
         </form>
     </div>
@@ -286,25 +286,23 @@
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
         document.getElementById(`pane-${tab}`).classList.remove('hidden');
         
-        // Update Buttons Styling
         document.querySelectorAll('[id^="tab-btn-"]').forEach(b => {
-            b.classList.remove('bg-teal-50', 'text-teal-700');
-            b.classList.add('text-slate-500', 'hover:bg-teal-50/50');
+            b.classList.remove('bg-prisma-mint/25', 'text-teal-900', 'font-bold');
+            b.classList.add('text-on-surface-variant', 'font-medium');
         });
         const activeBtn = document.getElementById(`tab-btn-${tab}`);
-        activeBtn.classList.add('bg-teal-50', 'text-teal-700');
-        activeBtn.classList.remove('text-slate-500', 'hover:bg-teal-50/50');
+        activeBtn.classList.add('bg-prisma-mint/25', 'text-teal-900', 'font-bold');
+        activeBtn.classList.remove('text-on-surface-variant', 'font-medium');
 
-        // Update Title & Actions
         const titles = { users: '<?= \App\Core\Lang::t('admin.users') ?>', classrooms: '<?= \App\Core\Lang::t('admin.classrooms') ?>', settings: 'Configuración' };
         document.getElementById('current-tab-title').innerText = titles[tab];
         
         const actions = document.getElementById('tab-actions');
         if (tab === 'users') {
-            actions.innerHTML = `<button onclick="openUserModal()" class="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 transition-transform flex items-center gap-2"><span class="material-symbols-outlined text-lg">add</span> <?= \App\Core\Lang::t('admin.new_user') ?></button>`;
+            actions.innerHTML = `<button onclick="openUserModal()" class="h-10 bg-primary text-on-primary px-5 rounded-xl font-bold text-xs shadow-xs hover:bg-primary/90 transition-transform flex items-center gap-1.5 cursor-pointer"><span class="material-symbols-outlined text-base">add</span> <?= \App\Core\Lang::t('admin.new_user') ?></button>`;
             loadUsers();
         } else if (tab === 'classrooms') {
-            actions.innerHTML = `<button onclick="openClassroomModal()" class="bg-secondary text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg shadow-secondary/20 hover:scale-105 transition-transform flex items-center gap-2"><span class="material-symbols-outlined text-lg">add</span> <?= \App\Core\Lang::t('admin.new_classroom') ?></button>`;
+            actions.innerHTML = `<button onclick="openClassroomModal()" class="h-10 bg-primary text-on-primary px-5 rounded-xl font-bold text-xs shadow-xs hover:bg-primary/90 transition-transform flex items-center gap-1.5 cursor-pointer"><span class="material-symbols-outlined text-base">add</span> <?= \App\Core\Lang::t('admin.new_classroom') ?></button>`;
             loadClassrooms();
         } else {
             actions.innerHTML = '';
@@ -355,24 +353,23 @@
         return div.innerHTML;
     }
 
-    // --- CRUD Usuarios ---
     async function loadUsers() {
         try {
             const res = await fetchJson('/admin/api/users');
             allUsers = res.data || [];
             const tbody = document.getElementById('users-tbody');
             tbody.innerHTML = allUsers.map(u => `
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-bold text-slate-400">#${u.id}</td>
-                    <td class="px-6 py-4 font-bold text-on-surface">${escapeHtml(u.name)}</td>
-                    <td class="px-6 py-4 text-slate-500">${escapeHtml(u.email)}</td>
-                    <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${u.role==='admin'?'bg-red-100 text-red-700':(u.role==='alumno'?'bg-green-100 text-green-700':'bg-blue-100 text-blue-700')}">${u.role}</span></td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <button onclick='editUser(${JSON.stringify(u).replace(/'/g, "&apos;")})' class="text-primary hover:bg-primary/10 p-2 rounded-full transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                        <button onclick="deleteUser(${u.id})" class="text-error hover:bg-error/10 p-2 rounded-full transition-colors"><span class="material-symbols-outlined">delete</span></button>
+                <tr class="hover:bg-surface-container-low transition-colors">
+                    <td class="px-5 py-3.5 font-bold text-on-surface-variant/70">#${u.id}</td>
+                    <td class="px-5 py-3.5 font-semibold text-on-surface">${escapeHtml(u.name)}</td>
+                    <td class="px-5 py-3.5 text-on-surface-variant">${escapeHtml(u.email)}</td>
+                    <td class="px-5 py-3.5"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${u.role==='admin'?'bg-red-100 text-red-800':(u.role==='alumno'?'bg-prisma-mint/25 text-teal-900':'bg-prisma-sky/30 text-sky-950')}">${u.role}</span></td>
+                    <td class="px-5 py-3.5 text-right space-x-1">
+                        <button onclick='editUser(${JSON.stringify(u).replace(/'/g, "&apos;")})' class="text-primary hover:bg-primary/10 p-1.5 rounded-lg transition-colors cursor-pointer"><span class="material-symbols-outlined text-base">edit</span></button>
+                        <button onclick="deleteUser(${u.id})" class="text-error hover:bg-error/10 p-1.5 rounded-lg transition-colors cursor-pointer"><span class="material-symbols-outlined text-base">delete</span></button>
                     </td>
                 </tr>
-            `).join('') || '<tr><td colspan="5" class="px-6 py-10 text-center text-slate-400 italic">No hay usuarios registrados</td></tr>';
+            `).join('') || '<tr><td colspan="5" class="px-5 py-8 text-center text-on-surface-variant italic">No hay usuarios registrados</td></tr>';
             updateTutorSelect();
         } catch (e) { alert('<?= \App\Core\Lang::t('admin.error_loading_users') ?>'); }
     }
@@ -398,23 +395,22 @@
         } catch (e) { alert('<?= \App\Core\Lang::t('admin.error_connection') ?>'); }
     }
 
-    // --- CRUD Aulas ---
     async function loadClassrooms() {
         try {
             const res = await fetchJson('/admin/api/classrooms');
             allClassrooms = res.data || [];
             const tbody = document.getElementById('classrooms-tbody');
             tbody.innerHTML = allClassrooms.map(c => `
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-bold text-slate-400">#${c.id}</td>
-                    <td class="px-6 py-4 font-bold text-on-surface">${escapeHtml(c.name)}</td>
-                    <td class="px-6 py-4 text-slate-500">${c.tutor_name ? escapeHtml(c.tutor_name) : '<span class="italic opacity-50"><?= \App\Core\Lang::t('admin.no_tutor') ?></span>'}</td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <button onclick='editClassroom(${JSON.stringify(c).replace(/'/g, "&apos;")})' class="text-secondary hover:bg-secondary/10 p-2 rounded-full transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                        <button onclick="deleteClassroom(${c.id})" class="text-error hover:bg-error/10 p-2 rounded-full transition-colors"><span class="material-symbols-outlined">delete</span></button>
+                <tr class="hover:bg-surface-container-low transition-colors">
+                    <td class="px-5 py-3.5 font-bold text-on-surface-variant/70">#${c.id}</td>
+                    <td class="px-5 py-3.5 font-semibold text-on-surface">${escapeHtml(c.name)}</td>
+                    <td class="px-5 py-3.5 text-on-surface-variant">${c.tutor_name ? escapeHtml(c.tutor_name) : '<span class="italic opacity-60"><?= \App\Core\Lang::t('admin.no_tutor') ?></span>'}</td>
+                    <td class="px-5 py-3.5 text-right space-x-1">
+                        <button onclick='editClassroom(${JSON.stringify(c).replace(/'/g, "&apos;")})' class="text-primary hover:bg-primary/10 p-1.5 rounded-lg transition-colors cursor-pointer"><span class="material-symbols-outlined text-base">edit</span></button>
+                        <button onclick="deleteClassroom(${c.id})" class="text-error hover:bg-error/10 p-1.5 rounded-lg transition-colors cursor-pointer"><span class="material-symbols-outlined text-base">delete</span></button>
                     </td>
                 </tr>
-            `).join('') || '<tr><td colspan="4" class="px-6 py-10 text-center text-slate-400 italic">No hay aulas registradas</td></tr>';
+            `).join('') || '<tr><td colspan="4" class="px-5 py-8 text-center text-on-surface-variant italic">No hay aulas registradas</td></tr>';
             updateStudentClassroomSelect();
         } catch (e) { alert('<?= \App\Core\Lang::t('admin.error_loading_classrooms') ?>'); }
     }
@@ -440,7 +436,6 @@
         } catch (e) { alert('<?= \App\Core\Lang::t('admin.error_connection') ?>'); }
     }
 
-    // --- Modals Logic ---
     function openUserModal() {
         document.getElementById('user-id').value = '';
         document.getElementById('user-name').value = '';
@@ -511,4 +506,3 @@
     }
 </script>
 <?php $scripts = ob_get_clean(); ?>
-

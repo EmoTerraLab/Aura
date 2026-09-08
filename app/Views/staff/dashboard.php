@@ -1,143 +1,154 @@
-<?php $bodyClass = "bg-background text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col overflow-hidden"; ?>
+<?php $bodyClass = "bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col overflow-hidden"; ?>
 
 <!-- Mobile TopNavBar -->
-<nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b">
-    <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="p-2 -ml-2 text-slate-600">
-            <span class="material-symbols-outlined">menu</span>
+<nav class="lg:hidden fixed top-0 w-full z-[50] flex justify-between items-center px-4 h-14 bg-surface/90 backdrop-blur-md border-b border-surface-variant/40 font-display">
+    <div class="flex items-center gap-2.5">
+        <button onclick="toggleSidebar()" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary cursor-pointer">
+            <span class="material-symbols-outlined text-2xl">menu</span>
         </button>
-        <img src="/icono-sinfondo.png" class="w-8 h-8" alt="Aura">
+        <img src="<?= BASE_URL ?>assets/prisma-symbol.jpeg" class="w-7 h-7 rounded-lg object-contain shadow-xs" alt="Prisma">
+        <span class="font-bold text-base text-primary tracking-tight">Prisma</span>
     </div>
-    <div class="flex items-center gap-2">
-        <button onclick="toggleMentions()" class="p-2 text-slate-500 relative">
-            <span class="material-symbols-outlined">notifications</span>
-            <div id="mentions-badge-mobile" class="hidden absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-white"></div>
+    <div class="flex items-center gap-1">
+        <button onclick="toggleMentions()" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary relative cursor-pointer" aria-label="Notificaciones">
+            <span class="material-symbols-outlined text-xl">notifications</span>
+            <div id="mentions-badge-mobile" class="hidden absolute top-1.5 right-1.5 w-2 h-2 bg-prisma-mint rounded-full ring-2 ring-white"></div>
         </button>
     </div>
 </nav>
 
 <!-- App Shell -->
-<div class="flex flex-1 h-screen pt-16 lg:pt-0 overflow-hidden relative">
+<div class="flex flex-1 h-screen pt-14 lg:pt-0 overflow-hidden relative">
     
     <!-- Sidebar Overlay (Mobile) -->
-    <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-[55] lg:hidden"></div>
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-primary/40 backdrop-blur-xs z-[55] lg:hidden"></div>
 
     <!-- Sidebar Navigation -->
-    <aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-72 bg-slate-50 dark:bg-slate-950 border-r z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col shadow-2xl lg:shadow-none">
-        <div class="p-8 flex items-center gap-3">
-            <img src="/icono-sinfondo.png" class="w-10 h-10" alt="Aura">
-            <h1 class="font-h2 text-h2 text-primary">Aura</h1>
+    <aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-64 bg-surface-container-lowest border-r border-surface-variant/40 z-[60] -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col shadow-xs font-display">
+        <div class="p-6 flex items-center gap-3">
+            <img src="<?= BASE_URL ?>assets/prisma-symbol.jpeg" class="w-8 h-8 rounded-lg object-contain shadow-xs" alt="Prisma">
+            <div>
+                <h1 class="font-bold text-base text-primary tracking-tight">Prisma</h1>
+                <p class="text-[11px] text-on-surface-variant/70">Gestión de Convivencia</p>
+            </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto no-scrollbar py-4 space-y-1">
-            <a class="flex items-center gap-3 bg-primary/10 text-primary px-4 py-3 mx-2 rounded-full transition-colors" href="/staff/inbox">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">inbox</span>
-                <span class="font-body-md text-body-md font-bold"><?= \App\Core\Lang::t('staff.inbox_title') ?></span>
+        <div class="flex-1 overflow-y-auto py-2 space-y-1 px-3">
+            <a class="flex items-center gap-3 bg-prisma-mint/25 text-teal-900 font-bold px-3.5 py-2.5 rounded-xl transition-all active:scale-98" href="/staff/inbox">
+                <span class="material-symbols-outlined text-[20px] text-teal-800" style="font-variation-settings: 'FILL' 1">inbox</span>
+                <span class="text-xs font-bold"><?= \App\Core\Lang::t('staff.inbox_title') ?></span>
             </a>
             
-            <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="#">
-                <span class="material-symbols-outlined">folder_open</span>
-                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('nav.active_cases') ?></span>
+            <a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low px-3.5 py-2.5 rounded-xl transition-colors" href="/staff/inbox">
+                <span class="material-symbols-outlined text-[20px]">folder_open</span>
+                <span class="text-xs font-medium"><?= \App\Core\Lang::t('nav.active_cases') ?></span>
             </a>
 
             <?php 
             $ccaaProtocol = \App\Services\Protocol\ProtocolFactory::make(\App\Core\Config::get('ccaa_code'));
             if ($ccaaProtocol->isFullyImplemented()): ?>
-            <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/protocolos/dashboard">
-                <span class="material-symbols-outlined">dashboard_customize</span>
-                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?> (<?= $ccaaProtocol->getName() ?>)</span>
+            <a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low px-3.5 py-2.5 rounded-xl transition-colors" href="/protocolos/dashboard">
+                <span class="material-symbols-outlined text-[20px]">dashboard_customize</span>
+                <span class="text-xs font-medium"><?= \App\Core\Lang::t('protocol.dashboard_title') ?> (<?= $ccaaProtocol->getName() ?>)</span>
             </a>
             <?php endif; ?>
 
             <?php if (\App\Core\Config::get('ccaa_protocol_active', '1') === '1'): ?>
-                <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/protocolo-acoso">
-                    <span class="material-symbols-outlined">gavel</span>
-                    <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('protocol.title') ?></span>
+                <a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low px-3.5 py-2.5 rounded-xl transition-colors" href="/protocolo-acoso">
+                    <span class="material-symbols-outlined text-[20px]">gavel</span>
+                    <span class="text-xs font-medium"><?= \App\Core\Lang::t('protocol.title') ?></span>
                 </a>
             <?php endif; ?>
 
-            <a class="flex items-center gap-3 text-slate-500 dark:text-slate-400 px-4 py-3 mx-2 hover:bg-teal-50/50 dark:hover:bg-teal-900/10 rounded-full transition-colors" href="/profile/password">
-                <span class="material-symbols-outlined">lock</span>
-                <span class="font-body-md text-body-md font-medium"><?= \App\Core\Lang::t('auth.change_password') ?></span>
+            <a class="flex items-center gap-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low px-3.5 py-2.5 rounded-xl transition-colors" href="/profile/password">
+                <span class="material-symbols-outlined text-[20px]">lock</span>
+                <span class="text-xs font-medium"><?= \App\Core\Lang::t('auth.change_password') ?></span>
             </a>
 
-            <div class="mt-8 px-4">
-                <a href="/staff/sociogramas/demo" class="block bg-secondary-container rounded-DEFAULT p-4 ambient-shadow relative overflow-hidden group hover:scale-[1.02] transition-transform">
-                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/20 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-                    <span class="material-symbols-outlined text-secondary mb-2">hub</span>
-                    <h3 class="font-body-md text-body-md font-semibold text-on-secondary-container leading-tight"><?= \App\Core\Lang::t('nav.sociograms') ?></h3>
-                    <p class="font-label-caps text-label-caps text-secondary mt-1 normal-case"><?= \App\Core\Lang::t('nav.hidden_dynamics') ?></p>
+            <div class="mt-6 pt-2">
+                <a href="/staff/sociogramas/demo" class="block bg-prisma-lavender/25 rounded-xl p-3.5 border border-prisma-lavender/40 hover:scale-[1.02] transition-transform">
+                    <div class="flex items-center gap-2 text-purple-900 mb-1">
+                        <span class="material-symbols-outlined text-lg">hub</span>
+                        <h3 class="font-bold text-xs"><?= \App\Core\Lang::t('nav.sociograms') ?></h3>
+                    </div>
+                    <p class="text-[11px] text-purple-950/80 leading-tight"><?= \App\Core\Lang::t('nav.hidden_dynamics') ?></p>
                 </a>
             </div>
         </div>
 
-        <div class="p-4 border-t bg-white dark:bg-slate-900">
-            <div class="flex items-center gap-3 p-3 rounded-2xl bg-surface-container-low border border-surface-variant/30">
-                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md"><?= substr($user['name'], 0, 1) ?></div>
+        <div class="p-3 border-t border-surface-variant/40 bg-surface-container-low">
+            <div class="flex items-center gap-2.5 p-2 rounded-xl bg-surface-container-lowest border border-surface-variant/40">
+                <div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center font-bold text-xs shadow-xs"><?= strtoupper(substr($user['name'], 0, 1)) ?></div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs font-bold truncate"><?= $user['name'] ?></p>
-                    <p class="text-[10px] text-outline uppercase font-black tracking-tighter opacity-60"><?= $user['role'] ?></p>
+                    <p class="text-xs font-bold text-on-surface truncate"><?= htmlspecialchars($user['name']) ?></p>
+                    <p class="text-[9px] text-on-surface-variant uppercase font-bold tracking-wider opacity-75"><?= htmlspecialchars($user['role']) ?></p>
                 </div>
                 <form action="/logout" method="POST">
-                    <button class="p-2 text-error hover:bg-error-container rounded-full transition-colors"><span class="material-symbols-outlined">logout</span></button>
+                    <input type="hidden" name="csrf_token" value="<?= \App\Core\Csrf::generateToken() ?>">
+                    <button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-colors cursor-pointer" title="Cerrar sesión">
+                        <span class="material-symbols-outlined text-[18px]">logout</span>
+                    </button>
                 </form>
             </div>
         </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex overflow-hidden bg-white">
+    <!-- Main Content Canvas -->
+    <main class="flex-1 flex overflow-hidden bg-surface">
         
         <!-- List Pane -->
-        <div id="inbox-pane" class="w-full md:w-[400px] border-r flex flex-col shrink-0 bg-slate-50/30">
-            <div class="p-6 md:p-8 flex flex-col gap-4 border-b bg-white/50 backdrop-blur-sm sticky top-0 z-10">
-                <h2 class="font-h2 text-h2 text-on-surface"><?= \App\Core\Lang::t('staff.inbox_title') ?></h2>
+        <div id="inbox-pane" class="w-full md:w-[380px] border-r border-surface-variant/40 flex flex-col shrink-0 bg-surface-container-lowest font-display">
+            <div class="p-4 md:p-5 flex flex-col gap-3 border-b border-surface-variant/40 sticky top-0 z-10 bg-surface-container-lowest">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-bold text-base md:text-lg text-on-surface"><?= \App\Core\Lang::t('staff.inbox_title') ?></h2>
+                    <span class="text-[11px] font-bold text-on-surface-variant/70 bg-surface-container-low px-2 py-0.5 rounded-full"><?= count($reports ?? []) ?> casos</span>
+                </div>
                 <div class="relative">
-                    <span class="material-symbols-outlined absolute left-4 top-3 text-slate-400 text-lg">search</span>
-                    <input type="text" placeholder="<?= \App\Core\Lang::t('staff.search_placeholder') ?>" class="w-full bg-slate-100/80 border-0 rounded-full py-3 pl-12 pr-6 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">search</span>
+                    <input type="text" placeholder="<?= \App\Core\Lang::t('staff.search_placeholder') ?>" class="w-full h-10 bg-surface-container-low border border-surface-variant/30 rounded-xl pl-10 pr-4 text-xs font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-outline-variant text-on-surface">
                 </div>
             </div>
             
-            <div class="flex-1 overflow-y-auto no-scrollbar">
+            <div class="flex-1 overflow-y-auto">
                 <?php if (empty($reports)): ?>
-                    <div class="p-20 text-center space-y-4">
-                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-300">
-                            <span class="material-symbols-outlined text-4xl">inbox</span>
+                    <div class="p-12 text-center space-y-3">
+                        <div class="w-14 h-14 bg-surface-container-low rounded-2xl flex items-center justify-center mx-auto text-outline-variant">
+                            <span class="material-symbols-outlined text-3xl">inbox</span>
                         </div>
-                        <p class="text-sm text-slate-400 italic"><?= \App\Core\Lang::t('staff.inbox_empty') ?></p>
+                        <p class="text-xs text-on-surface-variant italic"><?= \App\Core\Lang::t('staff.inbox_empty') ?></p>
                     </div>
                 <?php else: ?>
-                    <div class="divide-y divide-slate-100">
+                    <div class="divide-y divide-surface-variant/30">
                         <?php foreach ($reports as $r): ?>
-                        <div onclick="loadReport(<?= $r['id'] ?>)" class="p-6 hover:bg-white cursor-pointer transition-all border-l-4 <?= $r['status'] === 'new' ? 'border-primary' : 'border-transparent' ?> group">
-                            <div class="flex justify-between items-start mb-2">
+                        <div onclick="loadReport(<?= $r['id'] ?>)" class="p-4 hover:bg-surface-container-low cursor-pointer transition-all border-l-3 <?= $r['status'] === 'new' ? 'border-primary bg-primary/5' : 'border-transparent' ?> group">
+                            <div class="flex justify-between items-center mb-1.5">
                                 <?php $urgency = (!empty($r['urgency_level'])) ? $r['urgency_level'] : 'low'; ?>
-                                <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full <?= $urgency === 'high' ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-500' ?>">
+                                <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full <?= $urgency === 'high' ? 'bg-error/15 text-red-700' : 'bg-surface-container-high text-on-surface-variant' ?>">
                                     <?= \App\Core\Lang::t('dashboard.urgency_' . $urgency) ?>
                                 </span>
-                                <span class="text-[10px] text-slate-400 font-bold"><?= date('H:i', strtotime($r['created_at'])) ?></span>
+                                <span class="text-[10px] text-on-surface-variant/70 font-medium"><?= date('H:i', strtotime($r['created_at'])) ?></span>
                             </div>
-                            <h3 class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors mb-1"><?= htmlspecialchars($r['student_name'] ?? '') ?></h3>
-                            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3"><?= htmlspecialchars($r['content'] ?? '') ?></p>
+                            <h3 class="font-bold text-xs md:text-sm text-on-surface group-hover:text-primary transition-colors mb-1 truncate"><?= htmlspecialchars($r['student_name'] ?? 'Anónimo') ?></h3>
+                            <p class="text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-2.5 font-normal"><?= htmlspecialchars($r['content'] ?? '') ?></p>
                             <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-4">
-                                    <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-1 text-[10px] text-on-surface-variant/80 font-bold">
                                         <span class="material-symbols-outlined text-xs">chat_bubble</span>
                                         <span><?= (int)($r['message_count'] ?? 0) ?></span>
                                     </div>
-                                    <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-black tracking-tighter">
+                                    <div class="flex items-center gap-1 text-[10px] text-on-surface-variant/80 font-bold">
                                         <span class="material-symbols-outlined text-xs">meeting_room</span>
-                                        <span><?= htmlspecialchars($r['classroom_name'] ?? '') ?></span>
+                                        <span><?= htmlspecialchars($r['classroom_name'] ?? 'Aula') ?></span>
                                     </div>
                                 </div>
                                 <?php 
                                 $protocol = \App\Services\Protocol\ProtocolFactory::make(\App\Core\Config::get('ccaa_code'));
                                 ?>
-                                <a href="<?= $protocol->getManageUrl($r['id']) ?>" class="text-[9px] font-black uppercase bg-primary/10 text-primary px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-all stop-propagation" onclick="event.stopPropagation()">
+                                <a href="<?= $protocol->getManageUrl($r['id']) ?>" class="text-[9px] font-bold uppercase bg-primary/10 text-primary px-2.5 py-1 rounded-lg hover:bg-primary hover:text-white transition-all stop-propagation" onclick="event.stopPropagation()">
                                     <?php if ($protocol->isFullyImplemented()): ?>
-                                        Gestionar Protocolo (<?= $protocol->getName() ?>)
+                                        Protocolo <?= $protocol->getName() ?>
                                     <?php else: ?>
-                                        Consultar Normativa de <?= $protocol->getName() ?>
+                                        Normativa <?= $protocol->getName() ?>
                                     <?php endif; ?>
                                 </a>
                             </div>
@@ -149,14 +160,14 @@
         </div>
 
         <!-- Detail Pane -->
-        <div id="report-detail-container" class="hidden md:flex flex-1 flex-col bg-white relative">
-            <div class="flex-1 flex flex-col items-center justify-center text-slate-300 p-20 text-center space-y-6">
-                <div class="w-32 h-32 bg-slate-50 rounded-[3rem] flex items-center justify-center border-2 border-dashed border-slate-200">
-                    <span class="material-symbols-outlined text-6xl">chat</span>
+        <div id="report-detail-container" class="hidden md:flex flex-1 flex-col bg-surface relative font-body-md">
+            <div class="flex-1 flex flex-col items-center justify-center text-outline-variant p-12 text-center space-y-4">
+                <div class="w-20 h-20 bg-surface-container-lowest rounded-2xl flex items-center justify-center border border-dashed border-surface-variant/60 shadow-xs">
+                    <span class="material-symbols-outlined text-4xl text-outline-variant">chat</span>
                 </div>
                 <div>
-                    <h3 class="font-h2 text-lg text-slate-400"><?= \App\Core\Lang::t('staff.select_case_title') ?></h3>
-                    <p class="text-sm text-slate-400 mt-2"><?= \App\Core\Lang::t('staff.select_case_desc') ?></p>
+                    <h3 class="font-display font-bold text-sm md:text-base text-on-surface"><?= \App\Core\Lang::t('staff.select_case_title') ?></h3>
+                    <p class="text-xs text-on-surface-variant mt-1"><?= \App\Core\Lang::t('staff.select_case_desc') ?></p>
                 </div>
             </div>
         </div>
@@ -165,20 +176,20 @@
 </div>
 
 <!-- Mentions Dropdown -->
-<div id="mentions-dropdown" class="hidden fixed top-16 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-[100] overflow-hidden">
-    <div class="p-4 border-b bg-slate-50/50 flex justify-between items-center">
-        <h3 class="font-bold text-xs uppercase tracking-widest text-slate-500"><?= \App\Core\Lang::t('staff.mentions_title') ?></h3>
-        <button onclick="toggleMentions()" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined text-sm">close</span></button>
+<div id="mentions-dropdown" class="hidden fixed top-16 right-4 w-80 bg-surface-container-lowest rounded-2xl shadow-card border border-surface-variant/40 z-[100] overflow-hidden font-display">
+    <div class="p-3.5 border-b border-surface-variant/30 flex justify-between items-center bg-surface-container-low">
+        <h3 class="font-bold text-xs uppercase tracking-wider text-on-surface-variant"><?= \App\Core\Lang::t('staff.mentions_title') ?></h3>
+        <button onclick="toggleMentions()" class="text-on-surface-variant hover:text-on-surface cursor-pointer"><span class="material-symbols-outlined text-base">close</span></button>
     </div>
-    <div id="mentions-list" class="max-h-96 overflow-y-auto no-scrollbar"></div>
+    <div id="mentions-list" class="max-h-80 overflow-y-auto"></div>
 </div>
 
-<div id="premium-modal" class="fixed inset-0 z-[100] hidden bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl p-6 md:p-8 text-center max-w-md w-full">
-        <h3 class="font-h1 text-[24px] font-bold mb-2"><?= \App\Core\Lang::t('staff.premium_title') ?></h3>
-        <p class="text-slate-500 mb-8"><?= \App\Core\Lang::t('staff.premium_desc') ?></p>
-        <button onclick="closePremiumModal()" class="w-full py-3 bg-primary text-white rounded-full font-bold mb-2">Contactar Soporte</button>
-        <button onclick="closePremiumModal()" class="w-full py-3 text-slate-500 font-medium">Cerrar</button>
+<div id="premium-modal" class="fixed inset-0 z-[100] hidden bg-primary/40 backdrop-blur-xs flex items-center justify-center p-4 font-display">
+    <div class="bg-surface-container-lowest rounded-2xl p-6 md:p-8 text-center max-w-md w-full shadow-card border border-surface-variant/40">
+        <h3 class="font-bold text-lg mb-2 text-on-surface"><?= \App\Core\Lang::t('staff.premium_title') ?></h3>
+        <p class="text-xs text-on-surface-variant mb-6 leading-relaxed"><?= \App\Core\Lang::t('staff.premium_desc') ?></p>
+        <button onclick="closePremiumModal()" class="w-full h-11 bg-primary text-on-primary rounded-xl font-bold text-xs mb-2 shadow-xs cursor-pointer">Contactar Soporte</button>
+        <button onclick="closePremiumModal()" class="w-full h-10 text-on-surface-variant hover:text-on-surface font-semibold text-xs cursor-pointer">Cerrar</button>
     </div>
 </div>
 
@@ -188,7 +199,6 @@
     let currentCaseId = null;
     let colleaguesList = [];
 
-    // Lógica de Autocompletado de Menciones
     document.addEventListener('input', (e) => {
         if (e.target.id === 'reply-message') {
             handleMentionInput(e.target);
@@ -209,24 +219,25 @@
             if (filtered.length > 0) {
                 renderSuggestions(filtered, mentionMatch[0], textarea);
             } else {
-                suggestionsDiv.classList.add('hidden');
+                suggestionsDiv?.classList.add('hidden');
             }
         } else {
-            suggestionsDiv.classList.add('hidden');
+            suggestionsDiv?.classList.add('hidden');
         }
     }
 
     function renderSuggestions(list, fullMention, textarea) {
         const div = document.getElementById('mentions-suggestions');
+        if (!div) return;
         div.innerHTML = list.map(user => `
-            <div class="p-3 hover:bg-teal-50 cursor-pointer flex items-center gap-3 border-b border-slate-50 last:border-0" 
+            <div class="p-2.5 hover:bg-surface-container-low cursor-pointer flex items-center gap-2.5 border-b border-surface-variant/20 last:border-0" 
                  onclick="selectMention('${user.name}', '${fullMention}')">
-                <div class="w-7 h-7 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-[10px] font-bold">
+                <div class="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">
                     ${user.name.charAt(0)}
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-slate-800">${user.name}</p>
-                    <p class="text-[9px] text-slate-400 uppercase tracking-tighter">${user.role}</p>
+                    <p class="text-xs font-bold text-on-surface">${user.name}</p>
+                    <p class="text-[9px] text-on-surface-variant uppercase tracking-wider">${user.role}</p>
                 </div>
             </div>
         `).join('');
@@ -240,13 +251,11 @@
         const textBeforeCursor = value.substring(0, cursorPosition);
         const textAfterCursor = value.substring(cursorPosition);
         
-        // Reemplazar la mención parcial por el nombre completo
         const newValue = textBeforeCursor.replace(/@([^@\s]*)$/, '@' + name + ' ') + textAfterCursor;
         textarea.value = newValue;
         textarea.focus();
-        document.getElementById('mentions-suggestions').classList.add('hidden');
+        document.getElementById('mentions-suggestions')?.classList.add('hidden');
     };
-
 
     function toggleSidebar() {
         const s = document.getElementById('app-sidebar');
@@ -265,7 +274,6 @@
         loadMentions();
         loadColleagues();
 
-        // Deep linking: cargar reporte si viene en la URL
         const urlParams = new URLSearchParams(window.location.search);
         const reportId = urlParams.get('report_id');
         if (reportId) {
@@ -281,6 +289,7 @@
     }
 
     function escapeHtml(text) {
+        if (!text) return '';
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
@@ -292,12 +301,12 @@
             if (res.success && res.mentions.length > 0) {
                 document.getElementById('mentions-badge-mobile')?.classList.remove('hidden');
                 document.getElementById('mentions-list').innerHTML = res.mentions.map(m => `
-                    <div class="p-4 hover:bg-surface cursor-pointer border-b" onclick="readMention(${m.id}, ${m.report_id})">
-                        <p class="text-[10px] text-outline">CASO-${m.report_id}</p>
-                        <p class="text-sm font-bold text-primary">${escapeHtml(m.sender_name)}</p>
+                    <div class="p-3 hover:bg-surface-container-low cursor-pointer border-b border-surface-variant/20" onclick="readMention(${m.id}, ${m.report_id})">
+                        <p class="text-[9px] font-bold text-on-surface-variant uppercase">CASO-${m.report_id}</p>
+                        <p class="text-xs font-bold text-primary">${escapeHtml(m.sender_name)}</p>
                     </div>`).join('');
             } else {
-                document.getElementById('mentions-list').innerHTML = '<p class="p-8 text-center text-slate-400 text-xs italic">No hay menciones nuevas</p>';
+                document.getElementById('mentions-list').innerHTML = '<p class="p-6 text-center text-on-surface-variant text-xs italic">No hay menciones nuevas</p>';
             }
         } catch (e) {}
     }
@@ -313,40 +322,35 @@
         currentReportId = id;
         const container = document.getElementById('report-detail-container');
         const inbox = document.getElementById('inbox-pane');
-        const bottomNav = document.getElementById('mobile-bottom-nav');
         
-        container.innerHTML = '<div class="flex h-full items-center justify-center text-primary"><span class="material-symbols-outlined animate-spin text-4xl">refresh</span></div>';
+        container.innerHTML = '<div class="flex h-full items-center justify-center text-primary"><span class="material-symbols-outlined animate-spin text-3xl">refresh</span></div>';
         container.classList.remove('hidden', 'md:flex');
         container.classList.add('flex');
 
         if (window.innerWidth < 768) { 
-            container.classList.add('fixed', 'inset-0', 'bg-white'); 
+            container.classList.add('fixed', 'inset-0', 'bg-surface', 'z-50'); 
             inbox.classList.add('hidden');
-            bottomNav.classList.add('hidden');
         } else {
             container.classList.add('md:flex');
         }
 
         const res = await fetchJson(`/staff/reports/${id}`);
         if (!res.error) await renderDetail(res.report, res.messages);
-        else container.innerHTML = `<div class="p-10 text-center"><p class="text-error font-bold mb-4">${escapeHtml(res.error)}</p><button onclick="closeDetailMobile()" class="bg-primary text-white px-6 py-2 rounded-full">Volver</button></div>`;
+        else container.innerHTML = `<div class="p-8 text-center"><p class="text-error font-bold text-xs mb-3">${escapeHtml(res.error)}</p><button onclick="closeDetailMobile()" class="h-10 bg-primary text-on-primary px-6 rounded-xl text-xs font-bold">Volver</button></div>`;
     }
 
     function closeDetailMobile() {
         const container = document.getElementById('report-detail-container');
         const inbox = document.getElementById('inbox-pane');
-        const bottomNav = document.getElementById('mobile-bottom-nav');
         
         container.classList.add('hidden', 'md:flex');
-        container.classList.remove('fixed', 'inset-0', 'bg-white', 'flex');
+        container.classList.remove('fixed', 'inset-0', 'bg-surface', 'z-50', 'flex');
         inbox.classList.remove('hidden');
-        bottomNav.classList.remove('hidden');
     }
 
     async function renderDetail(report, messages) {
         const container = document.getElementById('report-detail-container');
         
-        // Cargar datos del caso legal
         let caseRes = { success: false, error: 'Iniciando...' };
         try {
             caseRes = await fetchJson(`/api/protocol/case/${report.id}`);
@@ -362,24 +366,27 @@
         let mHtml = messages.map(m => {
             const isMe = m.is_current_user;
             const isInt = parseInt(m.is_internal) === 1;
-            return `<div class="flex gap-3 ${isMe?'flex-row-reverse':''} mb-4">
-                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">${escapeHtml(m.sender_name.charAt(0))}</div>
-                <div class="${isInt?'bg-amber-50 border-amber-100 border':(isMe?'bg-primary text-white':'bg-white border')} p-3 rounded-2xl ${isMe?'rounded-tr-none':'rounded-tl-none'} shadow-sm max-w-[85%]">
-                    ${isInt?'<p class="text-[9px] font-black text-amber-800 mb-1 uppercase tracking-tighter">🔒 Nota Interna</p>':''}
-                    <p class="text-[13px] whitespace-pre-wrap">${escapeHtml(m.message)}</p>
-                    <span class="text-[9px] opacity-60 block mt-1 ${isMe?'text-right':''}">${isMe?'Tú':escapeHtml(m.sender_name)} • ${m.created_at}</span>
+            return `<div class="flex gap-2.5 ${isMe?'flex-row-reverse':''} mb-3 font-display">
+                <div class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-on-surface-variant shrink-0">${escapeHtml(m.sender_name.charAt(0))}</div>
+                <div class="${isInt?'bg-amber-500/10 border-amber-500/30 border text-amber-950':(isMe?'bg-primary text-on-primary':'bg-surface-container-lowest border border-surface-variant/40 text-on-surface')} p-3 rounded-2xl ${isMe?'rounded-tr-none':'rounded-tl-none'} shadow-xs max-w-[85%]">
+                    ${isInt?'<p class="text-[9px] font-bold text-amber-800 mb-0.5 uppercase tracking-wider flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">lock</span> Nota Interna</p>':''}
+                    <p class="text-xs md:text-sm font-normal whitespace-pre-wrap leading-relaxed">${escapeHtml(m.message)}</p>
+                    <span class="text-[9px] opacity-70 block mt-1 ${isMe?'text-right':''}">${isMe?'Tú':escapeHtml(m.sender_name)} • ${m.created_at}</span>
                 </div>
             </div>`;
         }).join('');
 
         container.innerHTML = `
-            <div class="h-16 md:h-20 px-4 md:px-8 flex items-center justify-between bg-white border-b z-20 shrink-0">
-                <div class="flex items-center gap-3 min-w-0">
-                    <button onclick="closeDetailMobile()" class="md:hidden text-slate-500"><span class="material-symbols-outlined">arrow_back</span></button>
-                    <div class="min-w-0"><h3 class="font-bold text-sm truncate">Caso #${report.id}</h3><p class="text-[10px] text-outline uppercase font-bold truncate">${escapeHtml(report.classroom_name)}</p></div>
+            <div class="h-14 md:h-16 px-4 md:px-6 flex items-center justify-between bg-surface-container-lowest border-b border-surface-variant/40 z-20 shrink-0 font-display">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <button onclick="closeDetailMobile()" class="md:hidden text-on-surface-variant hover:text-primary cursor-pointer"><span class="material-symbols-outlined text-xl">arrow_back</span></button>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-xs md:text-sm text-on-surface truncate">Caso #${report.id}</h3>
+                        <p class="text-[10px] text-on-surface-variant uppercase font-semibold truncate">${escapeHtml(report.classroom_name || 'Aula')}</p>
+                    </div>
                 </div>
                 <div class="flex gap-2">
-                    <select onchange="handleStatusChange(${report.id}, this.value)" id="status-select" class="bg-slate-100 border-0 rounded-full py-1.5 px-3 md:px-4 text-[9px] md:text-[10px] font-black uppercase outline-none focus:ring-2 focus:ring-primary/20">
+                    <select onchange="handleStatusChange(${report.id}, this.value)" id="status-select" class="bg-surface-container-low border border-surface-variant/40 rounded-xl py-1 px-3 text-[10px] font-bold uppercase outline-none focus:border-primary">
                         <option value="new" ${report.status==='new'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_received') ?>'}</option>
                         <option value="in_progress" ${report.status==='in_progress'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_review') ?>'}</option>
                         <option value="resolved" ${report.status==='resolved'?'selected':''}>${'<?= \App\Core\Lang::t('staff.status_resolved') ?>'}</option>
@@ -390,39 +397,36 @@
             <!-- LEGAL PROTOCOL TIMELINE -->
             ${isAdvancedProtocol ? protocolMeta.timeline_html : ''}
 
-            <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50 no-scrollbar">
-                <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h4 class="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest"><?= \App\Core\Lang::t('staff.student_story') ?></h4>
-                    <p class="text-sm text-slate-800 whitespace-pre-wrap">${escapeHtml(report.content)}</p>
+            <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-surface">
+                <div class="bg-surface-container-lowest p-4 md:p-5 rounded-2xl shadow-card border border-surface-variant/40">
+                    <h4 class="text-[10px] font-bold uppercase text-on-surface-variant mb-2 tracking-wider font-display"><?= \App\Core\Lang::t('staff.student_story') ?></h4>
+                    <p class="text-xs md:text-sm text-on-surface whitespace-pre-wrap leading-relaxed">${escapeHtml(report.content)}</p>
                 </div>
                 
                 <!-- PROTOCOL ACTIONS CARD -->
                 ${protocolError ? `
-                    <div class="bg-red-50 p-6 rounded-[2rem] border border-red-100 text-red-600 text-xs text-center font-bold">
-                        Error cargando protocolo: ${protocolError}<br>
-                        <pre class="mt-2 text-[8px] text-left overflow-auto">${JSON.stringify(caseRes, null, 2)}</pre>
+                    <div class="bg-error/10 p-4 rounded-2xl border border-error/20 text-error text-xs font-semibold">
+                        Protocolo no disponible: ${escapeHtml(protocolError)}
                     </div>
-                ` : (protocolMeta ? renderProtocolActionsCard(protocolCase, protocolMeta) : `<div class="bg-amber-50 p-6 rounded-[2rem] border border-amber-100 text-amber-600 text-xs text-center font-bold">Protocol Meta Null - Response: <pre class="text-[8px] text-left overflow-auto">${JSON.stringify(caseRes, null, 2)}</pre></div>`)}
+                ` : (protocolMeta ? renderProtocolActionsCard(protocolCase, protocolMeta) : '')}
 
-                
-            <!-- MÒDUL RESTAURATIU -->
-            <div id="restorative-panel-container"></div>
-            <div id="messages-flow">${mHtml || '<p class="text-center text-slate-400 py-10 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
+                <!-- MÒDUL RESTAURATIU -->
+                <div id="restorative-panel-container"></div>
+                <div id="messages-flow" class="space-y-3 pt-2">${mHtml || '<p class="text-center text-on-surface-variant py-8 text-xs italic"><?= \App\Core\Lang::t('staff.no_responses') ?></p>'}</div>
             </div>
-            <div class="p-4 bg-white border-t shrink-0 relative">
-                <!-- Contenedor de Sugerencias de Menciones -->
-                <div id="mentions-suggestions" class="hidden absolute bottom-full left-4 mb-2 w-64 bg-white rounded-xl shadow-2xl border border-slate-100 z-[100] overflow-hidden"></div>
-                <div class="flex gap-2 mb-3">
-                    <input id="reply-message" class="flex-1 bg-slate-100 border-0 rounded-full py-3 px-6 text-sm outline-none focus:ring-2 focus:ring-primary/20" placeholder="<?= \App\Core\Lang::t('dashboard.chat_placeholder') ?>"/>
-                    <button onclick="sendMessage()" class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary/20 shrink-0 active:scale-90 transition-transform"><span class="material-symbols-outlined">send</span></button>
+
+            <div class="p-3 md:p-4 bg-surface-container-lowest border-t border-surface-variant/40 shrink-0 relative font-display">
+                <div id="mentions-suggestions" class="hidden absolute bottom-full left-4 mb-2 w-64 bg-surface-container-lowest rounded-xl shadow-card border border-surface-variant/40 z-[100] overflow-hidden"></div>
+                <div class="flex gap-2 mb-2">
+                    <input id="reply-message" class="flex-1 h-11 bg-surface-container-low border border-surface-variant/40 rounded-xl px-4 text-xs md:text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline-variant" placeholder="<?= \App\Core\Lang::t('dashboard.chat_placeholder') ?>"/>
+                    <button onclick="sendMessage()" class="w-11 h-11 bg-primary text-on-primary rounded-xl flex items-center justify-center shadow-xs active:scale-95 transition-transform cursor-pointer shrink-0"><span class="material-symbols-outlined text-[18px]">send</span></button>
                 </div>
-                <label class="text-[11px] font-bold text-slate-500 flex items-center gap-2 pl-4 cursor-pointer select-none">
-                    <input type="checkbox" id="reply-internal" class="rounded text-primary border-slate-300 focus:ring-primary/20"/> <?= \App\Core\Lang::t('staff.mark_internal') ?>
+                <label class="text-[11px] font-semibold text-on-surface-variant flex items-center gap-2 pl-2 cursor-pointer select-none">
+                    <input type="checkbox" id="reply-internal" class="rounded text-primary border-surface-variant/60 focus:ring-primary/20"/> <?= \App\Core\Lang::t('staff.mark_internal') ?>
                 </label>
             </div>
         `;
 
-        // Inicializar Módulo Restaurativo
         if (protocolCase) {
             currentCaseId = protocolCase.id;
             const resPanel = document.getElementById('restorative-panel-container');
@@ -430,8 +434,6 @@
             
             if (resPanel && originalModule) {
                 const activeProtocol = caseRes.ccaa;
-                
-                // Habilitar prácticas restaurativas para Catalunya y Aragón
                 let showRestorative = (activeProtocol === 'CAT' || activeProtocol === 'ARA');
 
                 if (showRestorative) {
@@ -440,7 +442,7 @@
                     loadRestorativeModule(currentCaseId);
                 } else {
                     originalModule.classList.add('hidden');
-                    document.body.appendChild(originalModule); // Lo devolvemos al body oculto
+                    document.body.appendChild(originalModule);
                 }
             }
         }
@@ -448,33 +450,21 @@
 
     function renderProtocolActionsCard(c, meta) {
         if (!c || !meta || !meta.current_actions || !Array.isArray(meta.current_actions) || meta.current_actions.length === 0) {
-             let msg = 'No hay acciones disponibles para esta fase.';
-             if (!meta) msg = 'Cargando datos del protocolo...';
-             else if (!c) msg = 'No se ha podido vincular el expediente legal.';
-             else if (!meta.current_actions) msg = 'Error en la configuración de acciones del protocolo.';
-
-             return `
-                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 italic text-slate-400 text-xs text-center">
-                    ${msg}
-                </div>
-            `;
+             return '';
         }
 
         const actions = meta.current_actions;
         
         const getStyleClass = (style) => {
             switch(style) {
-                case 'primary': return 'bg-primary text-white shadow-lg shadow-primary/20 hover:scale-105';
-                case 'secondary': return 'bg-slate-100 text-slate-600 hover:bg-slate-200';
-                case 'danger': return 'bg-red-500 text-white shadow-lg shadow-red-500/20 hover:bg-red-600';
-                case 'danger-outline': return 'border-2 border-red-500 text-red-600 hover:bg-red-50';
-                case 'success': return 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600';
-                case 'warning': return 'bg-amber-500 text-white shadow-lg shadow-amber-500/20 hover:bg-amber-600';
-                case 'indigo': return 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700';
-                case 'dark': return 'bg-slate-800 text-white hover:bg-slate-900';
-                case 'link': return 'text-primary underline font-bold hover:text-primary/80';
-                case 'alert': return 'bg-amber-50 border border-amber-100 text-amber-700 italic text-xs p-6 rounded-2xl';
-                default: return 'bg-slate-100 text-slate-600';
+                case 'primary': return 'bg-primary text-on-primary shadow-xs hover:bg-primary/90';
+                case 'secondary': return 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest';
+                case 'danger': return 'bg-error text-white shadow-xs hover:bg-error/90';
+                case 'danger-outline': return 'border border-error text-error hover:bg-error/10';
+                case 'success': return 'bg-teal-700 text-white shadow-xs hover:bg-teal-800';
+                case 'warning': return 'bg-amber-600 text-white shadow-xs hover:bg-amber-700';
+                case 'alert': return 'bg-amber-500/10 border border-amber-500/30 text-amber-900 text-xs p-4 rounded-xl';
+                default: return 'bg-surface-container-high text-on-surface';
             }
         };
 
@@ -486,24 +476,24 @@
         const closureAction = actions.find(a => a.style === 'closure_checklist');
 
         return `
-            <div class="bg-white p-8 rounded-[2.5rem] border-2 border-primary/10 shadow-sm space-y-6">
+            <div class="bg-surface-container-lowest p-5 md:p-6 rounded-2xl border border-surface-variant/40 shadow-card space-y-4 font-display">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">Fase Actual</h4>
-                        <p class="text-sm font-black text-slate-800 uppercase tracking-tight">${c.current_phase.replace(/_/g, ' ')}</p>
+                        <h4 class="text-[10px] font-bold uppercase text-on-surface-variant tracking-wider leading-none mb-1">Fase Actual Protocolo</h4>
+                        <p class="text-xs md:text-sm font-bold text-primary uppercase tracking-tight">${c.current_phase.replace(/_/g, ' ')}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
-                        <span class="material-symbols-outlined">auto_fix</span>
+                    <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-lg">gavel</span>
                     </div>
                 </div>
 
-                <div class="${buttonActions.some(a => a.style === 'alert') ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-3'}">
+                <div class="${buttonActions.some(a => a.style === 'alert') ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-2.5'}">
                     ${buttonActions.map(a => {
                         if (a.style === 'alert') {
                             return `<div class="${getStyleClass(a.style)}">${a.label}</div>`;
                         }
                         return `
-                            <button onclick="${a.onclick}" class="px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-wider transition-all flex items-center justify-center text-center gap-2 ${getStyleClass(a.style)}">
+                            <button onclick="${a.onclick}" class="h-11 px-4 rounded-xl text-xs font-bold tracking-wide transition-all flex items-center justify-center text-center gap-1.5 cursor-pointer ${getStyleClass(a.style)}">
                                 ${a.label}
                             </button>
                         `;
@@ -511,104 +501,45 @@
                 </div>
                 
                 ${revaAction ? `
-                    <div class="pt-4 border-t border-slate-50">
-                        <p class="text-[9px] font-black uppercase text-slate-400 mb-2">Completar requeriments REVA</p>
-                        <div class="space-y-2">
-                             <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
+                    <div class="pt-3 border-t border-surface-variant/30 space-y-2">
+                        <p class="text-[10px] font-bold uppercase text-on-surface-variant">Requerimientos REVA</p>
+                        <div class="space-y-1.5">
+                             <label class="flex items-center gap-2.5 p-2.5 bg-surface-container-low rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.inspeccio ? 'checked' : ''} onchange="toggleComm(${c.id}, 'inspeccio', this.checked)">
-                                <span class="text-xs font-bold text-slate-700">Comunicat a la Inspecció d'Educació (REVA)</span>
+                                <span class="text-xs font-semibold text-on-surface">Comunicado a Inspección (REVA)</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
+                            <label class="flex items-center gap-2.5 p-2.5 bg-surface-container-low rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.familia_victima ? 'checked' : ''} onchange="toggleComm(${c.id}, 'familia_victima', this.checked)">
-                                <span class="text-xs font-bold text-slate-700">Comunicat a la família de la víctima</span>
+                                <span class="text-xs font-semibold text-on-surface">Comunicado a la familia de la víctima</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
+                            <label class="flex items-center gap-2.5 p-2.5 bg-surface-container-low rounded-xl cursor-pointer">
                                 <input type="checkbox" class="comm-check w-4 h-4 rounded text-primary" ${comms.familia_agressor ? 'checked' : ''} onchange="toggleComm(${c.id}, 'familia_agressor', this.checked)">
-                                <span class="text-xs font-bold text-slate-700">Comunicat a la família de l'agressor</span>
+                                <span class="text-xs font-semibold text-on-surface">Comunicado a la familia del presunto agresor</span>
                             </label>
                         </div>
                     </div>
                 ` : ''}
 
                 ${closureAction ? `
-                    <div class="pt-4 border-t border-slate-50 space-y-4">
-                        <h5 class="text-[9px] font-black uppercase text-primary tracking-widest">Checklist de Tancament Oficial</h5>
-                        <div class="space-y-2">
-                            ${renderClosureCheck(c.id, 'eradicated', 'La violència s\'ha eradicat definitivament', checks.eradicated)}
-                            ${renderClosureCheck(c.id, 'reparation', 'S\'ha dut a terme un procés de reparació', checks.reparation)}
-                            ${renderClosureCheck(c.id, 'students_confirm', 'L\'alumnat confirma la millora', checks.students_confirm)}
-                            ${renderClosureCheck(c.id, 'teachers_valorate', 'L\'equip docent valora resolució', checks.teachers_valorate)}
+                    <div class="pt-3 border-t border-surface-variant/30 space-y-2">
+                        <h5 class="text-[10px] font-bold uppercase text-primary tracking-wider">Checklist de Cierre Oficial</h5>
+                        <div class="space-y-1">
+                            ${renderClosureCheck(c.id, 'eradicated', 'La violencia se ha erradicado definitivamente', checks.eradicated)}
+                            ${renderClosureCheck(c.id, 'reparation', 'Se ha completado el proceso de reparación', checks.reparation)}
+                            ${renderClosureCheck(c.id, 'students_confirm', 'El alumnado confirma la mejora', checks.students_confirm)}
+                            ${renderClosureCheck(c.id, 'teachers_valorate', 'El equipo docente valora la resolución', checks.teachers_valorate)}
                         </div>
-                    </div>
-                ` : ''}
-
-                ${meta.ccaa_code === 'CAT' && c.current_phase === 'violencia_sexual_actiu' ? `
-                    <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium">S'ha detectat un presumpte cas de violència sexual. El sistema ha bloquejat el circuit ordinari per protegir el menor.</p>
-                    </div>
-                ` : ''}
-
-                ${meta.ccaa_code === 'ARA' && c.current_phase === 'violencia_sexual_activa' ? `
-                    <div class="w-full bg-red-50 p-4 rounded-xl space-y-3">
-                        <p class="text-xs text-red-800 font-medium">S'ha detectado un presunto caso de violencia sexual. El sistema ha bloqueado el circuito ordinario.</p>
                     </div>
                 ` : ''}
             </div>
         `;
-    }
-
-    function openFollowupModalAragon(caseId) {
-        const html = `
-            <div id="modal-followup-aragon" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden animate-[scaleIn_0.3s_ease-out]">
-                    <div class="p-6 border-b flex items-center justify-between">
-                        <h3 class="font-black">Registro de Seguimiento (ANEXO IX)</h3>
-                        <button onclick="document.getElementById('modal-followup-aragon').remove()"><span class="material-symbols-outlined">close</span></button>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase text-slate-400 pl-4">Tipo de Sesión / Periodicidad</label>
-                            <select id="f-target-ar" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm">
-                                <option value="semanal_m1">Semanal (Primer mes)</option>
-                                <option value="quincenal_m2">Quincenal (Segundo mes)</option>
-                                <option value="mensual_m3">Mensual (A partir del tercer mes)</option>
-                                <option value="extraordinaria">Sesión Extraordinaria</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase text-slate-400 pl-4">Fecha de la sesión</label>
-                            <input type="date" id="f-date-ar" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm" value="${new Date().toISOString().split('T')[0]}">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase text-slate-400 pl-4">Actuaciones y acuerdos</label>
-                            <textarea id="f-notes-ar" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm" rows="4" placeholder="Escriba aquí los acuerdos alcanzados..."></textarea>
-                        </div>
-                        <button onclick="saveFollowupAragon(${caseId})" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg hover:scale-105 transition-transform">Guardar Registro Anexo IX</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', html);
-    }
-
-    async function saveFollowupAragon(caseId) {
-        const data = {
-            target_type: document.getElementById('f-target-ar').value,
-            session_date: document.getElementById('f-date-ar').value,
-            notes: document.getElementById('f-notes-ar').value
-        };
-        const res = await fetchJson(`/api/protocol/case/${caseId}/followup`, { method: 'POST', body: data });
-        if (res.success) {
-            document.getElementById('modal-followup-aragon').remove();
-            window.location.reload();
-        }
     }
 
     function renderClosureCheck(caseId, key, label, checked) {
         return `
-            <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors">
-                <input type="checkbox" class="closure-check w-4 h-4 rounded text-emerald-500" ${checked ? 'checked' : ''} onchange="toggleClosure(${caseId}, '${key}', this.checked)">
-                <span class="text-[11px] font-bold text-slate-600">${label}</span>
+            <label class="flex items-center gap-2.5 p-2 hover:bg-surface-container-low rounded-lg cursor-pointer transition-colors">
+                <input type="checkbox" class="closure-check w-4 h-4 rounded text-teal-600" ${checked ? 'checked' : ''} onchange="toggleClosure(${caseId}, '${key}', this.checked)">
+                <span class="text-xs font-medium text-on-surface">${label}</span>
             </label>
         `;
     }
@@ -619,155 +550,10 @@
         await fetchJson(`/api/protocol/case/${caseId}/closure`, { method: 'POST', body: { checks: currentClosureChecks } });
     }
 
-    function openFollowupModal(caseId, type = null) {
-        const title = type ? `Registre d'Actuació: ${type.replace(/_/g, ' ').toUpperCase()}` : 'Nou Registre de Seguiment';
-        const html = `
-            <div id="modal-followup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden">
-                    <div class="p-6 border-b flex items-center justify-between">
-                        <h3 class="font-black">${title}</h3>
-                        <button onclick="document.getElementById('modal-followup').remove()"><span class="material-symbols-outlined">close</span></button>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <select id="f-target" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm ${type ? 'hidden' : ''}">
-                            <option value="victima">Víctima</option>
-                            <option value="agressor">Agressor</option>
-                            <option value="familia">Família</option>
-                            <option value="grup_classe">Grup Classe</option>
-                            ${type ? `<option value="${type}" selected>${type}</option>` : ''}
-                        </select>
-                        <input type="date" id="f-date" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm" value="${new Date().toISOString().split('T')[0]}">
-                        <textarea id="f-notes" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm" rows="4" placeholder="Notes de la sessió..."></textarea>
-                        <button onclick="saveFollowup(${caseId}, '${type || ''}')" class="w-full py-4 bg-primary text-white rounded-full font-bold shadow-lg">Guardar Sessió</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', html);
-    }
-
-    async function saveFollowup(caseId, type = null) {
-        const data = {
-            target_type: type || document.getElementById('f-target').value,
-            session_date: document.getElementById('f-date').value,
-            notes: document.getElementById('f-notes').value
-        };
-        const res = await fetchJson(`/api/protocol/case/${caseId}/followup`, { method: 'POST', body: data });
-        if (res.success) {
-            document.getElementById('modal-followup').remove();
-            window.location.reload();
-        }
-    }
-
     let currentComms = {};
     async function toggleComm(caseId, key, checked) {
         currentComms[key] = checked;
         await fetchJson(`/api/protocol/case/${caseId}/communications`, { method: 'POST', body: { comms: currentComms } });
-        
-        // Comprobar si todos están marcados para habilitar el botón
-        const checks = document.querySelectorAll('.comm-check');
-        const allChecked = Array.from(checks).every(c => c.checked);
-        const btn = document.getElementById('btn-next-intervention');
-        if (btn) btn.disabled = !allChecked;
-    }
-
-    async function openSecurityMap(caseId) {
-        const res = await fetchJson(`/api/protocol/case/${caseId}/security-map`);
-        const map = res.map || {};
-        
-        const html = `
-            <div id="modal-security-map" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                <div class="bg-white rounded-[2rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-[scaleIn_0.3s_ease-out]">
-                    <div class="p-6 border-b flex items-center justify-between bg-emerald-500 text-white">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined">map</span>
-                            <h3 class="font-black text-lg">Mapa de Seguretat (Fase 4)</h3>
-                        </div>
-                        <button onclick="document.getElementById('modal-security-map').remove()" class="hover:bg-white/20 p-2 rounded-full transition-colors"><span class="material-symbols-outlined">close</span></button>
-                    </div>
-                    <div class="p-6 md:p-8 space-y-6 max-h-[70vh] overflow-y-auto no-scrollbar">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Espais Segurs per a la víctima</label>
-                            <textarea id="map-segurs" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none" rows="3" placeholder="Ej: Biblioteca, Despatx d'Orientació, Aula 204...">${map.espais_segurs || ''}</textarea>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Espais de Risc (Evitar coincidència)</label>
-                            <textarea id="map-risc" class="w-full bg-slate-50 border-0 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none" rows="3" placeholder="Ej: Lavabos planta 1, passadís nord al pati...">${map.espais_de_risc || ''}</textarea>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Persones de suport referents</label>
-                            <input id="map-persones" class="w-full bg-slate-50 border-0 rounded-full py-3 px-6 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none" value="${map.persones_de_suport || ''}" placeholder="Ej: Tutor de 3A, Mónica (6A)...">
-                        </div>
-                    </div>
-                    <div class="p-6 bg-slate-50 border-t flex justify-end gap-3">
-                        <button onclick="document.getElementById('modal-security-map').remove()" class="px-6 py-3 text-xs font-bold text-slate-500">Cancel·lar</button>
-                        <button onclick="saveSecurityMap(${caseId})" class="px-8 py-3 bg-emerald-500 text-white rounded-full text-xs font-bold shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all">Guardar Mapa</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', html);
-    }
-
-    async function saveSecurityMap(caseId) {
-        const data = {
-            map: {
-                espais_segurs: document.getElementById('map-segurs').value,
-                espais_de_risc: document.getElementById('map-risc').value,
-                persones_de_suport: document.getElementById('map-persones').value
-            }
-        };
-        const res = await fetchJson(`/api/protocol/case/${caseId}/security-map`, { method: 'POST', body: data });
-        if (res.success) {
-            document.getElementById('modal-security-map').remove();
-            alert('Mapa de Seguretat guardat amb èxit.');
-        }
-    }
-
-    async function copyRevaSummary(caseId) {
-        const res = await fetchJson(`/api/protocol/case/${caseId}/reva`);
-        if (res.success) {
-            await navigator.clipboard.writeText(res.summary);
-            alert('Resum per al REVA copiat al porta-retalls.');
-        }
-    }
-
-    async function uploadEvidence(caseId, input) {
-        if (!input.files || input.files.length === 0) return;
-        
-        const formData = new FormData();
-        formData.append('evidence', input.files[0]);
-
-        try {
-            const token = document.querySelector('meta[name="csrf-token"]').content;
-            const res = await fetch(`/api/protocol/case/${caseId}/evidence`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': token
-                },
-                body: formData
-            });
-            const data = await res.json();
-            if (data.success) alert('Evidència guardada correctament en custòdia.');
-            else alert('Error: ' + data.error);
-        } catch (e) {
-            alert('Error en la pujada.');
-        }
-    }
-
-    async function protocolClassify(id, severity, classification) {
-        if (!confirm('¿Confirmas esta clasificación preliminar? Esto activará las fases legales correspondientes.')) return;
-        const res = await fetchJson(`/api/protocol/case/${id}/classify`, { method: 'POST', body: { severity, classification } });
-        if (res.success) {
-            if (severity === 'violencia_sexual') alert('ALERTA: Se ha activado el bypass Barnahus. El caso ha saltado directamente a la fase de Comunicación/Protección.');
-            window.location.reload();
-        }
-    }
-
-    async function nextPhase(id, phase) {
-        if (!confirm('¿Deseas avanzar a la siguiente fase del protocolo?')) return;
-        const res = await fetchJson(`/api/protocol/case/${id}/phase`, { method: 'POST', body: { phase } });
-        if (res.success) window.location.reload();
     }
 
     async function handleStatusChange(id, status) {
@@ -776,27 +562,8 @@
             if (!sum) { document.getElementById('status-select').value = 'in_progress'; return; }
             updateStatus(id, status, sum);
         } else {
-            // Si el estado cambia a in_progress, mostrar sugerencia de protocolo si está activo
-            if (status === 'in_progress') {
-                checkProtocolGuide();
-            }
             updateStatus(id, status);
         }
-    }
-
-    async function checkProtocolGuide() {
-        try {
-            const res = await fetchJson(`/api/protocol/case/${currentReportId}`);
-            if (!res.success || !res.case) return;
-            
-            const protocolRes = await fetchJson('/api/protocol');
-            if (protocolRes.error) return;
-            
-            // Mostrar una notificación o modal con el enlace a la guía
-            if (confirm('Este caso requiere seguimiento. ¿Deseas consultar el protocolo oficial de ' + protocolRes.metadata.name + ' para guiar tu actuación?')) {
-                window.open('/protocolo-acoso', '_blank');
-            }
-        } catch (e) {}
     }
 
     async function updateStatus(id, status, sum = null) {
